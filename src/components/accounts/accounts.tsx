@@ -279,7 +279,7 @@ export default function Accounts() {
           <span className="main-content-title mg-b-0 mg-b-lg-1">Accounts</span>
         </div>
 
-        <div className="right-content">
+        {/* <div className="right-content">
 
           <OverlayTrigger
             placement="bottom"
@@ -287,7 +287,7 @@ export default function Accounts() {
             <button type="button" className="btn btn-dark p-1 pe-2 ps-2 me-1" data-bs-placement="bottom"
               data-bs-toggle="tooltip" title="Filter"><i className="bi bi-funnel"></i></button>
           </OverlayTrigger>
-        </div>
+        </div> */}
       </div>
 
       <Row>
@@ -413,10 +413,10 @@ export default function Accounts() {
                         <Tab eventKey="Receipt" title="Receipt">
                         <div className="float-end mt-2">
           <>
-            <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("receiptadd")}><i className="bi bi-plus"></i> Add</button>
+            <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("receiptadd")}><i className="bi bi-search"></i> Search</button>
             <Modal show={receiptadd} centered >
               <Modal.Header>
-                <Modal.Title>Add</Modal.Title>
+                <Modal.Title>Search</Modal.Title>
                 <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("receiptadd"); }}>
                   x
                 </Button>
@@ -425,6 +425,12 @@ export default function Accounts() {
 
               <Form.Group className="form-group">
                   <Form.Label>Society<span className="text-danger">*</span></Form.Label>
+
+
+                <Form.Group className="form-group">
+                  <Form.Label>Date <span className="text-danger">*</span></Form.Label>
+                  <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                </Form.Group>
 
                   <div className="SlectBox">
                     <Select
@@ -443,10 +449,6 @@ export default function Accounts() {
                 </Form.Group>
 
 
-                <Form.Group className="form-group">
-                  <Form.Label>Date <span className="text-danger">*</span></Form.Label>
-                  <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-                </Form.Group>
 
                 <Form.Group className="form-group">
                   <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
@@ -519,7 +521,26 @@ export default function Accounts() {
                         </Tab>
 
                         <Tab eventKey="Ledger" title="Ledger">
-                        Ledger
+                    <table className='table'>
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Particular</th>
+                          <th>Debit</th>
+                          <th>Credit</th>
+                          <th className='text-end'>Balance</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td></td>
+                          <td>Opening B/L</td>
+                          <td></td>
+                          <td></td>
+                          <td className='text-end'>2900.00</td>
+                        </tr>
+                      </tbody>
+                    </table>
                         </Tab>
                       </Tabs>
 
