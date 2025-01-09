@@ -1,0 +1,31 @@
+
+///* ###### globalHorizontal  ###### */
+.horizontal .main-sidemenu .slide-leftRTL,
+.horizontal .main-sidemenu .slide-rightRTL {
+  position: absolute;
+  inset-block-start: 0px;
+  padding: 17px;
+  color: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  cursor: pointer;
+}
+
+//
+.horizontal.scrollable-layout {
+  .switcher-page {
+    .app-sidebar {
+      margin-block-start: 4rem;
+    }
+  }
+}
+//
+.hor-scroll > div:last-child > div {
+  background-color: transparent !important;
+}
+.hor-scroll > div:last-child > div:hover {
+  background-color: $primary-02 !important;
+}
+///* ###### globalHorizontal  ###### */

@@ -1,0 +1,173 @@
+/* ###### globalRtl  ###### */
+
+.rtl .tooltip-secondary1.bs-tooltip-end .tooltip-arrow::before,
+.rtl
+  .tooltip-secondary1.bs-tooltip-auto[data-popper-placement^="end"]
+  .tooltip-arrow::before {
+  border-inline-end-color: $primary;
+}
+.rtl .tooltip-primary1.bs-tooltip-start .tooltip-arrow::before,
+.rtl
+  .tooltip-primary1.bs-tooltip-auto[data-popper-placement^="start"]
+  .tooltip-arrow::before {
+  border-inline-start-color: $primary;
+}
+.rtl {
+  .PhoneInputCountrySelectArrow {
+    translate: -4px;
+  }
+  .pcr-app {
+    direction: ltr !important;
+  }
+  .notification .notification-body:before {
+    transform: rotate(180deg);
+  }
+  .uselistdata {
+    .float-end {
+      float: right !important;
+    }
+  }
+  .rti--tag {
+    button {
+      margin-inline-end: 5px;
+    }
+  }
+  .was-validated .is-loading > .form-control:valid,
+  .is-loading > .form-control.is-invalid {
+    padding-inline-start: calc(1.5em + 0.75rem + 25px);
+  }
+
+  .btn-icons {
+    margin-inline-end: 0.8rem !important;
+    margin-inline-start: inherit !important;
+  }
+  .dropstart .dropdown-toggle::before {
+    vertical-align: 0;
+    margin-inline-start: 3px;
+  }
+  .ql-snow .ql-picker:not(.ql-color-picker):not(.ql-icon-picker) svg {
+    left: 0;
+    right: inherit !important;
+  }
+  .ql-editor li:not(.ql-direction-rtl)::before {
+    margin-right: -1.5em;
+    margin-left: 0.3em;
+    text-align: left;
+  }
+  .ql-editor ol li:not(.ql-direction-rtl),
+  .ql-editor ul li:not(.ql-direction-rtl) {
+    padding-right: 1.5em;
+    padding-left: inherit;
+  }
+  .ql-editor {
+    text-align: right;
+  }
+  .MuiTreeItem-iconContainer {
+    margin-inline-start: 4px;
+  }
+
+  .sidebar.sidebar-right {
+    transform: translate(-100%, 0);
+  }
+  @media (min-width: 1400px) {
+    &.layout-boxed .app-sidebar {
+      right: auto !important;
+      left: inherit !important;
+    }
+  }
+  .was-validated .form-control:invalid,
+  .form-control.is-invalid,
+  input.form-control.parsley-error,
+  textarea.form-control.parsley-error {
+    padding-left: calc(1.5em + 0.75rem);
+    padding-right: 0.75rem;
+    background-position: top calc(0.375em + 0.1875rem) left
+      calc(0.375em + 0.1875rem);
+  }
+  .was-validated .form-control:valid,
+  .form-control.is-valid,
+  input.form-control.parsley-success,
+  textarea.form-control.parsley-success {
+    padding-left: calc(55.5em + -51.25rem);
+    padding-right: 0.75rem;
+    background-position: top calc(0.375em + 0.1875rem) left
+      calc(0.375em + -0.18125rem);
+  }
+  #checkoutsteps .total {
+    float: left;
+  }
+  .checkout-btns {
+    .next {
+      float: left;
+    }
+  }
+  .carousel-item {
+    float: right;
+    margin-left: -100%;
+    margin-right: inherit;
+  }
+  .counter-side-badge .badge {
+    float: right;
+    transform: rotate(44deg);
+  }
+  .lds-heart div:before {
+    right: -17px;
+    left: inherit;
+    border-radius: 0 50% 50% 0;
+  }
+  .lds-heart {
+    transform: rotate(315deg);
+  }
+  .icon {
+    &.ion-ios-arrow-back:before {
+      transform: rotate(180deg);
+    }
+    &.ion-ios-arrow-forward:before {
+      transform: rotate(180deg);
+    }
+  }
+  .dropdown-menu {
+    --bs-position: end;
+    float: right;
+    text-align: right;
+  }
+  .progress-style.progress .progress-bar:after {
+    inset-inline-start: -15px;
+  }
+  .apexcharts-yaxis {
+    .apexcharts-yaxis-texts-g {
+      transform: translate(-10px, 0);
+    }
+  }
+  &.horizontal .app-sidebar .main-sidemenu {
+    .slide-right {
+      right: initial !important;
+      left: 0px;
+      transform: rotate(180deg);
+    }
+    .slide-left {
+      left: initial !important;
+      right: 0px;
+      transform: rotate(180deg);
+    }
+  }
+  .fe-chevron-right:before {
+    content: "\e92e";
+  }
+
+  #Slider {
+    direction: ltr;
+  }
+  .main-header-right .dropdown-menu:before {
+    content: "";
+    border-inline-end: 1px solid #e9edf4;
+    border-inline-start: 0 solid #e9edf4;
+  }
+  .las {
+    &.la-angle-right:before {
+      content: "\f104";
+    }
+  }
+}
+
+/* ###### globalRtl  ###### */

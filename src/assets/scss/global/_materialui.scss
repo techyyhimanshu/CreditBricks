@@ -1,0 +1,81 @@
+/* ###### 3.13 globalMui ###### */
+
+.MuiInput-underline:after {
+  display: none !important;
+}
+.MuiInput-underline:hover:not(.Mui-disabled):before {
+  border-block-end: none !important;
+}
+.MuiInput-underline:before {
+  border-block-end: none !important;
+}
+//
+.MuiSlider-colorPrimary {
+  color: $primary !important;
+}
+//
+.TrackInvertedSlider .MuiSlider-track {
+  background: #bfebe4 !important;
+  border: none !important;
+}
+//
+.datetimepicker-2 {
+  .MuiFormControl-root,
+  .MuiInputBase-root {
+    display: block !important;
+  }
+}
+//
+.MuiSlider-valueLabelOpen {
+  background-color: $primary !important;
+}
+//
+.MuiTreeItem-content.Mui-selected:hover {
+  background: transparent !important;
+}
+.MuiTreeItem-content.Mui-selected {
+  background: transparent !important;
+}
+.MuiTreeItem-content:hover {
+  background: transparent !important;
+}
+//
+.MuiSlider-valueLabel{
+  color: $dark-color;
+}
+//
+//treeview
+.MuiTreeItem-iconContainer {
+  margin-inline-end: 3px !important;
+}
+ .MuiTreeItem-label {
+  padding-inline-start: 3px !important;
+}
+
+.MuiTreeItem-content {
+  padding: 0 !important;
+}
+//
+#rating-3,
+#rating-6 {
+  .MuiRating-sizeLarge {
+    flex-wrap: wrap !important;
+  }
+}
+//
+.datepicker-style2 {
+  input {
+    padding: 0 !important;
+    border: 0 !important;
+  }
+  .MuiOutlinedInput-notchedOutline {
+    border-color: transparent !important;
+  }
+  .MuiInputBase-root {
+    color: #c6bcc9;
+  }
+  ::-webkit-calendar-picker-indicator {
+    opacity: 0.3 !important;
+  }
+}
+/* ###### 3.13 globalMui ###### */

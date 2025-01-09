@@ -1,0 +1,237 @@
+/*------------------------------------------------------------------
+[Master Stylesheet]
+
+Project        :   Cab Service 
+Version        :   V.1
+Copyright      :   Particles Infoscience Private Limited 
+Author         :   Diwakar
+Author URL     :   https://particlesinfo.com/
+Support	       :   diwakar@particlesinfo.com
+License        :   Licensed under Particles Infoscience
+
+-------------------------------------------------------------------*/
+
+/*
+1.  Accordions
+2.  Alerts
+3.  Badges
+4.  Breadcrumbs
+5.  Buttons
+6.  Card
+7.  Carousel
+8.  Dropdown
+9.  Forms
+10. Grid
+11. Input-group
+12. Modals
+13. Navigation
+14. Pagination
+15. Popover
+16. Progress
+17. Tables
+18. Tabs
+19. Toast
+20. Tooltip
+21. Main-content
+22. Header
+23. Horizontal-menu
+24. Profile
+25. Iconbar
+26. Datatable
+27. Date-picker
+28. Date-time-picker
+29. Jqvmap
+30. Chart
+31. Parsely
+32. Rangeslider
+33. Select2
+34. Spectrum
+35. Calendar
+36. Chat
+37 Contacts
+38. Error
+39. Invoice
+40. Mail
+41. Profile
+42. Background
+43. Border
+44. Height
+45. Margin
+46. Opacity
+47. Padding
+48. Position
+49. Typography
+50. Width
+51. Tags
+52. Navbar
+53. globalAccordion
+54. globalAccorion
+55. globalButton
+56. globalcarousel
+57. globalChart
+58. globalCustomstyle
+59. globalDarktheme
+60. globalDropdown
+61. globalFilepond
+62. globalForms
+63. globalFullcalendar
+64. globalHorizontal
+65. globalInputgroup
+66. globalMui
+67. globalNav
+68. globalReactselect
+69. globalRtl
+70. globalTable
+71. globalTabs
+72. globalTransparenttheme
+73. globalWidth
+
+*/
+
+@import "variables";
+
+
+/* ######## FONT ######## */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+
+/* ######## BOOTSTRAP ######## */ 
+@import "bootstrap/accordion";
+@import "bootstrap/alerts";
+@import "bootstrap/badge";
+@import "bootstrap/breadcrumbs";
+@import "bootstrap/buttons";
+@import "bootstrap/cards";
+@import "bootstrap/carousel";
+@import "bootstrap/custom";
+@import "bootstrap/dropdown";
+@import "bootstrap/forms";
+@import "bootstrap/grid";
+@import "bootstrap/input-group";
+@import "bootstrap/modals";
+@import "bootstrap/nav";
+@import "bootstrap/paginations";
+@import "bootstrap/popover";
+@import "bootstrap/progress";
+@import "bootstrap/tables";
+@import "bootstrap/toast";
+@import "bootstrap/tooltip";
+@import "bootstrap/tabs";
+
+/*  ######## CUSTOM ######## */ 
+@import "custom/bootstrap-input-spinner";
+@import "custom/checkbox";
+@import "custom/countdown";
+@import "custom/custom-control";
+@import "custom/image";
+@import "custom/list";
+@import "custom/listgroup";
+@import "custom/navbar";
+@import "custom/p-scroll";
+@import "custom/radio";
+@import "custom/rating";
+@import "custom/tags";
+@import "custom/timeline";
+@import "custom/toggle";
+@import "custom/custom-styles";
+@import "custom/Ie";
+@import "custom/ecommerce";
+@import "custom/widgets";
+
+
+/* ######## LAYOUT-STYLES ######## */
+@import "layout/footer";
+@import "layout/header";
+@import "layout/horizontal-menu";
+@import "layout/iconbar";
+@import "layout/maincontent";
+@import "layout/profile";
+@import "layout/sidebar";
+@import "layout/sidemenu";
+@import "layout/skin-modes";
+@import "layout/style-dark";
+@import "layout/style-transparent";
+
+/* ######## LIBARARY ######## */
+@import "lib/chart";
+@import "lib/datatable";
+@import "lib/datepicker";
+@import "lib/datetimepicker";
+@import "lib/parsely";
+@import "lib/rangesliders";
+@import "lib/select2";
+@import "lib/spectrum";
+@import "lib/calendar";
+@import "lib/notifications";
+
+
+/* ######## PLUGINS ######## */
+@import "plugins/accordion";
+@import "plugins/buttons.bootstrap";
+@import "plugins/classic";
+@import "plugins/countdown";
+@import "plugins/dataTables.bootstrap";
+@import "plugins/fullcalendar";
+@import "plugins/inputtags";
+@import "plugins/leaflet";
+@import "plugins/monolith";
+@import "plugins/nano";
+@import "plugins/picker";
+@import "plugins/p-scrollbar";
+@import "plugins/quill.snow";
+@import "plugins/responsive.bootstrap";
+@import "plugins/select2";
+@import "plugins/sidebar";
+@import "plugins/star-rating-svg";
+@import "plugins/sweetalert";
+@import "plugins/tab-style";
+@import "plugins/telephoneinput";
+@import "plugins/timeline";
+@import "plugins/treeview";
+
+
+
+
+
+/* ######## TEMPLATE ######## */
+@import "temp/calendar";
+@import "temp/chat";
+@import "temp/contact";
+@import "temp/error";
+@import "temp/invoice";
+@import "temp/mail";
+
+/* ######## UTILITIES ######## */    
+@import "util/background";
+@import "util/border";
+@import "util/height";
+@import "util/margin";
+@import "util/opacity";
+@import "util/padding";
+@import "util/position";
+@import "util/typography";
+@import "util/width";
+
+/* ######## GLOBAL ######## */
+@import "global/accoridon";
+@import "global/button";
+@import "global/carousel";
+@import "global/chart";
+@import "global/customstyle";
+@import "global/darktheme";
+@import "global/dropdown";
+@import "global/filepond";
+@import "global/forms";
+@import "global/fullcalendar";
+@import "global/horizontal";
+@import "global/inputgroup";
+@import "global/materialui";
+@import "global/nav";
+@import "global/react-select";
+@import "global/rtl";
+@import "global/table";
+@import "global/tabs";
+@import "global/transparenttheme";
+@import "global/width";
+
+

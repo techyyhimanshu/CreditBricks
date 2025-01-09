@@ -1,0 +1,51 @@
+
+/* ###### 3.13 globalReactselect ###### */
+
+.Select2__indicator-separator {
+  display: none;
+}
+.Select2__option:hover {
+  background:$primary-dark !important;
+  color:#fff;
+}
+//
+.Select2__menu {
+  div,
+  li,
+  .Select2__single-value {
+    &.active,
+    .Select2__option--is-selected {
+      background: $primary-dark !important;
+    }
+  }
+}
+//
+.Select2__control.Select2__control--is-focused:hover {
+  border-color: $primary !important;
+}
+
+//.Select2__control,
+.rti--container {
+  border-color: $border !important;
+}
+.Select2__menu {
+  margin: 0 !important;
+}
+//
+
+.Select2__control {
+  box-shadow: none !important;
+}
+
+
+//
+.background__indicator-separator{
+  display: none;
+}
+
+//
+.form-select {
+  width: 100% !important;
+  margin-left: auto;
+}
+/* ###### 3.13 globalReactselect ###### */

@@ -1,0 +1,101 @@
+
+/* ###### globalButton  ###### */
+.btn-primary:not(:disabled):not(.disabled):active:focus,
+.btn-primary:not(:disabled):not(.disabled).active:focus {
+  box-shadow: none;
+}
+
+//
+.btn-group> {
+
+  .btn {
+    &:not(:first-child) {
+      border-start-start-radius: 0 !important;
+      border-end-start-radius: 0 !important;
+    }
+    &:not(:last-child) {
+      border-start-end-radius: 0 !important;
+      border-end-end-radius: 0 !important;
+    }
+  }
+  
+}
+
+//
+.optiondots .btn {
+  display: block !important;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  line-height: 2.5rem !important;
+  text-align: center !important;
+  font-size: 18px !important;
+  border-radius: 50px !important;
+  border: 1px solid $border !important;
+  margin-inline-end: 5px !important;
+  padding: 0;
+  color:#000
+}
+
+//
+.show > .btn-outline-primary.dropdown-toggle {
+  color: #fff !important;
+  background-color: var(--primary-bg-color);
+  border-color: var(--primary-bg-color);
+}
+.btn-outline-secondary:hover {
+  color: #fff !important;
+  background-color: #f74f75 !important;
+  border-color: #f74f75 !important;
+}
+//
+.btn-country {
+  border-radius: 5px;
+}
+
+//
+.btn-group.file-attach .btn-text.rounded-pill {
+  border-start-start-radius: 50px !important;
+    border-start-end-radius: 0px !important;
+    border-end-end-radius: 0px !important;
+    border-end-start-radius: 50px !important;
+  
+}
+.btn-group.file-attach .btn-text1 {
+  border-start-start-radius: 4px !important;
+    border-start-end-radius: 0px !important;
+    border-end-end-radius: 0px !important;
+    border-end-start-radius: 4px !important;
+}
+
+//
+.checkout-btns {
+  margin-top: 10px;
+  .previous {
+    border: 1px solid $border;
+    color: $default-color;
+  }
+  .next {
+    float: right;
+  }
+}
+//
+.authentication-tabs {
+  background: $background;
+  border-radius: 8px;
+  display: inline-flex !important;
+  justify-content: center !important;
+  margin: 25px auto 0px;
+  overflow: hidden;
+  padding: 8px 9px;
+  width: auto;
+  .nav-item a {
+    padding: 8px 10px;
+  }
+}
+//
+#button61 {
+  .dropdown-toggle::after {
+    display: none;
+  }
+}
+/* ###### globalButton  ###### */

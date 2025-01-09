@@ -1,0 +1,97 @@
+///* ###### globalInputgroup  ###### */
+.msl-input {
+  font-size: 0.9375rem !important;
+  line-height: 1.8 !important;
+}
+.msl-input:before {
+  color: #3c4858 !important;
+}
+//
+.reactdate-pic {
+  .input-group-text {
+    border-radius: 5px 0px 0px 5px;
+  }
+}
+//
+.msl-input:before {
+  color: #929292 !important;
+}
+.tele-input {
+  button {
+    z-index: 0 !important;
+    border-end-start-radius: 0px !important;
+    border-start-start-radius: 0px !important;
+    border-end-end-radius: 5px !important;
+    border-start-end-radius: 5px !important;
+  }
+}
+.tags-bg {
+  .msl-input {
+    background-color: $primary;
+    border-radius: 5px !important;
+    :before {
+      color: $white !important;
+    }
+  }
+}
+.tags-bg {
+  .msl-input {
+    :before {
+      color: $white !important;
+    }
+  }
+  .msl-single-value {
+    background-color: $primary;
+    border-radius: 5px !important;
+    color: $white !important;
+  }
+}
+.showcode {
+  .form-check-input {
+    width: 3em;
+    margin-inline-start: -3.7em;
+    margin-block-start: -0.1rem;
+    height: 1.6em;
+    box-shadow: none;
+  }
+  .form-check-input:checked {
+    background-color: $primary;
+    border: 1px solid $border;
+  }
+}
+//
+.intl-tel-input .country-list {
+  white-space: normal;
+  .country.highlight {
+    background: transparent;
+    border: none;
+    margin: 0;
+  }
+}
+//
+.msl-input-wrp {
+  .msl-input:before {
+    color: $white !important;
+  }
+}
+.PhoneInputInput {
+  border-color: $border !important;
+  padding: 0.54rem;
+  border-style: solid;
+  border-width: 1px;
+}
+.PhoneInputCountry {
+  background: #f8f9fa;
+  border: 1px solid $border;
+  border-inline-end: 0px solid $border;
+  border-start-start-radius: 4px;
+  border-end-start-radius: 4px;
+  padding: 5px;
+  margin-right: 0;
+}
+input {
+  &:focus-visible {
+    outline: none !important;
+  }
+}
+///* ###### globalInputgroup  ###### */

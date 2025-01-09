@@ -1,0 +1,18 @@
+///* ###### globalFilepond  ###### */
+.filepond--credits{
+  display: none !important;
+}
+
+.filepond--drop-label {
+  background-color: #f8f9fa;
+}
+
+.form-control::-webkit-file-upload-button {
+  color: #fff;
+  background-color: $primary-dark !important;
+  border-inline-end:1px solid  $primary-dark !important
+}
+.form-control:hover:not(disabled):not([readonly])::-webkit-file-upload-button {
+  background-color: $primary !important;
+}
+/* ###### globalFilepond  ###### */

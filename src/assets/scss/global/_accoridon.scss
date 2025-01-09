@@ -1,0 +1,152 @@
+
+/* ###### globalAccordion  ###### */
+.accordion-button:focus {
+  box-shadow: none;
+}
+.accordion-item {
+  margin-block-end: 6px;
+  border: none;
+}
+//
+.accordiondclose {
+  .accordion-header button::after {
+    display: none !important;
+  }
+}
+.accordiondclose {
+  .panel-heading1 .accordion-header button::after {
+    display: block !important;
+  }
+}
+.accordion .card-header button {
+  display: block;
+  padding: 12px;
+  color: $default-color;
+  position: relative;
+  background-color: var(--primary02) !important;
+  border: 1px solid $border;
+  border-radius: 5px;
+}
+.accordion .card-header button[aria-expanded="true"] {
+  border-end-end-radius: 0px;
+  border-end-start-radius: 0px;
+}
+.accordion .card-header button:hover,
+.accordion .card-header button:focus {
+  color: var(--primary-bg-color);
+}
+.accordion .card-header button.collapsed {
+  color: #4d5875 !important;
+  background-color: #fff !important;
+  border: 1px solid $border !important;
+}
+.accordion .card-header button.collapsed:hover,
+.accordion .card-header button.collapsed:focus {
+  color: #323251;
+  background-color: var(--primary02);
+}
+
+.panel-heading1 .accordion-button:not(.collapsed)::after {
+  background-image: none;
+  content: "\e994" !important;
+  position: absolute !important;
+  font-family: "feather" !important;
+  inset-inline-end: 10px !important;
+  inset-block-start: 6px !important;
+  font-size: 20px !important;
+  transition: all 0.5s;
+  transform: scale(1) !important;
+  color: var(--primary-bg-color) !important;
+}
+.panel-group1 .accordion-button:not(.collapsed) {
+  background: var(--primary02) !important;
+  color: var(--primary-bg-color) !important;
+  box-shadow: none !important;
+}
+
+//
+.accor .accordion-header button {
+  padding: 12px;
+  display: block;
+  border-block-end: 1px solid $border;
+  background: var(--primary02) !important;
+  color: $default-color;
+  border-radius: 5px;
+}
+.Accordion-Style02 #headingThree3 button {
+  padding: 12px;
+  display: block;
+  border-block-end: 1px solid $border;
+  color: $default-color;
+  border-radius: 5px;
+}
+#accordion11 {
+  .panel-heading2 {
+    padding: 0px !important;
+  }
+  .panel-body {
+    padding: 15px;
+    border-block-start: 1px solid $border !important;
+    border-radius: 0px 0px 5px 5px;
+  }
+}
+.accordion-button:not(.collapsed) {
+  color: $default-color !important;
+  box-shadow: none !important;
+}
+
+//
+.accordiondclose {
+  .accordion-header button {
+    border: 1px solid $border;
+    background-color: var(--primary02) !important;
+  }
+}
+.accordiondclose {
+  .accordion-header button.collapsed {
+    border: 1px solid $border;
+    background-color: #fff !important;
+  }
+}
+.accordiondclose {
+  .panel-heading1 .accordion-header button.collapsed {
+    border: 1px solid $border;
+    background-color: var(--primary02) !important;
+  }
+  .accor .accordion-header button.collapsed {
+    border: 1px solid $border;
+    background-color: var(--primary02) !important;
+  }
+}
+//
+#accordion11 {
+  .accordion-item {
+    margin-block-end: 0px !important;
+  }
+}
+
+
+//////panel////
+.panel-heading1 .collapsed::after {
+  background-image: none;
+  content: "\e9af" !important;
+  position: absolute !important;
+  font-family: "feather" !important;
+  inset-inline-end: 10px !important;
+  inset-block-start: 6px;
+  font-size: 20px !important;
+  transition: none !important;
+  transform: scale(1) !important;
+}
+.panel-heading1 {
+  background-color: transparent !important;
+  color: #282f53 !important;
+}
+.panel-heading1 button {
+  display: block;
+  padding: 12px;
+  background: var(--primary02) !important;
+  color: var(--primary-bg-color);
+}
+
+/* ###### globalAccordion  ###### */

@@ -1,0 +1,22 @@
+
+/* ###### globalFullcalendar  ###### */
+.fc .fc-button-primary {
+  background-color: var(--primary-bg-color) !important;
+}
+
+//
+.fc .fc-daygrid-body {
+  z-index: 0 !important;
+}
+.fc-toolbar-chunk {
+  .fc-button-group {
+    margin-block-end: 4px !important;
+  }
+}
+//
+.fc .fc-button-primary {
+  &:is(:active, :focus) {
+    box-shadow: none;
+  }
+}
+/* ###### globalFullcalendar  ###### */

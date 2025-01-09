@@ -1,0 +1,84 @@
+/* ###### globalDropdown  ###### */
+.main-contact-star,
+.option-dots {
+  .dropdown-toggle::after {
+    display: none;
+  }
+}
+.option-dots.dropdown-toggle::after {
+  display: none;
+}
+.todo-widget-header {
+  .dropdown-toggle::after {
+    display: none;
+  }
+}
+
+//
+.dropdown-toggle .dropdown-label {
+  position: relative;
+  inset-block-start: -18px;
+  inset-inline-start: -12px;
+  background-color: #fff;
+  padding: 0px 10px 0px 10px;
+}
+//
+.main-chat-footer .dropdown-toggle::after {
+  display: none !important;
+}
+.email-media .dropdown .dropdown-toggle::after {
+  display: none !important;
+}
+
+.mail-option {
+  .hidden-phone,
+  .chk-all {
+    .dropdown-toggle::after {
+      display: none !important;
+    }
+  }
+}
+//
+.main-dropdown-form-demo .dropdown-toggle::after {
+  display: none !important;
+}
+//
+.main-header-notification .dropdown-toggle::after {
+  display: none !important;
+}
+.main-header-message .dropdown-toggle::after {
+  display: none !important;
+}
+.main-header-notification .dropdown-toggle::after {
+  display: none !important;
+}
+.main-profile-menu .dropdown-toggle::after {
+  display: none !important;
+}
+//
+.main-profile-menu.show .dropdown-menu {
+  display: block;
+  inset-block-start: 48px;
+}
+//
+.rdw-dropdown-wrapper:active {
+  box-shadow: none;
+}
+
+.rdw-dropdown-wrapper:hover {
+  box-shadow: none;
+}
+//
+.rmsc .dropdown-container:focus-within {
+  box-shadow: none !important;
+  border: 1px solid $primary !important;
+}
+.rmsc .dropdown-container {
+  border: 1px solid $border !important;
+}
+//
+.rdw-dropdown-optionwrapper .rdw-dropdownoption-highlighted:hover {
+  color: $white;
+  background: $primary;
+}
+/* ###### globalDropdown  ###### */

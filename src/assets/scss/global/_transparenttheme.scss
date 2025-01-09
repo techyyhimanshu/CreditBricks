@@ -1,0 +1,513 @@
+/* ###### globalTransparenttheme  ###### */
+///
+.transparent-theme {
+  .rti--container {
+    --rti-bg: rgba(255, 255, 255, 0.05);
+    --rti-border: rgba(255, 255, 255, 0.05);
+  }
+
+  .rti--container {
+    border-color: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .Select2__control {
+    background-color: $white-05;
+    border: 1px solid $white-05;
+
+    &:hover {
+      border: 1px solid $white-1;
+    }
+
+    .Select2__placeholder {
+      color: $white-6;
+    }
+  }
+
+  .Select2__menu {
+    background-color: $primary;
+  }
+
+  .Select2__menu {
+
+    div,
+    li,
+    .Select2__single-value {
+
+      &.active,
+      .Select2__option--is-selected {
+        background: $primary-dark !important;
+      }
+    }
+  }
+
+  .nav-tabs .nav-link {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+
+  .custom-control-label::before {
+    background-color: $white-1;
+  }
+
+  .card {
+    color: #fff !important;
+  }
+
+  .table td {
+    color: #fff !important;
+  }
+
+  .table th {
+    color: #fff !important;
+  }
+
+  .apexcharts-gridline {
+    stroke: rgba(255, 255, 255, 0.05);
+  }
+
+  .optiondots .btn {
+    color: $white !important;
+    border: 1px solid $white-08 !important;
+  }
+
+  //
+  .main-sidebar-header {
+    backdrop-filter: blur(15px) !important;
+  }
+
+  //
+  .sidebar-right {
+    .tabs-menu .nav-item a {
+      border: 1px solid $transparent-border;
+    }
+  }
+
+  //
+  .text-transparent {
+    color: $white !important;
+  }
+
+  //
+  .rmsc .dropdown-container {
+    background: $transparent-theme;
+    border: 1px solid $transparent-border !important;
+  }
+
+  .rmsc {
+    --rmsc-main: #000;
+    --rmsc-selected: #38cab3;
+    --rmsc-hover: #38cab3;
+    --rmsc-bg: #38cab3;
+    --rmsc-gray: #fff;
+  }
+
+  .MuiTreeItem-iconContainer {
+    svg {
+      color: $white !important;
+    }
+  }
+
+  .MuiTreeItem-label {
+    color: $white;
+  }
+
+  .MuiSlider-markLabel,
+  .dark-theme .MuiSlider-valueLabelLabel {
+    color: $dark-color !important;
+  }
+
+  .border-bottom {
+    border-bottom: 1px solid rgba(234, 236, 241, 0.2) !important;
+  }
+
+  .selectpage {
+    background: $transparent-theme;
+    color: #fff;
+  }
+
+  .border-0 {
+    border: 0;
+  }
+
+  .apexcharts-tooltip.apexcharts-theme-light {
+    border: 1px solid $white-1;
+    background: $white-1;
+  }
+
+  .apexcharts-tooltip.apexcharts-theme-light .apexcharts-tooltip-title {
+    background: $white-1;
+    border-bottom: 1px solid $white-1;
+  }
+
+  .tabs-style-4 .nav .nav-item a {
+    &.active {
+      background-color: $primary;
+    }
+
+    background-color: $white-1;
+    border: 1px solid $white-1;
+    color: $white-6;
+  }
+
+  .nav-tabs .nav-link {
+    background-color: $white-05;
+  }
+
+  .accordion-item {
+    background-color: $white-1;
+    border: 1px solid $white-05;
+  }
+
+  .accordiondclose .accordion-header button {
+    border: 1px solid $white-05;
+  }
+
+  .accordion-button:not(.collapsed) {
+    color: $white-8 !important;
+  }
+
+  .borders {
+    border-block-end: 1px solid $white-1;
+    border-block-start: 0px solid $white-1;
+    border-inline-start: 1px solid $white-1;
+    border-inline-end: 1px solid $white-1;
+  }
+
+  .accordiondclose .accordion-header button.collapsed {
+    border: 1px solid $white-1;
+    background-color: $white-1 !important;
+  }
+
+  .accordion-button {
+    color: $white;
+  }
+
+  .dark-theme .sun-editor .se-toolbar {
+    background-color: #2a2e3f;
+    outline: 1px solid #404353 !important;
+  }
+
+  .se-btn-module-border,
+  .se-resizing-bar {
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .sun-editor .se-toolbar,
+  .sun-editor-editable {
+    background-color: rgb(33 118 106) !important;
+    border-color: rgba(234, 236, 241, 0.2) !important;
+  }
+
+  .sun-editor,
+  .se-btn-module-border,
+  .se-resizing-bar {
+    border-color: rgba(234, 236, 241, 0.2) !important;
+  }
+
+  #checkoutsteps .wizard-wrapper {
+    border-color: rgb(255 255 255 / 10%) !important;
+  }
+
+  .checkout-btns .previous {
+    border-color: rgb(255 255 255 / 10%) !important;
+    color: #eaecf3;
+  }
+
+  .Select2__multi-value {
+    background-color: rgb(255 255 255 / 30%) !important;
+    color: #ffff !important;
+
+    .Select2__multi-value__label {
+      color: #ffff !important;
+    }
+  }
+
+  .bordera {
+    border-inline-end: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .Basicwizard {
+    border-block-start: 1px solid #404353;
+    border-block-end: 1px solid #404353;
+  }
+
+  .basicsteps .btn i {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .basicsteps .btn.active i {
+    color: var(--primary-bg-color) !important;
+  }
+
+  .basicsteps .btn.active .number {
+    background-color: var(--primary-bg-color) !important;
+  }
+
+  .basicsteps .btn .number {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .horwizard .number {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .horwizard i {
+    color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .Basicwizard {
+    border-block-start: 1px solid rgba(255, 255, 255, 0.1);
+    border-block-end: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .Select2__multi-value,
+  .filepond--root .filepond--drop-label {
+    background-color: #373d50;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .horwizard.active .number {
+    background-color: var(--primary-bg-color) !important;
+  }
+
+  .horwizard.active i {
+    color: var(--primary-bg-color) !important;
+  }
+
+  .sun-editor,
+  .se-btn-module-border,
+  .se-resizing-bar {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .sun-editor {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .latest-tasks .nav-link.active {
+    background-color: transparent !important;
+    color: var(--primary-bg-color) !important;
+  }
+
+  .latest-tasks .nav-tabs .nav-link {
+    color: #fff;
+  }
+
+  .accordion-button {
+    background: rgba(0, 0, 0, 0.2) !important;
+    color: #eaecf3 !important;
+  }
+
+  .accordion-button::after {
+    filter: contrast(0.5);
+    background-size: 1rem !important;
+  }
+
+  #accordion11 .panel-body {
+    border-block-start-color: x !important;
+  }
+
+  .demo-static-toast {
+    .toast {
+      background-color: transparent;
+
+      .toast-header {
+        background-color: transparent;
+      }
+    }
+  }
+
+  .main-chat-list .media.selected {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .main-chat-list .media:hover,
+  .main-chat-list .media:focus {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .card.customs-cards {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .productdesc .nav-tabs {
+    border-block-end-width: 0px;
+  }
+
+  .Accordion-Style02 #headingThree3 button {
+    border-block-end-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .custom-controls-stacked {
+    .form-control:disabled {
+      background-color: transparent !important;
+      border: none !important;
+    }
+  }
+
+  .form-select {
+    color: #fff !important;
+  }
+
+  .tablebutton {
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background-color: rgb(0, 0, 0, 0.2) !important;
+    color: #ffff;
+  }
+
+  select.table-border {
+    background-color: transparent;
+    padding: 6px 8px;
+    border-radius: 5px;
+    color: #ffff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .Select2__menu div.active,
+  .Select2__menu div .Select2__option--is-selected,
+  .Select2__menu li.active,
+  .Select2__menu li .Select2__option--is-selected,
+  .Select2__menu .Select2__single-value.active,
+  .Select2__menu .Select2__single-value .Select2__option--is-selected {
+    background: rgba(0, 0, 0, 0.2) !important;
+  }
+
+  .panel-heading1 {
+    color: #fff !important;
+  }
+
+  .sun-editor .se-toolbar {
+    outline-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .sun-editor .se-resizing-bar {
+    background-color: transparent !important;
+  }
+
+  .Select2__multi-value,
+  .filepond--root .filepond--drop-label {
+    background-color: transparent !important;
+  }
+
+  .Select2__single-value {
+    color: #fff !important;
+  }
+
+  .Select2__dropdown-indicator {
+    color: #fff !important;
+  }
+
+  .Select2__control {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .filepond--panel-root {
+    background-color: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .transparent-theme .filepond--panel-root {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .react-datepicker {
+    background-color: #2a2e3f;
+    border-color: rgba(255, 255, 255, 0.2);
+
+    .react-datepicker__day {
+      color: #fff !important;
+    }
+  }
+
+  .react-datepicker__month-text {
+    color: #fff !important;
+  }
+
+  .react-datepicker__year-text {
+    color: #fff !important;
+  }
+
+  .PhoneInputCountry {
+    background-color: rgb(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .PhoneInputInput {
+    background: rgb(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+
+    &::placeholder {
+      color: #fff;
+    }
+  }
+
+  .borderrigth {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .ql-toolbar.ql-snow {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .ql-container.ql-snow {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .se-resizing-bar {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: rgb(0, 0, 0, 0.2);
+  }
+
+  .sun-editor {
+    background-color: transparent !important;
+  }
+
+  .sun-editor button {
+    color: #edf0f5;
+  }
+
+  .sun-editor .se-tooltip {
+    color: #edf0f5;
+  }
+
+  .form-control.is-valid,
+  .was-validated .form-control:valid {
+    border-color: #3fc989 !important;
+  }
+
+  .form-control.is-invalid,
+  .was-validated .form-control:invalid {
+    border-color: #f06e7a !important;
+  }
+
+  .uploader__widget-base__modal-bg {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .uploader__modal {
+    background-color: var(--transparent-body) !important;
+  }
+
+  .filepond--panel-root {
+    background-color: var(--transparent-body) !important;
+    border: 0px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  .file_input.text-center.form-control{
+    background-color: var(--transparent-body) !important;
+  }
+
+  .productdesc .nav-tabs .nav-link.active,
+  .productdesc .nav-tabs .nav-link:hover,
+  .productdesc .nav-tabs .nav-link:focus {
+    background-color: transparent !important;
+    color: var(--primary-bg-color) !important;
+    border-color: var(--primary-bg-color) !important;
+  }
+  .main-header-center.form-group .form-control:focus {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+}
+
+/* ###### globalTransparenttheme  ###### */

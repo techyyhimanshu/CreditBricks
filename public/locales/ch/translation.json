@@ -1,0 +1,118 @@
+{
+  "validation": {
+
+  "alphaNumcharAllowed": "只允许输入字母、数字和特殊字符",
+  "alphaAllowed": "只允许输入字母",
+  "alphaNumericAllowed": "只允许输入字母和数字",
+  "alreadyExist": "已经存在",
+  "checkPinNumber": "检查您的PIN码",
+  "invalidCreditCard": "无效的信用卡号码",
+  "invalidDateField": "不是有效的日期！",
+  "invalidDob": "用户必须至少16岁。",
+  "invalidEmail": "无效的电子邮件",
+  "invalidEmailAddress": "无效的电子邮件地址",
+  "invalidMissMatch": "无效的确认密码。密码和确认密码必须匹配。",
+  "invalidMobile": "无效的电话号码",
+  "invalidPassword": "无效的密码。密码必须至少为8个字符，并包含一个数字。",
+  "invalidPassword1": "无效的密码。密码必须至少有一个小写字母。",
+  "invalidPassword2": "无效的密码。密码必须至少有一个大写字母。",
+  "invalidPassword3": "无效的密码。密码必须至少有一个数字。",
+  "invalidPassword4": "无效的密码。密码必须至少为1个字符，如 !@#$%^&*(),.?.",
+  "invalidPhone": "电话号码应为10位数字。",
+  "invalidUrl": "无效的URL",
+  "invalidWorkEmail": "无效的工作电子邮件",
+  "isNumber": "请只输入数字",
+  "matchWithOtherEmail": "与其他电子邮件匹配",
+  "matchWithPhone": "与电话匹配",
+  "maxlength": "最大长度应为字符",
+  "minlength": "最小长度应为5个字符",
+  "mobileWithOutDialCode": "没有拨号代码的电话",
+  "numericAllowed": "只允许输入数字",
+  "phoneVali": "检查您的电话号码",
+  "required": "必填项",
+  "twoDecimalAllowed": "允许最多2位小数的十进制值。"
+  },
+  "toastr": {
+    "success": {
+      "emailReset": {
+        "title": "Email sent",
+        "body": "A reset link has been send to your email address"
+      }, 
+      "whitelabel": {
+        "title": "White label",
+        "body": "You have successfully paid for an additional feature. Your report will be re-attached, and once it is ready you will be notified by email"
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "We received your message. Thank you!"
+      },
+      "newPass": {
+        "title": "Password changed",
+        "body": "Your password has been changed now you can log in with your new credentials"
+      },
+      "requestCall": {
+        "title": "Request Call",
+        "body": "We received your message. Thank you!"
+      },
+      "sampleReport": {
+        "title": "Sample Report",
+        "body": "Your sample report has been send to the email address"
+      },
+      "signUp": {
+        "title": "Sign Up",
+        "body": "You have successfully created an account in to our system"
+      },
+      "verifyCodeSent": {
+        "title": "Verify Email code",
+        "body": "Verification code has been sent to your email address"
+      },
+      "verifyEmail": {
+        "title": "Verify Email address",
+        "body": "You have successfully verified your email address"
+      },
+      "updateUser": {
+        "title": "Update user",
+        "body": "You have successfully updated the user data"
+      },
+      "changePass": {
+        "title": "Change password",
+        "body": "Your password has been changed from now on you can log in with your new credentials"
+      },
+      "deactivateAccount": {
+        "title": "Deactivate account",
+        "body": "Your account has been deactivated"
+      },
+      "deleteSuccess": {
+        "title": "Delete File",
+        "body": "You have successfully deleted the file"
+      }
+    },
+    "info": {
+      "otpmsg": {
+        "title": "OTP sent",
+        "body": "'Please check your registered mobile phone to get OTP number'"
+      } 
+    },
+    "warning": {
+      "otpmsg": {
+        "title": "Valid OTP",
+        "body": "Please enter valid OTP number"
+      }
+    },
+    "error": {
+      "validdata": {
+        "title": "Valid Data",
+        "body": "Please enter valid details!"
+      }, 
+      "fillAllData":
+      {
+        "title": "OTP sent",
+        "body":  "Please fill all the required data"
+      },
+      "notAuth": {
+        "title": "Logged out",
+        "body": "You don't have permision to perfrom this action"
+      }
+    }
+  }
+}

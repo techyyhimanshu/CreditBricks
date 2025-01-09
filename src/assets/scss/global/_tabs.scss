@@ -1,0 +1,39 @@
+/* ###### 3.13 globalTabs ###### */
+.error-page1 .tabs-menu1 ul li button.active {
+  border-block-end: 3px solid var(--primary-bg-color) !important;
+}
+.error-page1 {
+  .tabs-menu1 ul li button {
+    border-block-end: 3px solid #e6ebf1 !important;
+  }
+  .nav-tabs .nav-link:focus,
+  .nav-tabs .nav-link:hover {
+    border-inline-start: 1px solid transparent !important;
+    border-inline-end: 1px solid transparent !important;
+    border-block-start: 1px solid transparent !important;
+  }
+  .nav-tabs {
+    border: none !important;
+  }
+}
+//
+.card-pay .tabs-menu li button.active {
+  background: var(--primary-bg-color) !important;
+  color: #ffffff !important;
+  width: 100%;
+}
+.card-pay .tabs-menu li button {
+  width: 100%;
+}
+.card-pay .tabs-menu li button {
+  padding: 0.7rem 1rem;
+  display: block;
+  text-align: center;
+}
+//
+.profile-tabs {
+  padding-inline-start: 1.25rem !important;
+  padding-inline-end: 1.25rem !important;
+}
+
+/* ###### 3.13 globalTabs ###### */

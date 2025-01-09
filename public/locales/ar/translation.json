@@ -1,0 +1,117 @@
+{
+  "validation": {
+    "alphaNumcharAllowed": "يُسمح فقط بإدخال الأحرف الهجائية والأرقام والرموز الخاصة المحددة",
+    "alphaAllowed": "يُسمح فقط بإدخال الأحرف الهجائية",
+    "alphaNumericAllowed": "يُسمح فقط بإدخال الأحرف الهجائية والأرقام",
+    "alreadyExist": "موجود بالفعل",
+    "checkPinNumber": "تحقق من رقم البن",
+    "invalidCreditCard": "رقم بطاقة ائتمان غير صالح",
+    "invalidDateField": "ليس تاريخًا صالحًا!",
+    "invalidDob": "يجب أن يكون المستخدم على الأقل 16 عامًا",
+    "invalidEmail": "عنوان بريد إلكتروني غير صالح",
+    "invalidEmailAddress": "عنوان بريد إلكتروني غير صالح",
+    "invalidMissMatch": "تأكيد كلمة المرور غير صالح. يجب أن تتطابق كلمة المرور وتأكيد كلمة المرور.",
+    "invalidMobile": "رقم هاتف غير صالح",
+    "invalidPassword": "كلمة مرور غير صالحة. يجب أن تكون كلمة المرور على الأقل 8 أحرف وتحتوي على رقم.",
+    "invalidPassword1": "كلمة مرور غير صالحة. يجب أن تحتوي كلمة المرور على الأقل على حرف صغير واحد.",
+    "invalidPassword2": "كلمة مرور غير صالحة. يجب أن تحتوي كلمة المرور على الأقل على حرف كبير واحد.",
+    "invalidPassword3": "كلمة مرور غير صالحة. يجب أن تحتوي كلمة المرور على الأقل على رقم واحد.",
+    "invalidPassword4": "كلمة مرور غير صالحة. يجب أن تكون كلمة المرور على الأقل 1 حرفًا مثل !@#$%^&*(),.?.",
+    "invalidPhone": "يجب أن يكون رقم الهاتف مكونًا من 10 أرقام.",
+    "invalidUrl": "رابط غير صالح",
+    "invalidWorkEmail": "بريد إلكتروني للعمل غير صالح",
+    "isNumber": "الرجاء إدخال أرقامًا فقط",
+    "matchWithOtherEmail": "مُطابق لبريد إلكتروني آخر",
+    "matchWithPhone": "مُطابق للهاتف",
+    "maxlength": "الحد الأقصى للطول يجب أن يكون الأحرف",
+    "minlength": "الحد الأدنى للطول يجب أن يكون 5 أحرف",
+    "mobileWithOutDialCode": "رقم هاتف بدون رمز الطلب",
+    "numericAllowed": "يُسمح فقط بالقيم الرقمية",
+    "phoneVali": "تحقق من رقم هاتفك",
+    "required": "مطلوب",
+    "twoDecimalAllowed": "يُسمح بالقيم العشرية حتى 2 مكان عشري"
+  },
+  "toastr": {
+    "success": {
+      "emailReset": {
+        "title": "Email sent",
+        "body": "A reset link has been send to your email address"
+      }, 
+      "whitelabel": {
+        "title": "White label",
+        "body": "You have successfully paid for an additional feature. Your report will be re-attached, and once it is ready you will be notified by email"
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "We received your message. Thank you!"
+      },
+      "newPass": {
+        "title": "Password changed",
+        "body": "Your password has been changed now you can log in with your new credentials"
+      },
+      "requestCall": {
+        "title": "Request Call",
+        "body": "We received your message. Thank you!"
+      },
+      "sampleReport": {
+        "title": "Sample Report",
+        "body": "Your sample report has been send to the email address"
+      },
+      "signUp": {
+        "title": "Sign Up",
+        "body": "You have successfully created an account in to our system"
+      },
+      "verifyCodeSent": {
+        "title": "Verify Email code",
+        "body": "Verification code has been sent to your email address"
+      },
+      "verifyEmail": {
+        "title": "Verify Email address",
+        "body": "You have successfully verified your email address"
+      },
+      "updateUser": {
+        "title": "Update user",
+        "body": "You have successfully updated the user data"
+      },
+      "changePass": {
+        "title": "Change password",
+        "body": "Your password has been changed from now on you can log in with your new credentials"
+      },
+      "deactivateAccount": {
+        "title": "Deactivate account",
+        "body": "Your account has been deactivated"
+      },
+      "deleteSuccess": {
+        "title": "Delete File",
+        "body": "You have successfully deleted the file"
+      }
+    },
+    "info": {
+      "otpmsg": {
+        "title": "OTP sent",
+        "body": "'Please check your registered mobile phone to get OTP number'"
+      } 
+    },
+    "warning": {
+      "otpmsg": {
+        "title": "Valid OTP",
+        "body": "Please enter valid OTP number"
+      }
+    },
+    "error": {
+      "validdata": {
+        "title": "Valid Data",
+        "body": "Please enter valid details!"
+      }, 
+      "fillAllData":
+      {
+        "title": "OTP sent",
+        "body":  "Please fill all the required data"
+      },
+      "notAuth": {
+        "title": "Logged out",
+        "body": "You don't have permision to perfrom this action"
+      }
+    }
+  }
+}

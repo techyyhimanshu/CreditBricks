@@ -1,0 +1,226 @@
+/* ###### 3.13 globalNav ###### */
+
+.mailnav {
+  margin-block-start: 25px;
+}
+//
+
+.main-nav-column .nav-item .nav-link.active {
+  position: relative;
+  background: var(--primary02);
+  border-radius: 5px;
+  color: var(--primary-bg-color);
+}
+.main-nav-column .nav-item .nav-link.active::before {
+  content: "";
+  position: absolute; 
+  inset-block-start: 6px;
+  inset-block-end: 6px;
+  inset-inline-start: -28px;
+  width: 3px;
+  background-color: var(--primary-bg-color);
+  border-radius: 3px;
+  display: none;
+}
+.main-nav-column .nav-item .nav-link.active:hover,
+.main-nav-column .nav-item .nav-link.active:focus,
+.main-nav-column .nav-item .nav-link.active i,
+.main-nav-column .nav-item .nav-link.active:hover i,
+.main-nav-column .nav-item .nav-link.active:focus i {
+  color: var(--primary-bg-color);
+}
+
+//
+.pricing-tabs .nav-price {
+  text-align: center;
+  margin: 0 auto;
+  display: inline-flex;
+  margin-block-start: 30px;
+  margin-block-end: 40px;
+  border: 1px solid #e6ebf1;
+  border-radius: 5px;
+  background: #fff;
+  overflow: hidden;
+}
+.pricing-tabs .nav-price .nav-item {
+  display: block;
+}
+.pricing-tabs .nav-price .nav-item a.active {
+  background: var(--primary-bg-color);
+}
+.pricing-tabs .nav-price .nav-item a.active {
+  color: #fff;
+  transition: 0.3s;
+}
+.pricing-tabs .nav-price .nav-item a {
+  padding: 12px 22px;
+  display: block;
+  background: #fff;
+  font-size: 16px;
+  border-radius: 0px;
+  transition: 0.3s;
+}
+//
+.card-pay .tabs-menu .nav-link {
+  background: transparent !important;
+  margin: 0px;
+}
+//
+.profile-cover__info,
+.profile-tab .main-nav-line .nav-item a.active {
+  color: var(--primary-bg-color) !important;
+  padding: 15px;
+  background-color: transparent !important;
+}
+.profile-tab.tab-menu-heading .main-nav-line .nav-link {
+  position: relative;
+  padding: 4px 20px !important;
+}
+.sidebar .tabs-menu .nav-item .active {
+  background: var(--primary-bg-color);
+  color: #fff;
+  border: 1px solid var(--primary-bg-color);
+}
+.sidebar .tabs-menu .nav-item a {
+  padding: 8px 8px;
+  font-size: 12px;
+  display: inline-block;
+  margin-block-end: 10px;
+  border-radius: 3px;
+  border: 1px solid #ebeaf1;
+  font-weight: 500;
+  background: transparent;
+  color: $default-color;
+  margin: 0 2px;
+}
+//
+.main-content-contacts {
+  .main-nav-line .nav-link {
+    border: none !important;
+  }
+}
+//
+.main-nav-line .nav-link {
+  border: none !important;
+}
+//
+.card-pay .tabs-menu.nav {
+  background: #f0f3ff;
+}
+//
+.progress-nav ul li {
+  display: flex;
+  z-index: 0;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-basis: auto !important;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+.progress-nav ul .number {
+  background-color: #eaedf7;
+  color: #9197ab;
+  font-size: 17px;
+  font-weight: 400;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 15px auto;
+  font-style: normal;
+}
+.progress-nav {
+  margin-block-start: 20px;
+  .nav-pills {
+    .nav-item {
+      margin-block-start: -40px;
+      .nav-link.active {
+        background-color: transparent !important;
+        .number {
+          background-color: $primary;
+          color: $white;
+        }
+      }
+    }
+  }
+}
+.progress-nav {
+  .nav-pills {
+    .nav-link.done {
+      .number {
+        background-color: $primary;
+        color: $white;
+      }
+    }
+  }
+}
+
+.tabs-style-4 .nav .nav-item a {
+  &.active {
+    background-color: $primary;
+    color: #fff;
+  }
+  padding: 10px 20px 10px 20px;
+  background: #fff;
+  border-radius: 5px;
+  margin: 0 0 16px 0;
+  text-align: center;
+  display: block;
+  color: #4a4a69;
+  width: 100%;
+  border: 1px solid #ededf5;
+}
+#tabs-style5 {
+  .tab_wrapper.right_tab.right_side {
+    .nav-item a {
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 11.3px 18px;
+      border-width: 1px;
+      border-right: 0;
+      border-left: 0;
+      text-align: right;
+    }
+  }
+}
+.tabs-style-2 {
+  .nav-item {
+    button {
+      width: 100%;
+    }
+  }
+}
+.login-page {
+  .nav-pills .nav-link.active {
+    background-color: $primary-02 !important;
+  }
+}
+#example-collapse-text {
+  .nav-tabs {
+    .nav-item {
+      button {
+        padding: 5px;
+        width: 100px;
+      }
+    }
+  }
+}
+.tab_wrapper.right_side .nav-pills a:after {
+  display: none;
+}
+
+.bg-gray-100 {
+  .nav-tabs {
+    .nav-link.active {
+      background-color: $primary;
+      color: $white;
+      // border-radius: 5px;
+    }
+  }
+}
+
+/* ###### 3.13 globalNav ###### */
