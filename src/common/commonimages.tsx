@@ -59,9 +59,9 @@ import visa from '../assets/img/visa.webp';
 import paypal from '../assets/img/paypal.webp';
 import mastercard from '../assets/img/mastercard.webp';
 
-import startuplogo from '../assets/img/startuplogo.webp';
-import realestate from '../assets/img/house.webp';
-import startupimg from '../assets/img/startup.webp';
+import totalbalance from '../assets/img/totalbalance.png';
+import totalreceipt from '../assets/img/totalreceipt.png';
+import totalinvoice from '../assets/img/totalinvoive.png';
 
 export const imagesData = (idx: any) => {
   const images :any = {
@@ -70,7 +70,7 @@ export const imagesData = (idx: any) => {
     female1, female2, female5,female6, female7, female9,
     female11 ,chrome, edge, email, firefox, opera,  safari,
     us, italy, spain, india, french, mexico, singapore, poland, austria, russia, germany, argentina, brazil, uae, china, uk,
-    malaysia, canada, favicon,faviconwhite, logo, logowhite , mainlogo, bgimg, bgimg1, bgimg2, bgimg3, bgimg4, logibg, startuplogo, realestate, startupimg
+    malaysia, canada, favicon,faviconwhite, logo, logowhite , mainlogo, bgimg, bgimg1, bgimg2, bgimg3, bgimg4, logibg, totalbalance, totalreceipt, totalinvoice
 
   };
   return images[idx];

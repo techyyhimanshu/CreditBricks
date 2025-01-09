@@ -85896,3 +85896,13 @@ width: 100%;
     .panel-tabs .nav-link{font-size: 16px; font-weight:600}
     .h-300p{height:300px}
     .h-400p{height:400px}
+    .transactionbtn .dropdown-toggle::after {
+    content: "";
+    border-inline-end: 0.4em solid transparent;
+    border-inline-start: 0.4em solid transparent;
+    right: 15px;
+    position: absolute;
+    top: 17px;
+}
+.transactionbtn .dropdown{width: 100% !important;}
+.transactionbtn #dropdownMenuButton{  text-align: left !important;}
