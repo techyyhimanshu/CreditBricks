@@ -10,6 +10,7 @@ const Users = lazy (()=> import ('../components/masters/users'));
 const MobileApp = lazy (()=> import ('../components/masters/mobileapp'));
 const UserPermission = lazy (()=> import ('../components/masters/userpermission'));
 const TermsCondition = lazy (()=> import ('../components/masters/termscondition'));
+const UserProfile = lazy (()=> import ('../components/userprofile/userprofile'));
 
 export const Routingdata = [
   //Dashboard
@@ -22,7 +23,8 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}masters/users`, element: <Users /> },
   { path: `${import.meta.env.BASE_URL}masters/mobileapp`, element: <MobileApp /> },
   { path: `${import.meta.env.BASE_URL}masters/userpermission`, element: <UserPermission /> },
-  { path: `${import.meta.env.BASE_URL}masters/termscondition`, element: <TermsCondition /> }
+  { path: `${import.meta.env.BASE_URL}masters/termscondition`, element: <TermsCondition /> },
+  { path: `${import.meta.env.BASE_URL}userprofile/userprofile`, element: <UserProfile /> }
 ];
 
 export const Sidebarcomponents=[

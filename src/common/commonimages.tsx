@@ -63,6 +63,8 @@ import totalbalance from '../assets/img/totalbalance.png';
 import totalreceipt from '../assets/img/totalreceipt.png';
 import totalinvoice from '../assets/img/totalinvoive.png';
 
+import pdficon from '../assets/img/pdf.png';
+
 export const imagesData = (idx: any) => {
   const images :any = {
     evaluationfrm,applicationfrm, feedbackfrm,
@@ -70,7 +72,8 @@ export const imagesData = (idx: any) => {
     female1, female2, female5,female6, female7, female9,
     female11 ,chrome, edge, email, firefox, opera,  safari,
     us, italy, spain, india, french, mexico, singapore, poland, austria, russia, germany, argentina, brazil, uae, china, uk,
-    malaysia, canada, favicon,faviconwhite, logo, logowhite , mainlogo, bgimg, bgimg1, bgimg2, bgimg3, bgimg4, logibg, totalbalance, totalreceipt, totalinvoice
+    malaysia, canada, favicon,faviconwhite, logo, logowhite , mainlogo, bgimg, bgimg1, bgimg2, bgimg3, bgimg4, logibg, totalbalance, totalreceipt, totalinvoice,
+    pdficon
 
   };
   return images[idx];
