@@ -8,28 +8,37 @@ export const MENUITEMS = [
         icon: (
           <i className="side-menu__icon bi bi-speedometer2"></i>
         ),
-            path: `${import.meta.env.BASE_URL}dashboard/dashboard1`,
-            type: "link",
-            active:false,
-            selected:false,
+        path: `${import.meta.env.BASE_URL}dashboard/dashboard1`,
+        type: "link",
+        active: false,
+        selected: false,
       },
       {
         title: "Masters",
         icon: (
           <i className="side-menu__icon bi bi-briefcase"></i>
         ),
-         type: "sub",
-        active:false,
-        selected:false,
-          children: [
+        type: "sub",
+        active: false,
+        selected: false,
+        children: [
           {
             path: `${import.meta.env.BASE_URL}masters/societymaster`,
-           icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
             title: "Society",
             type: "link",
             active: false,
             selected: false,
-         },
+          },
+          //Added tower master 
+          {
+            path: `${import.meta.env.BASE_URL}masters/towermaster`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Tower/Block",
+            type: "link",
+            active: false,
+            selected: false,
+          },
           {
             path: `${import.meta.env.BASE_URL}masters/flatmaster`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
@@ -95,7 +104,7 @@ export const MENUITEMS = [
           },
 
         ],
-       },
+      },
       {
         title: "Accounts",
         icon: (
@@ -103,9 +112,9 @@ export const MENUITEMS = [
         ),
         path: `${import.meta.env.BASE_URL}accounts/accounts`,
         type: "link",
-        active:false,
-        selected:false,
-       },
+        active: false,
+        selected: false,
+      },
       {
         title: "Applications",
         icon: (
@@ -113,8 +122,8 @@ export const MENUITEMS = [
         ),
         path: `${import.meta.env.BASE_URL}applications/applications`,
         type: "link",
-        active:false,
-        selected:false,
+        active: false,
+        selected: false,
         // children: [
         //   {
         //    icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
@@ -153,7 +162,7 @@ export const MENUITEMS = [
         type: "link",
         selected: false,
         active: false,
-    },
+      },
 
       {
         title: "Vehicle",
@@ -172,7 +181,7 @@ export const MENUITEMS = [
         type: "link",
         selected: false,
         active: false,
-     },
+      },
       {
         title: "Notices",
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
@@ -250,12 +259,12 @@ export const MENUITEMS = [
         selected: false,
         children: [
           {
-          icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
             title: "Email",
             type: "link",
             active: false,
             selected: false,
-        },
+          },
           {
             path: ``,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
@@ -271,5 +280,5 @@ export const MENUITEMS = [
 
 
 
-]
+    ]
   }]

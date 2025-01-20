@@ -1,181 +1,224 @@
-import { Fragment, useState } from 'react';
-import { Col, Row, Card, Modal, Button, Form, Tooltip, OverlayTrigger } from "react-bootstrap";
+
+import { Fragment, useEffect, useState } from 'react';
+// import { Link } from "react-router-dom";
+import { Col, Row, Card, Modal, Button, Form } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-
-
-const columns = [
-  {
-    name: 'S.No.',
-    selector: row => row.sno,
-    sortable: true,
-  },
-  {
-    name: 'Society Name',
-    selector: row => row.Sname,
-    sortable: true,
-  },
-  {
-    name: 'Address',
-    selector: row => row.Saddress,
-    sortable: true,
-  },
-
-  {
-    name: 'Country',
-    selector: row => row.Scountry,
-    sortable: true,
-  },
-
-  {
-    name: 'State',
-    selector: row => row.Sstate,
-    sortable: true,
-  },
-
-  {
-    name: 'City',
-    selector: row => row.Scity,
-    sortable: true,
-  },
-
-  {
-    name: 'Action',
-    sortable: true,
-    cell: () => <button type="button" className="btn btn-light btn-sm">Edit</button>,
-
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    sno: '1',
-    Sname: 'SKVilla Society',
-    Saddress: 'D-Block',
-    Scountry: 'India',
-    Sstate: 'Delhi',
-    Scity:'Delhi'
-
-  },
-  {
-    id: 2,
-    sno: '2',
-    Sname: 'GreenGlobal Society',
-    Saddress: 'D-Block',
-    Scountry: 'India',
-    Sstate: 'Delhi',
-    Scity:'Delhi'
-  },
-  {
-    id: 3,
-    sno: '3',
-    Sname: 'Dewan Enclave Society',
-    Saddress: 'D-Block',
-    Scountry: 'India',
-    Sstate: 'Delhi',
-    Scity:'Delhi'
-  },
-  {
-    id: 4,
-    sno: '4',
-    Sname: 'SKVilla Society',
-    Saddress: 'D-Block',
-    Scountry: 'India',
-    Sstate: 'Delhi',
-    Scity:'Delhi'
-  },
-  {
-    id: 5,
-    sno: '5',
-    Sname: 'GreenGlobal Society',
-    Saddress: 'D-Block',
-    Scountry: 'India',
-    Sstate: 'Delhi',
-    Scity:'Delhi'
-  },
-  {
-    id: 6,
-    sno: '6',
-    Sname: 'Dewan Enclave Society',
-    Saddress: 'D-Block',
-    Scountry: 'India',
-    Sstate: 'Delhi',
-    Scity:'Delhi'
-  },
-  {
-    id: 7,
-    sno: '7',
-    Sname: 'GreenGlobal Society',
-    Saddress: 'D-Block',
-    Scountry: 'India',
-    Sstate: 'Delhi',
-    Scity:'Delhi'
-  },
-  {
-    id: 8,
-    sno: '8',
-    Sname: 'Dewan Enclave Society',
-    Saddress: 'D-Block',
-    Scountry: 'India',
-    Sstate: 'Delhi',
-    Scity:'Delhi'
-  },
-]
-
-
-
+import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { addSocietyApi, deleteSocietyApi, getAllSocietyApi, updateSocietyApi } from '../../api/society-api';
+import { showToast, CustomToastContainer } from '../../common/services/toastServices';
+import stateCities from "./stateCity.json"
+import { handleApiError } from '../../helpers/handle-api-error';
+// Define the types for the stateCities object
+interface StateCities {
+  [key: string]: string[]; // Index signature
+}
+const stateCitiesTyped: StateCities = stateCities;
 export default function SocietyMaster() {
+  const [showModal, setShowModal] = useState(false);
+  const [societyData, setSocietyData] = useState<any[]>([]);
+  const [currentSociety, setCurrentSociety] = useState({
+    societyId: null,
+    societyName: '',
+    address: '',
+    country: null,
+    state: null,
+    city: null
+  });
 
 
-  const countryoption = [
-    { value: "1", label: "India" },
+  const [isEditing, setIsEditing] = useState(false);
+  type Row = {
+    id: number;
+    sno: number;
+    societyName: string;
+    address: string;
+    country: string;
+    state: string;
+    city: string;
+  };
 
-  ];
-
-  const stateoption = [
-    { value: "1", label: "Delhi" },
-
-  ];
-
-  const cityoption = [
-    { value: "1", label: "Delhi" },
-
-  ];
-
-
-  const [select, setSelect] = useState(false);
-
+  const columns = [
+    {
+      name: 'S.No.',
+      selector: (row: Row) => row.sno,
+      sortable: true,
+    },
+    {
+      name: 'Society Name',
+      selector: (row: Row) => row.societyName,
+      sortable: true,
+    },
+    {
+      name: 'Address',
+      selector: (row: Row) => row.address,
+      sortable: true,
+    },
+    {
+      name: 'Country',
+      selector: (row: Row) => row.country,
+      sortable: true,
+    },
+    {
+      name: 'State',
+      selector: (row: Row) => row.state,
+      sortable: true,
+    },
+    {
+      name: 'City',
+      selector: (row: Row) => row.city,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: Row) => (
+        <div>
+          <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button>
+          <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
+        </div>
+      ),
+    },
+  ]
   const tableData = {
     columns,
-    data
+    data: societyData
+  };
+  const countryOptions: any = [{ value: "India", label: "India" }]
+
+  const stateOptions = Object.keys(stateCitiesTyped).map((state) => ({
+    value: state,
+    label: state,
+  }));
+
+  const [cityOptions, setCityOptions] = useState<any>([]);
+  const validationSchema = Yup.object({
+    societyName: Yup.string().required('Society name is required'),
+    address: Yup.string().required('Address is required'),
+    country: Yup.object().nullable().required('Country is required'),
+    state: Yup.object().nullable().required('State is required'),
+    city: Yup.object().nullable().required('City is required'),
+    // zipcode: Yup.string().required('Zipcode is required'),
+  })
+  const openAddModal = () => {
+    setIsEditing(false);
+    currentSociety.address = "";
+    currentSociety.societyName = "";
+    currentSociety.country = null;
+    currentSociety.state = null;
+    currentSociety.city = null;
+    setShowModal(true);
+  };
+
+  const openEditModal = (society: any) => {
+    setIsEditing(true);
+    setCurrentSociety(society);
+    setShowModal(true);
   };
 
 
+  useEffect(() => {
+    const fetchSocietyData = async () => {
+      try {
+        const response = await getAllSocietyApi();
+        const formattedData = response.data.data.map((item: any, index: number) => ({
+          id: item.societyId,
+          sno: index + 1,
+          societyName: item.societyName,
+          address: item.address,
+          country: item.country,
+          state: item.state,
+          city: item.city,
+        }));
+        setSocietyData(formattedData);
+      } catch (error) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    };
 
-  const viewDemoShow = (modal: any) => {
-    switch (modal) {
-
-      case "select":
-        setSelect(true);
-        break;
+    fetchSocietyData();
+  }, []);
 
 
+  const handleStateChange = (selected: { value: string; label: string }) => {
+    const cities = stateCitiesTyped[selected.value] || [];
+    setCityOptions(cities.map((city) => ({ value: city, label: city })));
+  };
+
+  const handleSubmit = (values: any) => {
+    const data = {
+      societyName: values.societyName,
+      address: values.address,
+      country: values.country.value,
+      state: values.state.value,
+      city: values.city.value,
     }
-  };
-
-  const viewDemoClose = (modal: any) => {
-    switch (modal) {
-
-      case "select":
-        setSelect(false);
-        break;
+    if (isEditing) {
+      ; (async () => {
+        try {
+          const response = await updateSocietyApi(data, currentSociety.societyId)
+          if (response.status === 200) {
+            showToast("success", response.data.message)
+            // Update specific society in the list
+            setSocietyData(prevData =>
+              prevData.map(society =>
+                society.societyId === currentSociety.societyId
+                  ? { ...society, ...data }
+                  : society
+              )
+            );
+            setShowModal(false)
+          }
+        } catch (error: any) {
+          const errorMessage = handleApiError(error);
+          showToast("error", errorMessage);
+        }
+      })()
+    } else {
+      // Call API to add new society
+      ; (async () => {
+        try {
+          const response = await addSocietyApi(data)
+          if (response.status === 200) {
+            showToast("success", response.data.message)
+            // Add the new society to the table
+            const newSociety = {
+              sno: societyData.length + 1,
+              id: response.data.data.societyId,
+              ...response.data.data
+            }
+            setSocietyData(prevData => [...prevData, newSociety]);
+            setShowModal(false)
+          }
+        } catch (error: any) {
+          const errorMessage = handleApiError(error);
+          showToast("error", errorMessage);
+        }
+      })()
     }
-  };
 
 
+  }
+  const handleDelete = (data: any) => {
+    console.log(data)
+      ; (async () => {
+        try {
+          const response = await deleteSocietyApi(data.id || data.societyId)
+          if (response.status === 200) {
+            showToast("success", response.data.message)
+            // Remove the society from the table
+            setSocietyData(prevData => prevData.filter(society => society.id !== data.id))
+          }
+        } catch (error: any) {
+          const errorMessage = handleApiError(error)
+          showToast("error", errorMessage)
+        }
+      })()
+  }
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -185,83 +228,110 @@ export default function SocietyMaster() {
 
         <div className="right-content">
 
-          <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("select")}><i className="bi bi-plus"></i> Add Society</button>
-          <Modal show={select} centered >
-            <Modal.Header>
-              <Modal.Title>Add Society</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("select"); }}>
-                x
-              </Button>
-            </Modal.Header>
-            <Modal.Body>
-              <Form.Group className="form-group">
-                <Form.Label>Society Name <span className="text-danger">*</span></Form.Label>
-                <Form.Control type='text' placeholder='Society name' className='form-control'></Form.Control>
-              </Form.Group>
+          <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Society</button>
+          <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+            <Formik
+              initialValues={{
+                societyId: null,
+                societyName: currentSociety?.societyName || "",
+                address: currentSociety?.address || "",
 
+                country: { value: currentSociety.country, label: currentSociety.country }, // Update this
+                state: { value: currentSociety.state, label: currentSociety.state },
+                city: { value: currentSociety.city, label: currentSociety.city }
+              }
+              }
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              {({ setFieldValue, values }) => (
+                <FormikForm>
+                  <Modal.Header>
+                    <Modal.Title>{isEditing ? "Edit Society" : "Add Society"}</Modal.Title>
+                    <Button variant="" className="btn-close" onClick={() => setShowModal(false)}>
+                      x
+                    </Button>
+                  </Modal.Header>
+                  <Modal.Body>
+                    <Form.Group className="form-group">
+                      <Form.Label>Society Name <span className="text-danger">*</span></Form.Label>
+                      <Field
+                        type="text"
+                        name="societyName"
+                        placeholder="Society name"
+                        className="form-control"
+                      />
+                      <ErrorMessage name="societyName" component="div" className="text-danger" />
+                    </Form.Group>
 
-              <Form.Group className="form-group">
-                <Form.Label>Address <span className="text-danger">*</span></Form.Label>
-                <Form.Control type='text' placeholder='Address' className='form-control'></Form.Control>
-              </Form.Group>
+                    <Form.Group className="form-group">
+                      <Form.Label>Address <span className="text-danger">*</span></Form.Label>
+                      <Field
+                        type="text"
+                        name="address"
+                        placeholder="Address"
+                        className="form-control"
+                      />
+                      <ErrorMessage name="address" component="div" className="text-danger" />
+                    </Form.Group>
 
+                    <Form.Group className="form-group">
+                      <Form.Label>Country <span className="text-danger">*</span></Form.Label>
+                      <Select
+                        options={countryOptions}
+                        value={values.country}
+                        onChange={(selected) => setFieldValue("country", selected)}
+                        placeholder="Select Country"
+                        classNamePrefix="Select2"
+                      />
+                      <ErrorMessage name="country" component="div" className="text-danger" />
+                    </Form.Group>
 
+                    <Form.Group className="form-group">
+                      <Form.Label>State <span className="text-danger">*</span></Form.Label>
+                      <Select
+                        options={stateOptions}
+                        value={values.state}
+                        onChange={(selected: any) => {
+                          setFieldValue('state', selected);
+                          handleStateChange({
+                            value: selected.value,
+                            label: selected.label
+                          });
+                        }}
+                        placeholder="Select State"
+                        classNamePrefix="Select2"
+                      />
+                      <ErrorMessage name="state" component="div" className="text-danger" />
+                    </Form.Group>
 
-
-              <Form.Group className="form-group">
-                <Form.Label>Country <span className="text-danger">*</span></Form.Label>
-
-                <div className=" SlectBox">
-                    <Select
-                       options={countryoption}
-                      placeholder="Country"
-                      // classNamePrefix="selectform"
-                      classNamePrefix='Select2' className="multi-select"
-                    />
-                  </div>
-
-              </Form.Group>
-
-              <Form.Group className="form-group">
-                <Form.Label>State <span className="text-danger">*</span></Form.Label>
-                <div className=" SlectBox">
-                    <Select
-                       options={stateoption}
-                      placeholder="State"
-                      // classNamePrefix="selectform"
-                      classNamePrefix='Select2' className="multi-select"
-                    />
-                  </div>
-              </Form.Group>
-
-              <Form.Group className="form-group">
-                <Form.Label>City <span className="text-danger">*</span></Form.Label>
-                <div className=" SlectBox">
-                    <Select
-                       options={cityoption}
-                      placeholder="City"
-                      // classNamePrefix="selectform"
-                      classNamePrefix='Select2' className="multi-select"
-                    />
-                  </div>
-              </Form.Group>
-
-              <Form.Group className="form-group">
-                <Form.Label>Zipcode <span className="text-danger">*</span></Form.Label>
-                <Form.Control type='text' placeholder='Zipcode' className='form-control'></Form.Control>
-              </Form.Group>
-
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("select"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoShow("select"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
+                    <Form.Group className="form-group">
+                      <Form.Label>City <span className="text-danger">*</span></Form.Label>
+                      <Select
+                        options={cityOptions}
+                        value={values.city}
+                        onChange={(selected) => setFieldValue("city", selected)}
+                        placeholder="Select City"
+                        classNamePrefix="Select2"
+                      />
+                      <ErrorMessage name="city" component="div" className="text-danger" />
+                    </Form.Group>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="default" onClick={() => setShowModal(false)}>
+                      Close
+                    </Button>
+                    <button className="btn btn-primary" type="submit">
+                      {isEditing ? "Save Changes" : "Add Society"}
+                    </button>
+                  </Modal.Footer>
+                </FormikForm>
+              )}
+            </Formik>
           </Modal>
+
+          <CustomToastContainer />
+
         </div>
       </div>
 
@@ -274,10 +344,9 @@ export default function SocietyMaster() {
                 <DataTableExtensions {...tableData}>
                   <DataTable
                     columns={columns}
-                    data={data}
+                    data={societyData}
                     pagination
-
-
+                    keyField="id"
                   />
                 </DataTableExtensions>
               </div>
@@ -289,7 +358,6 @@ export default function SocietyMaster() {
         </Col>
       </Row>
 
-
-    </Fragment>
+    </Fragment >
   );
 }
