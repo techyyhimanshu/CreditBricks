@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 
+
 const Dashboard = lazy(() => import('../components/dashboard/dashboard1/dashboard'));
 const Error501 = lazy(() => import('../components/pages/authentication/501error/501error'));
 const Accounts = lazy(() => import('../components/accounts/accounts'));
@@ -11,6 +12,8 @@ const Users = lazy(() => import('../components/masters/users'));
 const MobileApp = lazy(() => import('../components/masters/mobileapp'));
 const UserPermission = lazy(() => import('../components/masters/userpermission'));
 const TermsCondition = lazy(() => import('../components/masters/termscondition'));
+const UserProfile = lazy (()=> import ('../components/userprofile/userprofile'));
+
 
 export const Routingdata = [
   //Dashboard
@@ -25,7 +28,8 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}masters/users`, element: <Users /> },
   { path: `${import.meta.env.BASE_URL}masters/mobileapp`, element: <MobileApp /> },
   { path: `${import.meta.env.BASE_URL}masters/userpermission`, element: <UserPermission /> },
-  { path: `${import.meta.env.BASE_URL}masters/termscondition`, element: <TermsCondition /> }
+  { path: `${import.meta.env.BASE_URL}masters/termscondition`, element: <TermsCondition /> },
+  { path: `${import.meta.env.BASE_URL}userprofile/userprofile`, element: <UserProfile /> }
 ];
 
 export const Sidebarcomponents = [
