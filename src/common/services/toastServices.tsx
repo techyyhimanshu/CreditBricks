@@ -22,7 +22,7 @@ const toastConfig = {
   className: 'custom-toast',
   bodyClassName: 'custom-toast-body',
   toastClassName: 'custom-toast-container',
-  autoClose: 3000,
+  autoClose: 2000,
   style: {
     background: 'var(--primary-bg)',
     color: 'var(--primary-text)',

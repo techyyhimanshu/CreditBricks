@@ -6,11 +6,12 @@ import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { addUserApi, deleteUserApi, getAllUserApi, updateUserApi } from '../../api/user-api';
 import { ErrorMessage, Field, Formik, Form as FormikForm } from 'formik';
-import { showToast } from '../../common/services/toastServices';
+import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import stateCities from "./stateCity.json"
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { updateUserValidationSchema, addUserValidationSchema } from "../../schemas/user-schema"
 interface StateCities {
   [key: string]: string[]; // Index signature
 }
@@ -32,6 +33,7 @@ export default function Users() {
     country: '',
     state: '',
     city: '',
+    zipcode: ''
   })
   const [showModal, setShowModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -56,6 +58,7 @@ export default function Users() {
     country: string;
     state: string;
     city: string;
+    zipcode: string;
   };
 
   const columns = [
@@ -108,7 +111,7 @@ export default function Users() {
         const response = await getAllUserApi()
         const formattedData = response.data.data.map((user: any, index: number) => ({
           sno: index + 1,
-          id: user.PersonId,
+          personId: user.personId,
           firstName: user.firstName,
           lastName: user.lastName,
           salutation: user.salutation,
@@ -119,9 +122,9 @@ export default function Users() {
           personGenderIdentity: user.personGenderIdentity,
           country: user.country,
           state: user.state,
-          city: user.current_City__c,
-          address: user.address__c
-
+          city: user.city,
+          address: user.address__c,
+          zipcode: user.zipcode
         }))
         setUsers(formattedData)
       } catch (error) {
@@ -154,18 +157,25 @@ export default function Users() {
   ];
   const openAddModal = () => {
     setIsEditing(false);
+    currentUser.personId = "";
     currentUser.firstName = "";
     currentUser.lastName = "";
+    currentUser.personGenderIdentity = "";
+    currentUser.personBirthdate = "";
     currentUser.personEmail = "";
     currentUser.phone = "";
     currentUser.country = "";
     currentUser.state = "";
     currentUser.city = "";
     currentUser.role = "";
+    currentUser.zipcode = "";
     setShowModal(true);
   };
 
   const openEditModal = (user: any) => {
+    console.log(user.personBirthdate
+    )
+    console.log("USER", user)
     setIsEditing(true);
     setCurrentUser(user);
     setShowModal(true);
@@ -175,21 +185,23 @@ export default function Users() {
     setCityOptions(cities.map((city) => ({ value: city, label: city })));
   };
   const handleSubmit = (values: any) => {
-    console.log(values)
+
     const data = {
-      salutation: values.gender.male === "Male" ? "Mr" : "Ms",
+      salutation: values.personGenderIdentity.value === "Male" ? "Mr" : "Ms",
       personId: values.personId,
       firstName: values.firstName,
       lastName: values.lastName,
       type: values.role.value,
       phone: values.phone,
       personEmail: values.personEmail,
-      personBirthdate: values.dob.toISOString().split("T")[0],
-      personGenderIdentity: values.gender.value,
+      personBirthdate: values.personBirthdate,
+      personGenderIdentity: values.personGenderIdentity.value,
       country: values.country.value,
       state: values.state.value,
       city: values.city.value,
+      zipcode: values.zipcode
     }
+    console.log(data)
     if (isEditing) {
       ; (async () => {
         try {
@@ -200,7 +212,7 @@ export default function Users() {
             setUsers(prevData =>
               prevData.map(user =>
                 user.personId === currentUser.personId
-                  ? { ...user, ...data }
+                  ? { ...user, ...data, role: data.type }
                   : user
               )
             );
@@ -218,10 +230,14 @@ export default function Users() {
           const response = await addUserApi(data)
           if (response.status === 200) {
             showToast("success", response.data.message)
+            console.log("REsponse", response.data.data)
+            console.log(response.data.data.personBirthdate.split("T")[0])
             // Add the new user to the table
             const newUser = {
               sno: users.length + 1,
-              id: response.data.data.userId,
+              personId: response.data.data.userId,
+              role: response.data.data.type,
+              personBirthdate: response.data.data.personBirthdate.split("T")[0],
               ...response.data.data
             }
             setUsers(prevData => [...prevData, newUser]);
@@ -267,19 +283,21 @@ export default function Users() {
           <Modal show={showModal} onHide={() => setShowModal(false)} centered size='lg' >
             <Formik
               initialValues={{
-                personId: null,
+                personId: currentUser?.personId || "",
                 firstName: currentUser?.firstName || "",
                 lastName: currentUser?.lastName || "",
+                personGenderIdentity: { value: currentUser?.personGenderIdentity || "", label: currentUser?.personGenderIdentity || "" },
                 personEmail: currentUser?.personEmail || "",
                 phone: currentUser?.phone || "",
-                dob: null,
-                role: currentUser?.role || "",
+                personBirthdate: currentUser?.personBirthdate,
+                role: { value: currentUser?.role || "", label: currentUser?.role || "" },
                 country: { value: currentUser.country, label: currentUser.country }, // Update this
                 state: { value: currentUser.state, label: currentUser.state },
-                city: { value: currentUser.city, label: currentUser.city }
+                city: { value: currentUser.city, label: currentUser.city },
+                zipcode: currentUser?.zipcode || ""
               }
               }
-              // validationSchema={validationSchema}
+              validationSchema={isEditing ? updateUserValidationSchema : addUserValidationSchema}
               onSubmit={handleSubmit}
             >
               {({ setFieldValue, values, touched, errors }) => (
@@ -292,16 +310,18 @@ export default function Users() {
                   </Modal.Header>
                   <Modal.Body>
                     <Row>
-
+                      {/* Username */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>UserName <span className="text-danger">*</span></Form.Label>
                           <Field
                             type='text'
                             placeholder='UserName'
+                            disabled={isEditing}
                             className='form-control'
                             name="personId"
                           />
+                          <ErrorMessage name="personId" component="div" className="text-danger" />
                         </Form.Group>
                       </Col>
 
@@ -312,7 +332,7 @@ export default function Users() {
                         </Form.Group>
                       </Col> */}
 
-
+                      {/* First Name */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>First Name <span className="text-danger">*</span></Form.Label>
@@ -322,10 +342,10 @@ export default function Users() {
                             className='form-control'
                             name="firstName"
                           />
-
+                          <ErrorMessage name="firstName" component="div" className="text-danger" />
                         </Form.Group>
                       </Col>
-
+                      {/* Last Name */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>Last Name <span className="text-danger">*</span></Form.Label>
@@ -335,8 +355,10 @@ export default function Users() {
                             className='form-control'
                             name="lastName"
                           />
+                          <ErrorMessage name="lastName" component="div" className="text-danger" />
                         </Form.Group>
                       </Col>
+                      {/* Gender */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>Gender<span className="text-danger">*</span></Form.Label>
@@ -344,13 +366,18 @@ export default function Users() {
                             <Select
                               options={gender}
                               placeholder="Select Gender"
-                              onChange={(selected) => setFieldValue('gender', selected)}
+                              value={values.personGenderIdentity}
+                              onChange={(selected) => setFieldValue('personGenderIdentity', selected)}
                               // classNamePrefix="selectform"
                               classNamePrefix='Select2' className="multi-select"
                             />
+                            {touched.personGenderIdentity?.value && errors.personGenderIdentity?.value && (
+                              <div className="text-danger">{errors.personGenderIdentity.value}</div>
+                            )}
                           </div>
                         </Form.Group>
                       </Col>
+                      {/* Date of Birth */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>
@@ -358,8 +385,12 @@ export default function Users() {
                           </Form.Label>
                           <div className="datepicker-wrapper">
                             <ReactDatePicker
-                              selected={values.dob}
-                              onChange={(date) => setFieldValue("dob", date)}
+                              selected={values.personBirthdate ? new Date(values.personBirthdate) : null}
+                              onChange={(date) => {
+                                // Convert the selected date to a string in 'YYYY-MM-DD' format
+                                const formattedDate = date ? date.toISOString().split("T")[0] : null;
+                                setFieldValue("personBirthdate", formattedDate);
+                              }}
                               dateFormat="yyyy-MM-dd"
                               placeholderText="Select DOB"
                               className="form-control"
@@ -367,27 +398,33 @@ export default function Users() {
                               yearDropdownItemNumber={100}
                               scrollableYearDropdown
                             />
+
                           </div>
-                          {touched.dob && errors.dob && (
-                            <div className="text-danger">{errors.dob}</div>
+                          {touched.personBirthdate && errors.personBirthdate && (
+                            <div className="text-danger">{errors.personBirthdate}</div>
                           )}
                         </Form.Group>
                       </Col>
+                      {/* Roles */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>Roles<span className="text-danger">*</span></Form.Label>
                           <div className="SlectBox">
                             <Select
                               options={roletype}
+                              value={values.role}
                               placeholder="Select Roles"
                               onChange={(selected) => setFieldValue('role', selected)}
                               // classNamePrefix="selectform"
                               classNamePrefix='Select2' className="multi-select"
                             />
+                            {touched.role?.value && errors.role?.value && (
+                              <div className="text-danger">{errors.role.value}</div>
+                            )}
                           </div>
                         </Form.Group>
                       </Col>
-
+                      {/* Email */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>Email <span className="text-danger">*</span></Form.Label>
@@ -397,9 +434,10 @@ export default function Users() {
                             className='form-control'
                             name="personEmail"
                           />
+                          <ErrorMessage name="personEmail" component="div" className="text-danger" />
                         </Form.Group>
                       </Col>
-
+                      {/* Phone */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>Phone. <span className="text-danger">*</span></Form.Label>
@@ -409,8 +447,10 @@ export default function Users() {
                             className='form-control'
                             name="phone"
                           />
+                          <ErrorMessage name="phone" component="div" className="text-danger" />
                         </Form.Group>
                       </Col>
+                      {/* Country */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>Country <span className="text-danger">*</span></Form.Label>
@@ -418,15 +458,21 @@ export default function Users() {
                           <div className=" SlectBox">
                             <Select
                               options={countryoption}
+                              value={values.country}
                               placeholder="Country"
                               onChange={(selected) => setFieldValue('country', selected)}
                               // classNamePrefix="selectform"
                               classNamePrefix='Select2' className="multi-select"
                             />
+                            {touched.country?.value && errors.country?.value && (
+                              <div className="text-danger">{errors.country.value}</div>
+                            )}
                           </div>
 
                         </Form.Group>
                       </Col>
+
+                      {/* State */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>State <span className="text-danger">*</span></Form.Label>
@@ -443,9 +489,13 @@ export default function Users() {
                             placeholder="Select State"
                             classNamePrefix="Select2"
                           />
-                          <ErrorMessage name="state" component="div" className="text-danger" />
+                          {touched.state?.value && errors.state?.value && (
+                            <div className="text-danger">{errors.state.value}</div>
+                          )}
                         </Form.Group>
                       </Col>
+
+                      {/* City */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>City <span className="text-danger">*</span></Form.Label>
@@ -456,9 +506,13 @@ export default function Users() {
                             placeholder="Select City"
                             classNamePrefix="Select2"
                           />
-                          <ErrorMessage name="city" component="div" className="text-danger" />
+                          {touched.city?.value && errors.city?.value && (
+                            <div className="text-danger">{errors.city.value}</div>
+                          )}
                         </Form.Group>
                       </Col>
+
+                      {/* Zipcode */}
                       <Col xl={6}>
                         <Form.Group className="form-group">
                           <Form.Label>Zipcode <span className="text-danger">*</span></Form.Label>
@@ -466,8 +520,9 @@ export default function Users() {
                             type='text'
                             placeholder='Zipcode'
                             className='form-control'
-                            name="zip"
+                            name="zipcode"
                           />
+                          <ErrorMessage name="zipcode" component="div" className="text-danger" />
                         </Form.Group>
 
                       </Col>
@@ -490,6 +545,8 @@ export default function Users() {
             </Formik>
 
           </Modal>
+          <CustomToastContainer />
+
         </div>
       </div>
 
