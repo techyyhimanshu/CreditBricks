@@ -185,7 +185,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
                 try {
                     const response = await addUserApi(data)
                     if (response.status === 200) {
-                        showToast("success", "Personal info. submitted successfully")
+                        showToast("success", "Personal info. saved successfully")
                         // Add the new user to the table
                         const newUser = {
                             sno: users.length + 1,
