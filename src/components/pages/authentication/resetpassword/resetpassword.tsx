@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import * as Switcherdatacustam from '../../../../common/switcherdatacustam';
 import useFormValidation from "../../../../common/hooks/FormValidation";
 import apiService from "../../../../common/redux/api";
-import { showToast, Toaster } from "../../../../common/services/toastServices";
+import { showToast, CustomToastContainer } from "../../../../common/services/toastServices";
 import 'react-toastify/dist/ReactToastify.css'
 
 const getUrlData = () => {
@@ -14,8 +14,8 @@ const getUrlData = () => {
   return { id, token }
 }
 
-const resetPass = async (password: string,confirmpassword:string,id:string,token:string) => {
-  const data={password,id,token,confirmPassword:confirmpassword}
+const resetPass = async (password: string, confirmpassword: string, id: string, token: string) => {
+  const data = { password, id, token, confirmPassword: confirmpassword }
   const response = await apiService.ResetPassword(data)
   return response
 }
@@ -39,16 +39,16 @@ const ResetPassword = () => {
     try {
       isValid = await validateForm();
       if (isValid && id && token) {
-        const res = await resetPass(formData.password,formData.confirmpassword,id,token)
-        if(res.status==200){
-          showToast("success",res.data.data.message)
-        }else{
-          showToast("error",res.data.message)
+        const res = await resetPass(formData.password, formData.confirmpassword, id, token)
+        if (res.status == 200) {
+          showToast("success", res.data.data.message)
+        } else {
+          showToast("error", res.data.message)
         }
       } else {
       }
     } catch (error) {
-      showToast("error","Please enter valid details")
+      showToast("error", "Please enter valid details")
       isValid = false;
     } finally {
       setLoading(false)
@@ -60,7 +60,7 @@ const ResetPassword = () => {
   return (
     <Fragment>
       <div >
-        <Toaster/>
+        <CustomToastContainer />
         <div className="cover-image">
           <div className="page loginbg">
             <h3 className="text-center pt-5">Dealovate</h3>

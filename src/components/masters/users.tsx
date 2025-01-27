@@ -1,184 +1,148 @@
 
 import { Fragment, useEffect, useState } from 'react';
-import { Col, Row, Card, Modal, Button, Form, Tab, Tabs } from "react-bootstrap";
-
+import { Modal, Button, Tab, Tabs } from "react-bootstrap";
+// import { deleteUserApi, getAllUserApi } from '../../api/user-api';
+import { CustomToastContainer } from '../../common/services/toastServices';
+import "react-datepicker/dist/react-datepicker.css";
+import PersonalInfo from './UserTabs/personalinfo-tab';
+import Document from './UserTabs/document-tab';
+import Properties from './UserTabs/properties-tab';
+import Loan from './UserTabs/loan-tab';
+import Parking from './UserTabs/parking-tab';
+import Cookies from "js-cookie"
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
-import "react-data-table-component-extensions/dist/index.css";
-import Select from "react-select";
+import { getAllUserApi } from '../../api/user-api';
+// const columns = [
+//   {
+//     name: 'First Name',
+//     selector: row => row.Fname,
+//     sortable: true,
+//   },
+//   {
+//     name: 'Last Name',
+//     selector: row => row.Lname,
+//     sortable: true,
+//   },
+//   {
+//     name: 'Mobile No',
+//     selector: row => row.mobileno,
+//     sortable: true,
+//   },
 
-import { imagesData } from "../../common/commonimages";
+//   {
+//     name: 'Email Id',
+//     selector: row => row.emailid,
+//     sortable: true,
+//   },
+//   {
+//     name: 'Status',
+//     selector: row => row.status,
+//     sortable: true,
+//   },
 
+//   {
+//     name: 'Action',
+//     sortable: true,
+//     cell: () => <div><button type="button" className="btn btn-light btn-sm">Edit</button><button type="button" className="btn bg-info-transparent ms-2 btn-sm">Delete</button></div>,
 
-const columns = [
-  {
-    name: 'First Name',
-    selector: row => row.Fname,
-    sortable: true,
-  },
-  {
-    name: 'Last Name',
-    selector: row => row.Lname,
-    sortable: true,
-  },
-  {
-    name: 'Mobile No',
-    selector: row => row.mobileno,
-    sortable: true,
-  },
+//   },
+// ];
 
-  {
-    name: 'Email Id',
-    selector: row => row.emailid,
-    sortable: true,
-  },
-
-  {
-    name: 'Roles',
-    selector: row => row.roles,
-    sortable: true,
-  },
-
-  {
-    name: 'Status',
-    selector: row => row.status,
-    sortable: true,
-  },
-
-  {
-    name: 'Action',
-    sortable: true,
-    cell: () => <div><button type="button" className="btn btn-light btn-sm">Edit</button><button type="button" className="btn bg-info-transparent ms-2 btn-sm">Delete</button></div>,
-
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    Fname: 'User',
-    Lname: 'User',
-    mobileno: '',
-    emailid: '',
-    roles: 'SuperAdmin',
-    status: 'Active'
+// const data = [
+//   {
+//     id: 1,
+//     Fname: 'User',
+//     Lname: 'User',
+//     mobileno: '',
+//     emailid: '',
+//     status: 'Active'
 
 
-  },
-  {
-    id: 2,
-    Fname: 'User',
-    Lname: 'User',
-    mobileno: '',
-    emailid: '',
-    roles: 'Admin',
-    status: 'Active'
-  },
-  {
-    id: 3,
-    Fname: 'User',
-    Lname: 'User',
-    mobileno: '',
-    emailid: '',
-    roles: 'SuperAdmin',
-    status: 'Active'
-  },
-  {
-    id: 4,
-    Fname: 'User',
-    Lname: 'User',
-    mobileno: '',
-    emailid: '',
-    roles: 'SuperAdmin',
-    status: 'Active'
-  },
-  {
-    id: 5,
-    Fname: 'User',
-    Lname: 'User',
-    mobileno: '',
-    emailid: '',
-    roles: 'SuperAdmin',
-    status: 'Active'
-  },
-  {
-    id: 6,
-    Fname: 'User',
-    Lname: 'User',
-    mobileno: '',
-    emailid: '',
-    roles: 'SuperAdmin',
-    status: 'Active'
-  },
-  {
-    id: 7,
-    Fname: 'User',
-    Lname: 'User',
-    mobileno: '',
-    emailid: '',
-    roles: 'SuperAdmin',
-    status: 'Active'
-  },
-  {
-    id: 8,
-    Fname: 'User',
-    Lname: 'User',
-    mobileno: '',
-    emailid: '',
-    roles: 'SuperAdmin',
-    status: 'Active'
-  },
-]
-
-
-
-import { addUserApi, deleteUserApi, getAllUserApi, updateUserApi } from '../../api/user-api';
-import { ErrorMessage, Field, Formik, Form as FormikForm } from 'formik';
-import { CustomToastContainer, showToast } from '../../common/services/toastServices';
-import { handleApiError } from '../../helpers/handle-api-error';
-import stateCities from "./stateCity.json"
-import ReactDatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { updateUserValidationSchema, addUserValidationSchema } from "../../schemas/user-schema"
-interface StateCities {
-  [key: string]: string[]; // Index signature
-}
-const stateCitiesTyped: StateCities = stateCities;
+//   },
+//   {
+//     id: 2,
+//     Fname: 'User',
+//     Lname: 'User',
+//     mobileno: '',
+//     emailid: '',
+//     status: 'Active'
+//   },
+//   {
+//     id: 3,
+//     Fname: 'User',
+//     Lname: 'User',
+//     mobileno: '',
+//     emailid: '',
+//     status: 'Active'
+//   },
+//   {
+//     id: 4,
+//     Fname: 'User',
+//     Lname: 'User',
+//     mobileno: '',
+//     emailid: '',
+//     status: 'Active'
+//   },
+//   {
+//     id: 5,
+//     Fname: 'User',
+//     Lname: 'User',
+//     mobileno: '',
+//     emailid: '',
+//     status: 'Active'
+//   },
+//   {
+//     id: 6,
+//     Fname: 'User',
+//     Lname: 'User',
+//     mobileno: '',
+//     emailid: '',
+//     status: 'Active'
+//   },
+//   {
+//     id: 7,
+//     Fname: 'User',
+//     Lname: 'User',
+//     mobileno: '',
+//     emailid: '',
+//     status: 'Active'
+//   },
+//   {
+//     id: 8,
+//     Fname: 'User',
+//     Lname: 'User',
+//     mobileno: '',
+//     emailid: '',
+//     status: 'Active'
+//   },
+// ]
 
 
 export default function Users() {
+  const [activeTab, setActiveTab] = useState("Personal")
 
+  const [completedTabs, setCompletedTabs] = useState({
+    Personal: false,
+    Document: false,
+    Properties: false,
+    Loan: false,
+    Parking: false
+  });
+  const [disabledTab, setDisabledTab] = useState({
+    Personal: false,
+    Document: true,
+    Properties: true,
+    Loan: true,
+    Parking: true
+  });
   const [users, setUsers] = useState<any[]>([])
-  const [currentUser, setCurrentUser] = useState({
-    personId: '',
-    firstName: '',
-    lastName: '',
-    role: '',
-    phone: '',
-    personEmail: '',
-    personBirthdate: '',
-    personGenderIdentity: '',
-    address: '',
-    country: '',
-    state: '',
-    city: '',
-    zipcode: ''
-  })
-  const [showModal, setShowModal] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const stateOptions = Object.keys(stateCitiesTyped).map((state) => ({
-    value: state,
-    label: state,
-  }));
-
-  const [cityOptions, setCityOptions] = useState<any>([]);
 
   type Row = {
-    personId: number;
+    username: number;
     sno: number;
     firstName: string;
     lastName: string;
-    role: string;
     phone: string;
     personEmail: string;
     personBirthdate: string;
@@ -188,6 +152,11 @@ export default function Users() {
     state: string;
     city: string;
     zipcode: string;
+    alternatePhone: string;
+    anniversary: string;
+    recordType: string;
+    memberType: string;
+
   };
 
   const columns = [
@@ -216,19 +185,18 @@ export default function Users() {
       selector: (row: Row) => row.personEmail,
       sortable: true,
     },
-    {
-      name: 'Role',
-      selector: (row: Row) => row.role,
-      sortable: true,
-    },
 
     {
       name: 'Action',
       sortable: true,
       cell: (row: Row) => (
         <div>
-          <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button>
-          <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
+          <button type="button" className="btn btn-light btn-sm"
+          //  onClick={() => openEditModal(row)}
+          >Edit</button>
+          <button type="button" className="btn bg-info-transparent ms-2 btn-sm"
+          //  onClick={() => handleDelete(row)}
+          >Delete</button>
         </div>
       ),
     },
@@ -240,11 +208,10 @@ export default function Users() {
         const response = await getAllUserApi()
         const formattedData = response.data.data.map((user: any, index: number) => ({
           sno: index + 1,
-          personId: user.personId,
+          username: user.username,
           firstName: user.firstName,
           lastName: user.lastName,
           salutation: user.salutation,
-          role: user.type,
           phone: user.phone,
           personEmail: user.personEmail,
           personBirthdate: user.personBirthdate,
@@ -252,8 +219,8 @@ export default function Users() {
           country: user.country,
           state: user.state,
           city: user.city,
-          address: user.address__c,
-          zipcode: user.zipcode
+          address: user.address,
+          zipcode: user.zipCode
         }))
         setUsers(formattedData)
       } catch (error) {
@@ -262,23 +229,6 @@ export default function Users() {
     }
     fetchUsers()
   }, [])
-  const countryoption = [
-    { value: "India", label: "India" },
-
-  ];
-
-
-  ];
-
-  const cityoption = [
-    { value: "1", label: "Delhi" },
-
-  ];
-  const Recordtype = [
-    { value: "1", label: "Member" },
-
-  ];
-
 
   const [select, setSelect] = useState(false);
 
@@ -287,163 +237,79 @@ export default function Users() {
     columns,
     data: users
   };
+  // const openAddModal = () => {
+  //   setIsEditing(false);
+  //   currentUser.username = "";
+  //   currentUser.firstName = "";
+  //   currentUser.lastName = "";
+  //   currentUser.personGenderIdentity = "";
+  //   currentUser.personBirthdate = "";
+  //   currentUser.personEmail = "";
+  //   currentUser.phone = "";
+  //   currentUser.country = "";
+  //   currentUser.state = "";
+  //   currentUser.city = "";
+  //   currentUser.zipcode = "";
+  //   setShowModal(true);
+  // };
+
+  // const openEditModal = (user: any) => {
+  //   console.log(user.personBirthdate
+  //   )
+  //   console.log("USER", user)
+  //   setIsEditing(true);
+  //   setCurrentUser(user);
+  //   setShowModal(true);
+  // };
+  // const handleDelete = (data: any) => {
+  //   console.log(data)
+  //     ; (async () => {
+  //       try {
+  //         const response = await deleteUserApi(data.username)
+  //         if (response.status === 200) {
+  //           showToast("success", response.data.message)
+  //           // Remove the user from the table
+  //           setUsers(prevData => prevData.filter(user => user.username !== data.username))
+  //         }
+  //       } catch (error: any) {
+  //         const errorMessage = handleApiError(error)
+  //         showToast("error", errorMessage)
+  //       }
+  //     })()
+  // }
+
+  const viewDemoShow = (modal: any) => {
+    switch (modal) {
+
+      case "select":
+        setSelect(true);
+        break;
 
 
-
-  const roletype = [
-    { value: "Super Admin", label: "Super Admin" },
-    { value: "Admin", label: "Admin" }
-  ];
-  const gender = [
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" }
-  ];
-  const openAddModal = () => {
-    setIsEditing(false);
-    currentUser.personId = "";
-    currentUser.firstName = "";
-    currentUser.lastName = "";
-    currentUser.personGenderIdentity = "";
-    currentUser.personBirthdate = "";
-    currentUser.personEmail = "";
-    currentUser.phone = "";
-    currentUser.country = "";
-    currentUser.state = "";
-    currentUser.city = "";
-    currentUser.role = "";
-    currentUser.zipcode = "";
-    setShowModal(true);
-  };
-
-  const openEditModal = (user: any) => {
-    console.log(user.personBirthdate
-    )
-    console.log("USER", user)
-    setIsEditing(true);
-    setCurrentUser(user);
-    setShowModal(true);
-  };
-  const handleStateChange = (selected: { value: string; label: string }) => {
-    const cities = stateCitiesTyped[selected.value] || [];
-    setCityOptions(cities.map((city) => ({ value: city, label: city })));
-  };
-  const handleSubmit = (values: any) => {
-
-    const data = {
-      salutation: values.personGenderIdentity.value === "Male" ? "Mr" : "Ms",
-      personId: values.personId,
-      firstName: values.firstName,
-      lastName: values.lastName,
-      type: values.role.value,
-      phone: values.phone,
-      personEmail: values.personEmail,
-      personBirthdate: values.personBirthdate,
-      personGenderIdentity: values.personGenderIdentity.value,
-      country: values.country.value,
-      state: values.state.value,
-      city: values.city.value,
-      zipcode: values.zipcode
     }
-    console.log(data)
-    if (isEditing) {
-      ; (async () => {
-        try {
-          const response = await updateUserApi(data, currentUser.personId)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            // Update specific user in the list
-            setUsers(prevData =>
-              prevData.map(user =>
-                user.personId === currentUser.personId
-                  ? { ...user, ...data, role: data.type }
-                  : user
-              )
-            );
-            setShowModal(false)
-          }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error);
-          showToast("error", errorMessage);
-        }
-      })()
-    } else {
-      // Call API to add new user
-      ; (async () => {
-        try {
-          const response = await addUserApi(data)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            console.log("REsponse", response.data.data)
-            console.log(response.data.data.personBirthdate.split("T")[0])
-            // Add the new user to the table
-            const newUser = {
-              sno: users.length + 1,
-              personId: response.data.data.userId,
-              role: response.data.data.type,
-              personBirthdate: response.data.data.personBirthdate.split("T")[0],
-              ...response.data.data
-            }
-            setUsers(prevData => [...prevData, newUser]);
-            setShowModal(false)
-          }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error);
-          showToast("error", errorMessage);
-        }
-      })()
+  };
+
+  const viewDemoClose = (modal: any) => {
+    Cookies.remove('username')
+    switch (modal) {
+
+      case "select":
+        setSelect(false);
+        break;
     }
+  };
 
+  const handleTabChange = (tabKey: string) => {
+    setActiveTab(tabKey); // Change the active tab
+  };
 
-
-  const roletype = [
-    { value: "1", label: "Super Admin" },
-    { value: "2", label: "Admin" }
-  ];
-
-
-  const membertype = [
-    { value: "1", label: "Club" },
-    { value: "2", label: "Swimming Pull" }
-  ];
-
-  const narration = [
-    { value: "1", label: "2BHK" },
-    { value: "2", label: "3BHK" }
-  ];
-
-  const propertystatus = [
-    { value: "1", label: "Occupied" },
-    { value: "2", label: "Unoccupied" }
-  ];
-
-  const loantype = [
-    { value: "1", label: "Home" },
-    { value: "2", label: "Vehicle" }
-  ];
-
-  const vehicletype = [
-    { value: "1", label: "2W" },
-    { value: "2", label: "4W" }
-  ];
-
-  }
-  const handleDelete = (data: any) => {
-    console.log(data)
-      ; (async () => {
-        try {
-          const response = await deleteUserApi(data.personId)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            // Remove the user from the table
-            setUsers(prevData => prevData.filter(user => user.personId !== data.personId))
-          }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error)
-          showToast("error", errorMessage)
-        }
-      })()
-  }
-
+  const renderFooter = (customFooter: React.ReactNode) => {
+    return (
+      <Modal.Footer>
+        {customFooter}
+      </Modal.Footer>
+    );
+  };
 
 
   return (
@@ -451,13 +317,14 @@ export default function Users() {
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
           <span className="main-content-title mg-b-0 mg-b-lg-1">User Master</span>
+
         </div>
 
         <div className="right-content">
 
 
           <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("select")}><i className="bi bi-plus"></i> Add User</button>
-          <Modal show={select} centered size='xl' >
+          <Modal show={select} onHide={() => { viewDemoClose("select"); }} centered size='xl' >
             <Modal.Header>
               <Modal.Title>Add User</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("select"); }}>
@@ -465,882 +332,75 @@ export default function Users() {
               </Button>
             </Modal.Header>
             <Modal.Body className='usertab pb-0'>
-            <Tabs
-                defaultActiveKey="Personal"
+              <Tabs
+                activeKey={activeTab || "Personal"}
+                onSelect={(key: any) => setActiveTab(key)}
                 id="uncontrolled-tab-example"
                 className="panel-tabs main-nav-line bd-b-1"
                 transition={false}
               >
-
-                <Tab eventKey="Personal" title="Personal" className='pt-1'>
-
-
-<Row>
-<Col xl={4}>
-<Form.Group className="form-group">
-  <Form.Label>UserName <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Username' className='form-control'></Form.Control>
-</Form.Group>
-</Col>
-<Col xl={4}>
-<Form.Group className="form-group">
-  <Form.Label>Password<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='password' placeholder='First Name' className='form-control'></Form.Control>
-</Form.Group>
-</Col>
-<Col xl={4}></Col>
-<Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>First Name <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='First Name' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Last Name <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Last Name' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-
-
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Email <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Email' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Mobile No. <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Mobileno' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Alternative Mobile No. <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Mobileno' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Date of Birth <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Anniversary <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Record Type<span className="text-danger">*</span></Form.Label>
-  <div className="SlectBox">
-      <Select
-         options={Recordtype}
-        placeholder="Select Type"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-  </Col>
-
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Member Type<span className="text-danger">*</span></Form.Label>
-  <div className="SlectBox">
-      <Select
-         options={membertype}
-        placeholder="Select type"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-  </Col>
-  <Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Country <span className="text-danger">*</span></Form.Label>
-
-  <div className=" SlectBox">
-      <Select
-         options={countryoption}
-        placeholder="Country"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-
-</Form.Group>
-</Col>
-<Col xl={4}>
-<Form.Group className="form-group">
-  <Form.Label>State <span className="text-danger">*</span></Form.Label>
-  <div className=" SlectBox">
-      <Select
-         options={stateoption}
-        placeholder="State"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-</Col>
-<Col xl={4}>
-<Form.Group className="form-group">
-  <Form.Label>City <span className="text-danger">*</span></Form.Label>
-  <div className=" SlectBox">
-      <Select
-         options={cityoption}
-        placeholder="City"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-</Col>
-<Col xl={4}>
-<Form.Group className="form-group">
-  <Form.Label>Zipcode <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Zipcode' className='form-control'></Form.Control>
-</Form.Group>
-
-</Col>
-
-<Col xl={4}>
-  <Form.Group className="form-group">
-  <Form.Label>Address<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Mobileno' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-  <Col xl={4}>
-<Form.Group className="form-group">
-  <Form.Label>Roles<span className="text-danger">*</span></Form.Label>
-  <div className="SlectBox">
-      <Select
-         options={roletype}
-        placeholder="Select Roles"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-</Col>
-</Row>
-
-
-
-                </Tab>
-                <Tab eventKey="Document" title="Document">
-                <Row>
-<Col xl={6}>
-<Form.Group className="form-group">
-  <Form.Label>Aadhar No <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Aadhar No' className='form-control'></Form.Control>
-</Form.Group>
-</Col>
-
-<Col xl={6}>
-<Form.Group className="form-group">
-  <Form.Label>Pan No.<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Pan No' className='form-control'></Form.Control>
-</Form.Group>
-</Col>
-
-<Col xl={6}>
-  <Form.Group className="form-group">
-  <Form.Label>Passport No. <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Passport No.' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={6}>
-  <Form.Group className="form-group">
-  <Form.Label>GSTIN No. (Member) <span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='GSTIN No. (Member)' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-
-
-</Row>
+                <Tab disabled={disabledTab.Personal} eventKey="Personal" title={
+                  <>
+                    Personal {completedTabs.Personal && <i className="bi bi-check-circle-fill"></i>}
+                  </>
+                } className='pt-1'>
+                  <PersonalInfo setCompletedTabs={setCompletedTabs} handleTabChange={handleTabChange} setDisabledTab={setDisabledTab} renderFooter={renderFooter} />
                 </Tab>
 
-                <Tab eventKey="Properties" title="Properties" className='pt-2'>
-
-                <Row>
-<Col xl={3}>
-<Form.Group className="form-group">
-  <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='Property Name' className='form-control'></Form.Control>
-</Form.Group>
-</Col>
-
-<Col xl={3}>
-<Form.Group className="form-group">
-  <Form.Label>Owner Name<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='owner name' className='form-control'></Form.Control>
-</Form.Group>
-</Col>
-
-<Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Narration<span className="text-danger">*</span></Form.Label>
-  <div className="SlectBox">
-      <Select
-         options={narration}
-        placeholder="Select Type"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Status <span className="text-danger">*</span></Form.Label>
-  <div className="SlectBox">
-      <Select
-         options={propertystatus}
-        placeholder="Select status"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-  </Col>
-
-  <Col xl={12}>
-  <Form.Group className="form-group">
-  <Button className='btn btn-promary btn-sm float-end'>+ Add</Button>
-</Form.Group>
-  </Col>
-
-
-
-</Row>
-
-<Row>
-  <Col xl={12}>
-  <table className='table table-bordered mt-3'>
-    <thead>
-      <tr>
-        <th>S.no.</th>
-        <th>Property Name</th>
-        <th>Owner Name</th>
-        <th>Narration</th>
-        <th>Status</th>
-        <th className='text-center'>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>A-204</td>
-        <td>Vinod Kumar </td>
-        <td>2BHK</td>
-        <td>Ouccupied</td>
-        <td align='center'><i className='bi bi-trash text-danger cursor'></i></td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>A-204</td>
-        <td>Vinod Kumar </td>
-        <td>2BHK</td>
-        <td>Ouccupied</td>
-        <td align='center'><i className='bi bi-trash text-danger cursor'></i></td>
-      </tr>
-    </tbody>
-  </table>
-  </Col>
-</Row>
+                <Tab disabled={disabledTab.Document} eventKey="Document" title={
+                  <>
+                    Document {completedTabs.Document && <i className="bi bi-check-circle-fill"></i>}
+                  </>
+                }>
+                  <Document setCompletedTabs={setCompletedTabs} handleTabChange={handleTabChange} setDisabledTab={setDisabledTab} renderFooter={renderFooter} />
                 </Tab>
 
-                <Tab eventKey="Loan" title="Loan" className='pt-2'>
+                <Tab disabled={disabledTab.Properties} eventKey="Properties" title={
+                  <>
+                    Properties {completedTabs.Properties && <i className="bi bi-check-circle-fill"></i>}
+                  </>
+                } className='pt-2'>
 
-                <Row>
-<Col xl={3}>
-<Form.Group className="form-group">
-  <Form.Label>Loan Type<span className="text-danger">*</span></Form.Label>
-  <div className="SlectBox">
-      <Select
-         options={loantype}
-        placeholder="Select Type"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-</Col>
+                  <Properties setCompletedTabs={setCompletedTabs} handleTabChange={handleTabChange} setDisabledTab={setDisabledTab} renderFooter={renderFooter} />
+                </Tab>
 
-<Col xl={3}>
-<Form.Group className="form-group">
-  <Form.Label>Loan Number<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='loan number' className='form-control'></Form.Control>
-</Form.Group>
-</Col>
+                <Tab disabled={disabledTab.Loan} eventKey="Loan" title={
+                  <>
+                    Loan {completedTabs.Loan && <i className="bi bi-check-circle-fill"></i>}
+                  </>
+                } className='pt-2'>
+                  <Loan setCompletedTabs={setCompletedTabs} handleTabChange={handleTabChange} setDisabledTab={setDisabledTab} renderFooter={renderFooter} />
+                </Tab>
 
-<Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Loan Period (in yrs)<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='10' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
+                <Tab disabled={disabledTab.Parking} eventKey="Parking" title="Parking" className='pt-2'>
+                  <Parking setCompletedTabs={setCompletedTabs} handleTabChange={handleTabChange} setDisabledTab={setDisabledTab} renderFooter={renderFooter} />
 
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Loan Amount<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='loan amount' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Start Date<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>End Date<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Monthly EMI<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='monthly emi' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Bank Name<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='bank name' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={6}>
-  <Form.Group className="form-group">
-  <Form.Label>Bank Address<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='address' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Loan Scan Copy <span className="text-danger">*</span> <span className='float-end text-muted tx-10 tx-normal'>Upload size: Max 2 MB</span></Form.Label>
-  <Form.Control type='file' placeholder='' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label></Form.Label>
-  <Button className='btn btn-promary btn-sm mt-4'>+ Add</Button>
-</Form.Group>
-  </Col>
-
-
-
-</Row>
-
-<Row>
-  <Col xl={12}>
-  <table className='table table-bordered mt-3'>
-    <thead>
-      <tr>
-        <th>S.no.</th>
-        <th>Loan Type</th>
-        <th>Loan Number</th>
-        <th>Loan Period</th>
-        <th>Loan Amount</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Monthly EMI</th>
-        <th>Bank Name</th>
-        <th>Bank Address</th>
-        <th>Upload File</th>
-        <th className='text-center'>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>Vehicle</td>
-        <td>4657686797898</td>
-        <td>10yrs</td>
-        <td>80,000</td>
-        <td>12/12/2024</td>
-        <td>12/12/2023</td>
-        <td>7,000</td>
-        <td>HDFC Bank</td>
-        <td>Sector 21, Noida Uttar Pradesh 201102</td>
-        <td><img src={imagesData('pdficon')} className="wd-50"/></td>
-        <td align='center'><i className='bi bi-trash text-danger cursor'></i></td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>Home</td>
-        <td>4657686797898</td>
-        <td>10yrs</td>
-        <td>80,000</td>
-        <td>12/12/2024</td>
-        <td>12/12/2023</td>
-        <td>7,000</td>
-        <td>HDFC Bank</td>
-        <td>Sector 21, Noida Uttar Pradesh 201102</td>
-        <td><img src={imagesData('pdficon')} className="wd-50"/></td>
-        <td align='center'><i className='bi bi-trash text-danger cursor'></i></td>
-      </tr>
-    </tbody>
-  </table>
-  </Col>
-</Row>
- </Tab>
-
- <Tab eventKey="Parking" title="Parking" className='pt-2'>
-
- <Row>
-
-
-<Col xl={3}>
-<Form.Group className="form-group">
-  <Form.Label>Vehicle Type<span className="text-danger">*</span></Form.Label>
-  <div className="SlectBox">
-      <Select
-         options={vehicletype}
-        placeholder="Select type"
-        // classNamePrefix="selectform"
-        classNamePrefix='Select2' className="multi-select"
-      />
-    </div>
-</Form.Group>
-</Col>
-
-<Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Vehicle Number<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='vehicle number' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Vehicle Owner Name<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='owner name' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>DL Number<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='owner name' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>DL Issue Date<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>DL Expiry Date<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label>Parking Number<span className="text-danger">*</span></Form.Label>
-  <Form.Control type='text' placeholder='parking number' className='form-control'></Form.Control>
-</Form.Group>
-  </Col>
-
-
-
-
-  <Col xl={3}>
-  <Form.Group className="form-group">
-  <Form.Label></Form.Label>
-  <Button className='btn btn-promary btn-sm mt-4'>+ Add</Button>
-</Form.Group>
-  </Col>
-
-
-
-</Row>
-
-<Row>
-  <Col xl={12}>
-  <table className='table table-bordered mt-3'>
-    <thead>
-      <tr>
-        <th>S.no.</th>
-        <th>Vehicle Type</th>
-        <th>Vehicle Number</th>
-        <th>Vehicle Owner Name</th>
-        <th>DL Number</th>
-        <th>DL Issue Date</th>
-        <th>DL Expiry Date</th>
-        <th>Parking Number</th>
-         <th className='text-center'>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>4 Wheelr</td>
-        <td>UP2A9876</td>
-        <td>Rahul Sharma</td>
-        <td>345464564</td>
-        <td>12/12/2024</td>
-        <td>12/12/2034</td>
-        <td>234</td>
-       <td align='center'><i className='bi bi-trash text-danger cursor'></i></td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>4 Wheelr</td>
-        <td>UP2A9876</td>
-        <td>Rahul Sharma</td>
-        <td>345464564</td>
-        <td>12/12/2024</td>
-        <td>12/12/2034</td>
-        <td>234</td>
-        <td align='center'><i className='bi bi-trash text-danger cursor'></i></td>
-      </tr>
-    </tbody>
-  </table>
-  </Col>
-</Row>
- </Tab>
+                </Tab>
 
 
               </Tabs>
-
-
-
-
             </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("select"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoShow("select"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
-
-          <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add User</button>
-          <Modal show={showModal} onHide={() => setShowModal(false)} centered size='lg' >
-            <Formik
-              initialValues={{
-                personId: currentUser?.personId || "",
-                firstName: currentUser?.firstName || "",
-                lastName: currentUser?.lastName || "",
-                personGenderIdentity: { value: currentUser?.personGenderIdentity || "", label: currentUser?.personGenderIdentity || "" },
-                personEmail: currentUser?.personEmail || "",
-                phone: currentUser?.phone || "",
-                personBirthdate: currentUser?.personBirthdate,
-                role: { value: currentUser?.role || "", label: currentUser?.role || "" },
-                country: { value: currentUser.country, label: currentUser.country }, // Update this
-                state: { value: currentUser.state, label: currentUser.state },
-                city: { value: currentUser.city, label: currentUser.city },
-                zipcode: currentUser?.zipcode || ""
-              }
-              }
-              validationSchema={isEditing ? updateUserValidationSchema : addUserValidationSchema}
-              onSubmit={handleSubmit}
-            >
-              {({ setFieldValue, values, touched, errors }) => (
-                <FormikForm>
-                  <Modal.Header>
-                    <Modal.Title>{isEditing ? "Edit User" : "Add User"}</Modal.Title>
-                    <Button variant="" className="btn btn-close" onClick={() => setShowModal(false)}>
-                      x
-                    </Button>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Row>
-                      {/* Username */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>UserName <span className="text-danger">*</span></Form.Label>
-                          <Field
-                            type='text'
-                            placeholder='UserName'
-                            disabled={isEditing}
-                            className='form-control'
-                            name="personId"
-                          />
-                          <ErrorMessage name="personId" component="div" className="text-danger" />
-                        </Form.Group>
-                      </Col>
-
-                      {/* <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Password<span className="text-danger">*</span></Form.Label>
-                          <Form.Control type='password' placeholder='First Name' className='form-control'></Form.Control>
-                        </Form.Group>
-                      </Col> */}
-
-                      {/* First Name */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>First Name <span className="text-danger">*</span></Form.Label>
-                          <Field
-                            type='text'
-                            placeholder='First Name'
-                            className='form-control'
-                            name="firstName"
-                          />
-                          <ErrorMessage name="firstName" component="div" className="text-danger" />
-                        </Form.Group>
-                      </Col>
-                      {/* Last Name */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Last Name <span className="text-danger">*</span></Form.Label>
-                          <Field
-                            type='text'
-                            placeholder='Last Name'
-                            className='form-control'
-                            name="lastName"
-                          />
-                          <ErrorMessage name="lastName" component="div" className="text-danger" />
-                        </Form.Group>
-                      </Col>
-                      {/* Gender */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Gender<span className="text-danger">*</span></Form.Label>
-                          <div className="SlectBox">
-                            <Select
-                              options={gender}
-                              placeholder="Select Gender"
-                              value={values.personGenderIdentity}
-                              onChange={(selected) => setFieldValue('personGenderIdentity', selected)}
-                              // classNamePrefix="selectform"
-                              classNamePrefix='Select2' className="multi-select"
-                            />
-                            {touched.personGenderIdentity?.value && errors.personGenderIdentity?.value && (
-                              <div className="text-danger">{errors.personGenderIdentity.value}</div>
-                            )}
-                          </div>
-                        </Form.Group>
-                      </Col>
-                      {/* Date of Birth */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>
-                            DOB<span className="text-danger">*</span>
-                          </Form.Label>
-                          <div className="datepicker-wrapper">
-                            <ReactDatePicker
-                              selected={values.personBirthdate ? new Date(values.personBirthdate) : null}
-                              onChange={(date) => {
-                                // Convert the selected date to a string in 'YYYY-MM-DD' format
-                                const formattedDate = date ? date.toISOString().split("T")[0] : null;
-                                setFieldValue("personBirthdate", formattedDate);
-                              }}
-                              dateFormat="yyyy-MM-dd"
-                              placeholderText="Select DOB"
-                              className="form-control"
-                              showYearDropdown
-                              yearDropdownItemNumber={100}
-                              scrollableYearDropdown
-                            />
-
-                          </div>
-                          {touched.personBirthdate && errors.personBirthdate && (
-                            <div className="text-danger">{errors.personBirthdate}</div>
-                          )}
-                        </Form.Group>
-                      </Col>
-                      {/* Roles */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Roles<span className="text-danger">*</span></Form.Label>
-                          <div className="SlectBox">
-                            <Select
-                              options={roletype}
-                              value={values.role}
-                              placeholder="Select Roles"
-                              onChange={(selected) => setFieldValue('role', selected)}
-                              // classNamePrefix="selectform"
-                              classNamePrefix='Select2' className="multi-select"
-                            />
-                            {touched.role?.value && errors.role?.value && (
-                              <div className="text-danger">{errors.role.value}</div>
-                            )}
-                          </div>
-                        </Form.Group>
-                      </Col>
-                      {/* Email */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Email <span className="text-danger">*</span></Form.Label>
-                          <Field
-                            type='text'
-                            placeholder='Email'
-                            className='form-control'
-                            name="personEmail"
-                          />
-                          <ErrorMessage name="personEmail" component="div" className="text-danger" />
-                        </Form.Group>
-                      </Col>
-                      {/* Phone */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Phone. <span className="text-danger">*</span></Form.Label>
-                          <Field
-                            type='text'
-                            placeholder='Phone'
-                            className='form-control'
-                            name="phone"
-                          />
-                          <ErrorMessage name="phone" component="div" className="text-danger" />
-                        </Form.Group>
-                      </Col>
-                      {/* Country */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Country <span className="text-danger">*</span></Form.Label>
-
-                          <div className=" SlectBox">
-                            <Select
-                              options={countryoption}
-                              value={values.country}
-                              placeholder="Country"
-                              onChange={(selected) => setFieldValue('country', selected)}
-                              // classNamePrefix="selectform"
-                              classNamePrefix='Select2' className="multi-select"
-                            />
-                            {touched.country?.value && errors.country?.value && (
-                              <div className="text-danger">{errors.country.value}</div>
-                            )}
-                          </div>
-
-                        </Form.Group>
-                      </Col>
-
-                      {/* State */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>State <span className="text-danger">*</span></Form.Label>
-                          <Select
-                            options={stateOptions}
-                            value={values.state}
-                            onChange={(selected: any) => {
-                              setFieldValue('state', selected);
-                              handleStateChange({
-                                value: selected.value,
-                                label: selected.label
-                              });
-                            }}
-                            placeholder="Select State"
-                            classNamePrefix="Select2"
-                          />
-                          {touched.state?.value && errors.state?.value && (
-                            <div className="text-danger">{errors.state.value}</div>
-                          )}
-                        </Form.Group>
-                      </Col>
-
-                      {/* City */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>City <span className="text-danger">*</span></Form.Label>
-                          <Select
-                            options={cityOptions}
-                            value={values.city}
-                            onChange={(selected) => setFieldValue("city", selected)}
-                            placeholder="Select City"
-                            classNamePrefix="Select2"
-                          />
-                          {touched.city?.value && errors.city?.value && (
-                            <div className="text-danger">{errors.city.value}</div>
-                          )}
-                        </Form.Group>
-                      </Col>
-
-                      {/* Zipcode */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Zipcode <span className="text-danger">*</span></Form.Label>
-                          <Field
-                            type='text'
-                            placeholder='Zipcode'
-                            className='form-control'
-                            name="zipcode"
-                          />
-                          <ErrorMessage name="zipcode" component="div" className="text-danger" />
-                        </Form.Group>
-
-                      </Col>
-
-                    </Row>
-
-
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="default" onClick={() => setShowModal(false)}>
-                      Close
-                    </Button>
-                    <Button variant="primary" type="submit">
-                      {isEditing ? "Save changes" : "Save"}
-                    </Button>
-
-                  </Modal.Footer>
-                </FormikForm>
-              )}
-            </Formik>
-
-
+            <CustomToastContainer />
           </Modal>
-          <CustomToastContainer />
 
         </div>
+
       </div>
-
-      <Row>
-        <Col xl={12}>
-          <Card>
-            <Card.Body>
-
-              <div className="table-responsive ">
-                <DataTableExtensions {...tableData}>
-                  <DataTable
-                    columns={columns}
-                    data={users}
-                    pagination
-
-
-                  />
-                </DataTableExtensions>
-              </div>
-
-
-
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-
+      <div
+        className="table-responsive"
+      >
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            data={users}
+            fixedHeader
+            highlightOnHover
+            pagination
+            keyField="id"
+          />
+        </DataTableExtensions>
+      </div>
     </Fragment>
-  );
+  )
+
 }
