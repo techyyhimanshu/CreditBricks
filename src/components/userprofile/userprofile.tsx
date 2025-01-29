@@ -52,19 +52,15 @@ export default function UserProfile() {
                   </Nav.Item>
                   <Nav.Item>
                     <Nav.Link eventKey="TabStyle04">
-                    <Link className='p-0' to={``}>Loan</Link>
+                    Loan
                     </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
                     <Nav.Link eventKey="TabStyle05">
-                    <Link className='p-0' to={``}> Parking</Link>
+                   Parking
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link eventKey="TabStyle06">
-                    <Link className='p-0' to={`${import.meta.env.BASE_URL}accounts/accounts`}>Accounts   </Link>
-</Nav.Link>
-                  </Nav.Item>
+
                  <Nav.Item>
                     <Nav.Link eventKey="TabStyle08">
                  Logout
@@ -221,6 +217,71 @@ export default function UserProfile() {
     <label>GSTIN No. (Member)</label>
     <strong>-</strong>
   </Col>
+
+</Row>
+                    </CardBody>
+                </Card>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="TabStyle03">
+                  <Card className='mb-3'>
+                  <CardHeader>
+                    <h5>Properties Details</h5>
+                  </CardHeader>
+                  <CardBody className='pt-0'>
+<Row>
+  <Col xl={6}>
+<Card>
+  <CardBody>
+
+  </CardBody>
+  </Card>
+  </Col>
+
+
+
+</Row>
+                    </CardBody>
+                </Card>
+                  </Tab.Pane>
+
+                  <Tab.Pane eventKey="TabStyle04">
+                  <Card className='mb-3'>
+                  <CardHeader>
+                    <h5>Loan Details</h5>
+                  </CardHeader>
+                  <CardBody className='pt-0'>
+<Row>
+  <Col xl={6}>
+<Card>
+  <CardBody>
+
+  </CardBody>
+  </Card>
+  </Col>
+
+
+
+</Row>
+                    </CardBody>
+                </Card>
+                  </Tab.Pane>
+
+                  <Tab.Pane eventKey="TabStyle05">
+                  <Card className='mb-3'>
+                  <CardHeader>
+                    <h5>Parking Details</h5>
+                  </CardHeader>
+                  <CardBody className='pt-0'>
+<Row>
+  <Col xl={6}>
+<Card>
+  <CardBody>
+
+  </CardBody>
+  </Card>
+  </Col>
+
+
 
 </Row>
                     </CardBody>
