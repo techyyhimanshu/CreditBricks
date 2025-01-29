@@ -4,7 +4,7 @@ import { Button, Col, Form, InputGroup, Row, Spinner } from 'react-bootstrap';
 import * as Switcherdatacustam from "../../../../common/switcherdatacustam";
 import useFormValidation from "../../../../common/hooks/FormValidation";
 import apiService from "../../../../common/redux/api";
-import { showToast, Toaster } from "../../../../common/services/toastServices";
+import { showToast, CustomToastContainer } from "../../../../common/services/toastServices";
 import 'react-toastify/dist/ReactToastify.css'
 import { useGoogleLogin } from "@react-oauth/google";
 // import store from "../../../../common/store/store";
@@ -145,8 +145,8 @@ const SignUp = () => {
     <Fragment>
       <div>
         <div className="page loginbg">
-          <Toaster />
-         <div
+          <CustomToastContainer />
+          <div
             className="page-single"
             onClick={() => Switcherdatacustam.Swichermainrightremove()}
           >
@@ -161,230 +161,230 @@ const SignUp = () => {
                   className="card p-0 mx-auto my-auto justify-content-center"
                 >
                   <div className="card-sigin p-0">
-                  <Row>
-                  <Col xl={7} className="p-0">
-                    <img src="https://lh3.googleusercontent.com/Shib0aDkNhDxKfbhfOwWWg5vKJRknZc1YiLkjwcbMaLyRSUMI_liPbScEpXZrgDI0chcLqz7cVuer5b8mh2JBjausQc9lfq4-YwxGT0WV-egD0c" className="signup_img"/>
+                    <Row>
+                      <Col xl={7} className="p-0">
+                        <img src="https://lh3.googleusercontent.com/Shib0aDkNhDxKfbhfOwWWg5vKJRknZc1YiLkjwcbMaLyRSUMI_liPbScEpXZrgDI0chcLqz7cVuer5b8mh2JBjausQc9lfq4-YwxGT0WV-egD0c" className="signup_img" />
 
-                    </Col>
-                    <Col xl={5} className="pt-4 pb-0 ps-4 pe-4 bg-white right-radius radius15">
-                    <div className="main-signup-header">
-                    {
-          logo?<img src={logo} alt={tenant} className="rounded mx-auto d-block" style={{height:"50px",width:"50px"}}/>: <h3 className="text-primary  text-center">Dealovate</h3>
-        }
+                      </Col>
+                      <Col xl={5} className="pt-4 pb-0 ps-4 pe-4 bg-white right-radius radius15">
+                        <div className="main-signup-header">
+                          {
+                            logo ? <img src={logo} alt={tenant} className="rounded mx-auto d-block" style={{ height: "50px", width: "50px" }} /> : <h3 className="text-primary  text-center">Dealovate</h3>
+                          }
                           {/* <h5 className="mb-2 mt-2  text-center">Register your account</h5> */}
                           <p className=" text-center mb-3">Register your account</p>
-                            <Form onSubmit={handleFormSubmit}>
-                              <Row>
-                                <Col xl={6}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label>First Name <span className="text-danger">*</span></Form.Label>
-                                    <InputGroup className="input-group">
+                          <Form onSubmit={handleFormSubmit}>
+                            <Row>
+                              <Col xl={6}>
+                                <Form.Group className="form-group mb-1">
+                                  <Form.Label>First Name <span className="text-danger">*</span></Form.Label>
+                                  <InputGroup className="input-group">
 
-                                      <InputGroup.Text
-                                        className="input-group-text"
-                                        id="basic-addon1"
-                                      >
-                                        <i className="bi bi-person"></i>
-                                      </InputGroup.Text>
-                                      <Form.Control
-                                        className="form-control"
-                                        type="text"
-                                        id="firstName"
-                                        name="firstName"
-                                        value={formData.firstName}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        isInvalid={!!errors.firstName} />
-                                      <Form.Control.Feedback type="invalid" tooltip>
-                                        {errors.firstName}
-                                      </Form.Control.Feedback>
-                                    </InputGroup>
+                                    <InputGroup.Text
+                                      className="input-group-text"
+                                      id="basic-addon1"
+                                    >
+                                      <i className="bi bi-person"></i>
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                      className="form-control"
+                                      type="text"
+                                      id="firstName"
+                                      name="firstName"
+                                      value={formData.firstName}
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      isInvalid={!!errors.firstName} />
+                                    <Form.Control.Feedback type="invalid" tooltip>
+                                      {errors.firstName}
+                                    </Form.Control.Feedback>
+                                  </InputGroup>
 
-                                  </Form.Group>
-                                </Col>
-                                <Col xl={6}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label>Last Name <span className="text-danger">*</span></Form.Label>
-                                    <InputGroup className="input-group">
+                                </Form.Group>
+                              </Col>
+                              <Col xl={6}>
+                                <Form.Group className="form-group mb-1">
+                                  <Form.Label>Last Name <span className="text-danger">*</span></Form.Label>
+                                  <InputGroup className="input-group">
 
-                                      <InputGroup.Text
-                                        className="input-group-text"
-                                        id="basic-addon1"
-                                      >
-                                        <i className="bi bi-person"></i>
-                                      </InputGroup.Text>
-                                      <Form.Control
-                                        className="form-control"
-                                        type="text"
-                                        id="lastName"
-                                        name="lastName"
-                                        value={formData.lastName}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        isInvalid={!!errors.lastName} />
-                                      <Form.Control.Feedback type="invalid" tooltip>
-                                        {errors.lastName}
-                                      </Form.Control.Feedback>
-                                    </InputGroup>
-                                  </Form.Group>
-                                </Col>
+                                    <InputGroup.Text
+                                      className="input-group-text"
+                                      id="basic-addon1"
+                                    >
+                                      <i className="bi bi-person"></i>
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                      className="form-control"
+                                      type="text"
+                                      id="lastName"
+                                      name="lastName"
+                                      value={formData.lastName}
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      isInvalid={!!errors.lastName} />
+                                    <Form.Control.Feedback type="invalid" tooltip>
+                                      {errors.lastName}
+                                    </Form.Control.Feedback>
+                                  </InputGroup>
+                                </Form.Group>
+                              </Col>
 
-                                <Col xl={12}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label>Email Address <span className="text-danger">*</span></Form.Label>
-                                    <InputGroup className="input-group">
+                              <Col xl={12}>
+                                <Form.Group className="form-group mb-1">
+                                  <Form.Label>Email Address <span className="text-danger">*</span></Form.Label>
+                                  <InputGroup className="input-group">
 
-                                      <InputGroup.Text
-                                        className="input-group-text"
-                                        id="basic-addon1"
-                                      >
-                                        <i className="bi bi-envelope"></i>
-                                      </InputGroup.Text>
-                                      <Form.Control
-                                        className="form-control"
-                                        type="emailId"
-                                        id="emailId"
-                                        name="emailId"
-                                        value={formData.emailId}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        isInvalid={!!errors.emailId} />
-                                      <Form.Control.Feedback type="invalid" tooltip>
-                                        {errors.emailId}
-                                      </Form.Control.Feedback>
-                                    </InputGroup>
-                                  </Form.Group>
-                                </Col>
+                                    <InputGroup.Text
+                                      className="input-group-text"
+                                      id="basic-addon1"
+                                    >
+                                      <i className="bi bi-envelope"></i>
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                      className="form-control"
+                                      type="emailId"
+                                      id="emailId"
+                                      name="emailId"
+                                      value={formData.emailId}
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      isInvalid={!!errors.emailId} />
+                                    <Form.Control.Feedback type="invalid" tooltip>
+                                      {errors.emailId}
+                                    </Form.Control.Feedback>
+                                  </InputGroup>
+                                </Form.Group>
+                              </Col>
 
-                                <Col xl={12}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label>Mobile Number <span className="text-danger">*</span></Form.Label>
-                                    <InputGroup className="input-group">
+                              <Col xl={12}>
+                                <Form.Group className="form-group mb-1">
+                                  <Form.Label>Mobile Number <span className="text-danger">*</span></Form.Label>
+                                  <InputGroup className="input-group">
 
-                                      <InputGroup.Text
-                                        className="input-group-text"
-                                        id="basic-addon1"
-                                      >
-                                        <i className="bi bi-phone"></i>
-                                      </InputGroup.Text>
-                                      <Form.Control
-                                        className="form-control"
-                                        type="number"
-                                        id="mobile"
-                                        name="mobile"
-                                        value={formData.mobile}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        isInvalid={!!errors.mobile} />
-                                      <Form.Control.Feedback type="invalid" tooltip>
-                                        {errors.mobile}
-                                      </Form.Control.Feedback>
-                                    </InputGroup>
-                                  </Form.Group>
-                                </Col>
+                                    <InputGroup.Text
+                                      className="input-group-text"
+                                      id="basic-addon1"
+                                    >
+                                      <i className="bi bi-phone"></i>
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                      className="form-control"
+                                      type="number"
+                                      id="mobile"
+                                      name="mobile"
+                                      value={formData.mobile}
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      isInvalid={!!errors.mobile} />
+                                    <Form.Control.Feedback type="invalid" tooltip>
+                                      {errors.mobile}
+                                    </Form.Control.Feedback>
+                                  </InputGroup>
+                                </Form.Group>
+                              </Col>
 
-                                <Col xl={12}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label>Password <span className="text-danger">*</span></Form.Label>
-                                    <InputGroup className="input-group">
+                              <Col xl={12}>
+                                <Form.Group className="form-group mb-1">
+                                  <Form.Label>Password <span className="text-danger">*</span></Form.Label>
+                                  <InputGroup className="input-group">
 
-                                      <InputGroup.Text
-                                        className="input-group-text"
-                                        id="basic-addon1"
-                                      >
-                                        <i className="bi bi-key"></i>
-                                      </InputGroup.Text>
-                                      <Form.Control
-                                        className="form-control"
-                                        type="password"
-                                        id="password"
-                                        name="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        isInvalid={!!errors.password} />
-                                      <Form.Control.Feedback type="invalid" tooltip>
-                                        {errors.password}
-                                      </Form.Control.Feedback>
-                                    </InputGroup>
-                                  </Form.Group>
-                                </Col>
-                                <Col xl={6}>
-                                  <span className="text-center tx-32 captcha mt-3">{captcha}</span>
-                                  <i className="bi bi-arrow-clockwise captcharefresh" onClick={() => getCaptcha()}></i>
-                                </Col>
-                                <Col xl={6}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label>Captcha Code <span className="text-danger">*</span></Form.Label>
-                                    <InputGroup className="input-group">
+                                    <InputGroup.Text
+                                      className="input-group-text"
+                                      id="basic-addon1"
+                                    >
+                                      <i className="bi bi-key"></i>
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                      className="form-control"
+                                      type="password"
+                                      id="password"
+                                      name="password"
+                                      value={formData.password}
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      isInvalid={!!errors.password} />
+                                    <Form.Control.Feedback type="invalid" tooltip>
+                                      {errors.password}
+                                    </Form.Control.Feedback>
+                                  </InputGroup>
+                                </Form.Group>
+                              </Col>
+                              <Col xl={6}>
+                                <span className="text-center tx-32 captcha mt-3">{captcha}</span>
+                                <i className="bi bi-arrow-clockwise captcharefresh" onClick={() => getCaptcha()}></i>
+                              </Col>
+                              <Col xl={6}>
+                                <Form.Group className="form-group mb-1">
+                                  <Form.Label>Captcha Code <span className="text-danger">*</span></Form.Label>
+                                  <InputGroup className="input-group">
 
-                                      <InputGroup.Text
-                                        className="input-group-text"
-                                        id="basic-addon1"
-                                      >
-                                        <i className="bi bi-upc"></i>
-                                      </InputGroup.Text>
-                                      <Form.Control
-                                        className="form-control"
-                                        type="text"
-                                        id="captcha"
-                                        name="captcha"
-                                        value={formData.captcha}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                        isInvalid={!!errors.captcha} />
-                                      <Form.Control.Feedback type="invalid" tooltip>
-                                        {errors.captcha}
-                                      </Form.Control.Feedback>
-                                    </InputGroup>
-                                  </Form.Group>
-                                </Col>
-                                <Col xl={12}>
-                                  <Button
-                                    variant=""
-                                    className="btn btn-primary btn-block mt-3 mb-3"
-                                    type="submit"
-                                  >{!loading ? '' : <Spinner animation="border"
-                                    className="spinner-border spinner-border-sm me-1"
-                                    role="status"
-                                    aria-hidden="true"
-                                  ></Spinner>}
-                                    Sign Up
-                                  </Button>
-                                </Col>
-                              </Row>
+                                    <InputGroup.Text
+                                      className="input-group-text"
+                                      id="basic-addon1"
+                                    >
+                                      <i className="bi bi-upc"></i>
+                                    </InputGroup.Text>
+                                    <Form.Control
+                                      className="form-control"
+                                      type="text"
+                                      id="captcha"
+                                      name="captcha"
+                                      value={formData.captcha}
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      isInvalid={!!errors.captcha} />
+                                    <Form.Control.Feedback type="invalid" tooltip>
+                                      {errors.captcha}
+                                    </Form.Control.Feedback>
+                                  </InputGroup>
+                                </Form.Group>
+                              </Col>
+                              <Col xl={12}>
+                                <Button
+                                  variant=""
+                                  className="btn btn-primary btn-block mt-3 mb-3"
+                                  type="submit"
+                                >{!loading ? '' : <Spinner animation="border"
+                                  className="spinner-border spinner-border-sm me-1"
+                                  role="status"
+                                  aria-hidden="true"
+                                ></Spinner>}
+                                  Sign Up
+                                </Button>
+                              </Col>
+                            </Row>
 
-                            </Form>
-                            <hr />
-                            <p className="text-center mt-2 or_login">OR</p>
-                            <div className="mt-3 d-flex text-center justify-content-center mb-0">
+                          </Form>
+                          <hr />
+                          <p className="text-center mt-2 or_login">OR</p>
+                          <div className="mt-3 d-flex text-center justify-content-center mb-0">
 
-                              <Button
-                                onClick={() => login()}
-                                className="btn btn-icon me-2  btn-white border-0"
-                                type="button"
-                              >
-                                <span className="btn-inner--icon">
-                                  {" "}
-                                  <i className="bx bxl-google tx-18 tx-prime"></i>{" "}
-                                </span>
-                              </Button>
-                              <Button
-                                onClick={handleLogin}
-                                className="btn btn-icon me-2  btn-white border-0"
-                                type="button"
-                              >
-                                <span className="btn-inner--icon">
-                                  {" "}
-                                  <i className="bx bxl-linkedin tx-18 tx-prime"></i>{" "}
-                                </span>
-                              </Button>
-
-                            </div>
-                            <div className="text-center mt-2 mb-0 tx-14">New to Dealovate? <Link to={`${import.meta.env.BASE_URL}pages/authentication/sigin`} className="text-primary"><b>Sign In</b></Link></div>
+                            <Button
+                              onClick={() => login()}
+                              className="btn btn-icon me-2  btn-white border-0"
+                              type="button"
+                            >
+                              <span className="btn-inner--icon">
+                                {" "}
+                                <i className="bx bxl-google tx-18 tx-prime"></i>{" "}
+                              </span>
+                            </Button>
+                            <Button
+                              onClick={handleLogin}
+                              className="btn btn-icon me-2  btn-white border-0"
+                              type="button"
+                            >
+                              <span className="btn-inner--icon">
+                                {" "}
+                                <i className="bx bxl-linkedin tx-18 tx-prime"></i>{" "}
+                              </span>
+                            </Button>
 
                           </div>
-                    </Col>
+                          <div className="text-center mt-2 mb-0 tx-14">New to Dealovate? <Link to={`${import.meta.env.BASE_URL}pages/authentication/sigin`} className="text-primary"><b>Sign In</b></Link></div>
+
+                        </div>
+                      </Col>
                     </Row>
 
                   </div>
