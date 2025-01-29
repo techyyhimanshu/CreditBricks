@@ -4,7 +4,8 @@ import { lazy } from 'react';
 const Dashboard = lazy(() => import('../components/dashboard/dashboard1/dashboard'));
 const Error501 = lazy(() => import('../components/pages/authentication/501error/501error'));
 const Accounts = lazy(() => import('../components/accounts/accounts'));
-const SocietyMaster = lazy(() => import('../components/masters/societymaster'));
+const SocietyMaster = lazy(() => import('../components/masters/society/societymaster'));
+const AddSocietyMaster = lazy(() => import('../components/masters/society/addsocietymaster'));
 const TowerMaster = lazy(() => import('../components/masters/towermaster'));
 const FlatMaster = lazy(() => import('../components/masters/flatmaster'));
 const Roles = lazy(() => import('../components/masters/roles'));
@@ -20,7 +21,8 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}dashboard/dashboard1`, element: <Dashboard /> },
   { path: `${import.meta.env.BASE_URL}pages/authentication/501error`, element: <Error501 /> },
   { path: `${import.meta.env.BASE_URL}accounts/accounts`, element: <Accounts /> },
-  { path: `${import.meta.env.BASE_URL}masters/societymaster`, element: <SocietyMaster /> },
+  { path: `${import.meta.env.BASE_URL}society/societymaster`, element: <SocietyMaster /> },
+  { path: `${import.meta.env.BASE_URL}society/addsocietymaster`, element: <AddSocietyMaster /> },
   //Added tower master
   { path: `${import.meta.env.BASE_URL}masters/towermaster`, element: <TowerMaster /> },
   { path: `${import.meta.env.BASE_URL}masters/flatmaster`, element: <FlatMaster /> },

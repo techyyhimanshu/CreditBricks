@@ -23,14 +23,14 @@ export const MENUITEMS = [
         selected: false,
         children: [
           {
-            path: `${import.meta.env.BASE_URL}masters/societymaster`,
+            path: `${import.meta.env.BASE_URL}society/societymaster`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
             title: "Society",
             type: "link",
             active: false,
             selected: false,
           },
-          //Added tower master 
+          //Added tower master
           {
             path: `${import.meta.env.BASE_URL}masters/towermaster`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),

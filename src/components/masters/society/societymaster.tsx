@@ -8,10 +8,11 @@ import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { addSocietyApi, deleteSocietyApi, getAllSocietyApi, updateSocietyApi } from '../../api/society-api';
-import { showToast, CustomToastContainer } from '../../common/services/toastServices';
-import stateCities from "./stateCity.json"
-import { handleApiError } from '../../helpers/handle-api-error';
+import { addSocietyApi, deleteSocietyApi, getAllSocietyApi, updateSocietyApi } from '../../../api/society-api';
+import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
+import stateCities from "../stateCity.json"
+import { handleApiError } from '../../../helpers/handle-api-error';
+import { Link } from "react-router-dom";
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
@@ -227,9 +228,9 @@ export default function SocietyMaster() {
         </div>
 
         <div className="right-content">
-
+<Link to={`${import.meta.env.BASE_URL}society/addsocietymaster`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Society</Link>
           <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Society</button>
-          <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+          <Modal show={showModal} size="lg" onHide={() => setShowModal(false)} centered>
             <Formik
               initialValues={{
                 societyId: null,
