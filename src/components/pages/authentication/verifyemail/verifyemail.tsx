@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Button, Spinner } from "react-bootstrap"
 import apiService from "../../../../common/redux/api"
-import { showToast, Toaster } from "../../../../common/services/toastServices"
+import { showToast, CustomToastContainer } from "../../../../common/services/toastServices"
 import 'react-toastify/dist/ReactToastify.css'
 
 
@@ -77,7 +77,7 @@ const VerifyEmail = () => {
                 </Spinner>
             }
             {
-                !loading && <Toaster />
+                !loading && <CustomToastContainer />
             }
             {
                 !loading && responsemsg.includes('successful') && <div className="pt-20vh h-100vh loginbg"> <div className="col-sm-4 m-auto card pb-5"><i className="bi bi-check-circle tx-60 mt-4 text-success"></i> <h3 className="mt-4">Email verification successful.</h3> <p className="tx-16 mb-4">Please click on login button to login </p> <Button href="/" className="btn d-block btn-primary m-auto col-sm-3">Login </Button></div></div>

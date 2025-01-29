@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import * as Switcherdatacustam from "../../../../common/switcherdatacustam";
 import useFormValidation from "../../../../common/hooks/FormValidation";
 import apiService from "../../../../common/redux/api";
-import { showToast, Toaster } from "../../../../common/services/toastServices";
+import { showToast, CustomToastContainer } from "../../../../common/services/toastServices";
 import 'react-toastify/dist/ReactToastify.css'
 import { imagesData } from "../../../../common/commonimages";
 
@@ -45,7 +45,7 @@ const ForgotPassword = () => {
   return (
     <Fragment>
       <div className="cover-image">
-        <Toaster/>
+        <CustomToastContainer/>
         <div className="page loginbg">
          <img src={imagesData('logo')} className="w-200px m-auto d-block"  />
           <div

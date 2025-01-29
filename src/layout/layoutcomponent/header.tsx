@@ -20,16 +20,17 @@ interface User {
 
 export default function Header() {
   const [userinfo, setUserinfo] = useState<User | null>(null)
-  const [userType,setUserType] = useState<string>("")
+  const [userType, setUserType] = useState<string>("")
 
-  useEffect(() => {
-    Switcherdata.localStorageBackUp();
-    const token = localStorage.getItem('token');
-    if (token) {
-      const decodedToken: any = jwtDecode(token);
-      setUserinfo(decodedToken)
-    }
-  }, []);
+  // useEffect(() => {
+  //   Switcherdata.localStorageBackUp();
+  //   const token = localStorage.getItem('token');
+  //   if (token) {
+  //     console.log(token)
+  //     const decodedToken: any = jwtDecode(token);
+  //     setUserinfo(decodedToken)
+  //   }
+  // }, []);
 
   useEffect(() => {
     const user = localStorage.getItem("userType")
@@ -474,31 +475,31 @@ export default function Header() {
         </> */}
                   </li>
                   {
-                    userType==="admin"&&<li className="dropdown nav-item w-auto headericon me-3">
-                    <Dropdown>
-                    <OverlayTrigger
-                placement="bottom"
-                overlay={<Tooltip>Switch Your Profile</Tooltip>}>
-                      <Dropdown.Toggle
-                        className="new nav-link profile-user d-flex text-primary"
+                    userType === "admin" && <li className="dropdown nav-item w-auto headericon me-3">
+                      <Dropdown>
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={<Tooltip>Switch Your Profile</Tooltip>}>
+                          <Dropdown.Toggle
+                            className="new nav-link profile-user d-flex text-primary"
 
-                        variant=""
-                      >
-                      <strong><i className="bi bi-people"></i></strong>
-                      </Dropdown.Toggle>
-                      </OverlayTrigger>
-                      <Dropdown.Menu>
+                            variant=""
+                          >
+                            <strong><i className="bi bi-people"></i></strong>
+                          </Dropdown.Toggle>
+                        </OverlayTrigger>
+                        <Dropdown.Menu>
 
-                        <Dropdown.Item className="dropdown-item"  href={`${import.meta.env.BASE_URL}setting/setting`}>
-                          <i className="far fa-user-circle me-2"></i>Tenant
-                        </Dropdown.Item>
+                          <Dropdown.Item className="dropdown-item" href={`${import.meta.env.BASE_URL}setting/setting`}>
+                            <i className="far fa-user-circle me-2"></i>Tenant
+                          </Dropdown.Item>
 
-                        <Dropdown.Item className="dropdown-item" onClick={()=>handleLogOut()}  href="/"
-     >
-                          <i className="far fa-user-circle me-2"></i> Owner
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
+                          <Dropdown.Item className="dropdown-item" onClick={() => handleLogOut()} href="/"
+                          >
+                            <i className="far fa-user-circle me-2"></i> Owner
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
                     </li>
                   }
                   <li className="dropdown nav-item">
@@ -953,7 +954,7 @@ export default function Header() {
                             </div>
                           </div>
                         </div>
-                        <Dropdown.Item className="dropdown-item" href={`${import.meta.env.BASE_URL}setting/setting`}>
+                        <Dropdown.Item className="dropdown-item" href={`${import.meta.env.BASE_URL}userprofile/userprofile`}>
                           <i className="far fa-user-circle"></i>Profile
                         </Dropdown.Item>
                         {/* <Dropdown.Item
