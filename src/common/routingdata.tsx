@@ -9,6 +9,9 @@ const AddSocietyMaster = lazy(() => import('../components/masters/society/addsoc
 const EditSocietyMaster = lazy(() => import('../components/masters/society/editsocietymaster'));
 const TowerMaster = lazy(() => import('../components/masters/towermaster'));
 const FlatMaster = lazy(() => import('../components/masters/flatmaster'));
+const PropertyMaster = lazy(() => import('../components/masters/property/propertymaster'));
+const AddPropertyMaster = lazy(() => import('../components/masters/property/addpropertymaster'));
+const PropertyView = lazy(() => import('../components/masters/property/propertyview'));
 const Roles = lazy(() => import('../components/masters/roles'));
 const Users = lazy(() => import('../components/masters/users'));
 const MobileApp = lazy(() => import('../components/masters/mobileapp'));
