@@ -1,8 +1,8 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { Modal, Button, Tab, Tabs } from "react-bootstrap";
-// import { deleteUserApi, getAllUserApi } from '../../api/user-api';
-import { CustomToastContainer } from '../../common/services/toastServices';
+// import { deleteUserApi, getAllUserApi } from '../../api/member-api';
+import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import "react-datepicker/dist/react-datepicker.css";
 import PersonalInfo from './UserTabs/personalinfo-tab';
 import Document from './UserTabs/document-tab';
@@ -12,7 +12,8 @@ import Parking from './UserTabs/parking-tab';
 import Cookies from "js-cookie"
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
-import { getAllUserApi } from '../../api/user-api';
+import { deleteUserApi, getAllUserApi } from '../../api/user-api';
+import { handleApiError } from '../../helpers/handle-api-error';
 // const columns = [
 //   {
 //     name: 'First Name',
@@ -52,8 +53,8 @@ import { getAllUserApi } from '../../api/user-api';
 // const data = [
 //   {
 //     id: 1,
-//     Fname: 'User',
-//     Lname: 'User',
+//     Fname: 'Member',
+//     Lname: 'Member',
 //     mobileno: '',
 //     emailid: '',
 //     status: 'Active'
@@ -62,56 +63,56 @@ import { getAllUserApi } from '../../api/user-api';
 //   },
 //   {
 //     id: 2,
-//     Fname: 'User',
-//     Lname: 'User',
+//     Fname: 'Member',
+//     Lname: 'Member',
 //     mobileno: '',
 //     emailid: '',
 //     status: 'Active'
 //   },
 //   {
 //     id: 3,
-//     Fname: 'User',
-//     Lname: 'User',
+//     Fname: 'Member',
+//     Lname: 'Member',
 //     mobileno: '',
 //     emailid: '',
 //     status: 'Active'
 //   },
 //   {
 //     id: 4,
-//     Fname: 'User',
-//     Lname: 'User',
+//     Fname: 'Member',
+//     Lname: 'Member',
 //     mobileno: '',
 //     emailid: '',
 //     status: 'Active'
 //   },
 //   {
 //     id: 5,
-//     Fname: 'User',
-//     Lname: 'User',
+//     Fname: 'Member',
+//     Lname: 'Member',
 //     mobileno: '',
 //     emailid: '',
 //     status: 'Active'
 //   },
 //   {
 //     id: 6,
-//     Fname: 'User',
-//     Lname: 'User',
+//     Fname: 'Member',
+//     Lname: 'Member',
 //     mobileno: '',
 //     emailid: '',
 //     status: 'Active'
 //   },
 //   {
 //     id: 7,
-//     Fname: 'User',
-//     Lname: 'User',
+//     Fname: 'Member',
+//     Lname: 'Member',
 //     mobileno: '',
 //     emailid: '',
 //     status: 'Active'
 //   },
 //   {
 //     id: 8,
-//     Fname: 'User',
-//     Lname: 'User',
+//     Fname: 'Member',
+//     Lname: 'Member',
 //     mobileno: '',
 //     emailid: '',
 //     status: 'Active'
@@ -195,7 +196,7 @@ export default function Users() {
           //  onClick={() => openEditModal(row)}
           >Edit</button>
           <button type="button" className="btn bg-info-transparent ms-2 btn-sm"
-          //  onClick={() => handleDelete(row)}
+            onClick={() => handleDelete(row)}
           >Delete</button>
         </div>
       ),
@@ -206,21 +207,21 @@ export default function Users() {
     const fetchUsers = async () => {
       try {
         const response = await getAllUserApi()
-        const formattedData = response.data.data.map((user: any, index: number) => ({
+        const formattedData = response.data.data.map((member: any, index: number) => ({
           sno: index + 1,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          salutation: user.salutation,
-          phone: user.phone,
-          personEmail: user.personEmail,
-          personBirthdate: user.personBirthdate,
-          personGenderIdentity: user.personGenderIdentity,
-          country: user.country,
-          state: user.state,
-          city: user.city,
-          address: user.address,
-          zipcode: user.zipCode
+          username: member.username,
+          firstName: member.firstName,
+          lastName: member.lastName,
+          salutation: member.salutation,
+          phone: member.phone,
+          personEmail: member.personEmail,
+          personBirthdate: member.personBirthdate,
+          personGenderIdentity: member.personGenderIdentity,
+          country: member.country,
+          state: member.state,
+          city: member.city,
+          address: member.address,
+          zipcode: member.zipCode
         }))
         setUsers(formattedData)
       } catch (error) {
@@ -253,30 +254,30 @@ export default function Users() {
   //   setShowModal(true);
   // };
 
-  // const openEditModal = (user: any) => {
-  //   console.log(user.personBirthdate
+  // const openEditModal = (member: any) => {
+  //   console.log(member.personBirthdate
   //   )
-  //   console.log("USER", user)
+  //   console.log("USER", member)
   //   setIsEditing(true);
-  //   setCurrentUser(user);
+  //   setCurrentUser(member);
   //   setShowModal(true);
   // };
-  // const handleDelete = (data: any) => {
-  //   console.log(data)
-  //     ; (async () => {
-  //       try {
-  //         const response = await deleteUserApi(data.username)
-  //         if (response.status === 200) {
-  //           showToast("success", response.data.message)
-  //           // Remove the user from the table
-  //           setUsers(prevData => prevData.filter(user => user.username !== data.username))
-  //         }
-  //       } catch (error: any) {
-  //         const errorMessage = handleApiError(error)
-  //         showToast("error", errorMessage)
-  //       }
-  //     })()
-  // }
+  const handleDelete = (data: any) => {
+    console.log(data)
+      ; (async () => {
+        try {
+          const response = await deleteUserApi(data.username)
+          if (response.status === 200) {
+            showToast("success", response.data.message)
+            // Remove the member from the table
+            setUsers(prevData => prevData.filter(member => member.username !== data.username))
+          }
+        } catch (error: any) {
+          const errorMessage = handleApiError(error)
+          showToast("error", errorMessage)
+        }
+      })()
+  }
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -316,17 +317,17 @@ export default function Users() {
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1">User Master</span>
+          <span className="main-content-title mg-b-0 mg-b-lg-1">Member Master</span>
 
         </div>
 
         <div className="right-content">
 
 
-          <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("select")}><i className="bi bi-plus"></i> Add User</button>
+          <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("select")}><i className="bi bi-plus"></i> Add Member</button>
           <Modal show={select} onHide={() => { viewDemoClose("select"); }} centered size='xl' >
             <Modal.Header>
-              <Modal.Title>Add User</Modal.Title>
+              <Modal.Title>Add Member</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("select"); }}>
                 x
               </Button>

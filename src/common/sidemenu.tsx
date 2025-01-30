@@ -68,7 +68,7 @@ export const MENUITEMS = [
           {
             path: `${import.meta.env.BASE_URL}masters/users`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
-            title: "Members Name",
+            title: "Members",
             type: "link",
             selected: false,
             active: false,
