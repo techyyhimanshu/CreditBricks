@@ -6,6 +6,7 @@ const Error501 = lazy(() => import('../components/pages/authentication/501error/
 const Accounts = lazy(() => import('../components/accounts/accounts'));
 const SocietyMaster = lazy(() => import('../components/masters/society/societymaster'));
 const AddSocietyMaster = lazy(() => import('../components/masters/society/addsocietymaster'));
+const EditSocietyMaster = lazy(() => import('../components/masters/society/editsocietymaster'));
 const TowerMaster = lazy(() => import('../components/masters/towermaster'));
 const FlatMaster = lazy(() => import('../components/masters/flatmaster'));
 const Roles = lazy(() => import('../components/masters/roles'));
@@ -13,7 +14,7 @@ const Users = lazy(() => import('../components/masters/users'));
 const MobileApp = lazy(() => import('../components/masters/mobileapp'));
 const UserPermission = lazy(() => import('../components/masters/userpermission'));
 const TermsCondition = lazy(() => import('../components/masters/termscondition'));
-const UserProfile = lazy (()=> import ('../components/userprofile/userprofile'));
+const UserProfile = lazy(() => import('../components/userprofile/userprofile'));
 
 
 export const Routingdata = [
@@ -23,6 +24,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}accounts/accounts`, element: <Accounts /> },
   { path: `${import.meta.env.BASE_URL}society/societymaster`, element: <SocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/addsocietymaster`, element: <AddSocietyMaster /> },
+  { path: `${import.meta.env.BASE_URL}society/editsocietymaster`, element: <EditSocietyMaster /> },
   //Added tower master
   { path: `${import.meta.env.BASE_URL}masters/towermaster`, element: <TowerMaster /> },
   { path: `${import.meta.env.BASE_URL}masters/flatmaster`, element: <FlatMaster /> },

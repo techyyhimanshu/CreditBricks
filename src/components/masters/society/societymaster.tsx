@@ -33,13 +33,24 @@ export default function SocietyMaster() {
 
   const [isEditing, setIsEditing] = useState(false);
   type Row = {
-    id: number;
+    societyId: number;
     sno: number;
     societyName: string;
     address: string;
     country: string;
     state: string;
     city: string;
+    registrationNumber: string;
+    tanNumber: string;
+    panNumber: string;
+    signatory: string;
+    hsnCode: string;
+    gstin: string;
+    bankName: string;
+    accountNumber: string;
+    branchName: string;
+    ifscCode: string;
+    chequeFavourable: string;
   };
 
   const columns = [
@@ -78,7 +89,11 @@ export default function SocietyMaster() {
       sortable: true,
       cell: (row: Row) => (
         <div>
-          <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button>
+          <Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
+            state={{ society: row }}
+            className="btn btn-light btn-sm">Edit</Link>
+
+          {/* <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button> */}
           <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
         </div>
       ),
@@ -126,13 +141,25 @@ export default function SocietyMaster() {
       try {
         const response = await getAllSocietyApi();
         const formattedData = response.data.data.map((item: any, index: number) => ({
-          id: item.societyId,
+          societyId: item.societyId,
           sno: index + 1,
           societyName: item.societyName,
+          societyManager: item.societyManager,
           address: item.address,
           country: item.country,
           state: item.state,
           city: item.city,
+          registrationNumber: item.registrationNumber,
+          tanNumber: item.tanNumber,
+          panNumber: item.panNumber,
+          signatory: item.signatory,
+          hsnCode: item.hsnCode,
+          gstin: item.gstin,
+          bankName: item.bankName,
+          accountNumber: item.accountNumber,
+          branchName: item.branchName,
+          ifscCode: item.ifscCode,
+          chequeFavourable: item.chequeFavourable
         }));
         setSocietyData(formattedData);
       } catch (error) {
@@ -189,7 +216,7 @@ export default function SocietyMaster() {
             // Add the new society to the table
             const newSociety = {
               sno: societyData.length + 1,
-              id: response.data.data.societyId,
+              societyId: response.data.data.societyId,
               ...response.data.data
             }
             setSocietyData(prevData => [...prevData, newSociety]);
@@ -208,11 +235,11 @@ export default function SocietyMaster() {
     console.log(data)
       ; (async () => {
         try {
-          const response = await deleteSocietyApi(data.id || data.societyId)
+          const response = await deleteSocietyApi(data.societyId || data.societyId)
           if (response.status === 200) {
             showToast("success", response.data.message)
             // Remove the society from the table
-            setSocietyData(prevData => prevData.filter(society => society.id !== data.id))
+            setSocietyData(prevData => prevData.filter(society => society.societyId !== data.societyId))
           }
         } catch (error: any) {
           const errorMessage = handleApiError(error)
@@ -228,8 +255,9 @@ export default function SocietyMaster() {
         </div>
 
         <div className="right-content">
-<Link to={`${import.meta.env.BASE_URL}society/addsocietymaster`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Society</Link>
-          <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Society</button>
+          <Link to={`${import.meta.env.BASE_URL}society/addsocietymaster`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Society</Link>
+
+          {/* <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Society</button> */}
           <Modal show={showModal} size="lg" onHide={() => setShowModal(false)} centered>
             <Formik
               initialValues={{
@@ -347,7 +375,7 @@ export default function SocietyMaster() {
                     columns={columns}
                     data={societyData}
                     pagination
-                    keyField="id"
+                    keyField="societyId"
                   />
                 </DataTableExtensions>
               </div>

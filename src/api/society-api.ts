@@ -3,7 +3,17 @@ import baseUrl from './base-url';
 
 export const addSocietyApi = async (data: any): Promise<any> => {
     try {
-        const response = await axios.post(`${baseUrl}/society/new`, data)
+        const formData = new FormData();
+        for (const key in data) {
+            if (key === 'paymentQrFile' && data[key]) {
+                formData.append(key, data[key]);
+            } else if (typeof data[key] === 'object' && data[key] !== null) {
+                formData.append(key, JSON.stringify(data[key]));
+            } else {
+                formData.append(key, data[key]);
+            }
+        }
+        const response = await axios.post(`${baseUrl}/society/new`, formData)
         return response
     } catch (error) {
         throw error
@@ -19,7 +29,17 @@ export const getAllSocietyApi = async (): Promise<any> => {
 }
 export const updateSocietyApi = async (data: any, id: any): Promise<any> => {
     try {
-        const response = await axios.patch(`${baseUrl}/society/${id}`, data)
+        const formData = new FormData();
+        for (const key in data) {
+            if (key === 'paymentQrFile' && data[key]) {
+                formData.append(key, data[key]);
+            } else if (typeof data[key] === 'object' && data[key] !== null) {
+                formData.append(key, JSON.stringify(data[key]));
+            } else {
+                formData.append(key, data[key]);
+            }
+        }
+        const response = await axios.patch(`${baseUrl}/society/update/${id}`, formData)
         return response
     } catch (error) {
         throw error
