@@ -28,6 +28,9 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}society/societymaster`, element: <SocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/addsocietymaster`, element: <AddSocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/editsocietymaster`, element: <EditSocietyMaster /> },
+  { path: `${import.meta.env.BASE_URL}property/propertymaster`, element: <PropertyMaster /> },
+  { path: `${import.meta.env.BASE_URL}property/addpropertymaster`, element: <AddPropertyMaster /> },
+  { path: `${import.meta.env.BASE_URL}property/propertyview`, element: <PropertyView /> },
   //Added tower master
   { path: `${import.meta.env.BASE_URL}masters/towermaster`, element: <TowerMaster /> },
   { path: `${import.meta.env.BASE_URL}masters/flatmaster`, element: <FlatMaster /> },
