@@ -18,6 +18,7 @@ export default function TowerMaster() {
     const [societyData, setSocietyData] = useState<any[]>([]);
     const [currentTower, setCurrentTower] = useState({
         towerId: null,
+        towerOwner: '',
         towerName: '',
         societyId: null,
         societyName: ''
@@ -31,6 +32,7 @@ export default function TowerMaster() {
                     towerId: item.towerId,
                     sno: index + 1,
                     towerName: item.towerName,
+                    towerOwner: item.towerOwner,
                     societyId: item.societyId,
                     societyName: item.societyName
                 }));
@@ -47,6 +49,7 @@ export default function TowerMaster() {
         towerId: number;
         sno: number;
         towerName: string;
+        towerOwner: string;
         societyId: number;
         societyName: string;
     };
@@ -60,6 +63,11 @@ export default function TowerMaster() {
         {
             name: 'Tower/Block Name',
             selector: (row: Row) => row.towerName,
+            sortable: true,
+        },
+        {
+            name: 'Owner',
+            selector: (row: Row) => row.towerOwner,
             sortable: true,
         },
         {
@@ -111,6 +119,7 @@ export default function TowerMaster() {
         currentTower.towerName = "";
         currentTower.societyId = null;
         currentTower.societyName = "";
+        currentTower.towerOwner = "";
         setShowModal(true);
         await fetchSocietiesForDropDown()
     };
@@ -126,6 +135,7 @@ export default function TowerMaster() {
     const handleSubmit = (values: any) => {
         const data = {
             towerName: values.towerName,
+            towerOwner: values.towerOwner,
             societyId: values.society.value,
             societyName: values.society.label,
         }
@@ -209,6 +219,7 @@ export default function TowerMaster() {
                             initialValues={{
                                 towerId: null,
                                 towerName: currentTower?.towerName || "",
+                                towerOwner: currentTower?.towerOwner || "",
                                 society: { value: currentTower?.societyId || "", label: currentTower?.societyName || "" }
                             }
                             }
@@ -234,7 +245,16 @@ export default function TowerMaster() {
                                             />
                                             <ErrorMessage name="towerName" component="div" className="text-danger" />
                                         </Form.Group>
-
+                                        <Form.Group className="form-group">
+                                            <Form.Label>Owner Name <span className="text-danger">*</span></Form.Label>
+                                            <Field
+                                                type="text"
+                                                name="towerOwner"
+                                                placeholder="Owner Name"
+                                                className="form-control"
+                                            />
+                                            <ErrorMessage name="towerOwner" component="div" className="text-danger" />
+                                        </Form.Group>
                                         <Form.Group className="form-group">
                                             <Form.Label>Society<span className="text-danger">*</span></Form.Label>
                                             <Select
