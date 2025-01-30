@@ -17,7 +17,7 @@ const MobileApp = lazy(() => import('../components/masters/mobileapp'));
 const UserPermission = lazy(() => import('../components/masters/userpermission'));
 const TermsCondition = lazy(() => import('../components/masters/termscondition'));
 const UserProfile = lazy (()=> import ('../components/userprofile/userprofile'));
-
+const MemberName = lazy (()=> import ('../components/masters/membername/membernamemaster'));
 
 export const Routingdata = [
   //Dashboard
@@ -38,6 +38,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}masters/userpermission`, element: <UserPermission /> },
   { path: `${import.meta.env.BASE_URL}masters/termscondition`, element: <TermsCondition /> },
   { path: `${import.meta.env.BASE_URL}userprofile/userprofile`, element: <UserProfile /> }
+  { path: `${import.meta.env.BASE_URL}membername/membernamemaster`, element: <MemberName /> }
 ];
 
 export const Sidebarcomponents = [
