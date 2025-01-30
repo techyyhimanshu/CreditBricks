@@ -7537,7 +7537,7 @@ pre code {
 
 .form-control:disabled,
 .form-control[readonly] {
-    background-color: rgba(234, 243, 241, 0.2784313725);
+    background-color: rgb(224 224 224 / 28%);
     opacity: 1;
 }
 

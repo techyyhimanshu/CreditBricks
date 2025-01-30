@@ -47,6 +47,14 @@ export const MENUITEMS = [
             selected: false,
             active: false,
           },
+          {
+            path: `${import.meta.env.BASE_URL}property/propertymaster`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Properties",
+            type: "link",
+            selected: false,
+            active: false,
+          },
 
           {
             path: `${import.meta.env.BASE_URL}masters/roles`,
@@ -60,7 +68,7 @@ export const MENUITEMS = [
           {
             path: `${import.meta.env.BASE_URL}masters/users`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
-            title: "Users",
+            title: "Members Name",
             type: "link",
             selected: false,
             active: false,

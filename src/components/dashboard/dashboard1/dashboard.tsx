@@ -11,11 +11,8 @@ const Dashboard = () => {
   return (
     <Fragment>
       <Pageheader title="Dashboard" heading="Dashboard" active="Dashboard" />
-
       <Row>
-        <Col xl={8}>
-          <Row>
-            <Col xl={3}>
+            <Col xl={2}>
               <Card>
                 <Card.Body className='pt-3 ps-4 pe-4 pb-3'>
                   <Row>
@@ -26,12 +23,12 @@ const Dashboard = () => {
                     </div>
                     <div className="col-10">
                       <div className="d-flex">
-                        <h6 className="mb-2 tx-12">Total Complaints</h6>
+                        <h6 className="mb-2 tx-12">Total Number Of Bills Generated</h6>
                       </div>
                       <div className="pb-0 mt-0">
                         <div className="d-flex">
                           <h4 className="tx-18 font-weight-semibold mb-0">
-                           145
+                        1.8k
                           </h4>
                         </div>
                       </div>
@@ -42,7 +39,7 @@ const Dashboard = () => {
               </Card>
             </Col>
 
-            <Col xl={3}>
+            <Col xl={2}>
               <Card>
                 <Card.Body className='pt-3 ps-4 pe-4 pb-3'>
                   <Row>
@@ -53,12 +50,12 @@ const Dashboard = () => {
                     </div>
                     <div className="col-10">
                       <div className="d-flex">
-                        <h6 className="mb-2 tx-12">Total Invoices</h6>
+                        <h6 className="mb-2 tx-12">Total<br/>Receipts</h6>
                       </div>
                       <div className="pb-0 mt-0">
                         <div className="d-flex">
                           <h4 className="tx-18 font-weight-semibold mb-0">
-                            36
+                         279
                           </h4>
                         </div>
                       </div>
@@ -70,7 +67,7 @@ const Dashboard = () => {
             </Col>
 
 
-            <Col xl={3}>
+            <Col xl={2}>
               <Card>
                 <Card.Body className='pt-3 ps-4 pe-4 pb-3'>
                   <Row>
@@ -81,12 +78,12 @@ const Dashboard = () => {
                     </div>
                     <div className="col-10">
                       <div className="d-flex">
-                        <h6 className="mb-2 tx-12">Total Receipts</h6>
+                        <h6 className="mb-2 tx-12">Total Bill Amount Generated</h6>
                       </div>
                       <div className="pb-0 mt-0">
                         <div className="d-flex">
                           <h4 className="tx-18 font-weight-semibold mb-0">
-                            10
+                            <i className='fa fa-rupee'></i> 5.2M
                           </h4>
                         </div>
                       </div>
@@ -97,7 +94,7 @@ const Dashboard = () => {
               </Card>
             </Col>
 
-            <Col xl={3}>
+            <Col xl={2}>
               <Card>
                 <Card.Body className='pt-3 ps-4 pe-4 pb-3'>
                   <Row>
@@ -108,12 +105,71 @@ const Dashboard = () => {
                     </div>
                     <div className="col-10">
                       <div className="d-flex">
-                        <h6 className="mb-2 tx-12">Total Visitors</h6>
+                        <h6 className="mb-2 tx-12">Total Receipt Amount Collected</h6>
                       </div>
                       <div className="pb-0 mt-0">
                         <div className="d-flex">
                           <h4 className="tx-18 font-weight-semibold mb-0">
-                            10
+                          <i className='fa fa-rupee'></i> 0
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+                  </Row>
+
+                </Card.Body>
+              </Card>
+
+
+            </Col>
+
+
+            <Col xl={2}>
+              <Card>
+                <Card.Body className='pt-3 ps-4 pe-4 pb-3'>
+                  <Row>
+                    <div className="col-2 p-0 d-flex align-items-center justify-content-center">
+                      <div className="circle-icon bg-danger text-center align-self-center overflow-hidden shadow">
+                        <i className="bi bi-people tx-15 text-white"></i>
+                      </div>
+                    </div>
+                    <div className="col-10">
+                      <div className="d-flex">
+                        <h6 className="mb-2 tx-12">Over due Aging Report</h6>
+                      </div>
+                      <div className="pb-0 mt-0">
+                        <div className="d-flex">
+                          <h4 className="tx-18 font-weight-semibold mb-0">
+                          <i className='fa fa-rupee'></i> 0
+                          </h4>
+                        </div>
+                      </div>
+                    </div>
+                  </Row>
+
+                </Card.Body>
+              </Card>
+
+
+            </Col>
+
+            <Col xl={2}>
+              <Card>
+                <Card.Body className='pt-3 ps-4 pe-4 pb-3'>
+                  <Row>
+                    <div className="col-2 p-0 d-flex align-items-center justify-content-center">
+                      <div className="circle-icon bg-purple text-center align-self-center overflow-hidden shadow">
+                        <i className="bi bi-people tx-15 text-white"></i>
+                      </div>
+                    </div>
+                    <div className="col-10">
+                      <div className="d-flex">
+                        <h6 className="mb-2 tx-12">Total Complaints Received</h6>
+                      </div>
+                      <div className="pb-0 mt-0">
+                        <div className="d-flex">
+                          <h4 className="tx-18 font-weight-semibold mb-0">
+                          33
                           </h4>
                         </div>
                       </div>
@@ -127,11 +183,14 @@ const Dashboard = () => {
             </Col>
 
           </Row>
+      <Row>
+        <Col xl={8}>
+
 
           <Card>
             <Card.Header className="bg-transparent pb-0">
               <div>
-                <h3 className="card-title mb-2"> Account Summary</h3>
+                <h3 className="card-title mb-2"> Wing wise total bills generated</h3>
               </div>
             </Card.Header>
             <Card.Body className="apexchart apexchart1">
@@ -181,7 +240,7 @@ const Dashboard = () => {
           <Card>
             <Card.Header className="bg-transparent pb-0">
               <div>
-                <h3 className="card-title mb-2">Visitors</h3>
+                <h3 className="card-title mb-2">Total Overdues</h3>
               </div>
             </Card.Header>
             <Card.Body className="apexchart apexchart1">
