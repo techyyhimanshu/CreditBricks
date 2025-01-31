@@ -57,6 +57,16 @@ export const MENUITEMS = [
           },
 
           {
+            path: `${import.meta.env.BASE_URL}members/membersmaster`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Members",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
+
+          {
             path: `${import.meta.env.BASE_URL}masters/roles`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
             title: "Roles",
@@ -65,14 +75,6 @@ export const MENUITEMS = [
             active: false,
           },
 
-          {
-            path: `${import.meta.env.BASE_URL}membername/membernamemaster`,
-            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
-            title: "Members Name",
-            type: "link",
-            selected: false,
-            active: false,
-          },
 
           {
             path: ``,

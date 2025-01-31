@@ -14,32 +14,74 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'Date',
-    selector: row => row.date,
+    name: 'Name',
+    cell: () => <Link className="text-primary">IV-2703 </Link>,
     sortable: true,
   },
   {
-    name: 'Invoice ID',
-    cell: () => <Link className="text-primary">#INVT457476 </Link>,
-    sortable: true,
-  },
-
-  {
-    name: 'Amount',
-    cell: () => <span><i className="bi bi-currency"></i> 800.00 </span>,
+    name: 'Invoice Number',
+    selector: row => row.invoicenumber,
     sortable: true,
   },
 
   {
-    name: 'Status',
-    selector: row => row.invcstatus,
+    name: 'Property',
+    cell: (row: Row) => (
+      <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link>
+    ),
+    sortable: true,
+  },
+
+  {
+    name: 'Invoice Type',
+    selector: row => row.invctype,
+    sortable: true,
+  },
+
+  {
+    name: 'Invoice Dt',
+    selector: row => row.invcdt,
+    sortable: true,
+  },
+
+
+  {
+    name: 'Due Dt',
+    selector: row => row.duedt,
+    sortable: true,
+  },
+
+  {
+    name: 'Total Amt',
+    selector: row => row.totalamt,
+    sortable: true,
+  },
+
+  {
+    name: 'Total Paid Amt',
+    selector: row => row.totalpaidamt,
+    sortable: true,
+  },
+
+  {
+    name: 'Total Outstanding',
+    selector: row => row.totaloutstanding,
     sortable: true,
   },
 
   {
     name: 'Action',
     sortable: true,
-    cell: () => <button type="button" className="btn btn-light btn-sm">Edit</button>,
+    cell: () => <Dropdown >
+    <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+     Action
+    </Dropdown.Toggle>
+
+    <Dropdown.Menu>
+      <Dropdown.Item>Edit</Dropdown.Item>
+      <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+</Dropdown.Menu>
+  </Dropdown>,
   },
 ];
 
@@ -47,64 +89,106 @@ const data = [
   {
     id: 1,
     sno: '1',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-    invcstatus: 'Paid'
-
+    name: '',
+    invoicenumber: '1',
+    property: '800',
+    invctype: 'Maintenance',
+    invcdt: '8/16/2024',
+    duedt: '4/15/2024',
+    totalamt:'₹2,850.00',
+    totalpaidamt:'₹2,850.00',
+    totaloutstanding:'₹0.00',
   },
   {
     id: 2,
     sno: '2',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-    invcstatus: 'Paid'
+    name: '',
+    invoicenumber: '1',
+    property: '800',
+    invctype: 'Maintenance',
+    invcdt: '8/16/2024',
+    duedt: '4/15/2024',
+    totalamt:'₹2,850.00',
+    totalpaidamt:'₹2,850.00',
+    totaloutstanding:'₹0.00',
   },
   {
     id: 3,
     sno: '3',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-    invcstatus: 'Paid'
+    name: '',
+    invoicenumber: '1',
+    property: '800',
+    invctype: 'Maintenance',
+    invcdt: '8/16/2024',
+    duedt: '4/15/2024',
+    totalamt:'₹2,850.00',
+    totalpaidamt:'₹2,850.00',
+    totaloutstanding:'₹0.00',
   },
   {
     id: 4,
     sno: '4',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-    invcstatus: 'Paid'
+    name: '',
+    invoicenumber: '1',
+    property: '800',
+    invctype: 'Maintenance',
+    invcdt: '8/16/2024',
+    duedt: '4/15/2024',
+    totalamt:'₹2,850.00',
+    totalpaidamt:'₹2,850.00',
+    totaloutstanding:'₹0.00',
   },
   {
     id: 5,
     sno: '5',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-    invcstatus: 'Paid'
+    name: '',
+    invoicenumber: '1',
+    property: '800',
+    invctype: 'Maintenance',
+    invcdt: '8/16/2024',
+    duedt: '4/15/2024',
+    totalamt:'₹2,850.00',
+    totalpaidamt:'₹2,850.00',
+    totaloutstanding:'₹0.00',
   },
   {
     id: 6,
     sno: '6',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
+    name: '',
+    invoicenumber: '1',
+    property: '800',
+    invctype: 'Maintenance',
+    invcdt: '8/16/2024',
+    duedt: '4/15/2024',
+    totalamt:'₹2,850.00',
+    totalpaidamt:'₹2,850.00',
+    totaloutstanding:'₹0.00',
   },
   {
     id: 7,
     sno: '7',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
+    name: '',
+    invoicenumber: '1',
+    property: '800',
+    invctype: 'Maintenance',
+    invcdt: '8/16/2024',
+    duedt: '4/15/2024',
+    totalamt:'₹2,850.00',
+    totalpaidamt:'₹2,850.00',
+    totaloutstanding:'₹0.00',
   },
   {
     id: 8,
     sno: '8',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
+    name: '',
+    invoicenumber: '1',
+    property: '800',
+    invctype: 'Maintenance',
+    invcdt: '8/16/2024',
+    duedt: '4/15/2024',
+    totalamt:'₹2,850.00',
+    totalpaidamt:'₹2,850.00',
+    totaloutstanding:'₹0.00',
   },
 ]
 
@@ -208,7 +292,11 @@ export default function Accounts() {
     { value: "3", label: "Dewan Enclave Society" }
   ];
 
-
+  const propertyoption = [
+    { value: "1", label: "A101" },
+    { value: "2", label: "A102" },
+    { value: "3", label: "A103" }
+  ];
 
   const [select, setSelect] = useState(false);
   const [exportshow, setExport] = useState(false);
@@ -302,29 +390,22 @@ export default function Accounts() {
               >
 
                 <Tab eventKey="Tab 01" title="Invoice">
-                  <div className="float-end mt-2">
-                    <>
-                      <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("select")}><i className="bi bi-search"></i> Search</button>
-                      <Modal show={select} centered >
-                        <Modal.Header>
-                          <Modal.Title>Search</Modal.Title>
-                          <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("select"); }}>
-                            x
-                          </Button>
-                        </Modal.Header>
-                        <Modal.Body>
-                          <Form.Group className="form-group">
+                <Row className='bg-light'>
+                      <Col xl={2}>
+                       <Form.Group className="form-group">
                             <Form.Label>Date <span className="text-danger">*</span></Form.Label>
                             <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
                           </Form.Group>
+                      </Col>
 
-                          <Form.Group className="form-group">
-                            <Form.Label>Society<span className="text-danger">*</span></Form.Label>
+                      <Col xl={4}>
+                      <Form.Group className="form-group">
+                            <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
 
                             <div className="SlectBox">
                               <Select
-                                options={societyoptions}
-                                placeholder="Select Society"
+                                options={propertyoption}
+                                placeholder="Select Property"
                                 // classNamePrefix="selectform"
                                 classNamePrefix='Select2' className="multi-select"
                               />
@@ -332,33 +413,27 @@ export default function Accounts() {
 
 
                           </Form.Group>
+                      </Col>
 
-                          <Form.Group className="form-group">
+                      <Col xl={2}>
+                      <Form.Group className="form-group">
                             <Form.Label>Invoice ID <span className="text-danger">*</span></Form.Label>
                             <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
                           </Form.Group>
+                      </Col>
 
 
-
-
-                          <Form.Group className="form-group">
+                      <Col xl={2}>
+                      <Form.Group className="form-group">
                             <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
                             <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
                           </Form.Group>
+                      </Col>
 
-                        </Modal.Body>
-                        <Modal.Footer>
-                          <Button variant="default" onClick={() => { viewDemoClose("select"); }}>
-                            Close
-                          </Button>
-                          <Button variant="primary" onClick={() => { viewDemoShow("select"); }}>
-                            Save
-                          </Button>
-
-                        </Modal.Footer>
-                      </Modal>
-                    </>
-                    <button type="button" className="btn btn-info p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("exportshow")}><i className="bi bi-upload"></i> Import</button>
+                      <Col xl={2}>
+                      <Form.Label className='mb-4'></Form.Label>
+                      <button type="button" className="btn btn-primary mt-1 me-1" onClick={() => viewDemoShow("select")}>Search</button>
+                      <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
                     <Modal centered show={exportshow}>
                       <Modal.Header>
                         <Modal.Title>Import</Modal.Title>
@@ -396,8 +471,10 @@ export default function Accounts() {
 
                       </Modal.Footer>
                     </Modal>
+                      </Col>
 
-                  </div>
+                    </Row>
+
                   <div className="table-responsive ">
                     <DataTableExtensions {...tableData}>
                       <DataTable
@@ -412,6 +489,7 @@ export default function Accounts() {
                 </Tab>
                 <Tab eventKey="Receipt" title="Receipt">
                   <div className="float-end mt-2">
+
                     <>
                       <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("receiptadd")}><i className="bi bi-search"></i> Search</button>
                       <Modal show={receiptadd} centered >

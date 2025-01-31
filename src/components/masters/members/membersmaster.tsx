@@ -7,7 +7,7 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import { Link } from "react-router-dom";
 
-export default function PropertyMaster() {
+export default function MembersMaster() {
 
 
 
@@ -20,36 +20,20 @@ export default function PropertyMaster() {
     },
 
     {
-      name: 'Property Name',
-      cell: (row: Row) => (
-        <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link>
-      ),
-      sortable: true,
-    },
-    {
       name: 'Member Name',
       cell: (row: Row) => (
-        <Link to={``} className='text-info'>Mr. Vinod Kunar</Link>
+        <Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kunar</Link>
       ),
       sortable: true,
     },
     {
-      name: 'Society',
-      cell: (row: Row) => (
-        <Link to={``} className='text-info'>Mohan Areca Co-Op Housing Society Limited</Link>
-      ),
+      name: 'Member Type',
+      selector: (row: Row) => row.membertype,
       sortable: true,
     },
     {
-      name: 'Flat No.',
-      selector: (row: Row) => row.flatno,
-      sortable: true,
-    },
-    {
-      name: 'Wing',
-      cell: (row: Row) => (
-        <Link to={``} className='text-info'>A</Link>
-      ),
+      name: 'Mobile No.',
+      selector: (row: Row) => row.membernumber,
       sortable: true,
     },
 
@@ -71,32 +55,47 @@ export default function PropertyMaster() {
     },
   ]
 
-  const propertydata = [
+  const memberdata = [
 
     {
       id: 1,
       sno: '1',
-      flatno: '101'
+      membername: 'Mr. Vinod Kumar Pandia',
+      membertype: 'Member',
+      membernumber: ''
 
     },
     {
       id: 2,
       sno: '2',
-      flatno: '101'
+      membername: 'Mrs. Chanda Vinod Pandia',
+      membertype: 'Customer/Tenant',
+      membernumber: ''
 
     },
     {
       id: 3,
       sno: '3',
-      flatno: '101'
+      membername: 'Mr. Vinod Kumar Pandia',
+      membertype: 'Member',
+      membernumber: ''
 
     },
+    {
+      id: 4,
+      sno: '4',
+      membername: 'Mrs. Chanda Vinod Pandia',
+      membertype: 'Customer/Tenant',
+      membernumber: ''
+
+    },
+
 
   ]
 
   const tableData = {
     columns,
-    data: propertydata
+    data: memberdata
   };
 
 
@@ -108,11 +107,11 @@ export default function PropertyMaster() {
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1">Property Master</span>
+          <span className="main-content-title mg-b-0 mg-b-lg-1">Members Master</span>
         </div>
 
         <div className="right-content">
-<Link to={`${import.meta.env.BASE_URL}property/addpropertymaster`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Property</Link>
+<Link to={`${import.meta.env.BASE_URL}members/addmembers`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Member</Link>
 
         </div>
       </div>
@@ -126,7 +125,7 @@ export default function PropertyMaster() {
                 <DataTableExtensions {...tableData}>
                   <DataTable
                     columns={columns}
-                    data={propertydata}
+                    data={memberdata}
                     pagination
                     keyField="id"
                   />

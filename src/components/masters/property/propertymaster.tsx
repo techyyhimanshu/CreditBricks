@@ -29,7 +29,7 @@ export default function PropertyMaster() {
     {
       name: 'Member Name',
       cell: (row: Row) => (
-        <Link to={``} className='text-info'>Mr. Vinod Kunar</Link>
+        <Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kunar</Link>
       ),
       sortable: true,
     },

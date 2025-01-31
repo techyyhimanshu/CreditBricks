@@ -954,7 +954,7 @@ export default function Header() {
                             </div>
                           </div>
                         </div>
-                        <Dropdown.Item className="dropdown-item" href={`${import.meta.env.BASE_URL}userprofile/userprofile`}>
+                        <Dropdown.Item className="dropdown-item" href={`${import.meta.env.BASE_URL}members/membersProfile`}>
                           <i className="far fa-user-circle"></i>Profile
                         </Dropdown.Item>
                         {/* <Dropdown.Item
