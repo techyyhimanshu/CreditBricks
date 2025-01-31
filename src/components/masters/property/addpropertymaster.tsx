@@ -730,15 +730,6 @@ const tenant = [
 
 </Accordion>
 
-
-
-
-
-
-
-
-
-
           <span className='float-end mb-5'>
           <Button variant="default ms-3"> Cancel </Button>
                     <Button className="btn btn-primary" type="submit">Save </Button>
