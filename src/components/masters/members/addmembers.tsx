@@ -65,7 +65,7 @@ export default function AddMembersMaster() {
   const tenant = [
     { value: "1", label: "Select Tenant" }
   ]
-  const tower = [{ value: "1", label: "Select Tower" }]
+  const membertype = [{ value: "1", label: "Member" },{ value: "2", label: "Customer/Tenant" }]
 
   const wing = [{ value: "1", label: "Select Wing" }]
 
@@ -131,6 +131,20 @@ export default function AddMembersMaster() {
                             className="form-control"
                           />
                           {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Member Type</Form.Label>
+                          <Select
+                            options={membertype}
+                            // value={values.country}
+                            // onChange={(selected) => setFieldValue("country", selected)}
+                            placeholder="Select Type"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -257,6 +271,50 @@ export default function AddMembersMaster() {
                           {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
+
+                    </Row>
+
+                  </Card.Body>
+                </Card>
+              </Accordion.Body>
+            </Accordion.Item>
+
+            <Accordion.Item eventKey="Society Details" className="bg-white  mb-3">
+              <Accordion.Header className="borders">
+              Society Details
+              </Accordion.Header>
+              <Accordion.Body className="borders p-0">
+                <Card className='m-0'>
+
+                  <Card.Body className='pt-3'>
+
+                    <Row>
+                      <Col xl={6}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Society Name</Form.Label>
+                          <FormControl
+                            type="text"
+                            name="societyname"
+                            placeholder="Society Name"
+                            className="form-control"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Property Name</Form.Label>
+                          <FormControl
+                            type="text"
+                            name="propertyname"
+                            placeholder="Property Name"
+                            className="form-control"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
 
                     </Row>
 
