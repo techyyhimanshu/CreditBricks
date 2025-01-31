@@ -40,9 +40,9 @@ export const MENUITEMS = [
             selected: false,
           },
           {
-            path: `${import.meta.env.BASE_URL}masters/flatmaster`,
+            path: `${import.meta.env.BASE_URL}masters/wingmaster`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
-            title: "Flat",
+            title: "Wing",
             type: "link",
             selected: false,
             active: false,
