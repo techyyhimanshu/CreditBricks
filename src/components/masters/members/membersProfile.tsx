@@ -297,6 +297,20 @@ export default function PropertyView() {
 
         <Col xl={4}>
 
+
+        <Card>
+              <Card.Body>
+                <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Society Details</h5>
+                <Row>
+                  <Col xl={12} className='mb-1 tx-12'>Society Name</Col>
+                  <Col xl={12} className='tx-semibold'>Mohan Areca Co-Op Housing Society Limited</Col>
+                  <Col xl={12} className='mb-1 mt-3 tx-12'>Property Name</Col>
+                  <Col xl={12} className='tx-semibold'>A101</Col>
+
+                </Row>
+              </Card.Body>
+            </Card>
+
             <Card>
               <Card.Body>
                 <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documentation Details</h5>
