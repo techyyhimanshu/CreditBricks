@@ -1,5 +1,6 @@
 import axios from 'axios';
 import baseUrl from './base-url';
+import axiosInstance from './axiosInstance';
 
 export const addSocietyApi = async (data: any): Promise<any> => {
     try {
@@ -21,7 +22,7 @@ export const addSocietyApi = async (data: any): Promise<any> => {
 }
 export const getAllSocietyApi = async (): Promise<any> => {
     try {
-        const response = await axios.get(`${baseUrl}/society/all`)
+        const response = await axiosInstance.get(`/society/all`)
         return response
     } catch (error) {
         throw error

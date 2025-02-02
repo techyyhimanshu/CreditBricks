@@ -8,6 +8,7 @@ import * as Switcherdata from '../../common/switcherdata';
 import store from "../../common/store/store";
 import { logout } from "../../common/actions/authActions";
 import { jwtDecode } from "jwt-decode";
+import { adminLogoutApi } from "../../api/authentication-api";
 // interface UseLang {
 //   lang: boolean;
 //   lng: string;
@@ -62,7 +63,8 @@ export default function Header() {
     }
   };
 
-  const handleLogOut = () => {
+  const handleLogOut =async () => {
+    await adminLogoutApi()
     store.dispatch(logout())
   }
 
