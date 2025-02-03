@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Modal, Button, Form } from "react-bootstrap";
+import { Col, Row, Card, Modal, Button, Form, Dropdown } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
@@ -88,14 +88,26 @@ export default function SocietyMaster() {
       name: 'Action',
       sortable: true,
       cell: (row: Row) => (
-        <div>
-          <Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
-            state={{ society: row }}
-            className="btn btn-light btn-sm">Edit</Link>
+        <Dropdown >
+        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+         Action
+        </Dropdown.Toggle>
 
-          {/* <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button> */}
-          <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
-        </div>
+        <Dropdown.Menu>
+          <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
+            state={{ society: row }}>Edit</Link> </Dropdown.Item>
+          <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)} >Delete</Dropdown.Item>
+</Dropdown.Menu>
+      </Dropdown>
+
+        // <div>
+        //   <Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
+        //     state={{ society: row }}
+        //     className="btn btn-light btn-sm">Edit</Link>
+
+        //   {/* <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button> */}
+        //   <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
+        // </div>
       ),
     },
   ]
