@@ -1,10 +1,9 @@
-import axios from "axios"
-import baseUrl from "./base-url"
+import axiosInstance from "./axiosInstance"
 
 
 export const getAllTowerApi = async (): Promise<any> => {
     try {
-        const response = await axios.get(`${baseUrl}/tower/all`)
+        const response = await axiosInstance.get(`/tower/all`)
         return response
     } catch (error) {
         throw error
@@ -12,7 +11,7 @@ export const getAllTowerApi = async (): Promise<any> => {
 }
 export const addTowerApi = async (data: any): Promise<any> => {
     try {
-        const response = await axios.post(`${baseUrl}/tower/new`, data)
+        const response = await axiosInstance.post(`/tower/new`, data)
         return response
     } catch (error) {
         throw error
@@ -24,7 +23,7 @@ export const updateTowerApi = async (data: any, id: any): Promise<any> => {
             towerName: data.towerName,
             societyId: data.societyId
         }
-        const response = await axios.patch(`${baseUrl}/tower/${id}`, dataToUpdate)
+        const response = await axiosInstance.patch(`/tower/${id}`, dataToUpdate)
         return response
     } catch (error) {
         throw error
@@ -32,7 +31,7 @@ export const updateTowerApi = async (data: any, id: any): Promise<any> => {
 }
 export const deleteTowerApi = async (id: number): Promise<any> => {
     try {
-        const response = await axios.delete(`${baseUrl}/tower/${id}`)
+        const response = await axiosInstance.delete(`/tower/${id}`)
         return response
     } catch (error) {
         throw error

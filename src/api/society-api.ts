@@ -1,5 +1,3 @@
-import axios from 'axios';
-import baseUrl from './base-url';
 import axiosInstance from './axiosInstance';
 
 export const addSocietyApi = async (data: any): Promise<any> => {
@@ -14,7 +12,7 @@ export const addSocietyApi = async (data: any): Promise<any> => {
                 formData.append(key, data[key]);
             }
         }
-        const response = await axios.post(`${baseUrl}/society/new`, formData)
+        const response = await axiosInstance.post(`/society/new`, formData)
         return response
     } catch (error) {
         throw error
@@ -48,7 +46,7 @@ export const updateSocietyApi = async (data: any, id: any): Promise<any> => {
                 formData.append(key, data[key]);
             }
         }
-        const response = await axios.patch(`${baseUrl}/society/update/${id}`, formData)
+        const response = await axiosInstance.patch(`/society/${id}`, formData)
         return response
     } catch (error) {
         throw error
@@ -56,7 +54,7 @@ export const updateSocietyApi = async (data: any, id: any): Promise<any> => {
 }
 export const deleteSocietyApi = async (id: number): Promise<any> => {
     try {
-        const response = await axios.delete(`${baseUrl}/society/${id}`)
+        const response = await axiosInstance.delete(`/society/${id}`)
         return response
     } catch (error) {
         throw error
@@ -65,7 +63,7 @@ export const deleteSocietyApi = async (id: number): Promise<any> => {
 
 export const getTowersOfSocietyApi = async (id: any): Promise<any> => {
     try {
-        const response = await axios.get(`${baseUrl}/society/${id}/towers`)
+        const response = await axiosInstance.get(`/society/${id}/towers`)
         return response
     } catch (error) {
         throw error

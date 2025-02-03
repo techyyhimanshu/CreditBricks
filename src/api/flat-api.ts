@@ -1,9 +1,8 @@
-import axios from 'axios';
-import baseUrl from './base-url';
+import axiosInstance from './axiosInstance';
 
 export const addFlatApi = async (data: any): Promise<any> => {
     try {
-        const response = await axios.post(`${baseUrl}/flat/new`, data)
+        const response = await axiosInstance.post(`/flat/new`, data)
         return response
     } catch (error) {
         throw error
@@ -11,7 +10,7 @@ export const addFlatApi = async (data: any): Promise<any> => {
 }
 export const getAllFlatApi = async (): Promise<any> => {
     try {
-        const response = await axios.get(`${baseUrl}/flat/all`)
+        const response = await axiosInstance.get(`/flat/all`)
         return response
     } catch (error) {
         throw error
@@ -24,7 +23,7 @@ export const updateFlatApi = async (data: any, id: any): Promise<any> => {
             floorNumber: data.floorNumber,
             towerId: data.towerId
         }
-        const response = await axios.patch(`${baseUrl}/flat/${id}`, dataToUpdate)
+        const response = await axiosInstance.patch(`/flat/${id}`, dataToUpdate)
         return response
     } catch (error) {
         throw error
@@ -32,7 +31,7 @@ export const updateFlatApi = async (data: any, id: any): Promise<any> => {
 }
 export const deleteFlatApi = async (id: number): Promise<any> => {
     try {
-        const response = await axios.delete(`${baseUrl}/flat/${id}`)
+        const response = await axiosInstance.delete(`/flat/${id}`)
         return response
     } catch (error) {
         throw error

@@ -27,6 +27,7 @@ export default function TowerMaster() {
     });
     const [isEditing, setIsEditing] = useState(false);
     useEffect(() => {
+
         const fetchTowerData = async () => {
             try {
                 const response = await getAllTowerApi();
@@ -44,9 +45,12 @@ export default function TowerMaster() {
                 showToast("error", errorMessage)
             }
         };
-
-        fetchTowerData();
-    }, []);
+        // console.log(towerData.length)
+        if (towerData.length === 0) {
+            fetchTowerData();
+        }
+        // fetchTowerData();
+    }, [towerData]);
     type Row = {
         towerId: number;
         sno: number;
