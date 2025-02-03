@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Accordion, Button, Form, CardHeader, FormControl } from "react-bootstrap";
+import { Col, Row, Card, Accordion, Button, Form, Dropdown, FormControl } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 // import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
@@ -65,7 +65,7 @@ export default function AddMembersMaster() {
   const tenant = [
     { value: "1", label: "Select Tenant" }
   ]
-  const membertype = [{ value: "1", label: "Member" },{ value: "2", label: "Customer/Tenant" }]
+  const membertype = [{ value: "1", label: "Member" }, { value: "2", label: "Customer/Tenant" }]
 
   const wing = [{ value: "1", label: "Select Wing" }]
 
@@ -281,7 +281,7 @@ export default function AddMembersMaster() {
 
             <Accordion.Item eventKey="Society Details" className="bg-white  mb-3">
               <Accordion.Header className="borders">
-              Society Details
+                Property Details
               </Accordion.Header>
               <Accordion.Body className="borders p-0">
                 <Card className='m-0'>
@@ -289,7 +289,7 @@ export default function AddMembersMaster() {
                   <Card.Body className='pt-3'>
 
                     <Row>
-                      <Col xl={6}>
+                      <Col xl={3}>
                         <Form.Group className="form-group">
                           <Form.Label>Society Name</Form.Label>
                           <FormControl
@@ -302,7 +302,7 @@ export default function AddMembersMaster() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={6}>
+                      <Col xl={3}>
                         <Form.Group className="form-group">
                           <Form.Label>Property Name</Form.Label>
                           <FormControl
@@ -316,6 +316,86 @@ export default function AddMembersMaster() {
                       </Col>
 
 
+                      <Col xl={3}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Wing</Form.Label>
+                          <FormControl
+                            type="text"
+                            name="propertyname"
+                            placeholder="Property Name"
+                            className="form-control"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={3}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Flat</Form.Label>
+                          <FormControl
+                            type="text"
+                            name="propertyname"
+                            placeholder="Property Name"
+                            className="form-control"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={12}>
+                        <Button className='btn btn-sm btn-priamry float-end mb-3'>Add</Button>
+
+
+                        <table className='table'>
+                          <thead>
+                            <tr>
+                              <th>S.no.</th>
+                              <th>Society Name </th>
+                              <th>Property Name</th>
+                              <th>Wing</th>
+                              <th>Flat</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Mohan Areca Co-Op Housing Society Limited</td>
+                              <td>A101</td>
+                              <td>A</td>
+                              <td>101</td>
+                              <td><Dropdown >
+                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                  Action
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                  <Dropdown.Item>Edit</Dropdown.Item>
+                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown></td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>Mohan Areca Co-Op Housing Society Limited</td>
+                              <td>A101</td>
+                              <td>A</td>
+                              <td>101</td>
+                              <td><Dropdown >
+                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                  Action
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                  <Dropdown.Item>Edit</Dropdown.Item>
+                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown></td>
+                            </tr>
+
+                          </tbody>
+                        </table>
+                      </Col>
                     </Row>
 
                   </Card.Body>
