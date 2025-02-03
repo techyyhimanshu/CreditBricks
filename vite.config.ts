@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: true,
-      port: 8080
+      port: 8080,
     },
     preview: {
       port: parseInt(env.VITE_PER_PORT)

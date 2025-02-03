@@ -9,7 +9,7 @@ const AddSocietyMaster = lazy(() => import('../components/masters/society/addsoc
 const EditSocietyMaster = lazy(() => import('../components/masters/society/editsocietymaster'));
 const AddParentSociety = lazy(() => import('../components/masters/society/addparentsociety'));
 const TowerMaster = lazy(() => import('../components/masters/towermaster'));
-const FlatMaster = lazy(() => import('../components/masters/flatmaster'));
+const WingMaster = lazy(() => import('../components/masters/wingmaster'));
 const PropertyMaster = lazy(() => import('../components/masters/property/propertymaster'));
 const AddPropertyMaster = lazy(() => import('../components/masters/property/addpropertymaster'));
 const PropertyView = lazy(() => import('../components/masters/property/propertyview'));
@@ -18,10 +18,10 @@ const Users = lazy(() => import('../components/masters/users'));
 const MobileApp = lazy(() => import('../components/masters/mobileapp'));
 const UserPermission = lazy(() => import('../components/masters/userpermission'));
 const TermsCondition = lazy(() => import('../components/masters/termscondition'));
-const UserProfile = lazy (()=> import ('../components/userprofile/userprofile'));
-const MembersMaster = lazy (()=> import ('../components/masters/members/membersmaster'));
-const AddMembersMaster = lazy (()=> import ('../components/masters/members/addmembers'));
-const MembersProfile= lazy (()=> import ('../components/masters/members/membersProfile'));
+const UserProfile = lazy(() => import('../components/userprofile/userprofile'));
+const MembersMaster = lazy(() => import('../components/masters/members/membersmaster'));
+const AddMembersMaster = lazy(() => import('../components/masters/members/addmembers'));
+const MembersProfile = lazy(() => import('../components/masters/members/membersProfile'));
 
 export const Routingdata = [
   //Dashboard
@@ -37,7 +37,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}property/propertyview`, element: <PropertyView /> },
   //Added tower master
   { path: `${import.meta.env.BASE_URL}masters/towermaster`, element: <TowerMaster /> },
-  { path: `${import.meta.env.BASE_URL}masters/flatmaster`, element: <FlatMaster /> },
+  { path: `${import.meta.env.BASE_URL}masters/wingmaster`, element: <WingMaster /> },
   { path: `${import.meta.env.BASE_URL}masters/roles`, element: <Roles /> },
   { path: `${import.meta.env.BASE_URL}masters/users`, element: <Users /> },
   { path: `${import.meta.env.BASE_URL}masters/mobileapp`, element: <MobileApp /> },

@@ -7,53 +7,58 @@ import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { addTowerApi, deleteTowerApi, getAllTowerApi, updateTowerApi } from '../../api/tower-api';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi, getSocietyOwnerApi } from '../../api/society-api';
+import { getAllSocietyApi, getSocietyOwnerApi, getTowersOfSocietyApi } from '../../api/society-api';
+import { addWingApi, deleteWingApi, getAllWingApi, updateWingApi } from '../../api/wing-api';
 // Define the types for the stateCities object
-export default function TowerMaster() {
+export default function WingMaster() {
     const [showModal, setShowModal] = useState(false);
-    const [towerData, setTowerData] = useState<any[]>([]);
     const [societyData, setSocietyData] = useState<any[]>([]);
+    const [wingData, setWingData] = useState<any[]>([]);
     const [societyOwner, setSocietyOwner] = useState("");
-
-    const [currentTower, setCurrentTower] = useState({
+    const [currentWing, setCurrentWing] = useState({
+        wingId: null,
+        wingName: '',
         towerId: null,
-        ownerName: '',
-        towerName: '',
+        towerName: null,
         societyId: null,
-        societyName: ''
+        societyName: "",
+        ownerName: ""
     });
     const [isEditing, setIsEditing] = useState(false);
     useEffect(() => {
-        const fetchTowerData = async () => {
+        const fetchWingData = async () => {
             try {
-                const response = await getAllTowerApi();
+                const response = await getAllWingApi();
                 const formattedData = response.data.data.map((item: any, index: number) => ({
-                    towerId: item.towerId,
                     sno: index + 1,
+                    wingId: item.wingId,
+                    wingName: item.wingName,
+                    towerId: item.towerId,
                     towerName: item.towerName,
-                    ownerName: item.societyManager,
                     societyId: item.societyId,
-                    societyName: item.societyName
+                    societyName: item.societyName,
+                    ownerName: item.ownerName
                 }));
-                setTowerData(formattedData);
+                setWingData(formattedData);
             } catch (error) {
                 const errorMessage = handleApiError(error)
                 showToast("error", errorMessage)
             }
         };
 
-        fetchTowerData();
+        fetchWingData();
     }, []);
     type Row = {
-        towerId: number;
         sno: number;
-        towerName: string;
-        ownerName: string;
+        wingId: number;
+        wingName: string;
         societyId: number;
         societyName: string;
+        towerId: number;
+        towerName: number;
+        ownerName: string
     };
 
     const columns = [
@@ -63,7 +68,13 @@ export default function TowerMaster() {
             sortable: true,
         },
         {
-            name: 'Tower/Block Name',
+            name: 'Wing Name',
+            selector: (row: Row) => row.wingName,
+            sortable: true,
+        },
+
+        {
+            name: 'Tower/Block',
             selector: (row: Row) => row.towerName,
             sortable: true,
         },
@@ -90,17 +101,24 @@ export default function TowerMaster() {
     ]
     const tableData = {
         columns,
-        data: towerData
+        data: wingData
     };
     const societyOptions = societyData?.map((society) => ({
         value: society.societyId,
         label: society.societyName
     }))
+    const [towerOptions, setTowerOptions] = useState([]);
+
     const validationSchema = Yup.object({
-        towerName: Yup.string().required('Tower name is required'),
         society: Yup.object({
             value: Yup.string().required('Society is required'),
-        }).required('Society is required'),
+        }),
+        tower: Yup.object({
+            value: Yup.string().required('Tower is required'),
+            label: Yup.string().required('Tower is requiredd'),
+        }).required("hello"),
+        wingName: Yup.string().required('Wing no is required'),
+
         // zipcode: Yup.string().required('Zipcode is required'),
     })
     const fetchSocietiesForDropDown = async () => {
@@ -111,6 +129,20 @@ export default function TowerMaster() {
                 societyName: item.societyName,
             }));
             setSocietyData(formattedData);
+        } catch (error) {
+            const errorMessage = handleApiError(error)
+            showToast("error", errorMessage)
+        }
+    }
+    const fetchTowersForDropDown = async (society: any) => {
+        try {
+            const response = await getTowersOfSocietyApi(society.value);
+            const formattedData = response.data.data.map((item: any) => ({
+                value: item.towerId,
+                label: item.towerName,
+            }));
+            console.log(formattedData)
+            setTowerOptions(formattedData);
         } catch (error) {
             const errorMessage = handleApiError(error)
             showToast("error", errorMessage)
@@ -128,42 +160,46 @@ export default function TowerMaster() {
     }
     const openAddModal = async () => {
         setIsEditing(false);
-        currentTower.towerName = "";
-        currentTower.societyId = null;
-        currentTower.societyName = "";
-        currentTower.ownerName = "";
+        currentWing.wingId = null
+        currentWing.wingName = ''
+        currentWing.towerId = null
+        currentWing.towerName = null
+        currentWing.societyId = null
+        currentWing.societyName = ""
+        // currentWing. = ";
         setShowModal(true);
         await fetchSocietiesForDropDown()
     };
 
-    const openEditModal = async (tower: any) => {
-        console.log(tower)
+    const openEditModal = async (wing: any) => {
+        console.log(wing)
         await fetchSocietiesForDropDown()
         setIsEditing(true);
-        setCurrentTower(tower);
+        setCurrentWing(wing);
         setShowModal(true);
     };
 
     const handleSubmit = (values: any) => {
+        console.log(values)
         const data = {
-            towerName: values.towerName,
-            ownerName: values.ownerName,
+            wingName: values.wingName,
+            towerId: values.tower.value,
+            towerName: values.tower.label,
             societyId: values.society.value,
             societyName: values.society.label,
         }
-        console.log(data)
         if (isEditing) {
             ; (async () => {
                 try {
-                    const response = await updateTowerApi(data, currentTower.towerId)
+                    const response = await updateWingApi(data, currentWing.wingId)
                     if (response.status === 200) {
                         showToast("success", response.data.message)
                         // Update specific tower in the list
-                        setTowerData(prevData =>
-                            prevData.map(tower =>
-                                tower.towerId === currentTower.towerId
-                                    ? { ...tower, ...data, ownerName: societyOwner }
-                                    : tower
+                        setWingData(prevData =>
+                            prevData.map(wing =>
+                                wing.wingId === currentWing.wingId
+                                    ? { ...wing, ...data, ownerName: societyOwner }
+                                    : wing
                             )
                         );
                         setShowModal(false)
@@ -177,19 +213,22 @@ export default function TowerMaster() {
             // Call API to add new tower
             ; (async () => {
                 try {
-                    const response = await addTowerApi(data)
+                    const response = await addWingApi(data)
                     if (response.status === 200) {
                         showToast("success", response.data.message)
                         // Add the new tower to the table
-                        const newSociety = {
-                            sno: towerData.length + 1,
-                            towerId: response.data.data.towerId,
-                            towerName: response.data.data.towerName,
-                            societyId: response.data.data.societyId,
-                            societyName: societyData.filter((society) => society.societyId === response.data.data.societyId)[0].societyName,
-                            ownerName: societyOwner,
+
+                        const newWing = {
+                            sno: wingData.length + 1,
+                            wingId: response.data.data.wingId,
+                            wingName: response.data.data.wingName,
+                            towerId: values.tower.value,
+                            towerName: values.tower.label,
+                            societyId: values.society.value,
+                            societyName: values.society.label,
+                            ownerName: societyOwner
                         }
-                        setTowerData(prevData => [...prevData, newSociety]);
+                        setWingData(prevData => [...prevData, newWing]);
                         setShowModal(false)
                     }
                 } catch (error: any) {
@@ -205,11 +244,11 @@ export default function TowerMaster() {
         console.log(data)
             ; (async () => {
                 try {
-                    const response = await deleteTowerApi(data.towerId)
+                    const response = await deleteWingApi(data.wingId)
                     if (response.status === 200) {
                         showToast("success", response.data.message)
                         // Remove the tower from the table
-                        setTowerData(prevData => prevData.filter(tower => tower.towerId !== data.towerId))
+                        setWingData(prevData => prevData.filter(wing => wing.wingId !== data.wingId))
                     }
                 } catch (error: any) {
                     const errorMessage = handleApiError(error)
@@ -221,28 +260,30 @@ export default function TowerMaster() {
         <Fragment>
             <div className="breadcrumb-header justify-content-between">
                 <div className="left-content">
-                    <span className="main-content-title mg-b-0 mg-b-lg-1">Tower/Block Master</span>
+                    <span className="main-content-title mg-b-0 mg-b-lg-1">Wing Master</span>
                 </div>
 
                 <div className="right-content">
 
-                    <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Tower/Block</button>
+                    <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Wing</button>
                     <Modal show={showModal} onHide={() => setShowModal(false)} centered>
                         <Formik
                             initialValues={{
-                                towerId: null,
-                                towerName: currentTower?.towerName || "",
-                                ownerName: currentTower?.ownerName,
-                                society: { value: currentTower?.societyId || "", label: currentTower?.societyName || "" }
+                                wingId: null,
+                                wingName: currentWing?.wingName || "",
+                                tower: { value: currentWing?.towerId || "", label: currentWing?.towerName || "" },
+                                society: { value: currentWing?.societyId || "", label: currentWing?.societyName || "" },
+                                ownerName: societyOwner
                             }
                             }
                             validationSchema={validationSchema}
                             onSubmit={handleSubmit}
                         >
                             {({ setFieldValue, values, errors, touched }) => (
+
                                 <FormikForm>
                                     <Modal.Header>
-                                        <Modal.Title>{isEditing ? "Edit Tower" : "Add Tower"}</Modal.Title>
+                                        <Modal.Title>{isEditing ? "Edit Tower" : "Add Wing"}</Modal.Title>
                                         <Button variant="" className="btn-close" onClick={() => setShowModal(false)}>
                                             x
                                         </Button>
@@ -255,6 +296,8 @@ export default function TowerMaster() {
                                                 value={values.society}
                                                 onChange={(selected) => {
                                                     setFieldValue("society", selected)
+                                                    setFieldValue("tower", null); // Reset tower selection
+                                                    fetchTowersForDropDown(selected); // Fetch towers for the selected society
                                                     fetchSocietyOwner(selected)
                                                 }}
                                                 placeholder="Select Society"
@@ -268,24 +311,40 @@ export default function TowerMaster() {
                                         </Form.Group>
                                         <Form.Group className="form-group">
                                             <Form.Label>Owner</Form.Label>
+
                                             <Field
                                                 type="text"
                                                 disabled={true}
+                                                name="ownerName"
                                                 value={societyOwner}
-                                                // name="ownerName"
                                                 className="form-control"
                                             />
-                                            <ErrorMessage name="ownerName" component="div" className="text-danger" />
+
                                         </Form.Group>
                                         <Form.Group className="form-group">
-                                            <Form.Label>Tower/Block Name <span className="text-danger">*</span></Form.Label>
+                                            <Form.Label>
+                                                Tower<span className="text-danger">*</span>
+                                            </Form.Label>
+                                            <Select
+                                                options={towerOptions}
+                                                value={values.tower}
+                                                onChange={(selected) => setFieldValue("tower", selected)}
+                                                placeholder="Select Tower"
+                                                classNamePrefix="Select2"
+                                            />
+                                            {touched.tower?.value && errors.tower?.value && (
+                                                <div className="text-danger">{errors.tower.value}</div>
+                                            )}
+                                        </Form.Group>
+                                        <Form.Group className="form-group">
+                                            <Form.Label>Wing Name <span className="text-danger">*</span></Form.Label>
                                             <Field
                                                 type="text"
-                                                name="towerName"
-                                                placeholder="Tower/Block name"
+                                                name="wingName"
+                                                placeholder="Wing Name"
                                                 className="form-control"
                                             />
-                                            <ErrorMessage name="towerName" component="div" className="text-danger" />
+                                            <ErrorMessage name="wingName" component="div" className="text-danger" />
                                         </Form.Group>
 
 
@@ -295,7 +354,7 @@ export default function TowerMaster() {
                                             Close
                                         </Button>
                                         <button className="btn btn-primary" type="submit">
-                                            {isEditing ? "Save Changes" : "Add Tower"}
+                                            {isEditing ? "Save Changes" : "Add Wing"}
                                         </button>
                                     </Modal.Footer>
                                 </FormikForm>
@@ -317,9 +376,9 @@ export default function TowerMaster() {
                                 <DataTableExtensions {...tableData}>
                                     <DataTable
                                         columns={columns}
-                                        data={towerData}
+                                        data={wingData}
                                         pagination
-                                        keyField="towerId"
+                                        keyField="wingId"
                                     />
                                 </DataTableExtensions>
                             </div>
