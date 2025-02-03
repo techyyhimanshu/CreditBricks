@@ -1,25 +1,45 @@
-export const handleApiError = (error: any) => {
+export const handleApiError = (error: any): string => {
     console.error("API Error:", error);
 
     if (error.response) {
-        // Server responded with an error
+        // The request was made and the server responded with a status code
         const { status, data } = error.response;
 
-        if (status === 400) {
-            // Validation or bad request error
-            return "Validation error occurred.";
-        } else if (status >= 500) {
-            // Server-side error
-            return "Server error. Please try again later.";
-        } else {
-            // Other server errors
-            return data.message || "Something went wrong";
+        switch (status) {
+            case 400:
+                return data.message || "Validation error occurred";
+            case 401:
+                return "Unauthorized. Please log in again.";
+            case 403:
+                return "Forbidden. You do not have permission to perform this action.";
+            case 404:
+                return "Resource not found. Please check the URL or contact support.";
+            case 408:
+                return "Request timeout. The server took too long to respond.";
+            case 429:
+                return "Too many requests. Please slow down and try again later.";
+            case 500:
+                return "Internal server error. Please try again later.";
+            case 502:
+                return "Bad gateway. The server received an invalid response from an upstream service.";
+            case 503:
+                return "Service unavailable. The server is temporarily overloaded or under maintenance.";
+            case 504:
+                return "Gateway timeout. The server took too long to respond.";
+            default:
+                return data.message || "An unexpected error occurred. Please try again.";
         }
     } else if (error.request) {
-        // No response from the server (network error)
-        return "Network error. Please check your connection.";
+        // The request was made but no response was received
+        if (error.code === "ECONNABORTED") {
+            return "Request timed out. Please try again.";
+        }
+        return "Network error. Please check your internet connection.";
     } else {
-        // Unexpected client-side error
-        return "Internal server error. Please try again later.";
+        // Something happened in setting up the request that triggered an error
+        if (error.message.includes("Network Error")) {
+            return "Network error. The server may be down or unreachable.";
+        }
+        return "An unexpected error occurred. Please try again later.";
     }
 };

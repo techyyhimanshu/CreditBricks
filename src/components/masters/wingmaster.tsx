@@ -9,13 +9,14 @@ import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi, getTowersOfSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi, getSocietyOwnerApi, getTowersOfSocietyApi } from '../../api/society-api';
 import { addWingApi, deleteWingApi, getAllWingApi, updateWingApi } from '../../api/wing-api';
 // Define the types for the stateCities object
 export default function WingMaster() {
     const [showModal, setShowModal] = useState(false);
     const [societyData, setSocietyData] = useState<any[]>([]);
     const [wingData, setWingData] = useState<any[]>([]);
+    const [societyOwner, setSocietyOwner] = useState("");
     const [currentWing, setCurrentWing] = useState({
         wingId: null,
         wingName: '',
@@ -23,6 +24,7 @@ export default function WingMaster() {
         towerName: null,
         societyId: null,
         societyName: "",
+        ownerName: ""
     });
     const [isEditing, setIsEditing] = useState(false);
     useEffect(() => {
@@ -37,8 +39,8 @@ export default function WingMaster() {
                     towerName: item.towerName,
                     societyId: item.societyId,
                     societyName: item.societyName,
+                    ownerName: item.ownerName
                 }));
-                console.log(formattedData)
                 setWingData(formattedData);
             } catch (error) {
                 const errorMessage = handleApiError(error)
@@ -56,6 +58,7 @@ export default function WingMaster() {
         societyName: string;
         towerId: number;
         towerName: number;
+        ownerName: string
     };
 
     const columns = [
@@ -65,19 +68,24 @@ export default function WingMaster() {
             sortable: true,
         },
         {
-            name: 'Society',
-            selector: (row: Row) => row.societyName,
+            name: 'Wing Name',
+            selector: (row: Row) => row.wingName,
             sortable: true,
         },
+
         {
             name: 'Tower/Block',
             selector: (row: Row) => row.towerName,
             sortable: true,
         },
-
         {
-            name: 'Wing Name',
-            selector: (row: Row) => row.wingName,
+            name: 'Society',
+            selector: (row: Row) => row.societyName,
+            sortable: true,
+        },
+        {
+            name: 'Owner',
+            selector: (row: Row) => row.ownerName,
             sortable: true,
         },
         {
@@ -109,7 +117,7 @@ export default function WingMaster() {
             value: Yup.string().required('Tower is required'),
             label: Yup.string().required('Tower is requiredd'),
         }).required("hello"),
-        wingNumber: Yup.string().required('Wing no is required'),
+        wingName: Yup.string().required('Wing no is required'),
 
         // zipcode: Yup.string().required('Zipcode is required'),
     })
@@ -140,10 +148,20 @@ export default function WingMaster() {
             showToast("error", errorMessage)
         }
     }
+    const fetchSocietyOwner = async (society: any) => {
+        try {
+            const response = await getSocietyOwnerApi(society.value);
+            const { societyManager } = response.data.data
+            setSocietyOwner(societyManager);
+        } catch (error) {
+            const errorMessage = handleApiError(error)
+            showToast("error", errorMessage)
+        }
+    }
     const openAddModal = async () => {
         setIsEditing(false);
         currentWing.wingId = null
-        currentWing.wingNumber = ''
+        currentWing.wingName = ''
         currentWing.towerId = null
         currentWing.towerName = null
         currentWing.societyId = null
@@ -180,7 +198,7 @@ export default function WingMaster() {
                         setWingData(prevData =>
                             prevData.map(wing =>
                                 wing.wingId === currentWing.wingId
-                                    ? { ...wing, ...data }
+                                    ? { ...wing, ...data, ownerName: societyOwner }
                                     : wing
                             )
                         );
@@ -199,16 +217,16 @@ export default function WingMaster() {
                     if (response.status === 200) {
                         showToast("success", response.data.message)
                         // Add the new tower to the table
-                        console.log(values)
 
                         const newWing = {
                             sno: wingData.length + 1,
                             wingId: response.data.data.wingId,
-                            wingNumber: response.data.data.wingNumber,
+                            wingName: response.data.data.wingName,
                             towerId: values.tower.value,
                             towerName: values.tower.label,
                             societyId: values.society.value,
-                            societyName: values.society.label
+                            societyName: values.society.label,
+                            ownerName: societyOwner
                         }
                         setWingData(prevData => [...prevData, newWing]);
                         setShowModal(false)
@@ -254,7 +272,8 @@ export default function WingMaster() {
                                 wingId: null,
                                 wingName: currentWing?.wingName || "",
                                 tower: { value: currentWing?.towerId || "", label: currentWing?.towerName || "" },
-                                society: { value: currentWing?.societyId || "", label: currentWing?.societyName || "" }
+                                society: { value: currentWing?.societyId || "", label: currentWing?.societyName || "" },
+                                ownerName: societyOwner
                             }
                             }
                             validationSchema={validationSchema}
@@ -279,6 +298,7 @@ export default function WingMaster() {
                                                     setFieldValue("society", selected)
                                                     setFieldValue("tower", null); // Reset tower selection
                                                     fetchTowersForDropDown(selected); // Fetch towers for the selected society
+                                                    fetchSocietyOwner(selected)
                                                 }}
                                                 placeholder="Select Society"
                                                 classNamePrefix="Select2"
@@ -287,6 +307,18 @@ export default function WingMaster() {
                                             {touched.society?.value && errors.society?.value && (
                                                 <div className="text-danger">{errors.society.value}</div>
                                             )}
+
+                                        </Form.Group>
+                                        <Form.Group className="form-group">
+                                            <Form.Label>Owner</Form.Label>
+
+                                            <Field
+                                                type="text"
+                                                disabled={true}
+                                                name="ownerName"
+                                                value={societyOwner}
+                                                className="form-control"
+                                            />
 
                                         </Form.Group>
                                         <Form.Group className="form-group">
@@ -308,11 +340,11 @@ export default function WingMaster() {
                                             <Form.Label>Wing Name <span className="text-danger">*</span></Form.Label>
                                             <Field
                                                 type="text"
-                                                name="wingNumber"
+                                                name="wingName"
                                                 placeholder="Wing Name"
                                                 className="form-control"
                                             />
-                                            <ErrorMessage name="wingNumber" component="div" className="text-danger" />
+                                            <ErrorMessage name="wingName" component="div" className="text-danger" />
                                         </Form.Group>
 
 

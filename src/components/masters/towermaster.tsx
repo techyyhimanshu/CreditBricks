@@ -10,15 +10,17 @@ import * as Yup from 'yup';
 import { addTowerApi, deleteTowerApi, getAllTowerApi, updateTowerApi } from '../../api/tower-api';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi, getSocietyOwnerApi } from '../../api/society-api';
 // Define the types for the stateCities object
 export default function TowerMaster() {
     const [showModal, setShowModal] = useState(false);
     const [towerData, setTowerData] = useState<any[]>([]);
     const [societyData, setSocietyData] = useState<any[]>([]);
+    const [societyOwner, setSocietyOwner] = useState("");
+
     const [currentTower, setCurrentTower] = useState({
         towerId: null,
-        towerOwner: '',
+        ownerName: '',
         towerName: '',
         societyId: null,
         societyName: ''
@@ -32,7 +34,7 @@ export default function TowerMaster() {
                     towerId: item.towerId,
                     sno: index + 1,
                     towerName: item.towerName,
-                    towerOwner: item.towerOwner,
+                    ownerName: item.societyManager,
                     societyId: item.societyId,
                     societyName: item.societyName
                 }));
@@ -49,7 +51,7 @@ export default function TowerMaster() {
         towerId: number;
         sno: number;
         towerName: string;
-        towerOwner: string;
+        ownerName: string;
         societyId: number;
         societyName: string;
     };
@@ -66,13 +68,13 @@ export default function TowerMaster() {
             sortable: true,
         },
         {
-            name: 'Owner',
-            selector: (row: Row) => row.towerOwner,
+            name: 'Society',
+            selector: (row: Row) => row.societyName,
             sortable: true,
         },
         {
-            name: 'Society',
-            selector: (row: Row) => row.societyName,
+            name: 'Owner',
+            selector: (row: Row) => row.ownerName,
             sortable: true,
         },
         {
@@ -114,12 +116,22 @@ export default function TowerMaster() {
             showToast("error", errorMessage)
         }
     }
+    const fetchSocietyOwner = async (society: any) => {
+        try {
+            const response = await getSocietyOwnerApi(society.value);
+            const { societyManager } = response.data.data
+            setSocietyOwner(societyManager);
+        } catch (error) {
+            const errorMessage = handleApiError(error)
+            showToast("error", errorMessage)
+        }
+    }
     const openAddModal = async () => {
         setIsEditing(false);
         currentTower.towerName = "";
         currentTower.societyId = null;
         currentTower.societyName = "";
-        currentTower.towerOwner = "";
+        currentTower.ownerName = "";
         setShowModal(true);
         await fetchSocietiesForDropDown()
     };
@@ -135,7 +147,7 @@ export default function TowerMaster() {
     const handleSubmit = (values: any) => {
         const data = {
             towerName: values.towerName,
-            towerOwner: values.towerOwner,
+            ownerName: values.ownerName,
             societyId: values.society.value,
             societyName: values.society.label,
         }
@@ -150,7 +162,7 @@ export default function TowerMaster() {
                         setTowerData(prevData =>
                             prevData.map(tower =>
                                 tower.towerId === currentTower.towerId
-                                    ? { ...tower, ...data }
+                                    ? { ...tower, ...data, ownerName: societyOwner }
                                     : tower
                             )
                         );
@@ -174,7 +186,8 @@ export default function TowerMaster() {
                             towerId: response.data.data.towerId,
                             towerName: response.data.data.towerName,
                             societyId: response.data.data.societyId,
-                            societyName: societyData.filter((society) => society.societyId === response.data.data.societyId)[0].societyName
+                            societyName: societyData.filter((society) => society.societyId === response.data.data.societyId)[0].societyName,
+                            ownerName: societyOwner,
                         }
                         setTowerData(prevData => [...prevData, newSociety]);
                         setShowModal(false)
@@ -219,7 +232,7 @@ export default function TowerMaster() {
                             initialValues={{
                                 towerId: null,
                                 towerName: currentTower?.towerName || "",
-                                towerOwner: currentTower?.towerOwner || "",
+                                ownerName: currentTower?.ownerName,
                                 society: { value: currentTower?.societyId || "", label: currentTower?.societyName || "" }
                             }
                             }
@@ -236,31 +249,14 @@ export default function TowerMaster() {
                                     </Modal.Header>
                                     <Modal.Body>
                                         <Form.Group className="form-group">
-                                            <Form.Label>Tower/Block Name <span className="text-danger">*</span></Form.Label>
-                                            <Field
-                                                type="text"
-                                                name="towerName"
-                                                placeholder="Tower/Block name"
-                                                className="form-control"
-                                            />
-                                            <ErrorMessage name="towerName" component="div" className="text-danger" />
-                                        </Form.Group>
-                                        <Form.Group className="form-group">
-                                            <Form.Label>Owner Name <span className="text-danger">*</span></Form.Label>
-                                            <Field
-                                                type="text"
-                                                name="towerOwner"
-                                                placeholder="Owner Name"
-                                                className="form-control"
-                                            />
-                                            <ErrorMessage name="towerOwner" component="div" className="text-danger" />
-                                        </Form.Group>
-                                        <Form.Group className="form-group">
                                             <Form.Label>Society<span className="text-danger">*</span></Form.Label>
                                             <Select
                                                 options={societyOptions}
                                                 value={values.society}
-                                                onChange={(selected) => setFieldValue("society", selected)}
+                                                onChange={(selected) => {
+                                                    setFieldValue("society", selected)
+                                                    fetchSocietyOwner(selected)
+                                                }}
                                                 placeholder="Select Society"
                                                 classNamePrefix="Select2"
                                             />
@@ -270,6 +266,29 @@ export default function TowerMaster() {
                                             )}
 
                                         </Form.Group>
+                                        <Form.Group className="form-group">
+                                            <Form.Label>Owner</Form.Label>
+                                            <Field
+                                                type="text"
+                                                disabled={true}
+                                                value={societyOwner}
+                                                // name="ownerName"
+                                                className="form-control"
+                                            />
+                                            <ErrorMessage name="ownerName" component="div" className="text-danger" />
+                                        </Form.Group>
+                                        <Form.Group className="form-group">
+                                            <Form.Label>Tower/Block Name <span className="text-danger">*</span></Form.Label>
+                                            <Field
+                                                type="text"
+                                                name="towerName"
+                                                placeholder="Tower/Block name"
+                                                className="form-control"
+                                            />
+                                            <ErrorMessage name="towerName" component="div" className="text-danger" />
+                                        </Form.Group>
+
+
                                     </Modal.Body>
                                     <Modal.Footer>
                                         <Button variant="default" onClick={() => setShowModal(false)}>

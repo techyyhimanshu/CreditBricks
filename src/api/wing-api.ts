@@ -20,8 +20,8 @@ export const getAllWingApi = async (): Promise<any> => {
 export const updateWingApi = async (data: any, id: any): Promise<any> => {
     try {
         const dataToUpdate = {
-            wingNumber: data.wingNumber,
-            floorNumber: data.floorNumber,
+            wingName: data.wingName,
+            societyId: data.societyId,
             towerId: data.towerId
         }
         const response = await axios.patch(`${baseUrl}/wing/${id}`, dataToUpdate)

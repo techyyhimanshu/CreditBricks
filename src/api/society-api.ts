@@ -28,6 +28,14 @@ export const getAllSocietyApi = async (): Promise<any> => {
         throw error
     }
 }
+export const getSocietyOwnerApi = async (societyId: number): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/society/${societyId}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const updateSocietyApi = async (data: any, id: any): Promise<any> => {
     try {
         const formData = new FormData();
