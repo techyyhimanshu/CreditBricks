@@ -55,23 +55,23 @@ export default function AddSocietyMaster() {
     { value: "2", label: "Bill" },
     { value: "3", label: "Due" },
   ]
-const society =[
-  { value: "1", label: "Society" },
-  { value: "2", label: "Association" },
-]
+  const society = [
+    { value: "1", label: "Society" },
+    { value: "2", label: "Association" },
+  ]
   const applicationtype = [
     { value: "1", label: "Gate Pass" },
     { value: "2", label: "Flat Resale" },
     { value: "3", label: "Celebration" },
 
   ]
-const flat = [
-  { value: "1", label: "Select Flat " },
-]
+  const flat = [
+    { value: "1", label: "Select Flat " },
+  ]
 
-const wing  = [
-  { value: "1", label: "Select Wing " },
-]
+  const wing = [
+    { value: "1", label: "Select Wing " },
+  ]
   const designation = [
     { value: "1", label: "Secretary " },
     { value: "2", label: "Committe Member " },
@@ -301,12 +301,12 @@ const wing  = [
                             </Form.Group>
                           </Col>
 
-                          <Col xl={4}>
+                          {/* <Col xl={4}>
                             <Form.Group className="form-group pt-2">
 
                              <Link to={`${import.meta.env.BASE_URL}society/addparentsociety`} className='btn btn-primary mt-4'>Add Parent</Link>
                             </Form.Group>
-                          </Col>
+                          </Col> */}
 
 
                         </Row>
@@ -603,7 +603,7 @@ const wing  = [
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
-                            <Button className="btn btn-primary float-end btn-sm" type="button">Add </Button>
+                              <Button className="btn btn-primary float-end btn-sm" type="button">Add </Button>
                             </Form.Group>
                           </Col>
 
@@ -674,9 +674,9 @@ const wing  = [
                   </Accordion.Body>
                 </Accordion.Item>
 
-                <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
+                {/* <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
                   <Accordion.Header className="borders">
-                  List of Committee Members
+                    List of Committee Members
                   </Accordion.Header>
                   <Accordion.Body className="borders p-0">
                     <Card className='m-0'>
@@ -691,7 +691,7 @@ const wing  = [
                                 placeholder="Select Flat"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              
                             </Form.Group>
                           </Col>
 
@@ -703,7 +703,7 @@ const wing  = [
                                 placeholder="Select Wing"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                             
                             </Form.Group>
                           </Col>
 
@@ -716,18 +716,18 @@ const wing  = [
                                 placeholder="Approver Name"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                             
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
-                          <Form.Group className="form-group">
+                            <Form.Group className="form-group">
                               <Form.Label>Application Type </Form.Label>
                               <Select
                                 options={applicationtype}
                                 placeholder="Select Type"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -738,7 +738,7 @@ const wing  = [
                                 placeholder="Select Society"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                             
                             </Form.Group>
                           </Col>
 
@@ -750,7 +750,6 @@ const wing  = [
                                 placeholder="Select Designation"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -767,17 +766,16 @@ const wing  = [
                                 placeholder="Contact Details"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
 
 
-<Col xl={12}>
-  <Form.Group className="form-group">
-  <Button className="btn btn-primary float-end mb-3" type="button">Add </Button>
-  </Form.Group>
-</Col>
+                          <Col xl={12}>
+                            <Form.Group className="form-group">
+                              <Button className="btn btn-primary float-end mb-3" type="button">Add </Button>
+                            </Form.Group>
+                          </Col>
                         </Row>
 
                         <table className='table'>
@@ -791,7 +789,7 @@ const wing  = [
                               <th>Application Type</th>
                               <th>Designation</th>
                               <th>Contact Details</th>
-                               <th>Action</th>
+                              <th>Action</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -842,7 +840,8 @@ const wing  = [
                       </Card.Body>
                     </Card>
                   </Accordion.Body>
-                </Accordion.Item>
+                </Accordion.Item> 
+                */}
 
               </Accordion>
 
