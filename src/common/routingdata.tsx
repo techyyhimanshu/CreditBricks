@@ -7,7 +7,6 @@ const Accounts = lazy(() => import('../components/accounts/accounts'));
 const SocietyMaster = lazy(() => import('../components/masters/society/societymaster'));
 const AddSocietyMaster = lazy(() => import('../components/masters/society/addsocietymaster'));
 const EditSocietyMaster = lazy(() => import('../components/masters/society/editsocietymaster'));
-const AddParentSociety = lazy(() => import('../components/masters/society/addparentsociety'));
 const TowerMaster = lazy(() => import('../components/masters/towermaster'));
 const WingMaster = lazy(() => import('../components/masters/wingmaster'));
 const PropertyMaster = lazy(() => import('../components/masters/property/propertymaster'));
@@ -22,6 +21,7 @@ const UserProfile = lazy(() => import('../components/userprofile/userprofile'));
 const MembersMaster = lazy(() => import('../components/masters/members/membersmaster'));
 const AddMembersMaster = lazy(() => import('../components/masters/members/addmembers'));
 const MembersProfile = lazy(() => import('../components/masters/members/membersProfile'));
+const ParentEntity= lazy(() => import('../components/parententity/parententity'));
 
 export const Routingdata = [
   //Dashboard
@@ -31,7 +31,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}society/societymaster`, element: <SocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/addsocietymaster`, element: <AddSocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/editsocietymaster`, element: <EditSocietyMaster /> },
-  { path: `${import.meta.env.BASE_URL}society/addparentsociety`, element: <AddParentSociety /> },
+  { path: `${import.meta.env.BASE_URL}parententity/parententity`, element: <ParentEntity /> },
   { path: `${import.meta.env.BASE_URL}property/propertymaster`, element: <PropertyMaster /> },
   { path: `${import.meta.env.BASE_URL}property/addpropertymaster`, element: <AddPropertyMaster /> },
   { path: `${import.meta.env.BASE_URL}property/propertyview`, element: <PropertyView /> },

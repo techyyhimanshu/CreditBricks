@@ -116,9 +116,19 @@ export const MENUITEMS = [
         ],
       },
       {
+        title: "Parent Entity",
+        icon: (
+          <i className="side-menu__icon bi bi-diagram-2"></i>
+        ),
+        path: `${import.meta.env.BASE_URL}parententity/parententity`,
+        type: "link",
+        active: false,
+        selected: false,
+      },
+      {
         title: "Accounts",
         icon: (
-          <i className="side-menu__icon bi bi-briefcase"></i>
+          <i className="side-menu__icon bi bi-calculator"></i>
         ),
         path: `${import.meta.env.BASE_URL}accounts/accounts`,
         type: "link",
@@ -185,7 +195,7 @@ export const MENUITEMS = [
       },
       {
         title: "Loans",
-        icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
+        icon: (<i className="side-menu__icon bi bi-cash-stack"></i>
         ),
         path: `${import.meta.env.BASE_URL}chats/chats`,
         type: "link",
@@ -204,7 +214,7 @@ export const MENUITEMS = [
       },
       {
         title: "Announcements",
-        icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
+        icon: (<i className="side-menu__icon bi bi-megaphone"></i>
         ),
         path: `${import.meta.env.BASE_URL}document/document`,
         type: "link",
@@ -215,7 +225,7 @@ export const MENUITEMS = [
 
       {
         title: "Visitors",
-        icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
+        icon: (<i className="side-menu__icon bi bi-people"></i>
         ),
         path: `${import.meta.env.BASE_URL}document/document`,
         type: "link",

@@ -177,15 +177,19 @@ export default function PropertyView() {
 </div>
 
                 </Tab>
-                <Tab eventKey="Invoices" title="Invoices">
+                <Tab eventKey="Accounts" title="Accounts">
 
                 </Tab>
-                <Tab eventKey="Receipts" title="Receipts">
+
+
+<Tab eventKey="Applications" title="Applications">
 
 </Tab>
-                <Tab eventKey="Ledgers" title="Ledgers">
 
-                </Tab>
+<Tab eventKey="Complaints" title="Complaints">
+
+</Tab>
+
               </Tabs>
             </div>
           </div>

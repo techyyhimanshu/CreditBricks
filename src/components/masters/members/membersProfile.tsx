@@ -281,13 +281,13 @@ export default function PropertyView() {
 </div>
 
                 </Tab>
-                <Tab eventKey="Invoices" title="Invoices">
+                <Tab eventKey="Accounts" title="Accounts">
 
                 </Tab>
-                <Tab eventKey="Receipts" title="Receipts">
+                <Tab eventKey="Applications" title="Applications">
 
 </Tab>
-                <Tab eventKey="Ledgers" title="Ledgers">
+                <Tab eventKey="Complaints" title="Complaints">
 
                 </Tab>
               </Tabs>
@@ -300,13 +300,16 @@ export default function PropertyView() {
 
         <Card>
               <Card.Body>
-                <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Society Details</h5>
+                <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Property Details</h5>
                 <Row>
                   <Col xl={12} className='mb-1 tx-12'>Society Name</Col>
-                  <Col xl={12} className='tx-semibold'>Mohan Areca Co-Op Housing Society Limited</Col>
-                  <Col xl={12} className='mb-1 mt-3 tx-12'>Property Name</Col>
-                  <Col xl={12} className='tx-semibold'>A101</Col>
-
+                  <Col xl={12} className='tx-semibold'><Link to={``} className='text-info'>Mohan Areca Co-Op Housing Society Limited</Link></Col>
+                  <Col xl={6} className='mb-1 mt-3 tx-12'>Property Name<br/>
+                  <span className='tx-semibold'>A101</span></Col>
+                  <Col xl={3} className='mb-1 mt-3 tx-12'>Wing<br/>
+                  <span className='tx-semibold'>A</span></Col>
+                  <Col xl={3} className='mb-1 mt-3 tx-12'>Flat<br/>
+                  <span className='tx-semibold'>101</span> </Col>
                 </Row>
               </Card.Body>
             </Card>

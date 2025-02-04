@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Accordion, Button, Form, CardHeader, FormControl } from "react-bootstrap";
+import { Col, Row, Card, Accordion, Button, Form, Modal, FormControl } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 // import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
@@ -76,6 +76,28 @@ const tenant = [
     label: state,
   }));
 
+
+  const [flatsoldmodalshow, setflatsoldmodal] = useState(false);
+
+  const viewDemoShow = (modal: any) => {
+    switch (modal) {
+
+      case "flatsoldmodalshow":
+        setflatsoldmodal(true);
+        break;
+
+    }
+  };
+
+  const viewDemoClose = (modal: any) => {
+    switch (modal) {
+
+      case "flatsoldmodalshow":
+        setflatsoldmodal(false);
+        break;
+
+    }
+  };
 
   return (
     <Fragment>
@@ -266,13 +288,25 @@ const tenant = [
                     <FormControl
                       type="text"
                       name="floor"
-                      placeholder="FLoor no"
+                      placeholder="Floor no"
                       className="form-control"
                     />
                     {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                   </Form.Group>
                 </Col>
 
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Designation</Form.Label>
+                    <FormControl
+                      type="text"
+                      name="designation"
+                      placeholder="Designation"
+                      className="form-control"
+                    />
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
 
               </Row>
 
@@ -471,16 +505,47 @@ const tenant = [
                   </Form.Group>
                 </Col>
 
+
                 <Col xl={4}>
                   <Form.Group className="form-group">
-                    <Form.Label>Rent Agreement Start Date </Form.Label>
+                    <Form.Label>Tenant Mobile Number</Form.Label>
                     <FormControl
-                      type="date"
-                      name="rentAgreementStartDate"
-                      placeholder=""
+                      type="text"
+                      name="tenantnumber"
+                      placeholder="Number"
                       className="form-control"
                     />
                     {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Tenant Address</Form.Label>
+                    <FormControl
+                      type="text"
+                      name="tenantaddress"
+                      placeholder="Address"
+                      className="form-control"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+                <Col xl={12}>
+                <hr className='w-100'/>
+                </Col>
+<strong className='tx-16 mt-2 mb-3 col-sm-12 tx-semibold'>Rent Agreement Details</strong>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Rent Agreement Start Date</Form.Label>
+                    <FormControl
+                      type="date"
+                      name="rentAgreementEndDate"
+                      placeholder=""
+                      className="form-control"
+                    />
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                   </Form.Group>
                 </Col>
 
@@ -498,8 +563,54 @@ const tenant = [
                   </Form.Group>
                 </Col>
 
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Monthly Rent</Form.Label>
+                    <FormControl
+                      type="text"
+                      name="monthlyrent"
+                      placeholder="0:00"
+                      className="form-control"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
 
 
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Rent Registration Id</Form.Label>
+                    <FormControl
+                      type="text"
+                      name="registrationid"
+                      placeholder="id"
+                      className="form-control"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Upload Rent Agreement</Form.Label>
+                    <FormControl
+                      type="file"
+                      className="form-control"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Police Verification Document</Form.Label>
+                    <FormControl
+                      type="file"
+                      className="form-control"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
 
               </Row>
 
@@ -729,7 +840,70 @@ const tenant = [
 </Accordion.Item>
 
 </Accordion>
+<Button variant="success" onClick={() => viewDemoShow("flatsoldmodalshow")}> Flat Sold </Button>
+<Modal centered show={flatsoldmodalshow}>
+                      <Modal.Header>
+                        <Modal.Title>Flat Sold</Modal.Title>
+                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
+                          x
+                        </Button>
+                      </Modal.Header>
+                      <Modal.Body>
+                      <Form.Group className="form-group">
+                    <Form.Label>Owner Name</Form.Label>
+                    <FormControl
+                      type="text"
+                      name="ownername"
+                      placeholder="Owner name"
+                      className="form-control"
+                    />
+                    </Form.Group>
 
+
+                    <Form.Group className="form-group">
+                    <Form.Label>Owner Mobile Number</Form.Label>
+                    <FormControl
+                      type="text"
+                      name="ownernumber"
+                      placeholder="Owner number"
+                      className="form-control"
+                    />
+                    </Form.Group>
+
+
+                    <Form.Group className="form-group">
+                    <Form.Label>Owner Email</Form.Label>
+                    <FormControl
+                      type="text"
+                      name="owneremail"
+                      placeholder="Owner email"
+                      className="form-control"
+                    />
+                    </Form.Group>
+
+                    <Form.Group className="form-group">
+                    <Form.Label>Owner Address</Form.Label>
+                    <FormControl
+                      type="text"
+                      name="owneraddress"
+                      placeholder="Owner address"
+                      className="form-control"
+                    />
+                    </Form.Group>
+
+
+
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Button variant="default" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
+                          Close
+                        </Button>
+                        <Button variant="primary" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
+                          Save
+                        </Button>
+
+                      </Modal.Footer>
+                    </Modal>
           <span className='float-end mb-5'>
           <Button variant="default ms-3"> Cancel </Button>
                     <Button className="btn btn-primary" type="submit">Save </Button>
