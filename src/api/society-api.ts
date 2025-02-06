@@ -2,17 +2,7 @@ import axiosInstance from './axiosInstance';
 
 export const addSocietyApi = async (data: any): Promise<any> => {
     try {
-        const formData = new FormData();
-        for (const key in data) {
-            if (key === 'paymentQrFile' && data[key]) {
-                formData.append(key, data[key]);
-            } else if (typeof data[key] === 'object' && data[key] !== null) {
-                formData.append(key, JSON.stringify(data[key]));
-            } else {
-                formData.append(key, data[key]);
-            }
-        }
-        const response = await axiosInstance.post(`/society/new`, formData)
+        const response = await axiosInstance.post(`/society/new`, data)
         return response
     } catch (error) {
         throw error

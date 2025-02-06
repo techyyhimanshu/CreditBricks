@@ -35,8 +35,8 @@ export default function WingMaster() {
                     sno: index + 1,
                     wingId: item.wingId,
                     wingName: item.wingName,
-                    towerId: item.towerId,
-                    towerName: item.towerName,
+                    towerId: item?.towerId,
+                    towerName: item?.towerName,
                     societyId: item.societyId,
                     societyName: item.societyName,
                     ownerName: item.ownerName
@@ -113,10 +113,6 @@ export default function WingMaster() {
         society: Yup.object({
             value: Yup.string().required('Society is required'),
         }),
-        tower: Yup.object({
-            value: Yup.string().required('Tower is required'),
-            label: Yup.string().required('Tower is requiredd'),
-        }).required("hello"),
         wingName: Yup.string().required('Wing no is required'),
 
         // zipcode: Yup.string().required('Zipcode is required'),
@@ -183,8 +179,8 @@ export default function WingMaster() {
         console.log(values)
         const data = {
             wingName: values.wingName,
-            towerId: values.tower.value,
-            towerName: values.tower.label,
+            towerId: values.tower?.value,
+            towerName: values.tower?.label,
             societyId: values.society.value,
             societyName: values.society.label,
         }
@@ -222,8 +218,8 @@ export default function WingMaster() {
                             sno: wingData.length + 1,
                             wingId: response.data.data.wingId,
                             wingName: response.data.data.wingName,
-                            towerId: values.tower.value,
-                            towerName: values.tower.label,
+                            towerId: values.tower?.value,
+                            towerName: values.tower?.label,
                             societyId: values.society.value,
                             societyName: values.society.label,
                             ownerName: societyOwner
@@ -276,7 +272,7 @@ export default function WingMaster() {
                                 ownerName: societyOwner
                             }
                             }
-                            validationSchema={validationSchema}
+                            // validationSchema={validationSchema}
                             onSubmit={handleSubmit}
                         >
                             {({ setFieldValue, values, errors, touched }) => (
@@ -323,7 +319,7 @@ export default function WingMaster() {
                                         </Form.Group>
                                         <Form.Group className="form-group">
                                             <Form.Label>
-                                                Tower<span className="text-danger">*</span>
+                                                Tower
                                             </Form.Label>
                                             <Select
                                                 options={towerOptions}
@@ -332,9 +328,9 @@ export default function WingMaster() {
                                                 placeholder="Select Tower"
                                                 classNamePrefix="Select2"
                                             />
-                                            {touched.tower?.value && errors.tower?.value && (
+                                            {/* {touched.tower?.value && errors.tower?.value && (
                                                 <div className="text-danger">{errors.tower.value}</div>
-                                            )}
+                                            )} */}
                                         </Form.Group>
                                         <Form.Group className="form-group">
                                             <Form.Label>Wing Name <span className="text-danger">*</span></Form.Label>
@@ -353,9 +349,9 @@ export default function WingMaster() {
                                         <Button variant="default" onClick={() => setShowModal(false)}>
                                             Close
                                         </Button>
-                                        <button className="btn btn-primary" type="submit">
+                                        <Button className="btn btn-primary" type="submit" >
                                             {isEditing ? "Save Changes" : "Add Wing"}
-                                        </button>
+                                        </Button>
                                     </Modal.Footer>
                                 </FormikForm>
                             )}
