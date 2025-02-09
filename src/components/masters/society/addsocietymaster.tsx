@@ -505,7 +505,6 @@ export default function AddSocietyMaster() {
                               <Form.Label>Interest Calculation Type <span className="text-danger">*</span></Form.Label>
                               <Select
                                 options={calculationtype}
-                                className="form-control"
                                 name="interestCalculationType"
                                 placeholder="Select Type"
                                 onChange={(selected) => setFieldValue("interestCalculationType", selected)}

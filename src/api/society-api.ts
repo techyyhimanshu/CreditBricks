@@ -59,3 +59,12 @@ export const getTowersOfSocietyApi = async (id: any): Promise<any> => {
         throw error
     }
 }
+
+export const getWingsOfSocietyApi = async (id: any): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/society/${id}/wings`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
