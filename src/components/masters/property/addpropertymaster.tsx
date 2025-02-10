@@ -11,7 +11,7 @@ import { Uploader } from 'uploader';
 import { UploadButton } from 'react-uploader';
 import { getAllSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../../api/society-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
-import { showToast } from '../../../common/services/toastServices';
+import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 import { getAllWingApi } from '../../../api/wing-api';
 import { Formik, Form as FormikForm, ErrorMessage, Field } from 'formik';
 import { geTenantForDropDownApi, getMemberForDropDownApi } from '../../../api/user-api';
@@ -238,10 +238,10 @@ export default function AddPropertyMaster() {
       monthlyPaidArrears: values.monthlyPaidArrears,
       monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto
     }
+
     const response = await addPropertyApi(formattedData)
     if (response.status === 201 || response.status === 200) {
       console.log(response)
-      showToast("success", response.data.message);
     }
   }
 
@@ -1127,6 +1127,7 @@ export default function AddPropertyMaster() {
 
         </Modal.Footer>
       </Modal>
+      <CustomToastContainer />
     </Fragment >
   );
 }

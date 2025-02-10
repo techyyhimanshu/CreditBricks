@@ -30,9 +30,9 @@ export const updateWingApi = async (data: any, id: any): Promise<any> => {
         throw error
     }
 }
-export const deleteWingApi = async (id: number): Promise<any> => {
+export const deleteWingApi = async (identifier: string): Promise<any> => {
     try {
-        const response = await axiosInstance.delete(`/wing/${id}`)
+        const response = await axiosInstance.delete(`/wing/${identifier}`)
         return response
     } catch (error) {
         throw error

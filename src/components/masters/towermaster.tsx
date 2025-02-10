@@ -22,7 +22,7 @@ export default function TowerMaster() {
         towerId: null,
         ownerName: '',
         towerName: '',
-        societyId: null,
+        societyIdentifier: null,
         societyName: ''
     });
     const [isEditing, setIsEditing] = useState(false);
@@ -36,7 +36,7 @@ export default function TowerMaster() {
                     sno: index + 1,
                     towerName: item.towerName,
                     ownerName: item.societyManager,
-                    societyId: item.societyId,
+                    societyIdentifier: item.societyIdentifier,
                     societyName: item.societyName
                 }));
                 setTowerData(formattedData);
@@ -56,7 +56,7 @@ export default function TowerMaster() {
         sno: number;
         towerName: string;
         ownerName: string;
-        societyId: number;
+        societyIdentifier: number;
         societyName: string;
     };
 
@@ -97,7 +97,7 @@ export default function TowerMaster() {
         data: towerData
     };
     const societyOptions = societyData?.map((society) => ({
-        value: society.societyId,
+        value: society.societyIdentifier,
         label: society.societyName
     }))
     const validationSchema = Yup.object({
@@ -111,7 +111,7 @@ export default function TowerMaster() {
         try {
             const response = await getAllSocietyApi();
             const formattedData = response.data.data.map((item: any) => ({
-                societyId: item.societyId,
+                societyIdentifier: item.societyIdentifier,
                 societyName: item.societyName,
             }));
             setSocietyData(formattedData);
@@ -133,7 +133,7 @@ export default function TowerMaster() {
     const openAddModal = async () => {
         setIsEditing(false);
         currentTower.towerName = "";
-        currentTower.societyId = null;
+        currentTower.societyIdentifier = null;
         currentTower.societyName = "";
         currentTower.ownerName = "";
         setShowModal(true);
@@ -152,7 +152,7 @@ export default function TowerMaster() {
         const data = {
             towerName: values.towerName,
             ownerName: values.ownerName,
-            societyId: values.society.value,
+            societyIdentifier: values.society.value,
             societyName: values.society.label,
         }
         console.log(data)
@@ -189,8 +189,8 @@ export default function TowerMaster() {
                             sno: towerData.length + 1,
                             towerId: response.data.data.towerId,
                             towerName: response.data.data.towerName,
-                            societyId: response.data.data.societyId,
-                            societyName: societyData.filter((society) => society.societyId === response.data.data.societyId)[0].societyName,
+                            societyIdentifier: response.data.data.societyIdentifier,
+                            societyName: societyData.filter((society) => society.societyIdentifier === response.data.data.societyIdentifier)[0].societyName,
                             ownerName: societyOwner,
                         }
                         setTowerData(prevData => [...prevData, newSociety]);
@@ -237,7 +237,7 @@ export default function TowerMaster() {
                                 towerId: null,
                                 towerName: currentTower?.towerName || "",
                                 ownerName: currentTower?.ownerName,
-                                society: { value: currentTower?.societyId || "", label: currentTower?.societyName || "" }
+                                society: { value: currentTower?.societyIdentifier || "", label: currentTower?.societyName || "" }
                             }
                             }
                             validationSchema={validationSchema}
