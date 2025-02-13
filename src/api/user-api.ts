@@ -1,5 +1,6 @@
 import axios from 'axios';
 import baseUrl from './base-url';
+import axiosInstance from './axiosInstance';
 
 export const addUserApi = async (data: any): Promise<any> => {
     try {
@@ -136,7 +137,7 @@ export const deleteUserLoanApi = async (username: string, id: number): Promise<a
 
 export const geTenantForDropDownApi = async (): Promise<any> => {
     try {
-        const response = await axios.get(`${baseUrl}/tenant/ddl`)
+        const response = await axiosInstance.get(`/tenant/ddl`)
         return response
     } catch (error) {
         throw error
@@ -144,7 +145,7 @@ export const geTenantForDropDownApi = async (): Promise<any> => {
 }
 export const getMemberForDropDownApi = async (): Promise<any> => {
     try {
-        const response = await axios.get(`${baseUrl}/member/ddl`)
+        const response = await axiosInstance.get(`/member/ddl`)
         return response
     } catch (error) {
         throw error
