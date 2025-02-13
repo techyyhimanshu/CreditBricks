@@ -5,10 +5,8 @@ import { imagesData } from "../../../../common/commonimages";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { adminLoginApi } from "../../../../api/authentication-api";
-import { toast } from "react-toastify";
 import { CustomToastContainer, showToast } from "../../../../common/services/toastServices";
 import { handleApiError } from "../../../../helpers/handle-api-error";
-
 
 
 const SignIn = () => {
@@ -16,9 +14,8 @@ const SignIn = () => {
     try {
       const response = await adminLoginApi(values)
       if (response.status === 200 || response.status === 1) {
-        localStorage.setItem('token', response.data.token)
-        localStorage.setItem('user', JSON.stringify(response.data.user))
         window.location.href = "/dashboard/dashboard1/"
+        showToast("success", response.data.message)
       }
     } catch (error: any) {
       const errorMessage = handleApiError(error);

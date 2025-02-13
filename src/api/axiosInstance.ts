@@ -8,16 +8,16 @@ const axiosInstance = axios.create({
 });
 
 // Request Interceptor (Optional: Attach Access Token to Requests)
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const accessToken = Cookies.get("accessToken");
-        if (accessToken) {
-            config.headers.authorization = `Bearer ${accessToken}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+// axiosInstance.interceptors.request.use(
+//     (config) => {
+//         const accessToken = Cookies.get("accessToken");
+//         if (accessToken) {
+//             config.headers.authorization = `Bearer ${accessToken}`;
+//         }
+//         return config;
+//     },
+//     (error) => Promise.reject(error)
+// );
 
 // Response Interceptor (Handles Token Expiry)
 axiosInstance.interceptors.response.use(

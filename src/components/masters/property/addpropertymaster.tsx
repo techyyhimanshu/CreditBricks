@@ -9,6 +9,13 @@ import stateCities from "../stateCity.json"
 import { Link } from "react-router-dom";
 import { Uploader } from 'uploader';
 import { UploadButton } from 'react-uploader';
+import { getAllSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../../api/society-api';
+import { handleApiError } from '../../../helpers/handle-api-error';
+import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
+import { getAllWingApi } from '../../../api/wing-api';
+import { Formik, Form as FormikForm, ErrorMessage, Field } from 'formik';
+import { geTenantForDropDownApi, getMemberForDropDownApi } from '../../../api/user-api';
+import { addPropertyApi } from '../../../api/property-api';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
@@ -19,66 +26,168 @@ const uploader = Uploader({
 });
 const stateCitiesTyped: StateCities = stateCities;
 export default function AddPropertyMaster() {
-
+  const [currentProperty, setCurrentProperty] = useState({
+    propertyId: null,
+    propertyName: '',
+    status: null,
+    narration: null,
+    area: "",
+    societyIdentifier: "",
+    societyName: "",
+    towerId: null,
+    towerName: null,
+    wingIdentifier: null,
+    wingName: null,
+    flatNumber: "",
+    floorNumber: "",
+    dealType: null,
+    flatRegistrationNumber: '',
+    dateOfAgreement: "",
+    dateOfRegistration: "",
+    memberName: null,
+    memberIdentifier: null,
+    tenantName: null,
+    tenantIdentifier: null,
+    rentAgreementStartDate: "",
+    rentAgreementEndDate: "",
+    monthlyRent: "",
+    rentRegistrationId: "",
+    rentAgreementFile: null,
+    policeVerificationDocFile: null,
+    intercomNumber: "",
+    consumerElectricityNumber: "",
+    gasConnectionNumber: "",
+    monthlyPaidMaintenance: "",
+    monthlyPaidMaintenanceUpto: "",
+    monthlyPaidArrears: "",
+    monthlyPaidArrearsUpto: "",
+  });
+  const [societyData, setSocietyData] = useState<any[]>([]);
+  const [towerOptions, setTowerOptions] = useState<any[]>([]);
+  const [wingOptions, setWingOptions] = useState<any[]>([]);
+  const [tenantOptions, setTenantOptions] = useState<any[]>([]);
+  const [memberOptions, setMemberOptions] = useState<any[]>([]);
 
   const societyname: any = [{ value: "1", label: "Select Society" }]
 
-  const propertystatus = [{ value: "1", label: "None" },
-    { value: "2", label: "Sold" },
-    { value: "3", label: "Unsold" },
-    { value: "4", label: "Blocked by Management" },
-    { value: "5", label: "Refused" },
-    { value: "6", label: "Occupied" },
+  const propertystatus = [
+    { value: "Sold", label: "Sold" },
+    { value: "Unsold", label: "Unsold" },
+    { value: "Blocked by Management", label: "Blocked by Management" },
+    { value: "Refuge", label: "Refuge" },
+  ]
+
+  const narration = [
+    { value: "1 BHK", label: "1 BHK" },
+    { value: "1.5 BHK", label: "1.5 BHK" },
+    { value: "2 BHK", label: "2 BHK" },
+    { value: "2.5 BHK", label: "2.5 BHK" },
+    { value: "1 RK", label: "1 RK" },
+    { value: "3 BHK", label: "3 BHK" },
+    { value: "3.5 BHK", label: "3.5 BHK" },
+    { value: "4 BHK", label: "4 BHK" },
+    { value: "Shop", label: "Shop" },
+    { value: "Duplex", label: "Duplex" },
+    { value: "Villa", label: "Villa" },
+    { value: "Bungalow", label: "Bungalow" },
+    { value: "Basement", label: "Basement" },
+    { value: "Gala", label: "Gala" },
+    { value: "Garage", label: "Garage" },
+    { value: "Godown", label: "Godown" },
+    { value: "Independent House", label: "Independent House" },
+    { value: "Industrial Gala", label: "Industrial Gala" },
+    { value: "Office", label: "Office" },
+    { value: "Stall", label: "Stall" },
+  ];
+
+
+  const dealtype = [
+    { value: "Self Occupied", label: "Self Occupied" },
+    { value: "Rented", label: "Rented" },
+    { value: "Sell", label: "Sell" },
+    { value: "Rent", label: "Rent" },
+    { value: "Lease", label: "Lease" },
 
   ]
 
-  const narration = [{ value: "1", label: "None" },
-    { value: "2", label: "1BHk" },
-    { value: "3", label: "1.5BHK" },
-    { value: "4", label: "2BHK" },
-    { value: "5", label: "2.5BHK" },
-    { value: "6", label: "1RK" },
-    { value: "7", label: "3BHk" },
-    { value: "8", label: "3.5BHK" },
-    { value: "9", label: "4BHK" },
-    { value: "10", label: "Shop" },
-    { value: "11", label: "Duplex" },
-    { value: "12", label: "Villa" },
-    { value: "13", label: "Bangalow" },
-    { value: "14", label: "Basement" },
-    { value: "15", label: "Gala" },
-    { value: "16", label: "Garage" },
-    { value: "17", label: "Godown" },
-    { value: "18", label: "Independent House" },
-    { value: "19", label: "Industrial Gala" },
-    { value: "20", label: "Office" },
-    { value: "21", label: "Stall" },
-  ]
-
-  const dealtype = [{ value: "1", label: "None" },
-    { value: "2", label: "Self Occupied" },
-    { value: "3", label: "Rented" },
-    { value: "4", label: "Sell" },
-    { value: "5", label: "Rent" },
-    { value: "6", label: "Sell/Rent" },
-
-  ]
-
-const tenant = [
-  { value: "1", label: "Select Tenant" }
-]
-  const tower =  [{ value: "1", label: "Select Tower" }]
-
-  const wing =  [{ value: "1", label: "Select Wing" }]
-
-  const stateOptions = Object.keys(stateCitiesTyped).map((state) => ({
-    value: state,
-    label: state,
-  }));
-
-
+  const societyOptions = societyData?.map((society) => ({
+    value: society.societyIdentifier,
+    label: society.societyName
+  }))
+  useEffect(() => {
+    (async () => {
+      await fetchSocietiesForDropDown();
+      await fetchTenantsForDropDown();
+      await fetchMembersForDropDown();
+    })()
+  }, [])
   const [flatsoldmodalshow, setflatsoldmodal] = useState(false);
+  const fetchSocietiesForDropDown = async () => {
+    try {
+      const response = await getAllSocietyApi();
+      const formattedData = response.data.data.map((item: any) => ({
+        societyIdentifier: item.societyIdentifier,
+        societyName: item.societyName,
+      }));
+      setSocietyData(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+  const fetchWingsForDropDown = async (society: any) => {
+    try {
+      const response = await getWingsOfSocietyApi(society.value);
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.wingIdentifier,
+        label: item.wingName,
+      }));
 
+      setWingOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+  const fetchTowersForDropDown = async (society: any) => {
+    try {
+      const response = await getTowersOfSocietyApi(society.value);
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.towerId,
+        label: item.towerName,
+      }));
+      setTowerOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+  const fetchTenantsForDropDown = async () => {
+    try {
+      const response = await geTenantForDropDownApi();
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.identifier,
+        label: `${item.firstName} ${item.middleName} ${item.lastName}`,
+      }));
+      setTenantOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+  const fetchMembersForDropDown = async () => {
+    try {
+      const response = await getMemberForDropDownApi();
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.identifier,
+        label: `${item.firstName} ${item.middleName} ${item.lastName}`,
+      }));
+      setMemberOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
   const viewDemoShow = (modal: any) => {
     switch (modal) {
 
@@ -98,6 +207,43 @@ const tenant = [
 
     }
   };
+  const handleSubmit = async (values: any) => {
+    const formattedData = {
+      propertyName: values.propertyName,
+      status: values.status.value,
+      narration: values.narration.value,
+      area: values.area,
+      societyIdentifier: values.society.value,
+      towerId: values.tower.value,
+      wingIdentifier: values.wing.value,
+      flatNumber: values.flatNumber,
+      floorNumber: values.floorNumber,
+      dealType: values.dealType.value,
+      flatRegistrationNumber: values.flatRegistrationNumber,
+      dateOfAgreement: values.dateOfAgreement,
+      dateOfRegistration: values.dateOfRegistration,
+      memberIdentifier: values.member.value,
+      tenantIdentifier: values.tenant.value,
+      rentAgreementStartDate: values.rentAgreementStartDate,
+      rentAgreementEndDate: values.rentAgreementEndDate,
+      monthlyRent: values.monthlyRent,
+      rentRegistrationId: values.rentRegistrationId,
+      rentAgreementFile: values.rentAgreementFile,
+      policeVerificationDocFile: values.policeVerificationDocFile,
+      intercomNumber: values.intercomNumber,
+      consumerElectricityNumber: values.consumerElectricityNumber,
+      gasConnectionNumber: values.gasConnectionNumber,
+      monthlyPaidMaintenance: values.monthlyPaidMaintenance,
+      monthlyPaidMaintenanceUpto: values.monthlyPaidMaintenanceUpto,
+      monthlyPaidArrears: values.monthlyPaidArrears,
+      monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto
+    }
+
+    const response = await addPropertyApi(formattedData)
+    if (response.status === 201 || response.status === 200) {
+      console.log(response)
+    }
+  }
 
   return (
     <Fragment>
@@ -106,811 +252,882 @@ const tenant = [
           <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}property/propertymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Add Property Master</span>
         </div>
       </div>
+      <Formik
+        initialValues={{
+          propertyName: currentProperty?.propertyName,
+          status: currentProperty?.status,
 
-      <Row>
-        <Col xl={12}>
-
-        <Accordion defaultActiveKey="Basic Details">
-
-<Accordion.Item eventKey="Basic Details" className="bg-white mb-3">
-  <Accordion.Header className="borders ">
-  Basic Details
-  </Accordion.Header>
-  <Accordion.Body className="borders p-0">
-  <Card className='m-0'>
-
-            <Card.Body className='pt-3'>
-
-              <Row>
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Property Name <span className="text-danger">*</span></Form.Label>
-                    <FormControl
-                      type="text"
-                      name="propertyName"
-                      placeholder="Property name"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Owner <span className="text-danger">*</span></Form.Label>
-                    <FormControl
-                      type="text"
-                      name="ownername"
-                      placeholder="Owner name"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Ledger Name <span className="text-danger">*</span></Form.Label>
-                    <FormControl
-                      type="text"
-                      name="ledgername"
-                      placeholder="Ledger Name"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Status <span className="text-danger">*</span></Form.Label>
-                    <Select
-                      options={propertystatus}
-                      // value={values.country}
-                      // onChange={(selected) => setFieldValue("country", selected)}
-                      placeholder="Select Status"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Society <span className="text-danger">*</span></Form.Label>
-                    <Select
-                      options={societyname}
-                      // value={values.state}
-                      // onChange={(selected: any) => {
-                      //   setFieldValue('state', selected);
-                      //   handleStateChange({
-                      //     value: selected.value,
-                      //     label: selected.label
-                      //   });
-                      // }}
-                      placeholder="Select Society"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                <Form.Group className="form-group">
-                      <Form.Label>Narration <span className="text-danger">*</span></Form.Label>
-                      <Select
-                        options={narration}
-                        // value={values.city}
-                        // onChange={(selected) => setFieldValue("city", selected)}
-                        placeholder="Select narration"
-                        classNamePrefix="Select2"
-                      />
-                      {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
-                    </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                <Form.Group className="form-group">
-                      <Form.Label>Tower <span className="text-danger">*</span></Form.Label>
-                      <Select
-                        options={tower}
-                        // value={values.city}
-                        // onChange={(selected) => setFieldValue("city", selected)}
-                        placeholder="Select tower"
-                        classNamePrefix="Select2"
-                      />
-                      {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
-                    </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Area(sq.ft.) <span className="text-danger">*</span></Form.Label>
-                    <FormControl
-                      type="text"
-                      name="area"
-                      placeholder="Area"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                <Form.Group className="form-group">
-                      <Form.Label>Wing <span className="text-danger">*</span></Form.Label>
-                      <Select
-                        options={wing}
-                        // value={values.city}
-                        // onChange={(selected) => setFieldValue("city", selected)}
-                        placeholder="Select wing"
-                        classNamePrefix="Select2"
-                      />
-                      {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
-                    </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Flat No. <span className="text-danger">*</span></Form.Label>
-                    <FormControl
-                      type="text"
-                      name="arflatea"
-                      placeholder="Flat no"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                <Form.Group className="form-group">
-                      <Form.Label>Deal Type</Form.Label>
-                      <Select
-                        options={dealtype}
-                        // value={values.city}
-                        // onChange={(selected) => setFieldValue("city", selected)}
-                        placeholder="Select Type"
-                        classNamePrefix="Select2"
-                      />
-                      {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
-                    </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Floor No.</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="floor"
-                      placeholder="Floor no"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Designation</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="designation"
-                      placeholder="Designation"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-              </Row>
-
-            </Card.Body>
-          </Card>
-  </Accordion.Body>
-</Accordion.Item>
-
-<Accordion.Item eventKey="Owner Details" className="bg-white  mb-3">
-  <Accordion.Header className="borders">
-  Owner Details
-  </Accordion.Header>
-  <Accordion.Body className="borders p-0">
-  <Card className='m-0'>
-
-            <Card.Body className='pt-3'>
-
-              <Row>
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Member Name</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="membername"
-                      placeholder="Member Name"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Co Owner </Form.Label>
-                    <FormControl
-                      type="text"
-                      name="coOwner"
-                      placeholder="Co Owner"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Third Owner</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="thirdOwner"
-                      placeholder="Third Owner"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Fourth Owner</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="fourthOwner"
-                      placeholder="Fourth Owner"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Fifth Owner</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="fifthOwner"
-                      placeholder="Fifth Owner"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                <Form.Group className="form-group">
-                      <Form.Label>Previous Owner</Form.Label>
-                      <FormControl
-                      type="text"
-                      name="previousOwner"
-                      placeholder="Previous Owner"
-                      className="form-control"
-                    />
-                      {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
-                    </Form.Group>
-                </Col>
-
-
-
-
-
-
-              </Row>
-
-            </Card.Body>
-          </Card>
-  </Accordion.Body>
-</Accordion.Item>
-
-<Accordion.Item eventKey="Registration Details" className="bg-white  mb-3">
-  <Accordion.Header className="borders">
-  Registration Details
-  </Accordion.Header>
-  <Accordion.Body className="borders p-0">
-  <Card className='m-0'>
-
-      <Card.Body className='pt-3'>
-
-        <Row>
-          <Col xl={4}>
-            <Form.Group className="form-group">
-              <Form.Label>Flat Registration Number</Form.Label>
-              <FormControl
-                type="text"
-                name="flatRegistration"
-                placeholder="Flat Registration Number"
-                className="form-control"
-              />
-              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-            </Form.Group>
-          </Col>
-
-          <Col xl={4}>
-            <Form.Group className="form-group">
-              <Form.Label>Date of Agreement </Form.Label>
-              <FormControl
-                type="text"
-                name="dateAgreement"
-                placeholder="Date of Agreement"
-                className="form-control"
-              />
-              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-            </Form.Group>
-          </Col>
-
-
-          <Col xl={4}>
-            <Form.Group className="form-group">
-              <Form.Label>Date of Registration</Form.Label>
-              <FormControl
-                type="text"
-                name="dateRegistration"
-                placeholder="Date of Registration"
-                className="form-control"
-              />
-              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-            </Form.Group>
-          </Col>
-
-
-
-
-        </Row>
-
-      </Card.Body>
-    </Card>
-  </Accordion.Body>
-</Accordion.Item>
-
-
-<Accordion.Item eventKey="Tenant Details" className="bg-white  mb-3">
-  <Accordion.Header className="borders">
-  Tenant Details
-  </Accordion.Header>
-  <Accordion.Body className="borders p-0">
-  <Card className='m-0'>
-
-            <Card.Body className='pt-3'>
-
-              <Row>
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Tenant</Form.Label>
-                    <Select
-                        options={tenant}
-                        // value={values.city}
-                        // onChange={(selected) => setFieldValue("city", selected)}
-                        placeholder="Select Tenant"
-                        classNamePrefix="Select2"
-                      />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Tenant Mobile Number</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="tenantnumber"
-                      placeholder="Number"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Tenant Address</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="tenantaddress"
-                      placeholder="Address"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={12}>
-                <hr className='w-100'/>
-                </Col>
-<strong className='tx-16 mt-2 mb-3 col-sm-12 tx-semibold'>Rent Agreement Details</strong>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Rent Agreement Start Date</Form.Label>
-                    <FormControl
-                      type="date"
-                      name="rentAgreementEndDate"
-                      placeholder=""
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Rent Agreement End Date</Form.Label>
-                    <FormControl
-                      type="date"
-                      name="rentAgreementEndDate"
-                      placeholder=""
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Monthly Rent</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="monthlyrent"
-                      placeholder="0:00"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Rent Registration Id</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="registrationid"
-                      placeholder="id"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Upload Rent Agreement</Form.Label>
-                    <FormControl
-                      type="file"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group">
-                    <Form.Label>Police Verification Document</Form.Label>
-                    <FormControl
-                      type="file"
-                      className="form-control"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-              </Row>
-
-            </Card.Body>
-          </Card>
-  </Accordion.Body>
-</Accordion.Item>
-
-<Accordion.Item eventKey="Address Details" className="bg-white  mb-3">
-  <Accordion.Header className="borders">
-  Address Details
-  </Accordion.Header>
-  <Accordion.Body className="borders p-0">
-  <Card className='m-0'>
-
-<Card.Body className='pt-3'>
-
-  <Row>
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Address line 1</Form.Label>
-        <FormControl
-          type="text"
-          disabled
-          name="address"
-          placeholder="Opp Mohan Palms"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Address line 2</Form.Label>
-        <FormControl
-          type="text"
-          disabled
-          name="address"
-          placeholder="Shirgaon"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Address line 3</Form.Label>
-        <FormControl
-          type="text"
-          disabled
-          name="address"
-          placeholder="Badlapur East"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>City </Form.Label>
-        <FormControl
-          type="text"
-          name="city"
-          disabled
-          placeholder="Thane"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>State </Form.Label>
-        <FormControl
-          type="text"
-          name="city"
-          disabled
-          placeholder="Maharashtra"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Pincode </Form.Label>
-        <FormControl
-          type="text"
-          name="city"
-          disabled
-          placeholder="421503"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-  </Row>
-
-</Card.Body>
-</Card>
-  </Accordion.Body>
-</Accordion.Item>
-
-<Accordion.Item eventKey="Other Details" className="bg-white  mb-3">
-  <Accordion.Header className="borders" id="Portfolio">
-  Other Details
-  </Accordion.Header>
-  <Accordion.Body className="borders p-0">
-  <Card className='m-0'>
-
-<Card.Body className='pt-3'>
-  <Row>
-  <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Intercom Number </Form.Label>
-        <FormControl
-          type="text"
-          name="intercom Number"
-         placeholder="Intercom Number"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Consumer Electricity Number </Form.Label>
-        <FormControl
-          type="text"
-          name="consumerElectricityNumber"
-          placeholder="Consumer Electricity Number"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Gas Connection Number </Form.Label>
-        <FormControl
-          type="text"
-          name="gasConnectionNumber"
-         placeholder="Gas Connection Number"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-    </Row>
-    </Card.Body>
-    </Card>
-  </Accordion.Body>
-</Accordion.Item>
-
-<Accordion.Item eventKey="Already Paid Details" className="bg-white  mb-3">
-  <Accordion.Header className="borders" id="Portfolio">
-  Already Paid Details
-  </Accordion.Header>
-  <Accordion.Body className="borders p-0">
-  <Card className='m-0'>
-
-<Card.Body className='pt-3'>
-  <Row>
-  <Col xl={3}>
-      <Form.Group className="form-group">
-        <Form.Label>
-        Monthly Paid Maintenance to Builder</Form.Label>
-        <FormControl
-          type="text"
-           placeholder="Monthly Paid Maintenance to Builder"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={3}>
-    <Form.Group className="form-group">
-        <Form.Label>
-        Monthly Paid Maintenance to Builder Upto</Form.Label>
-        <FormControl
-          type="date"
-           placeholder="Monthly Paid Maintenance to Builder Upto"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={3}>
-    <Form.Group className="form-group">
-        <Form.Label>
-        Monthly Paid Arrears</Form.Label>
-        <FormControl
-          type="text"
-           placeholder="Monthly Paid Arrears"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={3}>
-    <Form.Group className="form-group">
-        <Form.Label>
-        Monthly Paid Arrears Upto</Form.Label>
-        <FormControl
-          type="date"
-           placeholder="Monthly Paid Arrears Upto"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-    </Row>
-    </Card.Body>
-    </Card>
-  </Accordion.Body>
-</Accordion.Item>
-
-</Accordion>
-<Button variant="success" onClick={() => viewDemoShow("flatsoldmodalshow")}> Flat Sold </Button>
-<Modal centered show={flatsoldmodalshow}>
-                      <Modal.Header>
-                        <Modal.Title>Flat Sold</Modal.Title>
-                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
-                          x
-                        </Button>
-                      </Modal.Header>
-                      <Modal.Body>
-                      <Form.Group className="form-group">
-                    <Form.Label>Owner Name</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="ownername"
-                      placeholder="Owner name"
-                      className="form-control"
-                    />
-                    </Form.Group>
-
-
-                    <Form.Group className="form-group">
-                    <Form.Label>Owner Mobile Number</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="ownernumber"
-                      placeholder="Owner number"
-                      className="form-control"
-                    />
-                    </Form.Group>
-
-
-                    <Form.Group className="form-group">
-                    <Form.Label>Owner Email</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="owneremail"
-                      placeholder="Owner email"
-                      className="form-control"
-                    />
-                    </Form.Group>
-
-                    <Form.Group className="form-group">
-                    <Form.Label>Owner Address</Form.Label>
-                    <FormControl
-                      type="text"
-                      name="owneraddress"
-                      placeholder="Owner address"
-                      className="form-control"
-                    />
-                    </Form.Group>
-
-
-
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button variant="default" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
-                          Close
-                        </Button>
-                        <Button variant="primary" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
-                          Save
-                        </Button>
-
-                      </Modal.Footer>
-                    </Modal>
-          <span className='float-end mb-5'>
-          <Button variant="default ms-3"> Cancel </Button>
-                    <Button className="btn btn-primary" type="submit">Save </Button>
-          </span>
-        </Col>
-      </Row>
+          narration: { value: currentProperty?.narration, label: currentProperty?.narration },
 
+          area: currentProperty?.area,
+
+          society: { value: currentProperty?.societyIdentifier, label: currentProperty?.societyName },
+
+          tower: { value: currentProperty?.towerId, label: currentProperty?.towerName },
+
+          wing: { value: currentProperty?.wingIdentifier, label: currentProperty?.wingName },
+
+          flatNumber: currentProperty?.flatNumber,
+
+          floorNumber: currentProperty?.floorNumber,
+
+          dealType: currentProperty?.dealType,
+
+          flatRegistrationNumber: currentProperty?.flatRegistrationNumber,
+
+          dateOfAgreement: currentProperty?.dateOfAgreement,
+
+          dateOfRegistration: currentProperty?.dateOfRegistration,
+
+          member: { value: currentProperty?.memberIdentifier, label: currentProperty?.memberName },
+
+          tenant: { value: currentProperty?.tenantIdentifier, label: currentProperty?.tenantName },
+
+          rentAgreementStartDate: currentProperty?.rentAgreementStartDate,
+
+          rentAgreementEndDate: currentProperty?.rentAgreementEndDate,
+
+          monthlyRent: currentProperty?.monthlyRent,
+
+          rentRegistrationId: currentProperty?.rentRegistrationId,
+
+          rentAgreementFile: currentProperty?.rentAgreementFile,
+
+          policeVerificationDocFile: currentProperty?.policeVerificationDocFile,
+
+          intercomNumber: currentProperty?.intercomNumber,
+
+          consumerElectricityNumber: currentProperty?.consumerElectricityNumber,
+
+          gasConnectionNumber: currentProperty?.gasConnectionNumber,
+
+          monthlyPaidMaintenance: currentProperty?.monthlyPaidMaintenance,
+
+          monthlyPaidMaintenanceUpto: currentProperty?.monthlyPaidMaintenanceUpto,
+
+          monthlyPaidArrears: currentProperty?.monthlyPaidArrears,
+
+          monthlyPaidArrearsUpto: currentProperty?.monthlyPaidArrearsUpto,
+
+        }}
+        onSubmit={handleSubmit}
+      >
+        {({ setFieldValue, values, errors, touched }) => (
+          <FormikForm>
+
+            <Row>
+              <Col xl={12}>
+
+                <Accordion defaultActiveKey="Basic Details">
+
+                  <Accordion.Item eventKey="Basic Details" className="bg-white mb-3">
+                    <Accordion.Header className="borders ">
+                      Basic Details
+                    </Accordion.Header>
+                    <Accordion.Body className="borders p-0">
+                      <Card className='m-0'>
+
+                        <Card.Body className='pt-3'>
+
+                          <Row>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Property Name <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type="text"
+                                  name="propertyName"
+                                  placeholder="Property name"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            {/* <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Owner <span className="text-danger">*</span></Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="ownername"
+                                  placeholder="Owner name"
+                                  className="form-control"
+                                />
+                               
+                              </Form.Group>
+                            </Col> */}
+
+
+                            {/* <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Ledger Name <span className="text-danger">*</span></Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="ledgername"
+                                  placeholder="Ledger Name"
+                                  className="form-control"
+                                />
+
+                              </Form.Group>
+                            </Col> */}
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Status <span className="text-danger">*</span></Form.Label>
+                                <Select
+                                  options={propertystatus}
+                                  name='status'
+                                  onChange={(selected) => setFieldValue("status", selected)}
+                                  placeholder="Select Status"
+                                  classNamePrefix="Select2"
+                                />
+                                {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Narration <span className="text-danger">*</span></Form.Label>
+                                <Select
+                                  options={narration}
+                                  name="narration"
+                                  onChange={(selected) => setFieldValue("narration", selected)}
+                                  placeholder="Select narration"
+                                  classNamePrefix="Select2"
+                                />
+                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Area(sq.ft.) <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type="text"
+                                  name="area"
+                                  placeholder="Area"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Society <span className="text-danger">*</span></Form.Label>
+                                <Select
+                                  options={societyOptions}
+                                  name='society'
+                                  onChange={(selected) => {
+                                    setFieldValue("society", selected)
+                                    setFieldValue("tower", null); // Reset tower selection
+                                    fetchTowersForDropDown(selected);
+                                    fetchWingsForDropDown(selected);
+                                  }}
+                                  placeholder="Select Society"
+                                  classNamePrefix="Select2"
+                                />
+
+                              </Form.Group>
+                            </Col>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Tower</Form.Label>
+                                <Select
+                                  options={towerOptions}
+                                  name='tower'
+                                  onChange={(selected) => setFieldValue("tower", selected)}
+                                  placeholder="Select tower"
+                                  classNamePrefix="Select2"
+                                />
+                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Wing <span className="text-danger">*</span></Form.Label>
+                                <Select
+                                  options={wingOptions}
+                                  name='wing'
+                                  onChange={(selected) => setFieldValue("wing", selected)}
+                                  placeholder="Select wing"
+                                  classNamePrefix="Select2"
+                                />
+                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Flat No. <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type="text"
+                                  name="flatNumber"
+                                  placeholder="Flat no"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Floor No.</Form.Label>
+                                <Field
+                                  type="text"
+                                  name="floorNumber"
+                                  placeholder="Floor no"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Deal Type</Form.Label>
+                                <Select
+                                  options={dealtype}
+                                  name="dealType"
+                                  onChange={(selected) => setFieldValue("dealType", selected)}
+                                  placeholder="Select Type"
+                                  classNamePrefix="Select2"
+                                />
+                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+
+                            {/* <Col xl={4}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Designation</Form.Label>
+                          <FormControl
+                            type="text"
+                            name="designation"
+                            placeholder="Designation"
+                            className="form-control"
+                          />
+                        </Form.Group>
+                      </Col> */}
+
+                          </Row>
+
+                        </Card.Body>
+                      </Card>
+                    </Accordion.Body>
+                  </Accordion.Item>
+
+                  <Accordion.Item eventKey="Owner Details" className="bg-white  mb-3">
+                    <Accordion.Header className="borders">
+                      Owner Details
+                    </Accordion.Header>
+                    <Accordion.Body className="borders p-0">
+                      <Card className='m-0'>
+
+                        <Card.Body className='pt-3'>
+
+                          <Row>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Member</Form.Label>
+                                <Select
+                                  options={memberOptions}
+                                  name="member"
+                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  placeholder="Select Member"
+                                  classNamePrefix="Select2"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Co Owner </Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="coOwner"
+                                  placeholder="Co Owner"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Third Owner</Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="thirdOwner"
+                                  placeholder="Third Owner"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Fourth Owner</Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="fourthOwner"
+                                  placeholder="Fourth Owner"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Fifth Owner</Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="fifthOwner"
+                                  placeholder="Fifth Owner"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Previous Owner</Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="previousOwner"
+                                  placeholder="Previous Owner"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+
+
+
+
+                          </Row>
+
+                        </Card.Body>
+                      </Card>
+                    </Accordion.Body>
+                  </Accordion.Item>
+
+                  <Accordion.Item eventKey="Registration Details" className="bg-white  mb-3">
+                    <Accordion.Header className="borders">
+                      Registration Details
+                    </Accordion.Header>
+                    <Accordion.Body className="borders p-0">
+                      <Card className='m-0'>
+
+                        <Card.Body className='pt-3'>
+
+                          <Row>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Flat Registration Number</Form.Label>
+                                <Field
+                                  type="text"
+                                  name="flatRegistrationNumber"
+                                  placeholder="Flat Registration Number"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Date of Agreement </Form.Label>
+                                <Field
+                                  type="date"
+                                  name="dateOfAgreement"
+                                  placeholder="Date of Agreement"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Date of Registration</Form.Label>
+                                <Field
+                                  type="date"
+                                  name="dateOfRegistration"
+                                  placeholder="Date of Registration"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+
+
+                          </Row>
+
+                        </Card.Body>
+                      </Card>
+                    </Accordion.Body>
+                  </Accordion.Item>
+
+
+                  <Accordion.Item eventKey="Tenant Details" className="bg-white  mb-3">
+                    <Accordion.Header className="borders">
+                      Tenant Details
+                    </Accordion.Header>
+                    <Accordion.Body className="borders p-0">
+                      <Card className='m-0'>
+
+                        <Card.Body className='pt-3'>
+
+                          <Row>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Tenant</Form.Label>
+                                <Select
+                                  options={tenantOptions}
+                                  name="tenant"
+                                  onChange={(selected) => setFieldValue("tenant", selected)}
+                                  placeholder="Select Tenant"
+                                  classNamePrefix="Select2"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            {/* <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Tenant Mobile Number</Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="tenantnumber"
+                                  placeholder="Number"
+                                  className="form-control"
+                                />
+
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Tenant Address</Form.Label>
+                                <FormControl
+                                  type="text"
+                                  name="tenantaddress"
+                                  placeholder="Address"
+                                  className="form-control"
+                                />
+
+                              </Form.Group>
+                            </Col> */}
+
+                            <Col xl={12}>
+                              <hr className='w-100' />
+                            </Col>
+                            <strong className='tx-16 mt-2 mb-3 col-sm-12 tx-semibold'>Rent Agreement Details</strong>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Rent Agreement Start Date</Form.Label>
+                                <Field
+                                  type="date"
+                                  name="rentAgreementStartDate"
+                                  placeholder=""
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Rent Agreement End Date</Form.Label>
+                                <Field
+                                  type="date"
+                                  name="rentAgreementEndDate"
+                                  placeholder=""
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Monthly Rent</Form.Label>
+                                <Field
+                                  type="text"
+                                  name="monthlyRent"
+                                  placeholder="0"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Rent Registration Id</Form.Label>
+                                <Field
+                                  type="text"
+                                  name="rentRegistrationId"
+                                  placeholder="id"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Upload Rent Agreement</Form.Label>
+                                <input type="file" className="form-control" name="rentAgreementFile" onChange={(e: any) => setFieldValue("rentAgreementFile", e.target.files[0])} />
+                                {/* <Field
+                                  type="text"
+                                  name=""
+                                  className="form-control"
+                                /> */}
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Police Verification Document</Form.Label>
+                                <input type="file" className="form-control" name='policeVerificationDocFile' onChange={(e: any) => setFieldValue("policeVerificationDocFile", e.target.files[0])} />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                          </Row>
+
+                        </Card.Body>
+                      </Card>
+                    </Accordion.Body>
+                  </Accordion.Item>
+
+                  <Accordion.Item eventKey="Address Details" className="bg-white  mb-3">
+                    <Accordion.Header className="borders">
+                      Address Details
+                    </Accordion.Header>
+                    <Accordion.Body className="borders p-0">
+                      <Card className='m-0'>
+
+                        <Card.Body className='pt-3'>
+
+                          <Row>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Address line 1</Form.Label>
+                                <Field
+                                  type="text"
+                                  disabled
+                                  name="address"
+                                  placeholder="Opp Mohan Palms"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Address line 2</Form.Label>
+                                <Field
+                                  type="text"
+                                  disabled
+                                  name="address"
+                                  placeholder="Shirgaon"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Address line 3</Form.Label>
+                                <Field
+                                  type="text"
+                                  disabled
+                                  name="address"
+                                  placeholder="Badlapur East"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>City </Form.Label>
+                                <Field
+                                  type="text"
+                                  name="city"
+                                  disabled
+                                  placeholder="Thane"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>State </Form.Label>
+                                <Field
+                                  type="text"
+                                  name="city"
+                                  disabled
+                                  placeholder="Maharashtra"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Pincode </Form.Label>
+                                <Field
+                                  type="text"
+                                  name="city"
+                                  disabled
+                                  placeholder="421503"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                          </Row>
+
+                        </Card.Body>
+                      </Card>
+                    </Accordion.Body>
+                  </Accordion.Item>
+
+                  <Accordion.Item eventKey="Other Details" className="bg-white  mb-3">
+                    <Accordion.Header className="borders" id="Portfolio">
+                      Other Details
+                    </Accordion.Header>
+                    <Accordion.Body className="borders p-0">
+                      <Card className='m-0'>
+
+                        <Card.Body className='pt-3'>
+                          <Row>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Intercom Number </Form.Label>
+                                <Field
+                                  type="text"
+                                  name="intercomNumber"
+                                  placeholder="Intercom Number"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Consumer Electricity Number </Form.Label>
+                                <Field
+                                  type="text"
+                                  name="consumerElectricityNumber"
+                                  placeholder="Consumer Electricity Number"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Gas Connection Number </Form.Label>
+                                <Field
+                                  type="text"
+                                  name="gasConnectionNumber"
+                                  placeholder="Gas Connection Number"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Accordion.Body>
+                  </Accordion.Item>
+
+                  <Accordion.Item eventKey="Already Paid Details" className="bg-white  mb-3">
+                    <Accordion.Header className="borders" id="Portfolio">
+                      Already Paid Details
+                    </Accordion.Header>
+                    <Accordion.Body className="borders p-0">
+                      <Card className='m-0'>
+
+                        <Card.Body className='pt-3'>
+                          <Row>
+                            <Col xl={3}>
+                              <Form.Group className="form-group">
+                                <Form.Label>
+                                  Monthly Paid Maintenance to Builder</Form.Label>
+                                <Field
+                                  type="text"
+                                  name="monthlyPaidMaintenance"
+                                  placeholder="Monthly Paid Maintenance to Builder"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={3}>
+                              <Form.Group className="form-group">
+                                <Form.Label>
+                                  Monthly Paid Maintenance to Builder Upto</Form.Label>
+                                <Field
+                                  type="date"
+                                  name="monthlyPaidMaintenanceUpto"
+                                  placeholder="Monthly Paid Maintenance to Builder Upto"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={3}>
+                              <Form.Group className="form-group">
+                                <Form.Label>
+                                  Monthly Paid Arrears</Form.Label>
+                                <Field
+                                  type="text"
+                                  name="monthlyPaidArrears"
+                                  placeholder="Monthly Paid Arrears"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={3}>
+                              <Form.Group className="form-group">
+                                <Form.Label>
+                                  Monthly Paid Arrears Upto</Form.Label>
+                                <Field
+                                  type="date"
+                                  name="monthlyPaidArrearsUpto"
+                                  placeholder="Monthly Paid Arrears Upto"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Accordion.Body>
+                  </Accordion.Item>
+
+                </Accordion>
+                <span className='float-end mb-5'>
+                  <Button variant="default ms-3"> Cancel </Button>
+                  <Button className="btn btn-primary" type="submit">Save </Button>
+                </span>
+              </Col>
+            </Row >
+          </FormikForm>
+        )}
+      </Formik>
+      <Button variant="success" onClick={() => viewDemoShow("flatsoldmodalshow")}> Flat Sold </Button>
+      <Modal centered show={flatsoldmodalshow}>
+        <Modal.Header>
+          <Modal.Title>Flat Sold</Modal.Title>
+          <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
+            x
+          </Button>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group className="form-group">
+            <Form.Label>Owner Name</Form.Label>
+            <FormControl
+              type="text"
+              name="ownername"
+              placeholder="Owner name"
+              className="form-control"
+            />
+          </Form.Group>
+
+
+          <Form.Group className="form-group">
+            <Form.Label>Owner Mobile Number</Form.Label>
+            <FormControl
+              type="text"
+              name="ownernumber"
+              placeholder="Owner number"
+              className="form-control"
+            />
+          </Form.Group>
+
+
+          <Form.Group className="form-group">
+            <Form.Label>Owner Email</Form.Label>
+            <FormControl
+              type="text"
+              name="owneremail"
+              placeholder="Owner email"
+              className="form-control"
+            />
+          </Form.Group>
+
+          <Form.Group className="form-group">
+            <Form.Label>Owner Address</Form.Label>
+            <FormControl
+              type="text"
+              name="owneraddress"
+              placeholder="Owner address"
+              className="form-control"
+            />
+          </Form.Group>
+
+
+
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="default" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={() => { viewDemoClose("flatsoldmodalshow"); }}>
+            Save
+          </Button>
+
+        </Modal.Footer>
+      </Modal>
+      <CustomToastContainer />
     </Fragment >
   );
 }

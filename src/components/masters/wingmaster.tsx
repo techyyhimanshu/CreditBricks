@@ -18,11 +18,11 @@ export default function WingMaster() {
     const [wingData, setWingData] = useState<any[]>([]);
     const [societyOwner, setSocietyOwner] = useState("");
     const [currentWing, setCurrentWing] = useState({
-        wingId: null,
+        wingIdentifier: null,
         wingName: '',
         towerId: null,
         towerName: null,
-        societyId: null,
+        societyIdentifier: null,
         societyName: "",
         ownerName: ""
     });
@@ -33,11 +33,11 @@ export default function WingMaster() {
                 const response = await getAllWingApi();
                 const formattedData = response.data.data.map((item: any, index: number) => ({
                     sno: index + 1,
-                    wingId: item.wingId,
+                    wingIdentifier: item.wingIdentifier,
                     wingName: item.wingName,
-                    towerId: item.towerId,
-                    towerName: item.towerName,
-                    societyId: item.societyId,
+                    towerId: item?.towerId,
+                    towerName: item?.towerName,
+                    societyIdentifier: item.societyIdentifier,
                     societyName: item.societyName,
                     ownerName: item.ownerName
                 }));
@@ -52,9 +52,9 @@ export default function WingMaster() {
     }, []);
     type Row = {
         sno: number;
-        wingId: number;
+        wingIdentifier: number;
         wingName: string;
-        societyId: number;
+        societyIdentifier: number;
         societyName: string;
         towerId: number;
         towerName: number;
@@ -104,7 +104,7 @@ export default function WingMaster() {
         data: wingData
     };
     const societyOptions = societyData?.map((society) => ({
-        value: society.societyId,
+        value: society.societyIdentifier,
         label: society.societyName
     }))
     const [towerOptions, setTowerOptions] = useState([]);
@@ -113,10 +113,6 @@ export default function WingMaster() {
         society: Yup.object({
             value: Yup.string().required('Society is required'),
         }),
-        tower: Yup.object({
-            value: Yup.string().required('Tower is required'),
-            label: Yup.string().required('Tower is requiredd'),
-        }).required("hello"),
         wingName: Yup.string().required('Wing no is required'),
 
         // zipcode: Yup.string().required('Zipcode is required'),
@@ -125,7 +121,7 @@ export default function WingMaster() {
         try {
             const response = await getAllSocietyApi();
             const formattedData = response.data.data.map((item: any) => ({
-                societyId: item.societyId,
+                societyIdentifier: item.societyIdentifier,
                 societyName: item.societyName,
             }));
             setSocietyData(formattedData);
@@ -160,11 +156,11 @@ export default function WingMaster() {
     }
     const openAddModal = async () => {
         setIsEditing(false);
-        currentWing.wingId = null
+        currentWing.wingIdentifier = null
         currentWing.wingName = ''
         currentWing.towerId = null
         currentWing.towerName = null
-        currentWing.societyId = null
+        currentWing.societyIdentifier = null
         currentWing.societyName = ""
         // currentWing. = ";
         setShowModal(true);
@@ -183,21 +179,21 @@ export default function WingMaster() {
         console.log(values)
         const data = {
             wingName: values.wingName,
-            towerId: values.tower.value,
-            towerName: values.tower.label,
-            societyId: values.society.value,
+            towerId: values.tower?.value,
+            towerName: values.tower?.label,
+            societyIdentifier: values.society.value,
             societyName: values.society.label,
         }
         if (isEditing) {
             ; (async () => {
                 try {
-                    const response = await updateWingApi(data, currentWing.wingId)
+                    const response = await updateWingApi(data, currentWing.wingIdentifier)
                     if (response.status === 200) {
                         showToast("success", response.data.message)
                         // Update specific tower in the list
                         setWingData(prevData =>
                             prevData.map(wing =>
-                                wing.wingId === currentWing.wingId
+                                wing.wingIdentifier === currentWing.wingIdentifier
                                     ? { ...wing, ...data, ownerName: societyOwner }
                                     : wing
                             )
@@ -220,11 +216,11 @@ export default function WingMaster() {
 
                         const newWing = {
                             sno: wingData.length + 1,
-                            wingId: response.data.data.wingId,
+                            wingIdentifier: response.data.data.wingIdentifier,
                             wingName: response.data.data.wingName,
-                            towerId: values.tower.value,
-                            towerName: values.tower.label,
-                            societyId: values.society.value,
+                            towerId: values.tower?.value,
+                            towerName: values.tower?.label,
+                            societyIdentifier: values.society.value,
                             societyName: values.society.label,
                             ownerName: societyOwner
                         }
@@ -244,11 +240,11 @@ export default function WingMaster() {
         console.log(data)
             ; (async () => {
                 try {
-                    const response = await deleteWingApi(data.wingId)
+                    const response = await deleteWingApi(data.wingIdentifier)
                     if (response.status === 200) {
                         showToast("success", response.data.message)
                         // Remove the tower from the table
-                        setWingData(prevData => prevData.filter(wing => wing.wingId !== data.wingId))
+                        setWingData(prevData => prevData.filter(wing => wing.wingIdentifier !== data.wingIdentifier))
                     }
                 } catch (error: any) {
                     const errorMessage = handleApiError(error)
@@ -269,14 +265,14 @@ export default function WingMaster() {
                     <Modal show={showModal} onHide={() => setShowModal(false)} centered>
                         <Formik
                             initialValues={{
-                                wingId: null,
+                                wingIdentifier: null,
                                 wingName: currentWing?.wingName || "",
                                 tower: { value: currentWing?.towerId || "", label: currentWing?.towerName || "" },
-                                society: { value: currentWing?.societyId || "", label: currentWing?.societyName || "" },
+                                society: { value: currentWing?.societyIdentifier || "", label: currentWing?.societyName || "" },
                                 ownerName: societyOwner
                             }
                             }
-                            validationSchema={validationSchema}
+                            // validationSchema={validationSchema}
                             onSubmit={handleSubmit}
                         >
                             {({ setFieldValue, values, errors, touched }) => (
@@ -323,7 +319,7 @@ export default function WingMaster() {
                                         </Form.Group>
                                         <Form.Group className="form-group">
                                             <Form.Label>
-                                                Tower<span className="text-danger">*</span>
+                                                Tower
                                             </Form.Label>
                                             <Select
                                                 options={towerOptions}
@@ -332,9 +328,9 @@ export default function WingMaster() {
                                                 placeholder="Select Tower"
                                                 classNamePrefix="Select2"
                                             />
-                                            {touched.tower?.value && errors.tower?.value && (
+                                            {/* {touched.tower?.value && errors.tower?.value && (
                                                 <div className="text-danger">{errors.tower.value}</div>
-                                            )}
+                                            )} */}
                                         </Form.Group>
                                         <Form.Group className="form-group">
                                             <Form.Label>Wing Name <span className="text-danger">*</span></Form.Label>
@@ -353,9 +349,9 @@ export default function WingMaster() {
                                         <Button variant="default" onClick={() => setShowModal(false)}>
                                             Close
                                         </Button>
-                                        <button className="btn btn-primary" type="submit">
+                                        <Button className="btn btn-primary" type="submit" >
                                             {isEditing ? "Save Changes" : "Add Wing"}
-                                        </button>
+                                        </Button>
                                     </Modal.Footer>
                                 </FormikForm>
                             )}
@@ -378,7 +374,7 @@ export default function WingMaster() {
                                         columns={columns}
                                         data={wingData}
                                         pagination
-                                        keyField="wingId"
+                                        keyField="wingIdentifier"
                                     />
                                 </DataTableExtensions>
                             </div>

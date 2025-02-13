@@ -12,6 +12,9 @@ import { UploadButton } from 'react-uploader';
 import { addSocietyApi, updateSocietyApi } from '../../../api/society-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { handleApiError } from '../../../helpers/handle-api-error';
+import DataTable from "react-data-table-component";
+import DataTableExtensions from "react-data-table-component-extensions";
+import interestDetails from './societyTabs/interestDetails';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
@@ -22,14 +25,30 @@ const uploader = Uploader({
 });
 const stateCitiesTyped: StateCities = stateCities;
 export default function AddSocietyMaster() {
+  const [formData, setFormData] = useState({
+    bankName: "",
+    accountNumber: "",
+    branchName: "",
+    ifscCode: "",
+    chequeFavourable: "",
+    paymentQrFile: null as File | null,
+    isPreferred: false
+  });
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [currentSociety, setCurrentSociety] = useState({
     societyId: null,
     societyName: '',
+    contactNumber: '',
+    email: '',
     societyManager: '',
     address: '',
     country: null,
     state: null,
     city: null,
+    pincode: '',
+    interestCalculationType: null,
+    annualRateOfInterest: '',
+    interestCalculationStartDate: '',
     registrationNumber: '',
     tanNumber: '',
     panNumber: '',
@@ -49,11 +68,79 @@ export default function AddSocietyMaster() {
   const countryOptions: any = [{ value: "India", label: "India" }]
 
   const [cityOptions, setCityOptions] = useState<any>([]);
+  const [bankData, setBankData] = useState<Row[]>([]);
+  type Row = {
+    id: number;
+    isPreferred: boolean;
+    bankName: string;
+    accountNumber: string;
+    branchName: string;
+    ifscCode: string;
+    chequeFavourable: string;
+    paymentQrFile: File | null;
+  };
 
+  const columns = [
+    {
+      name: "S.no.",
+      selector: (_: Row, index: number) => index + 1, // Serial number fix
+      sortable: true,
+    },
+    {
+      name: "Preferred",
+      cell: (row: Row) => (
+        row.isPreferred ? <i className='bi bi-check-circle text-success tx-20'></i> : ""
+      ),
+    },
+    {
+      name: "Bank Name",
+      selector: (row: Row) => row.bankName,
+    },
+    {
+      name: "Account Number",
+      selector: (row: Row) => row.accountNumber,
+    },
+    {
+      name: "IFSC Code",
+      selector: (row: Row) => row.ifscCode,
+    },
+    {
+      name: "Cheque Favourable",
+      selector: (row: Row) => row.chequeFavourable,
+    },
+    {
+      name: 'Payment QR',
+      cell: (row: Row) =>
+        row.paymentQrFile ? (
+          <a href={URL.createObjectURL(row.paymentQrFile)} target="_blank" rel="noopener noreferrer">
+            <i className="bi bi-image text-info"></i>
+          </a>
+        ) : (
+          'No File'
+        ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+    },
+    {
+      name: "Actions",
+      cell: (row: Row, index: number) => (
+        <div>
+          <button className="btn btn-light btn-sm"
+          //  onClick={() => handleEdit(index)}
+          >Edit</button>
+          <button className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(index)}>Delete</button>
+        </div>
+      ),
+    },
+  ];
+
+  const tableData = {
+    columns,
+    data: bankData
+  };
   const calculationtype = [
-    { value: "1", label: "None" },
-    { value: "2", label: "Bill" },
-    { value: "3", label: "Due" },
+    { value: "Bill Date", label: "Bill Date" },
+    { value: "Due Date", label: "Due Date" },
   ]
   const society = [
     { value: "1", label: "Society" },
@@ -86,53 +173,116 @@ export default function AddSocietyMaster() {
     const cities = stateCitiesTyped[selected.value] || [];
     setCityOptions(cities.map((city) => ({ value: city, label: city })));
   };
-  const handleSubmit = (values: any) => {
-    console.log(values)
-    const societyDataToCreate = {
-      societyName: values.societyName,
-      societyManager: values.societyManager,
-      address: values.address,
-      country: values.country.value,
-      state: values.state.value,
-      city: values.city.value,
-      registrationNumber: values.registrationNumber,
-      tanNumber: values.tanNumber,
-      panNumber: values.panNumber,
-      signatory: values.signatory,
-      hsnCode: values.hsnCode,
-      gstin: values.gstin,
-      bankName: values.bankName,
-      accountNumber: values.accountNumber,
-      branchName: values.branchName,
-      ifscCode: values.ifscCode,
-      chequeFavourable: values.chequeFavourable,
-      paymentQrFile: values.paymentQrFile
-    }
-
-      // Call API to add new society
-      ; (async () => {
-        try {
-          const response = await addSocietyApi(societyDataToCreate)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            // Add the new society to the table
-            const newSociety = {
-              sno: societyData.length + 1,
-              id: response.data.data.societyId,
-              ...response.data.data
-            }
-            window.location.href = "/society/societymaster"
-            // setSocietyData(prevData => [...prevData, newSociety]);
-          }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error);
-          showToast("error", errorMessage);
+  const handleSubmit = async (values: any) => {
+    try {
+      // Step 1: Rename paymentQrFile names
+      const updatedBankData = bankData.map((bank, index) => {
+        if (bank.paymentQrFile) {
+          const oldFile = bank.paymentQrFile;
+          const newFile = new File([oldFile], `${bank.accountNumber}.pdf`, { type: oldFile.type });
+          return { ...bank, paymentQrFile: newFile };
         }
-      })()
+        return bank;
+      });
+
+      // Step 2: Create FormData
+      const formData = new FormData();
+
+      // Append society details
+      const societyDetails = {
+        societyName: values.societyName,
+        societyManager: values.societyManager,
+        address: values.address,
+        country: values.country.value,
+        state: values.state.value,
+        city: values.city.value,
+        pincode: values.pincode,
+        interestCalculationType: values.interestCalculationType.value,
+        annualRateOfInterest: values.annualRateOfInterest,
+        interestCalculationStartDate: values.interestCalculationStartDate,
+        registrationNumber: values.registrationNumber,
+        tanNumber: values.tanNumber,
+        panNumber: values.panNumber,
+        signatory: values.signatory,
+        hsnCode: values.hsnCode,
+        gstin: values.gstin
+      };
+
+      Object.entries(societyDetails).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      // Convert bank data to JSON (excluding files)
+      const bankAccountsWithoutFiles = updatedBankData.map(({ paymentQrFile, ...rest }) => rest);
+      formData.append("bankAccounts", JSON.stringify(bankAccountsWithoutFiles));
+
+      // Append files separately
+      updatedBankData.forEach((bank) => {
+        if (bank.paymentQrFile instanceof File) {
+          formData.append("paymentQrFiles", bank.paymentQrFile);
+        }
+      });
+
+      console.log([...formData]); // Debugging
+
+      // Step 3: API Call
+      const response = await addSocietyApi(formData)
+      if (response.status === 201 || response.status === 200) {
+        console.log(response)
+        showToast("success", response.data.message);
+      }
+    } catch (error) {
+      handleApiError(error);
+    }
+  };
 
 
-
-  }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: type === "checkbox" ? checked : value
+    }));
+  };
+  const handleDelete = (index: number) => {
+    setBankData(prevState => prevState.filter((_, i) => i !== index));
+  };
+  // Handle file upload
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFormData(prevState => ({
+        ...prevState,
+        paymentQrFile: e.target.files![0]
+      }));
+    }
+  };
+  const resetForm = () => {
+    setFormData({
+      bankName: "",
+      accountNumber: "",
+      branchName: "",
+      ifscCode: "",
+      chequeFavourable: "",
+      paymentQrFile: null,
+      isPreferred: false
+    });
+  };
+  const handleAddNewBank = () => {
+    if (editingIndex !== null) {
+      // Update existing row
+      const updatedData = [...bankData];
+      updatedData[editingIndex] = { ...formData, id: editingIndex + 1 };
+      setBankData(updatedData);
+      setEditingIndex(null);
+    } else {
+      // Add new row
+      setBankData(prevState => [
+        ...prevState,
+        { ...formData, id: prevState.length + 1 }
+      ]);
+    }
+    // resetForm();
+  };
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -145,7 +295,10 @@ export default function AddSocietyMaster() {
         <Formik
           initialValues={{
             societyName: currentSociety?.societyName || "",
+            contactNumber: currentSociety?.contactNumber || "",
+            email: currentSociety?.email || "",
             societyManager: currentSociety?.societyManager || "",
+
             address: currentSociety?.address || "",
 
             country: { value: currentSociety.country, label: currentSociety.country },
@@ -153,6 +306,13 @@ export default function AddSocietyMaster() {
             state: { value: currentSociety.state, label: currentSociety.state },
 
             city: { value: currentSociety.city, label: currentSociety.city },
+            pincode: currentSociety?.pincode,
+
+            interestCalculationType: currentSociety?.interestCalculationType,
+
+            annualRateOfInterest: currentSociety?.annualRateOfInterest,
+
+            interestCalculationStartDate: currentSociety?.interestCalculationStartDate,
 
             registrationNumber: currentSociety?.registrationNumber,
             tanNumber: currentSociety?.tanNumber,
@@ -160,6 +320,7 @@ export default function AddSocietyMaster() {
             signatory: currentSociety?.signatory,
             hsnCode: currentSociety?.hsnCode,
             gstin: currentSociety?.gstin,
+
             bankName: currentSociety?.bankName,
             accountNumber: currentSociety?.accountNumber,
             branchName: currentSociety?.branchName,
@@ -202,7 +363,7 @@ export default function AddSocietyMaster() {
                               <Form.Label>Society Contact Number <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
-                                name="societyName"
+                                name="contactNumber"
                                 placeholder="Society number"
                                 className="form-control"
                               />
@@ -214,7 +375,7 @@ export default function AddSocietyMaster() {
                               <Form.Label>Society Email <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
-                                name="societyName"
+                                name="email"
                                 placeholder="Society email"
                                 className="form-control"
                               />
@@ -300,7 +461,18 @@ export default function AddSocietyMaster() {
                               {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
-
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Pincode <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type="text"
+                                name="pincode"
+                                placeholder="Pincode"
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
                           {/* <Col xl={4}>
                             <Form.Group className="form-group pt-2">
 
@@ -333,9 +505,9 @@ export default function AddSocietyMaster() {
                               <Form.Label>Interest Calculation Type <span className="text-danger">*</span></Form.Label>
                               <Select
                                 options={calculationtype}
-                                // value={values.city}
-                                // onChange={(selected) => setFieldValue("city", selected)}
+                                name="interestCalculationType"
                                 placeholder="Select Type"
+                                onChange={(selected) => setFieldValue("interestCalculationType", selected)}
                                 classNamePrefix="Select2"
                               />
                               {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
@@ -347,14 +519,24 @@ export default function AddSocietyMaster() {
                               <Form.Label>Annual Rate of Interest </Form.Label>
                               <Field
                                 type="text"
-                                name="annualrateinterest"
+                                name="annualRateOfInterest"
                                 placeholder="0.00%"
                                 className="form-control"
                               />
                               {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
-
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Interest Calculation Start Date<span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type="date"
+                                name="interestCalculationStartDate"
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
@@ -487,188 +669,70 @@ export default function AddSocietyMaster() {
                     Society Account Details
                   </Accordion.Header>
                   <Accordion.Body className="borders p-0">
-                    <Card className='m-0'>
-
-                      <Card.Body className='pt-3'>
+                    <Card className="m-0">
+                      <Card.Body className="pt-3">
                         <Row>
                           <Col xl={4}>
-                            <Form.Group className="form-group">
+                            <Form.Group>
                               <Form.Label>Society Bank Name</Form.Label>
-                              <Field
-                                type="text"
-                                name="bankName"
-                                placeholder="Bank name"
-                                className="form-control"
-                              />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              <input type="text" name="bankName" placeholder="Bank name" className="form-control" value={formData.bankName} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
                           <Col xl={4}>
-                            <Form.Group className="form-group">
-                              <Form.Label>Account Number </Form.Label>
-                              <Field
-                                type="text"
-                                name="accountNumber"
-                                placeholder="Account number"
-                                className="form-control"
-                              />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            <Form.Group>
+                              <Form.Label>Account Number</Form.Label>
+                              <input type="text" name="accountNumber" placeholder="Account number" className="form-control" value={formData.accountNumber} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
-
                           <Col xl={4}>
-                            <Form.Group className="form-group">
+                            <Form.Group>
                               <Form.Label>Branch Name</Form.Label>
-                              <Field
-                                type="text"
-                                name="branchName"
-                                placeholder="Branch name"
-                                className="form-control"
-                              />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              <input type="text" name="branchName" placeholder="Branch name" className="form-control" value={formData.branchName} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
-
                           <Col xl={4}>
-                            <Form.Group className="form-group">
+                            <Form.Group>
                               <Form.Label>IFSC Code</Form.Label>
-                              <Field
-                                type="text"
-                                name="ifscCode"
-                                placeholder="IFSC code"
-                                className="form-control"
-                              />
-                              {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                              <input type="text" name="ifscCode" placeholder="IFSC code" className="form-control" value={formData.ifscCode} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
-
-
                           <Col xl={4}>
-                            <Form.Group className="form-group">
-                              <Form.Label>Cheque Favourable </Form.Label>
-                              <Field
-                                type="text"
-                                name="chequeFavourable"
-                                placeholder="Cheque favourable"
-                                className="form-control"
-                              />
-                              {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
+                            <Form.Group>
+                              <Form.Label>Cheque Favourable</Form.Label>
+                              <input type="text" name="chequeFavourable" placeholder="Cheque favourable" className="form-control" value={formData.chequeFavourable} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
-
                           <Col xl={4}>
-                            <Form.Group className="form-group">
+                            <Form.Group>
                               <Form.Label>Society Payment QR Code</Form.Label>
-                              <input
-                                type="file"
-                                className="form-control"
-                                accept="application/pdf"
-                                name="paymentQrFile"
-                                onChange={(e: any) => setFieldValue("paymentQrFile", e.target.files[0])}
-                              />
-                              {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                              <input type="file" className="form-control" accept="image/*" onChange={handleFileChange} />
                             </Form.Group>
                           </Col>
 
-
                           <Col xl={4}>
-                            <Form.Group className="form-group">
-                              <div className="checkbox">
-                                <div className="custom-checkbox custom-control">
-                                  <Form.Control
-                                    type="checkbox"
-                                    data-checkboxes="mygroup"
-                                    className="custom-control-input"
-                                    id="checkbox-2"
-                                  />
-                                  <Form.Label
-                                    htmlFor="checkbox-2"
-                                    className="custom-control-label mt-1"
-                                  >
-                                    Is Preferred Bank
-                                  </Form.Label>
-
-                                </div>
-
+                            <Form.Group>
+                              <div className="custom-checkbox custom-control">
+                                <input type="checkbox" className="custom-control-input" id="checkbox-2" name="isPreferred" checked={formData.isPreferred} onChange={handleInputChange} />
+                                <Form.Label htmlFor="checkbox-2" className="custom-control-label mt-1">Is Preferred Bank</Form.Label>
                               </div>
                             </Form.Group>
                           </Col>
 
-                          <Col xl={4}></Col>
-
                           <Col xl={4}>
-                            <Form.Group className="form-group">
-                              <Button className="btn btn-primary float-end btn-sm" type="button">Add </Button>
-                            </Form.Group>
+                            <Button className="btn btn-primary float-end btn-sm" onClick={handleAddNewBank}>
+                              {editingIndex !== null ? "Update" : "Add"}
+                            </Button>
                           </Col>
-
-
                         </Row>
 
-                        <table className='table'>
-                          <thead>
-                            <tr>
-                              <th>S.no.</th>
-                              <th>Preferred </th>
-                              <th>Bank Name</th>
-                              <th>Account Number</th>
-                              <th>Branch Name</th>
-                              <th>IFSC Code</th>
-                              <th>Cheque Favourable</th>
-                              <th>Payment QR</th>
-                              <th>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td className='text-center'><i className='bi bi-check-circle text-success tx-20'></i></td>
-                              <td>Union Bank of India</td>
-                              <td>UBIN0826812</td>
-                              <td>268112010001018</td>
-                              <td>Mohan Areca Co Op HSG Soc Ltd</td>
-                              <td>Badlapur</td>
-                              <td><i className='bi bi-image text-info'></i></td>
-                              <td><Dropdown >
-                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                  Action
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                  <Dropdown.Item>Edit</Dropdown.Item>
-                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown></td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td className='text-center'></td>
-                              <td>Union Bank of India</td>
-                              <td>UBIN0826812</td>
-                              <td>268112010001018</td>
-                              <td>Mohan Areca Co Op HSG Soc Ltd</td>
-                              <td>Badlapur</td>
-                              <td><i className='bi bi-image text-info'></i></td>
-                              <td><Dropdown >
-                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                  Action
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                  <Dropdown.Item>Edit</Dropdown.Item>
-                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown></td>
-                            </tr>
-
-                          </tbody>
-                        </table>
-
+                        <DataTableExtensions {...tableData}>
+                          <DataTable columns={columns} data={bankData} pagination fixedHeader />
+                        </DataTableExtensions>
                       </Card.Body>
                     </Card>
                   </Accordion.Body>
@@ -853,8 +917,9 @@ export default function AddSocietyMaster() {
             </FormikForm>
           )}
         </Formik>
+        <CustomToastContainer />
+
       </Row>
-      <CustomToastContainer />
 
     </Fragment >
   );
