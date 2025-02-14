@@ -6,9 +6,20 @@ import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import { Link } from "react-router-dom";
+import { handleApiError } from '../../../helpers/handle-api-error';
+import { getAllMemberOrTenantsApi } from '../../../api/user-api';
 
 export default function MembersMaster() {
 
+
+  type Row = {
+    sno: number;
+    memberIdentifier: string;
+    memberName: string;
+    memberType: string;
+    mobileNumber: string;
+
+  };
 
 
   const columns = [
@@ -22,18 +33,18 @@ export default function MembersMaster() {
     {
       name: 'Member Name',
       cell: (row: Row) => (
-        <Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kunar</Link>
+        <Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>{row.memberName}</Link>
       ),
       sortable: true,
     },
     {
       name: 'Member Type',
-      selector: (row: Row) => row.membertype,
+      selector: (row: Row) => row.memberType,
       sortable: true,
     },
     {
       name: 'Mobile No.',
-      selector: (row: Row) => row.membernumber,
+      selector: (row: Row) => row.mobileNumber,
       sortable: true,
     },
 
@@ -42,65 +53,48 @@ export default function MembersMaster() {
       sortable: true,
       cell: (row: Row) => (
         <Dropdown >
-        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-         Action
-        </Dropdown.Toggle>
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
 
-        <Dropdown.Menu>
-          <Dropdown.Item>Edit</Dropdown.Item>
-          <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-</Dropdown.Menu>
-      </Dropdown>
+          <Dropdown.Menu>
+            <Dropdown.Item>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       ),
     },
   ]
-
-  const memberdata = [
-
-    {
-      id: 1,
-      sno: '1',
-      membername: 'Mr. Vinod Kumar Pandia',
-      membertype: 'Member',
-      membernumber: ''
-
-    },
-    {
-      id: 2,
-      sno: '2',
-      membername: 'Mrs. Chanda Vinod Pandia',
-      membertype: 'Customer/Tenant',
-      membernumber: ''
-
-    },
-    {
-      id: 3,
-      sno: '3',
-      membername: 'Mr. Vinod Kumar Pandia',
-      membertype: 'Member',
-      membernumber: ''
-
-    },
-    {
-      id: 4,
-      sno: '4',
-      membername: 'Mrs. Chanda Vinod Pandia',
-      membertype: 'Customer/Tenant',
-      membernumber: ''
-
-    },
-
-
-  ]
-
+  const [memberData, setMemberData] = useState([])
   const tableData = {
     columns,
-    data: memberdata
+    data: memberData
   };
 
 
 
-
+  useEffect(() => {
+    const fetchAllProperty = async () => {
+      try {
+        const memberResponse = await getAllMemberOrTenantsApi()
+        const memberData = memberResponse.data.data
+        console.log(memberData)
+        const formattedData = memberData.map((member: any, index: number) => (
+          {
+            sno: index + 1,
+            memberName: `${member.firstName} ${member.lastName}`,
+            memberType: member.role,
+            mobileNumber: member.personMobilePhone
+          }
+        ));
+        setMemberData(formattedData);
+      } catch (error) {
+        console.log(error)
+        handleApiError(error)
+      }
+    }
+    fetchAllProperty();
+  }, [])
 
 
   return (
@@ -111,7 +105,7 @@ export default function MembersMaster() {
         </div>
 
         <div className="right-content">
-<Link to={`${import.meta.env.BASE_URL}members/addmembers`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Member</Link>
+          <Link to={`${import.meta.env.BASE_URL}members/addmembers`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Member</Link>
 
         </div>
       </div>
@@ -125,7 +119,7 @@ export default function MembersMaster() {
                 <DataTableExtensions {...tableData}>
                   <DataTable
                     columns={columns}
-                    data={memberdata}
+                    data={memberData}
                     pagination
                     keyField="id"
                   />
