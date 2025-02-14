@@ -7,6 +7,7 @@ const Accounts = lazy(() => import('../components/accounts/accounts'));
 const SocietyMaster = lazy(() => import('../components/masters/society/societymaster'));
 const AddSocietyMaster = lazy(() => import('../components/masters/society/addsocietymaster'));
 const EditSocietyMaster = lazy(() => import('../components/masters/society/editsocietymaster'));
+const SocietyView = lazy(() => import('../components/masters/society/societyview'));
 const TowerMaster = lazy(() => import('../components/masters/towermaster'));
 const WingMaster = lazy(() => import('../components/masters/wingmaster'));
 const PropertyMaster = lazy(() => import('../components/masters/property/propertymaster'));
@@ -31,6 +32,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}society/societymaster`, element: <SocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/addsocietymaster`, element: <AddSocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/editsocietymaster`, element: <EditSocietyMaster /> },
+  { path: `${import.meta.env.BASE_URL}society/societyview`, element: <SocietyView /> },
   { path: `${import.meta.env.BASE_URL}parententity/parententity`, element: <ParentEntity /> },
   { path: `${import.meta.env.BASE_URL}property/propertymaster`, element: <PropertyMaster /> },
   { path: `${import.meta.env.BASE_URL}property/addpropertymaster`, element: <AddPropertyMaster /> },
