@@ -716,23 +716,26 @@ export default function AddSocietyMaster() {
 
                           <Col xl={4}>
                             <Form.Group>
-                              <div className="custom-checkbox custom-control">
+                              <div className="custom-checkbox custom-control mt-3">
                                 <input type="checkbox" className="custom-control-input" id="checkbox-2" name="isPreferred" checked={formData.isPreferred} onChange={handleInputChange} />
                                 <Form.Label htmlFor="checkbox-2" className="custom-control-label mt-1">Is Preferred Bank</Form.Label>
                               </div>
                             </Form.Group>
                           </Col>
 
-                          <Col xl={4}>
-                            <Button className="btn btn-primary float-end btn-sm" onClick={handleAddNewBank}>
+                          <Col xl={8}>
+                            <Button className="btn btn-primary float-end btn-sm mt-3" onClick={handleAddNewBank}>
                               {editingIndex !== null ? "Update" : "Add"}
                             </Button>
                           </Col>
                         </Row>
-
+<Row>
+  <Col xl={12}>
                         <DataTableExtensions {...tableData}>
                           <DataTable columns={columns} data={bankData} pagination fixedHeader />
                         </DataTableExtensions>
+                        </Col>
+                        </Row>
                       </Card.Body>
                     </Card>
                   </Accordion.Body>
@@ -755,7 +758,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Flat"
                                 classNamePrefix="Select2"
                               />
-                              
+
                             </Form.Group>
                           </Col>
 
@@ -767,7 +770,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Wing"
                                 classNamePrefix="Select2"
                               />
-                             
+
                             </Form.Group>
                           </Col>
 
@@ -780,7 +783,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Approver Name"
                                 className="form-control"
                               />
-                             
+
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -791,7 +794,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Type"
                                 classNamePrefix="Select2"
                               />
-                              
+
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -802,7 +805,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Society"
                                 classNamePrefix="Select2"
                               />
-                             
+
                             </Form.Group>
                           </Col>
 
@@ -904,7 +907,7 @@ export default function AddSocietyMaster() {
                       </Card.Body>
                     </Card>
                   </Accordion.Body>
-                </Accordion.Item> 
+                </Accordion.Item>
                 */}
 
               </Accordion>

@@ -23,6 +23,7 @@ const MembersMaster = lazy(() => import('../components/masters/members/membersma
 const AddMembersMaster = lazy(() => import('../components/masters/members/addmembers'));
 const MembersProfile = lazy(() => import('../components/masters/members/membersProfile'));
 const ParentEntity= lazy(() => import('../components/parententity/parententity'));
+const Loans= lazy(() => import('../components/loans/loans'));
 
 export const Routingdata = [
   //Dashboard
@@ -48,7 +49,8 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}userprofile/userprofile`, element: <UserProfile /> },
   { path: `${import.meta.env.BASE_URL}members/membersmaster`, element: <MembersMaster /> },
   { path: `${import.meta.env.BASE_URL}members/addmembers`, element: <AddMembersMaster /> },
-  { path: `${import.meta.env.BASE_URL}members/membersProfile`, element: <MembersProfile /> }
+  { path: `${import.meta.env.BASE_URL}members/membersProfile`, element: <MembersProfile /> },
+  { path: `${import.meta.env.BASE_URL}loans/loans`, element: <Loans /> }
 ];
 
 export const Sidebarcomponents = [
