@@ -178,7 +178,7 @@ export const MENUITEMS = [
         title: "Tenant",
         icon: (<i className="side-menu__icon bi bi-calendar-week"></i>
         ),
-        path: ``,
+        path: `${import.meta.env.BASE_URL}tenant/tenant`,
         type: "link",
         selected: false,
         active: false,

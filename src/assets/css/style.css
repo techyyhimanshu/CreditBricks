@@ -3499,8 +3499,8 @@ input[type=button].btn-block {
 }
 
 .card-footer {
-    border-end-start-radius: 7px !important;
-    border-end-end-radius: 7px !important;
+    border-end-start-radius: 20px !important;
+    border-end-end-radius: 20px !important;
 }
 
 .card-header-tab {
@@ -10443,7 +10443,7 @@ textarea.custom-file-input.parsley-error:focus~.custom-file-label {
 
 .progress-bar {
     border-radius: 3px;
-    height: 13px;
+    height: 10px;
     font-size: 12px;
 }
 
@@ -85181,7 +85181,9 @@ video.bg-video {
 }
 
 .kzZBXj {
-    font-size: 14px;
+    font-size: 13px;
+    white-space: normal !important;
+
 }
 
 .h_80 {
