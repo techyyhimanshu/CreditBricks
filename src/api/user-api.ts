@@ -4,10 +4,11 @@ import axiosInstance from './axiosInstance';
 
 export const addUserApi = async (data: any): Promise<any> => {
     try {
-        const response = await axios.post(`${baseUrl}/admin/user/new`, {
-            ...data,
-            role: "Customer"
-        })
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+        }
+        const response = await axiosInstance.post(`/member/mr/new`, formData)
         return response
     } catch (error) {
         throw error
