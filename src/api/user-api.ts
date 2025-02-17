@@ -143,6 +143,15 @@ export const geTenantForDropDownApi = async (): Promise<any> => {
         throw error
     }
 }
+
+export const getAllMemberOrTenantsApi = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/member/all`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const getMemberForDropDownApi = async (): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/member/ddl`)
