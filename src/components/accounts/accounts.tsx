@@ -488,68 +488,54 @@ export default function Accounts() {
                   </div>
                 </Tab>
                 <Tab eventKey="Receipt" title="Receipt">
-                  <div className="float-end mt-2">
+                <Row className='bg-light'>
+                      <Col xl={2}>
+                       <Form.Group className="form-group">
+                            <Form.Label>Date <span className="text-danger">*</span></Form.Label>
+                            <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                          </Form.Group>
+                      </Col>
 
-                    <>
-                      <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("receiptadd")}><i className="bi bi-search"></i> Search</button>
-                      <Modal show={receiptadd} centered >
-                        <Modal.Header>
-                          <Modal.Title>Search</Modal.Title>
-                          <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("receiptadd"); }}>
-                            x
-                          </Button>
-                        </Modal.Header>
-                        <Modal.Body>
-
-                          <Form.Group className="form-group">
-                            <Form.Label>Society<span className="text-danger">*</span></Form.Label>
-
-
-                            <Form.Group className="form-group">
-                              <Form.Label>Date <span className="text-danger">*</span></Form.Label>
-                              <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-                            </Form.Group>
+                      <Col xl={4}>
+                      <Form.Group className="form-group">
+                            <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
 
                             <div className="SlectBox">
                               <Select
-                                options={societyoptions}
-                                placeholder="Select Society"
+                                options={propertyoption}
+                                placeholder="Select Property"
                                 // classNamePrefix="selectform"
                                 classNamePrefix='Select2' className="multi-select"
                               />
                             </div>
 
-                          </Form.Group>
 
-                          <Form.Group className="form-group">
+                          </Form.Group>
+                      </Col>
+
+                      <Col xl={2}>
+                      <Form.Group className="form-group">
                             <Form.Label>Receipt ID <span className="text-danger">*</span></Form.Label>
                             <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
                           </Form.Group>
+                      </Col>
 
 
-
-                          <Form.Group className="form-group">
+                      <Col xl={2}>
+                      <Form.Group className="form-group">
                             <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
                             <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
                           </Form.Group>
+                      </Col>
 
-                        </Modal.Body>
-                        <Modal.Footer>
-                          <Button variant="default" onClick={() => { viewDemoClose("receiptadd"); }}>
-                            Close
-                          </Button>
-                          <Button variant="primary" onClick={() => { viewDemoShow("receiptadd"); }}>
-                            Save
-                          </Button>
-
-                        </Modal.Footer>
-                      </Modal>
-                    </>
-                    <button type="button" className="btn btn-info p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("receiptexportshow")}><i className="bi bi-upload"></i> Import</button>
-                    <Modal centered show={receiptexportshow}>
+                      <Col xl={2}>
+                      <Form.Label className='mb-4'></Form.Label>
+                      <button type="button" className="btn btn-primary mt-1 me-1" onClick={() => viewDemoShow("select")}>Search</button>
+                      <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
+                    <Modal centered show={exportshow}>
                       <Modal.Header>
                         <Modal.Title>Import</Modal.Title>
-                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("receiptexportshow"); }}>
+                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
                           x
                         </Button>
                       </Modal.Header>
@@ -563,7 +549,7 @@ export default function Accounts() {
                           </div>
 
                           <div className='upload-data'>
-                            <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> receipt.xls</div>
+                            <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
                             <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
                           </div>
 
@@ -574,17 +560,18 @@ export default function Accounts() {
 
                       </Modal.Body>
                       <Modal.Footer>
-                        <Button variant="default" onClick={() => { viewDemoClose("receiptexportshow"); }}>
+                        <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
                           Close
                         </Button>
-                        <Button variant="primary" onClick={() => { viewDemoClose("receiptexportshow"); }}>
+                        <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
                           Save
                         </Button>
 
                       </Modal.Footer>
                     </Modal>
+                      </Col>
 
-                  </div>
+                    </Row>
                   <div className="table-responsive ">
                     <DataTableExtensions {...tableData}>
                       <DataTable

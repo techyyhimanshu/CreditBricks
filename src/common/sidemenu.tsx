@@ -140,7 +140,7 @@ export const MENUITEMS = [
         icon: (
           <i className="side-menu__icon bi bi-window-sidebar"></i>
         ),
-        path: `${import.meta.env.BASE_URL}applications/applications`,
+        path: ``,
         type: "link",
         active: false,
         selected: false,
@@ -168,7 +168,7 @@ export const MENUITEMS = [
         title: "Complaints",
         icon: (<i className="side-menu__icon bi bi-piggy-bank"></i>
         ),
-        path: `${import.meta.env.BASE_URL}deals/deals`,
+        path: ``,
         type: "link",
         selected: false,
         active: false,
@@ -178,7 +178,7 @@ export const MENUITEMS = [
         title: "Tenant",
         icon: (<i className="side-menu__icon bi bi-calendar-week"></i>
         ),
-        path: `${import.meta.env.BASE_URL}calendar/calendar`,
+        path: `${import.meta.env.BASE_URL}tenant/tenant`,
         type: "link",
         selected: false,
         active: false,
@@ -188,7 +188,7 @@ export const MENUITEMS = [
         title: "Vehicle",
         icon: (<i className="side-menu__icon bi bi-list-task"></i>
         ),
-        path: `${import.meta.env.BASE_URL}task/task`,
+        path: ``,
         type: "link",
         selected: false,
         active: false,
@@ -197,7 +197,7 @@ export const MENUITEMS = [
         title: "Loans",
         icon: (<i className="side-menu__icon bi bi-cash-stack"></i>
         ),
-        path: `${import.meta.env.BASE_URL}chats/chats`,
+        path: `${import.meta.env.BASE_URL}loans/loans`,
         type: "link",
         selected: false,
         active: false,
@@ -206,7 +206,7 @@ export const MENUITEMS = [
         title: "Notices",
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
-        path: `${import.meta.env.BASE_URL}document/document`,
+        path: ``,
         type: "link",
         selected: false,
         active: false,
@@ -216,7 +216,7 @@ export const MENUITEMS = [
         title: "Announcements",
         icon: (<i className="side-menu__icon bi bi-megaphone"></i>
         ),
-        path: `${import.meta.env.BASE_URL}document/document`,
+        path: ``,
         type: "link",
         selected: false,
         active: false,
@@ -227,7 +227,7 @@ export const MENUITEMS = [
         title: "Visitors",
         icon: (<i className="side-menu__icon bi bi-people"></i>
         ),
-        path: `${import.meta.env.BASE_URL}document/document`,
+        path: ``,
         type: "link",
         selected: false,
         active: false,
@@ -238,7 +238,7 @@ export const MENUITEMS = [
         title: "Pets",
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
-        path: `${import.meta.env.BASE_URL}document/document`,
+        path: ``,
         type: "link",
         selected: false,
         active: false,
@@ -249,7 +249,7 @@ export const MENUITEMS = [
         title: "Helpers",
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
-        path: `${import.meta.env.BASE_URL}document/document`,
+        path: ``,
         type: "link",
         selected: false,
         active: false,
@@ -260,7 +260,7 @@ export const MENUITEMS = [
         title: "Community",
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
-        path: `${import.meta.env.BASE_URL}document/document`,
+        path: ``,
         type: "link",
         selected: false,
         active: false,
