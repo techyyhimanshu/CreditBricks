@@ -11,25 +11,27 @@ export default function TermsCondition() {
     const [value1, setValue1] = useState('');
 
   const applications = [
-    { value: "1", label: "Gate Pass" },
-    { value: "2", label: "Change In Name" },
-    { value: "3", label: "Contact Update" },
-    { value: "4", label: "Parking" },
-    { value: "5", label: "Flat Resale" },
-    { value: "6", label: "Interior Work" },
-    { value: "7", label: "Celebration" },
-    { value: "8", label: "Theater" },
-    { value: "9", label: "Banquet Hall" },
-    { value: "10", label: "Club House" },
-    { value: "11", label: "Swimming Pool" },
-    { value: "12", label: "Play Area" },
-    { value: "13", label: "CTurf Area" },
-    { value: "14", label: "Rent Agreement" },
-    { value: "15", label: "Share Certificate" },
-    { value: "16", label: "Nomination" },
-    { value: "17", label: "Badminton Count" },
-    { value: "18", label: "Food Court" },
-    { value: "19", label: "COther" }
+    { value: "1", label: "Society" },
+    { value: "2", label: "Tenant" },
+    { value: "3", label: "Gate Pass" },
+    { value: "4", label: "Change In Name" },
+    { value: "5", label: "Contact Update" },
+    { value: "6", label: "Parking" },
+    { value: "7", label: "Flat Resale" },
+    { value: "8", label: "Interior Work" },
+    { value: "9", label: "Celebration" },
+    { value: "10", label: "Theater" },
+    { value: "11", label: "Banquet Hall" },
+    { value: "12", label: "Club House" },
+    { value: "13", label: "Swimming Pool" },
+    { value: "14", label: "Play Area" },
+    { value: "15", label: "CTurf Area" },
+    { value: "16", label: "Rent Agreement" },
+    { value: "17", label: "Share Certificate" },
+    { value: "18", label: "Nomination" },
+    { value: "19", label: "Badminton Count" },
+    { value: "20", label: "Food Court" },
+    { value: "21", label: "Other" }
     //
   ];
   return (

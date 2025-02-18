@@ -60,6 +60,11 @@ export default function TenantView() {
                       <Card.Body>
                         <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Details</h5>
                         <Row>
+                        <Col xl={6}>
+                            <FormLabel>Society Name</FormLabel>
+                            <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>Mohan Areca Co-Op Housing Society Limited</Link>
+                          </Col>
+
                           <Col xl={6}>
                             <FormLabel>Property Name</FormLabel>
                             <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>A101</Link>

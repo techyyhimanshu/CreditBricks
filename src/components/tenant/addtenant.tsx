@@ -14,6 +14,10 @@ export default function AddTenant() {
     { value: "2", label: "4 Wheeler" },
   ]
 
+  const society = [
+    { value: "1", label: "Mohan Areca Co-Op Housing Society Limited" },
+  ]
+
   const property = [
     { value: "1", label: "A101" },
     { value: "2", label: "A102" },
@@ -56,6 +60,17 @@ export default function AddTenant() {
       <Card.Body className='pt-3'>
 
       <Row>
+      <Col xl={4}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Society<span className="text-danger">*</span></Form.Label>
+                    <Select
+                      options={society}
+                      placeholder="Select society"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
+
                 <Col xl={4}>
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Property<span className="text-danger">*</span></Form.Label>

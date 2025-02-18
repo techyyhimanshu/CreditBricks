@@ -85910,3 +85910,6 @@ width: 100%;
 .transactionbtn #dropdownMenuButton{  text-align: left !important;}
 .profile-tab{padding: 0px 15px 15px 15px !important;}
 .usertab .tab-content{min-height:400px}
+.society_select{max-width: 360px;
+    width: 360px;
+    margin-inline-start: -280px;}

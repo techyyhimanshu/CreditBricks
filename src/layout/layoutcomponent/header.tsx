@@ -476,6 +476,31 @@ export default function Header() {
             </Modal>
         </> */}
                   </li>
+                  <li className="dropdown nav-item w-auto headericon me-3">
+                      <Dropdown>
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={<Tooltip>Switch Your Society</Tooltip>}>
+                          <Dropdown.Toggle
+                            className="new nav-link profile-user d-flex text-primary"
+
+                            variant=""
+                          >
+                            <strong><i className="bi bi-building"></i></strong>
+                          </Dropdown.Toggle>
+                        </OverlayTrigger>
+                        <Dropdown.Menu className="society_select">
+
+                          <Dropdown.Item className="dropdown-item" href="/">
+                            <i className="far fa-user-circle me-2"></i>Mohan Areca Co-Op Housing Society Limited
+                          </Dropdown.Item>
+
+                          <Dropdown.Item className="dropdown-item" href="/">
+                            <i className="far fa-user-circle me-2"></i> SKA MetroVilla Society Limited
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </li>
                   {
                     userType === "admin" && <li className="dropdown nav-item w-auto headericon me-3">
                       <Dropdown>
