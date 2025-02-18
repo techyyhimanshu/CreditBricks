@@ -21,7 +21,7 @@ export default function Tenant() {
    {
     name: 'Society Name',
     cell: (row: Row) => (
-      <Link className='text-info cursor' to={``}>Mohan Areca Co-Op Housing Society Limited</Link>
+      <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}society/societyview`}>Mohan Areca Co-Op Housing Society Limited</Link>
     ),
 
     sortable: true,
@@ -29,7 +29,7 @@ export default function Tenant() {
   {
     name: 'Property Name',
     cell: (row: Row) => (
-      <Link className='text-info cursor' to={``}>A101</Link>
+      <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}property/propertyview`}>A101</Link>
     ),
 
     sortable: true,

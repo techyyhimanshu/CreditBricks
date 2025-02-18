@@ -25,10 +25,44 @@ export default function Loans() {
     { value: "6", label: "30yrs" },
   ]
 
+  const property = [
+    { value: "1", label: "A101" },
+    { value: "2", label: "A102" },
+  ]
+
+  const member = [
+    { value: "1", label: "Owner" },
+    { value: "2", label: "Tenant" },
+  ]
+
   const columns = [
     {
       name: 'S.No',
       selector: row => row.sno,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Loan Number',
+      cell: (row: Row) => (
+        <span className='text-info cursor' onClick={() => viewDemoShow("viewloan")}>243243545</span>
+      ),
+      sortable: true,
+    },
+
+    {
+      name: 'Property',
+      selector: row => row.property,
+      sortable: true,
+    },
+    {
+      name: 'Member',
+      selector: row => row.member,
+      sortable: true,
+    },
+    {
+      name: 'Name',
+      selector: row => row.name,
       sortable: true,
     },
     {
@@ -37,13 +71,6 @@ export default function Loans() {
       sortable: true,
     },
 
-    {
-      name: 'Loan Number',
-      cell: (row: Row) => (
-        <span className='text-info cursor' onClick={() => viewDemoShow("viewloan")}>243243545</span>
-      ),
-      sortable: true,
-    },
 
     {
       name: 'Loan Period',
@@ -55,16 +82,7 @@ export default function Loans() {
       selector: row => row.loanamt,
       sortable: true,
     },
-    {
-      name: 'Start Date',
-      selector: row => row.startdt,
-      sortable: true,
-    },
-    {
-      name: 'End Date',
-      selector: row => row.enddt,
-      sortable: true,
-    },
+
     {
       name: 'Monthly EMI',
       selector: row => row.monthlyemi,
@@ -94,47 +112,51 @@ export default function Loans() {
   const data = [
     {
       sno: 1,
+      property: 'A101',
+      member: 'Tenant',
+      name: 'Rahul Sharma',
       loantype: 'Home',
       loannumber: '',
       loanperiod: '10yrs',
       loanamt: '₹ 20,00,000',
-      startdt: '12/02/2011',
-      enddt: '12/02/2021',
       monthlyemi: '₹ 20,000',
       action: ''
 
     },
     {
       sno: 2,
+      property: 'A102',
+      member: 'Owner',
+      name: 'Neha Singh',
       loantype: 'Vehicle',
       loannumber: '',
       loanperiod: '5yrs',
       loanamt: '₹ 50,000',
-      startdt: '12/02/2025',
-      enddt: '12/02/2025',
       monthlyemi: '₹ 5,000',
       action: ''
     },
     {
       sno: 3,
+      property: 'A101',
+      member: 'Tenant',
+      name: 'Rajiv Sharma',
       loantype: 'Home',
       loannumber: '',
       loanperiod: '10yrs',
       loanamt: '₹ 20,00,000',
-      startdt: '12/02/2011',
-      enddt: '12/02/2021',
       monthlyemi: '₹ 20,000',
       action: ''
 
     },
     {
       sno: 4,
+      property: 'A102',
+      member: 'Owner',
+      name: 'Mohit Kumar',
       loantype: 'Vehicle',
       loannumber: '',
       loanperiod: '5yrs',
       loanamt: '₹ 50,000',
-      startdt: '12/02/2025',
-      enddt: '12/02/2025',
       monthlyemi: '₹ 5,000',
       action: ''
     }
@@ -209,6 +231,35 @@ export default function Loans() {
             </Modal.Header>
             <Modal.Body>
               <Row>
+              <Col xl={6}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Property<span className="text-danger">*</span></Form.Label>
+                    <Select
+                      options={property}
+                      placeholder="Select property"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Member Type<span className="text-danger">*</span></Form.Label>
+                    <Select
+                      options={member}
+                      placeholder="Select member"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Name<span className="text-danger">*</span></Form.Label>
+                    <Form.Control type="text" className='form-control' placeholder='Name'></Form.Control>
+                  </Form.Group>
+                </Col>
+
                 <Col xl={6}>
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Loan<span className="text-danger">*</span></Form.Label>
@@ -332,8 +383,29 @@ export default function Loans() {
                     <Col xl={12}>
                       <Card className='box-shadow'>
                         <CardBody className='border-bottom p-2'>
+                          <Row>
+                          <Col xl={6}>
                           <p className='mb-0 text-muted'>Car</p>
                           <p className='tx-16 tx-semibold'>243243545</p>
+                          </Col>
+                          <Col xl={6} className='text-end'>
+                          <p className='mb-0 text-muted'>Property</p>
+                          <p className='tx-15 tx-semibold'>A101</p>
+                          </Col>
+                          </Row>
+                        </CardBody>
+                        <CardBody className='border-bottom p-2'>
+                          <Row>
+                            <Col xl={6}>
+                            <p className='mb-0 text-muted'>Name</p>
+                            <p className='tx-15 tx-semibold'>Rahul Sharma</p>
+                            </Col>
+                            <Col xl={6} className='text-end'>
+                            <p className='mb-0 text-muted'>Member</p>
+                              <p className='tx-15 tx-semibold'>Owner</p>
+
+                            </Col>
+                          </Row>
                         </CardBody>
                         <CardBody className='border-bottom p-2'>
                           <Row>
@@ -341,13 +413,13 @@ export default function Loans() {
                               <p className='mb-0 text-muted'>Loan Period</p>
                               <p className='tx-15 tx-semibold'>10yrs</p>
                               <p className='mb-0 text-muted'>Start Date</p>
-                              <p className='tx-15 tx-semibold'>June 10,2011</p>
+                              <p className='tx-15 tx-semibold'>10 June,2011</p>
                             </Col>
                             <Col xl={6} className='text-end'>
                               <p className='mb-0 text-muted'>Loan Amount</p>
                               <p className='tx-15 tx-semibold text-primary'>₹ 20,00,000</p>
                               <p className='mb-0 text-muted'>End Date</p>
-                              <p className='tx-15 tx-semibold'>June 10,2021</p>
+                              <p className='tx-15 tx-semibold'>10 June,2021</p>
                             </Col>
                           </Row>
                         </CardBody>
