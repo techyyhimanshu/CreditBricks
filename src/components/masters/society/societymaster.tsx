@@ -22,7 +22,7 @@ export default function SocietyMaster() {
   const [showModal, setShowModal] = useState(false);
   const [societyData, setSocietyData] = useState<any[]>([]);
   const [currentSociety, setCurrentSociety] = useState({
-    societyId: null,
+    societyIdentifier: '',
     societyName: '',
     address: '',
     country: null,
@@ -33,7 +33,7 @@ export default function SocietyMaster() {
 
   const [isEditing, setIsEditing] = useState(false);
   type Row = {
-    societyId: number;
+    societyIdentifier: string;
     sno: number;
     societyName: string;
     address: string;
@@ -89,16 +89,16 @@ export default function SocietyMaster() {
       sortable: true,
       cell: (row: Row) => (
         <Dropdown >
-        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-         Action
-        </Dropdown.Toggle>
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
 
-        <Dropdown.Menu>
-          <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
-            state={{ society: row }}>Edit</Link> </Dropdown.Item>
-          <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)} >Delete</Dropdown.Item>
-</Dropdown.Menu>
-      </Dropdown>
+          <Dropdown.Menu>
+            <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
+              state={{ society: row }}>Edit</Link> </Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)} >Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
 
         // <div>
         //   <Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
@@ -131,29 +131,13 @@ export default function SocietyMaster() {
     city: Yup.object().nullable().required('City is required'),
     // zipcode: Yup.string().required('Zipcode is required'),
   })
-  const openAddModal = () => {
-    setIsEditing(false);
-    currentSociety.address = "";
-    currentSociety.societyName = "";
-    currentSociety.country = null;
-    currentSociety.state = null;
-    currentSociety.city = null;
-    setShowModal(true);
-  };
-
-  const openEditModal = (society: any) => {
-    setIsEditing(true);
-    setCurrentSociety(society);
-    setShowModal(true);
-  };
-
 
   useEffect(() => {
     const fetchSocietyData = async () => {
       try {
         const response = await getAllSocietyApi();
         const formattedData = response.data.data.map((item: any, index: number) => ({
-          societyId: item.societyId,
+          societyIdentifier: item.societyIdentifier,
           sno: index + 1,
           societyName: item.societyName,
           societyManager: item.societyManager,
@@ -200,13 +184,13 @@ export default function SocietyMaster() {
     if (isEditing) {
       ; (async () => {
         try {
-          const response = await updateSocietyApi(data, currentSociety.societyId)
+          const response = await updateSocietyApi(data, currentSociety.societyIdentifier)
           if (response.status === 200) {
             showToast("success", response.data.message)
             // Update specific society in the list
             setSocietyData(prevData =>
               prevData.map(society =>
-                society.societyId === currentSociety.societyId
+                society.societyIdentifier === currentSociety.societyIdentifier
                   ? { ...society, ...data }
                   : society
               )
@@ -228,7 +212,7 @@ export default function SocietyMaster() {
             // Add the new society to the table
             const newSociety = {
               sno: societyData.length + 1,
-              societyId: response.data.data.societyId,
+              societyIdentifier: response.data.data.societyIdentifier,
               ...response.data.data
             }
             setSocietyData(prevData => [...prevData, newSociety]);
@@ -243,21 +227,21 @@ export default function SocietyMaster() {
 
 
   }
-  const handleDelete = (data: any) => {
-    console.log(data)
-      ; (async () => {
-        try {
-          const response = await deleteSocietyApi(data.societyId || data.societyId)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            // Remove the society from the table
-            setSocietyData(prevData => prevData.filter(society => society.societyId !== data.societyId))
-          }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error)
-          showToast("error", errorMessage)
+  const handleDelete = (row: any) => {
+    ; (async () => {
+      try {
+
+        const response = await deleteSocietyApi(row.societyIdentifier)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          // Remove the society from the table
+          setSocietyData(prevData => prevData.filter(society => society.societyIdentifier !== row.societyIdentifier))
         }
-      })()
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
   }
   return (
     <Fragment>
@@ -273,7 +257,7 @@ export default function SocietyMaster() {
           <Modal show={showModal} size="lg" onHide={() => setShowModal(false)} centered>
             <Formik
               initialValues={{
-                societyId: null,
+                societyIdentifier: null,
                 societyName: currentSociety?.societyName || "",
                 address: currentSociety?.address || "",
 
@@ -387,7 +371,7 @@ export default function SocietyMaster() {
                     columns={columns}
                     data={societyData}
                     pagination
-                    keyField="societyId"
+                    keyField="societyIdentifier"
                   />
                 </DataTableExtensions>
               </div>

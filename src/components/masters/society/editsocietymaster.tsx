@@ -19,7 +19,7 @@ interface StateCities {
 const stateCitiesTyped: StateCities = stateCities;
 export default function EditSocietyMaster() {
   const [currentSociety, setCurrentSociety] = useState({
-    societyId: null,
+    societyIdentifier: null,
     societyName: '',
     societyManager: '',
     address: '',
@@ -45,10 +45,9 @@ export default function EditSocietyMaster() {
     return <p>No society selected. Please go back.</p>;
   }
   useEffect(() => {
-    setCurrentSociety(society);
     console.log(society)
+    setCurrentSociety(society);
   }, [society])
-  const [isEditing, setIsEditing] = useState(false);
 
   const countryOptions: any = [{ value: "India", label: "India" }]
 
@@ -88,14 +87,14 @@ export default function EditSocietyMaster() {
 
       ; (async () => {
         try {
-          const response = await updateSocietyApi(societyDataToUpdate, currentSociety.societyId)
+          const response = await updateSocietyApi(societyDataToUpdate, currentSociety.societyIdentifier)
           if (response.status === 200) {
             showToast("success", response.data.message)
-            window.location.href = "/society/societymaster"
+            // window.location.href = "/society/societymaster"
             // Update specific society in the list
             // setSocietyData(prevData =>
             //   prevData.map(society =>
-            //     society.societyId === currentSociety.societyId
+            //     society.societyIdentifier === currentSociety.societyIdentifier
             //       ? { ...society, ...data }
             //       : society
             //   )

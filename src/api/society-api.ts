@@ -24,7 +24,7 @@ export const getSocietyOwnerApi = async (societyIdentifier: string): Promise<any
         throw error
     }
 }
-export const updateSocietyApi = async (data: any, id: any): Promise<any> => {
+export const updateSocietyApi = async (data: any, identifier: any): Promise<any> => {
     try {
         const formData = new FormData();
         for (const key in data) {
@@ -36,15 +36,15 @@ export const updateSocietyApi = async (data: any, id: any): Promise<any> => {
                 formData.append(key, data[key]);
             }
         }
-        const response = await axiosInstance.patch(`/society/${id}`, formData)
+        const response = await axiosInstance.patch(`/society/${identifier}`, formData)
         return response
     } catch (error) {
         throw error
     }
 }
-export const deleteSocietyApi = async (id: number): Promise<any> => {
+export const deleteSocietyApi = async (identifier: string): Promise<any> => {
     try {
-        const response = await axiosInstance.delete(`/society/${id}`)
+        const response = await axiosInstance.delete(`/society/${identifier}`)
         return response
     } catch (error) {
         throw error
