@@ -20,7 +20,7 @@ export default function WingMaster() {
     const [currentWing, setCurrentWing] = useState({
         wingIdentifier: null,
         wingName: '',
-        towerId: null,
+        towerIdentifier: null,
         towerName: null,
         societyIdentifier: null,
         societyName: "",
@@ -35,7 +35,7 @@ export default function WingMaster() {
                     sno: index + 1,
                     wingIdentifier: item.wingIdentifier,
                     wingName: item.wingName,
-                    towerId: item?.towerId,
+                    towerIdentifier: item?.towerIdentifier,
                     towerName: item?.towerName,
                     societyIdentifier: item.societyIdentifier,
                     societyName: item.societyName,
@@ -56,7 +56,7 @@ export default function WingMaster() {
         wingName: string;
         societyIdentifier: number;
         societyName: string;
-        towerId: number;
+        towerIdentifier: string;
         towerName: number;
         ownerName: string
     };
@@ -134,7 +134,7 @@ export default function WingMaster() {
         try {
             const response = await getTowersOfSocietyApi(society.value);
             const formattedData = response.data.data.map((item: any) => ({
-                value: item.towerId,
+                value: item.towerIdentifier,
                 label: item.towerName,
             }));
             console.log(formattedData)
@@ -158,7 +158,7 @@ export default function WingMaster() {
         setIsEditing(false);
         currentWing.wingIdentifier = null
         currentWing.wingName = ''
-        currentWing.towerId = null
+        currentWing.towerIdentifier = null
         currentWing.towerName = null
         currentWing.societyIdentifier = null
         currentWing.societyName = ""
@@ -179,7 +179,7 @@ export default function WingMaster() {
         console.log(values)
         const data = {
             wingName: values.wingName,
-            towerId: values.tower?.value,
+            towerIdentifier: values.tower?.value,
             towerName: values.tower?.label,
             societyIdentifier: values.society.value,
             societyName: values.society.label,
@@ -218,7 +218,7 @@ export default function WingMaster() {
                             sno: wingData.length + 1,
                             wingIdentifier: response.data.data.wingIdentifier,
                             wingName: response.data.data.wingName,
-                            towerId: values.tower?.value,
+                            towerIdentifier: values.tower?.value,
                             towerName: values.tower?.label,
                             societyIdentifier: values.society.value,
                             societyName: values.society.label,
@@ -267,7 +267,7 @@ export default function WingMaster() {
                             initialValues={{
                                 wingIdentifier: null,
                                 wingName: currentWing?.wingName || "",
-                                tower: { value: currentWing?.towerId || "", label: currentWing?.towerName || "" },
+                                tower: { value: currentWing?.towerIdentifier || "", label: currentWing?.towerName || "" },
                                 society: { value: currentWing?.societyIdentifier || "", label: currentWing?.societyName || "" },
                                 ownerName: societyOwner
                             }
