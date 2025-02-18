@@ -50,7 +50,7 @@ export default function TowerMaster() {
             fetchTowerData();
         }
         // fetchTowerData();
-    }, [towerData]);
+    }, []);
     type Row = {
         towerId: number;
         sno: number;
