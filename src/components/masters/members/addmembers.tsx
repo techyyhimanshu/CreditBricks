@@ -17,7 +17,6 @@ export default function AddMembersMaster() {
     firstName: "",
     middleName: "",
     lastName: "",
-    role: null,
     personMobilePhone: "",
     alternatePhone: "",
     personEmail: "",
@@ -43,14 +42,13 @@ export default function AddMembersMaster() {
   ]
 
 
-  const membertype = [{ value: "Member", label: "Member" }, { value: "Tenant", label: "Customer/Tenant" }]
+  // const membertype = [{ value: "Member", label: "Member" }, { value: "Tenant", label: "Customer/Tenant" }]
   const handleSubmit = async (values: any) => {
     try {
       const formattedData = {
         "firstName": values.firstName,
         "middleName": values.middleName,
         "lastName": values.lastName,
-        "role": values.role.value,
         "personMobilePhone": values.personMobilePhone,
         "alternatePhone": values.alternatePhone,
         "personEmail": values.personEmail,
@@ -93,7 +91,6 @@ export default function AddMembersMaster() {
               firstName: currentMember?.firstName,
               middleName: currentMember?.middleName,
               lastName: currentMember?.lastName,
-              role: currentMember?.role,
               personMobilePhone: currentMember?.personMobilePhone,
               alternatePhone: currentMember?.alternatePhone,
               personEmail: currentMember?.personEmail,
@@ -167,7 +164,7 @@ export default function AddMembersMaster() {
                               </Form.Group>
                             </Col>
 
-                            <Col xl={4}>
+                            {/* <Col xl={4}>
                               <Form.Group className="form-group">
                                 <Form.Label>Member Type</Form.Label>
                                 <Select
@@ -177,9 +174,8 @@ export default function AddMembersMaster() {
                                   placeholder="Select Type"
                                   classNamePrefix="Select2"
                                 />
-                                {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
                               </Form.Group>
-                            </Col>
+                            </Col> */}
 
                             <Col xl={4}>
                               <Form.Group className="form-group">
