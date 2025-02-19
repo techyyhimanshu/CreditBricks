@@ -18,6 +18,22 @@ export default function Tenant() {
       sortable: true,
       width: "80px"                       // added line here
    },
+   {
+    name: 'Society Name',
+    cell: (row: Row) => (
+      <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}society/societyview`}>Mohan Areca Co-Op Housing Society Limited</Link>
+    ),
+
+    sortable: true,
+  },
+  {
+    name: 'Property Name',
+    cell: (row: Row) => (
+      <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}property/propertyview`}>A101</Link>
+    ),
+
+    sortable: true,
+  },
     {
       name: 'Tenant Name',
       cell: (row: Row) => (
