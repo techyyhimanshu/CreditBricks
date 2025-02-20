@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Accordion, Button, Form, Dropdown, FormControl } from "react-bootstrap";
+import { Col, Card, Row, Accordion, Button, Form, Dropdown, FormControl } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
@@ -141,27 +141,6 @@ export default function AddSocietyMaster() {
   const calculationtype = [
     { value: "Bill Date", label: "Bill Date" },
     { value: "Due Date", label: "Due Date" },
-  ]
-  const society = [
-    { value: "1", label: "Society" },
-    { value: "2", label: "Association" },
-  ]
-  const applicationtype = [
-    { value: "1", label: "Gate Pass" },
-    { value: "2", label: "Flat Resale" },
-    { value: "3", label: "Celebration" },
-
-  ]
-  const flat = [
-    { value: "1", label: "Select Flat " },
-  ]
-
-  const wing = [
-    { value: "1", label: "Select Wing " },
-  ]
-  const designation = [
-    { value: "1", label: "Secretary " },
-    { value: "2", label: "Committe Member " },
   ]
 
   const stateOptions = Object.keys(stateCitiesTyped).map((state) => ({
@@ -729,12 +708,12 @@ export default function AddSocietyMaster() {
                             </Button>
                           </Col>
                         </Row>
-<Row>
-  <Col xl={12}>
-                        <DataTableExtensions {...tableData}>
-                          <DataTable columns={columns} data={bankData} pagination fixedHeader />
-                        </DataTableExtensions>
-                        </Col>
+                        <Row>
+                          <Col xl={12}>
+                            <DataTableExtensions {...tableData}>
+                              <DataTable columns={columns} data={bankData} pagination fixedHeader />
+                            </DataTableExtensions>
+                          </Col>
                         </Row>
                       </Card.Body>
                     </Card>

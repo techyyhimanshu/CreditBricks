@@ -68,3 +68,12 @@ export const getWingsOfSocietyApi = async (id: any): Promise<any> => {
         throw error
     }
 }
+
+export const getPropertiesOfSocietyApi = async (identifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/society/${identifier}/ddl/properties`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}

@@ -34,7 +34,7 @@ export default function AddPropertyMaster() {
     area: "",
     societyIdentifier: "",
     societyName: "",
-    towerId: null,
+    towerIdentifier: null,
     towerName: null,
     wingIdentifier: null,
     wingName: null,
@@ -117,7 +117,7 @@ export default function AddPropertyMaster() {
   useEffect(() => {
     (async () => {
       await fetchSocietiesForDropDown();
-      await fetchTenantsForDropDown();
+      // await fetchTenantsForDropDown();
       await fetchMembersForDropDown();
     })()
   }, [])
@@ -153,23 +153,10 @@ export default function AddPropertyMaster() {
     try {
       const response = await getTowersOfSocietyApi(society.value);
       const formattedData = response.data.data.map((item: any) => ({
-        value: item.towerId,
+        value: item.towerIdentifier,
         label: item.towerName,
       }));
       setTowerOptions(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
-  const fetchTenantsForDropDown = async () => {
-    try {
-      const response = await geTenantForDropDownApi();
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.identifier,
-        label: `${item.firstName} ${item.middleName} ${item.lastName}`,
-      }));
-      setTenantOptions(formattedData);
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
@@ -214,7 +201,7 @@ export default function AddPropertyMaster() {
       narration: values.narration.value,
       area: values.area,
       societyIdentifier: values.society.value,
-      towerId: values.tower.value,
+      towerIdentifier: values.tower.value,
       wingIdentifier: values.wing.value,
       flatNumber: values.flatNumber,
       floorNumber: values.floorNumber,
@@ -241,7 +228,7 @@ export default function AddPropertyMaster() {
 
     const response = await addPropertyApi(formattedData)
     if (response.status === 201 || response.status === 200) {
-      console.log(response)
+      showToast("success", "Property added successfully")
     }
   }
 
@@ -263,7 +250,7 @@ export default function AddPropertyMaster() {
 
           society: { value: currentProperty?.societyIdentifier, label: currentProperty?.societyName },
 
-          tower: { value: currentProperty?.towerId, label: currentProperty?.towerName },
+          tower: { value: currentProperty?.towerIdentifier, label: currentProperty?.towerName },
 
           wing: { value: currentProperty?.wingIdentifier, label: currentProperty?.wingName },
 
@@ -691,7 +678,7 @@ export default function AddPropertyMaster() {
                   </Accordion.Item>
 
 
-              
+
 
                   <Accordion.Item eventKey="Address Details" className="bg-white  mb-3">
                     <Accordion.Header className="borders">

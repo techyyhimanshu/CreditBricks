@@ -136,15 +136,6 @@ export const deleteUserLoanApi = async (username: string, id: number): Promise<a
     }
 }
 
-export const geTenantForDropDownApi = async (): Promise<any> => {
-    try {
-        const response = await axiosInstance.get(`/tenant/ddl`)
-        return response
-    } catch (error) {
-        throw error
-    }
-}
-
 export const getAllMemberOrTenantsApi = async (): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/member/all`)
