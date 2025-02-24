@@ -391,7 +391,7 @@ export default function TenantView() {
                 <Col xl={9} className='p-0'>
                   <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : {tenantDetails.tenantProperties[0]?.rentRegistrationId}</p>
                   <a
-                    href={`http://localhost:3300${tenantDetails.tenantProperties[0]?.rentAgreementFile}`}
+                    href={`https://api.creditbricks.in${tenantDetails.tenantProperties[0]?.rentAgreementFile}`}
                     className="text-info"
                     download
                   >
@@ -410,7 +410,7 @@ export default function TenantView() {
                 <Col xl={9} className='p-0'>
                   <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
                   <a
-                    href={`http://localhost:3300${tenantDetails.tenantProperties[0]?.policeVerificationFile}`}
+                    href={`https://api.creditbricks.in${tenantDetails.tenantProperties[0]?.policeVerificationFile}`}
                     className="text-info"
                     download
                   >
