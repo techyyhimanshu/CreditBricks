@@ -34,7 +34,7 @@ export default function AddPropertyMaster() {
     area: "",
     societyIdentifier: "",
     societyName: "",
-    towerId: null,
+    towerIdentifier: null,
     towerName: null,
     wingIdentifier: null,
     wingName: null,
@@ -117,7 +117,7 @@ export default function AddPropertyMaster() {
   useEffect(() => {
     (async () => {
       await fetchSocietiesForDropDown();
-      await fetchTenantsForDropDown();
+      // await fetchTenantsForDropDown();
       await fetchMembersForDropDown();
     })()
   }, [])
@@ -153,23 +153,10 @@ export default function AddPropertyMaster() {
     try {
       const response = await getTowersOfSocietyApi(society.value);
       const formattedData = response.data.data.map((item: any) => ({
-        value: item.towerId,
+        value: item.towerIdentifier,
         label: item.towerName,
       }));
       setTowerOptions(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
-  const fetchTenantsForDropDown = async () => {
-    try {
-      const response = await geTenantForDropDownApi();
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.identifier,
-        label: `${item.firstName} ${item.middleName} ${item.lastName}`,
-      }));
-      setTenantOptions(formattedData);
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
@@ -214,7 +201,7 @@ export default function AddPropertyMaster() {
       narration: values.narration.value,
       area: values.area,
       societyIdentifier: values.society.value,
-      towerId: values.tower.value,
+      towerIdentifier: values.tower.value,
       wingIdentifier: values.wing.value,
       flatNumber: values.flatNumber,
       floorNumber: values.floorNumber,
@@ -241,7 +228,7 @@ export default function AddPropertyMaster() {
 
     const response = await addPropertyApi(formattedData)
     if (response.status === 201 || response.status === 200) {
-      console.log(response)
+      showToast("success", "Property added successfully")
     }
   }
 
@@ -263,7 +250,7 @@ export default function AddPropertyMaster() {
 
           society: { value: currentProperty?.societyIdentifier, label: currentProperty?.societyName },
 
-          tower: { value: currentProperty?.towerId, label: currentProperty?.towerName },
+          tower: { value: currentProperty?.towerIdentifier, label: currentProperty?.towerName },
 
           wing: { value: currentProperty?.wingIdentifier, label: currentProperty?.wingName },
 
@@ -691,143 +678,7 @@ export default function AddPropertyMaster() {
                   </Accordion.Item>
 
 
-                  <Accordion.Item eventKey="Tenant Details" className="bg-white  mb-3">
-                    <Accordion.Header className="borders">
-                      Tenant Details
-                    </Accordion.Header>
-                    <Accordion.Body className="borders p-0">
-                      <Card className='m-0'>
 
-                        <Card.Body className='pt-3'>
-
-                          <Row>
-                            <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Tenant</Form.Label>
-                                <Select
-                                  options={tenantOptions}
-                                  name="tenant"
-                                  onChange={(selected) => setFieldValue("tenant", selected)}
-                                  placeholder="Select Tenant"
-                                  classNamePrefix="Select2"
-                                />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                              </Form.Group>
-                            </Col>
-
-
-                            {/* <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Tenant Mobile Number</Form.Label>
-                                <FormControl
-                                  type="text"
-                                  name="tenantnumber"
-                                  placeholder="Number"
-                                  className="form-control"
-                                />
-
-                              </Form.Group>
-                            </Col>
-
-                            <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Tenant Address</Form.Label>
-                                <FormControl
-                                  type="text"
-                                  name="tenantaddress"
-                                  placeholder="Address"
-                                  className="form-control"
-                                />
-
-                              </Form.Group>
-                            </Col> */}
-
-                            <Col xl={12}>
-                              <hr className='w-100' />
-                            </Col>
-                            <strong className='tx-16 mt-2 mb-3 col-sm-12 tx-semibold'>Rent Agreement Details</strong>
-
-                            <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Rent Agreement Start Date</Form.Label>
-                                <Field
-                                  type="date"
-                                  name="rentAgreementStartDate"
-                                  placeholder=""
-                                  className="form-control"
-                                />
-                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                              </Form.Group>
-                            </Col>
-
-
-                            <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Rent Agreement End Date</Form.Label>
-                                <Field
-                                  type="date"
-                                  name="rentAgreementEndDate"
-                                  placeholder=""
-                                  className="form-control"
-                                />
-                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                              </Form.Group>
-                            </Col>
-
-                            <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Monthly Rent</Form.Label>
-                                <Field
-                                  type="text"
-                                  name="monthlyRent"
-                                  placeholder="0"
-                                  className="form-control"
-                                />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                              </Form.Group>
-                            </Col>
-
-
-                            <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Rent Registration Id</Form.Label>
-                                <Field
-                                  type="text"
-                                  name="rentRegistrationId"
-                                  placeholder="id"
-                                  className="form-control"
-                                />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                              </Form.Group>
-                            </Col>
-
-                            <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Upload Rent Agreement</Form.Label>
-                                <input type="file" className="form-control" name="rentAgreementFile" onChange={(e: any) => setFieldValue("rentAgreementFile", e.target.files[0])} />
-                                {/* <Field
-                                  type="text"
-                                  name=""
-                                  className="form-control"
-                                /> */}
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                              </Form.Group>
-                            </Col>
-
-                            <Col xl={4}>
-                              <Form.Group className="form-group">
-                                <Form.Label>Police Verification Document</Form.Label>
-                                <input type="file" className="form-control" name='policeVerificationDocFile' onChange={(e: any) => setFieldValue("policeVerificationDocFile", e.target.files[0])} />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                              </Form.Group>
-                            </Col>
-
-                          </Row>
-
-                        </Card.Body>
-                      </Card>
-                    </Accordion.Body>
-                  </Accordion.Item>
 
                   <Accordion.Item eventKey="Address Details" className="bg-white  mb-3">
                     <Accordion.Header className="borders">

@@ -36,8 +36,7 @@ export default function AddMembersMaster() {
   })
   const genderoption = [
     { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
-    { value: "Others", label: "Others" }
+    { value: "Female", label: "Female" }
 
   ]
 

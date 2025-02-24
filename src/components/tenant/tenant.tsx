@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
 import { Col, Row, Card, Dropdown, Modal, Form, Button, CardBody } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
@@ -6,38 +6,69 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import { Link } from "react-router-dom";
 import { imagesData } from "../../common/commonimages";
+import { handleApiError } from '../../helpers/handle-api-error';
+import { showToast } from '../../common/services/toastServices';
+import { getAllTenantApi } from '../../api/tenant-api';
+
 
 
 export default function Tenant() {
-
-
+  const [tenantData, setTenantData] = useState([])
+  useEffect(() => {
+    const fetchAllTenants = async () => {
+      try {
+        const response = await getAllTenantApi()
+        if (response.status === 200) {
+          const formattedData = response.data.data.map((item: any, index: number) => ({
+            sno: index + 1,
+            name: item.name,
+            mobileNumber: item.mobileNumber,
+            email: item.email,
+            address: item.address
+          }))
+          setTenantData(formattedData)
+        }
+      } catch (error) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    }
+    fetchAllTenants()
+  }, [])
+  type Row = {
+    sno: number,
+    name: string,
+    mobileNumber: string,
+    email: string,
+    address: string
+  };
   const columns = [
     {
       name: 'S.No',
-      selector: row => row.sno,
+      selector: (row: Row) => row.sno,
       sortable: true,
       width: "80px"                       // added line here
-   },
-   {
-    name: 'Society Name',
-    cell: (row: Row) => (
-      <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}society/societyview`}>Mohan Areca Co-Op Housing Society Limited</Link>
-    ),
+    },
+    // {
+    //   name: 'Society Name',
+    //   cell: (row: Row) => (
+    //     <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}society/societyview`}>{row.societyname}</Link>
+    //   ),
 
-    sortable: true,
-  },
-  {
-    name: 'Property Name',
-    cell: (row: Row) => (
-      <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}property/propertyview`}>A101</Link>
-    ),
+    //   sortable: true,
+    // },
+    // {
+    //   name: 'Property Name',
+    //   cell: (row: Row) => (
+    //     <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}property/propertyview`}>{row.propertyname}</Link>
+    //   ),
 
-    sortable: true,
-  },
+    //   sortable: true,
+    // },
     {
       name: 'Tenant Name',
       cell: (row: Row) => (
-        <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}tenant/tenantview`}>Rajiv Sharma</Link>
+        <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}tenant/tenantview`}>{row.name}</Link>
       ),
 
       sortable: true,
@@ -45,19 +76,19 @@ export default function Tenant() {
 
     {
       name: 'Tenant Number',
-      selector: row => row.tenantnumber,
+      selector: (row: Row) => row.mobileNumber,
       sortable: true,
     },
 
     {
       name: 'Tenant Email',
-      selector: row => row.tenantemail,
+      selector: (row: Row) => row.email,
       sortable: true,
     },
 
     {
       name: 'Tenant Address',
-      selector: row => row.tenentaddress,
+      selector: (row: Row) => row.address,
       sortable: true,
     },
 
@@ -82,42 +113,7 @@ export default function Tenant() {
     },
   ];
 
-  const data = [
-    {
-      sno: 1,
-      tenantname: 'Rajiv Sharma',
-      tenantnumber: '9876543212',
-      tenantemail: 'rajiv@gmail.com',
-     tenentaddress: 'Sector 22, Noida',
-      action: ''
 
-    },
-    {
-      sno: 2,
-      tenantname: 'Rajiv Sharma',
-      tenantnumber: '9876543212',
-      tenantemail: 'rajiv@gmail.com',
-     tenentaddress: 'Sector 22, Noida',
-      action: ''
-    },
-    {
-      sno: 3,
-      tenantname: 'Rajiv Sharma',
-      tenantnumber: '9876543212',
-      tenantemail: 'rajiv@gmail.com',
-     tenentaddress: 'Sector 22, Noida',
-      action: ''
-
-    },
-    {
-      sno: 4,
-      tenantname: 'Rajiv Sharma',
-      tenantnumber: '9876543212',
-      tenantemail: 'rajiv@gmail.com',
-     tenentaddress: 'Sector 22, Noida',
-      action: ''
-    }
-  ]
 
 
   const [addtenant, setaddtenant] = useState(false);
@@ -149,16 +145,7 @@ export default function Tenant() {
     }
   };
 
-  // type Row = {
-  //   sno: number;
-  //   loantype: string;
-  //   loanperiod: number;
-  //   loanamount: string;
-  //   startdt: string;
-  //   enddt: string;
-  //   monthlyemi: number;
 
-  // };
 
 
 
@@ -166,7 +153,7 @@ export default function Tenant() {
 
   const tableData = {
     columns,
-    data
+    data: tenantData
   };
 
 
@@ -191,7 +178,7 @@ export default function Tenant() {
                 <DataTableExtensions {...tableData}>
                   <DataTable
                     columns={columns}
-                    data={data}
+                    data={tenantData}
                     pagination
 
 

@@ -16,7 +16,6 @@ export default function MembersMaster() {
     sno: number;
     memberIdentifier: string;
     memberName: string;
-    memberType: string;
     mobileNumber: string;
 
   };
@@ -35,11 +34,6 @@ export default function MembersMaster() {
       cell: (row: Row) => (
         <Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>{row.memberName}</Link>
       ),
-      sortable: true,
-    },
-    {
-      name: 'Member Type',
-      selector: (row: Row) => row.memberType,
       sortable: true,
     },
     {
