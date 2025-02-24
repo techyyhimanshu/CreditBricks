@@ -6,8 +6,9 @@ import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import { Link } from "react-router-dom";
-import { getAllPropertyApi } from '../../../api/property-api';
+import { deletePropertyApi, getAllPropertyApi } from '../../../api/property-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
+import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 
 export default function PropertyMaster() {
 
@@ -15,7 +16,8 @@ export default function PropertyMaster() {
     sno: number;
     propertyName: string;
     memberName: string;
-    societyIdentifier: number;
+    propertyIdentifier: string;
+    societyIdentifier: string;
     societyName: string;
     flatRegistrationNumber: string;
     flatNumber: string;
@@ -92,7 +94,7 @@ export default function PropertyMaster() {
 
           <Dropdown.Menu>
             <Dropdown.Item>Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.propertyIdentifier)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       ),
@@ -106,7 +108,19 @@ export default function PropertyMaster() {
     data: propertydata
   };
 
-
+  const handleDelete = async (propertyIdentifier: string) => {
+    try {
+      const response = await deletePropertyApi(propertyIdentifier)
+      if (response.status === 200) {
+        showToast("success", response.data.message)
+        // Remove the society from the table
+        setPropertydata(propertydata.filter((item: any) => item.propertyIdentifier !== propertyIdentifier));
+      }
+    } catch (error: any) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
 
 
 
@@ -120,6 +134,7 @@ export default function PropertyMaster() {
           {
             sno: index + 1,
             propertyName: property.propertyName,
+            propertyIdentifier: property.propertyIdentifier,
             memberName: property.memberName,
             societyName: property.societyName,
             flatRegistrationNumber: property.flatRegistrationNumber,
@@ -188,7 +203,7 @@ export default function PropertyMaster() {
           </Card>
         </Col>
       </Row>
-
+      <CustomToastContainer />
     </Fragment >
   );
 }

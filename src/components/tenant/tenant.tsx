@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { imagesData } from "../../common/commonimages";
 import { handleApiError } from '../../helpers/handle-api-error';
 import { showToast } from '../../common/services/toastServices';
-import { getAllTenantApi } from '../../api/tenant-api';
+import { deleteTenantApi, getAllTenantApi } from '../../api/tenant-api';
 
 
 
@@ -21,6 +21,7 @@ export default function Tenant() {
         if (response.status === 200) {
           const formattedData = response.data.data.map((item: any, index: number) => ({
             sno: index + 1,
+            tenantIdentifier: item.tenantIdentifier,
             name: item.name,
             mobileNumber: item.mobileNumber,
             email: item.email,
@@ -37,6 +38,7 @@ export default function Tenant() {
   }, [])
   type Row = {
     sno: number,
+    tenantIdentifier: string,
     name: string,
     mobileNumber: string,
     email: string,
@@ -96,7 +98,7 @@ export default function Tenant() {
     {
       name: 'Action',
       sortable: true,
-      cell: () => (
+      cell: (row: Row) => (
         <Dropdown >
           <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
             Action
@@ -104,7 +106,7 @@ export default function Tenant() {
 
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => viewDemoShow("addloan")}>Edit </Dropdown.Item>
-            <Dropdown.Item className='text-danger' >Delete</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.tenantIdentifier)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -155,7 +157,19 @@ export default function Tenant() {
     columns,
     data: tenantData
   };
-
+  const handleDelete = async (tenantIdentifier: string) => {
+    try {
+      const response = await deleteTenantApi(tenantIdentifier)
+      if (response.status === 200) {
+        showToast("success", response.data.message)
+        // Remove the society from the table
+        setTenantData(tenantData.filter((item: any) => item.tenantIdentifier !== tenantIdentifier));
+      }
+    } catch (error: any) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
 
   return (
     <Fragment>
