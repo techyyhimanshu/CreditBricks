@@ -27,6 +27,7 @@ const Loans= lazy(() => import('../components/loans/loans'));
 const Tenant= lazy(() => import('../components/tenant/tenant'));
 const TenantView= lazy(() => import('../components/tenant/tenantview'));
 const AddTenant= lazy(() => import('../components/tenant/addtenant'));
+const Complaints= lazy(() => import('../components/complaints/complaints'));
 
 export const Routingdata = [
   //Dashboard
@@ -56,7 +57,8 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}loans/loans`, element: <Loans /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenant`, element: <Tenant /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenantview`, element: <TenantView /> },
-  { path: `${import.meta.env.BASE_URL}tenant/addtenant`, element: <AddTenant /> }
+  { path: `${import.meta.env.BASE_URL}tenant/addtenant`, element: <AddTenant /> },
+  { path: `${import.meta.env.BASE_URL}complaints/complaints`, element: <Complaints /> }
 ];
 
 export const Sidebarcomponents = [
