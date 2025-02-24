@@ -27,3 +27,12 @@ export const deleteTenantApi = async (identifier: string): Promise<any> => {
         throw error
     }
 }
+
+export const getTenantDetailsApi = async (identifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/tenant/${identifier}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}

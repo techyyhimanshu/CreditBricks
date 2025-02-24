@@ -70,7 +70,7 @@ export default function Tenant() {
     {
       name: 'Tenant Name',
       cell: (row: Row) => (
-        <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}tenant/tenantview`}>{row.name}</Link>
+        <Link className='text-info cursor' to={`${import.meta.env.BASE_URL}tenant/tenantview/${row.tenantIdentifier}`}>{row.name}</Link>
       ),
 
       sortable: true,

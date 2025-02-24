@@ -21,7 +21,7 @@ export const updateTowerApi = async (data: any, id: any): Promise<any> => {
     try {
         const dataToUpdate = {
             towerName: data.towerName,
-            societyId: data.societyId
+            societyIdentifier: data.societyIdentifier
         }
         const response = await axiosInstance.patch(`/tower/${id}`, dataToUpdate)
         return response
