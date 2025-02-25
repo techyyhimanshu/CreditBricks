@@ -93,7 +93,7 @@ export default function PropertyMaster() {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item>Edit</Dropdown.Item>
+            <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}property/editpropertymaster/${row.propertyIdentifier}`}>Edit</Link></Dropdown.Item>
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.propertyIdentifier)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
@@ -135,7 +135,7 @@ export default function PropertyMaster() {
             sno: index + 1,
             propertyName: property.propertyName,
             propertyIdentifier: property.propertyIdentifier,
-            memberName: property.memberName,
+            memberName: property.propertyMembers.length > 0 ? property.propertyMembers[0].member.firstName + " " + property.propertyMembers[0].member.lastName : 'Not available',
             societyName: property.societyName,
             flatRegistrationNumber: property.flatRegistrationNumber,
             flatNumber: property.flatNumber,

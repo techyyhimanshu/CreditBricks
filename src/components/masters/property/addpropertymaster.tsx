@@ -14,7 +14,7 @@ import { handleApiError } from '../../../helpers/handle-api-error';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 import { getAllWingApi } from '../../../api/wing-api';
 import { Formik, Form as FormikForm, ErrorMessage, Field } from 'formik';
-import { geTenantForDropDownApi, getMemberForDropDownApi } from '../../../api/user-api';
+import { getMemberForDropDownApi } from '../../../api/user-api';
 import { addPropertyApi } from '../../../api/property-api';
 // Define the types for the stateCities object
 interface StateCities {
@@ -914,7 +914,7 @@ export default function AddPropertyMaster() {
           </FormikForm>
         )}
       </Formik>
-      <Button variant="success" onClick={() => viewDemoShow("flatsoldmodalshow")}> Flat Sold </Button>
+      {/* <Button variant="success" onClick={() => viewDemoShow("flatsoldmodalshow")}> Flat Sold </Button> */}
       <Modal centered show={flatsoldmodalshow}>
         <Modal.Header>
           <Modal.Title>Flat Sold</Modal.Title>
