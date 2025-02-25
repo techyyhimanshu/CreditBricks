@@ -168,7 +168,7 @@ export const MENUITEMS = [
         title: "Complaints",
         icon: (<i className="side-menu__icon bi bi-piggy-bank"></i>
         ),
-        path: ``,
+        path: `${import.meta.env.BASE_URL}complaints/complaints`,
         type: "link",
         selected: false,
         active: false,

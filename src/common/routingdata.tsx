@@ -22,11 +22,12 @@ const UserProfile = lazy(() => import('../components/userprofile/userprofile'));
 const MembersMaster = lazy(() => import('../components/masters/members/membersmaster'));
 const AddMembersMaster = lazy(() => import('../components/masters/members/addmembers'));
 const MembersProfile = lazy(() => import('../components/masters/members/membersProfile'));
-const ParentEntity = lazy(() => import('../components/parententity/parententity'));
-const Loans = lazy(() => import('../components/loans/loans'));
-const Tenant = lazy(() => import('../components/tenant/tenant'));
-const TenantView = lazy(() => import(`../components/tenant/tenantview`));
-const AddTenant = lazy(() => import('../components/tenant/addtenant'));
+const ParentEntity= lazy(() => import('../components/parententity/parententity'));
+const Loans= lazy(() => import('../components/loans/loans'));
+const Tenant= lazy(() => import('../components/tenant/tenant'));
+const TenantView= lazy(() => import('../components/tenant/tenantview'));
+const AddTenant= lazy(() => import('../components/tenant/addtenant'));
+const Complaints= lazy(() => import('../components/complaints/complaints'));
 
 export const Routingdata = [
   //Dashboard
@@ -56,7 +57,8 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}loans/loans`, element: <Loans /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenant`, element: <Tenant /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenantview/:identifier`, element: <TenantView /> },
-  { path: `${import.meta.env.BASE_URL}tenant/addtenant`, element: <AddTenant /> }
+  { path: `${import.meta.env.BASE_URL}tenant/addtenant`, element: <AddTenant /> },
+  { path: `${import.meta.env.BASE_URL}complaints/complaints`, element: <Complaints /> }
 ];
 
 export const Sidebarcomponents = [

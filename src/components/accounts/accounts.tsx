@@ -9,9 +9,10 @@ import { imagesData } from "../../common/commonimages";
 
 const columns = [
   {
-    name: 'S.No.',
+    name: 'S.no',
     selector: row => row.sno,
     sortable: true,
+    width: '76px'
   },
   {
     name: 'Name',
@@ -19,7 +20,7 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'Invoice Number',
+    name: 'Inv No',
     selector: row => row.invoicenumber,
     sortable: true,
   },
@@ -30,16 +31,18 @@ const columns = [
       <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link>
     ),
     sortable: true,
+    width:"110px"
   },
 
   {
-    name: 'Invoice Type',
+    name: 'Inv Type',
     selector: row => row.invctype,
     sortable: true,
+    width:"130px"
   },
 
   {
-    name: 'Invoice Dt',
+    name: 'Inv Dt',
     selector: row => row.invcdt,
     sortable: true,
   },
@@ -68,11 +71,17 @@ const columns = [
     selector: row => row.totaloutstanding,
     sortable: true,
   },
+  {
+    name: 'Status',
+    selector: row => row.status,
+    sortable: true,
+    width:"90px"
+  },
 
   {
     name: 'Action',
     sortable: true,
-    cell: () => <Dropdown >
+    cell: () => <Dropdown>
     <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
      Action
     </Dropdown.Toggle>
@@ -98,6 +107,7 @@ const data = [
     totalamt:'₹2,850.00',
     totalpaidamt:'₹2,850.00',
     totaloutstanding:'₹0.00',
+    status: 'Paid'
   },
   {
     id: 2,
@@ -111,6 +121,7 @@ const data = [
     totalamt:'₹2,850.00',
     totalpaidamt:'₹2,850.00',
     totaloutstanding:'₹0.00',
+      status: 'Paid'
   },
   {
     id: 3,
@@ -124,6 +135,7 @@ const data = [
     totalamt:'₹2,850.00',
     totalpaidamt:'₹2,850.00',
     totaloutstanding:'₹0.00',
+      status: 'Paid'
   },
   {
     id: 4,
@@ -137,6 +149,7 @@ const data = [
     totalamt:'₹2,850.00',
     totalpaidamt:'₹2,850.00',
     totaloutstanding:'₹0.00',
+      status: 'Unpaid'
   },
   {
     id: 5,
@@ -150,6 +163,7 @@ const data = [
     totalamt:'₹2,850.00',
     totalpaidamt:'₹2,850.00',
     totaloutstanding:'₹0.00',
+       status: 'Unpaid'
   },
   {
     id: 6,
