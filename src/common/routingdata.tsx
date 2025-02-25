@@ -35,7 +35,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}accounts/accounts`, element: <Accounts /> },
   { path: `${import.meta.env.BASE_URL}society/societymaster`, element: <SocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/addsocietymaster`, element: <AddSocietyMaster /> },
-  { path: `${import.meta.env.BASE_URL}society/editsocietymaster`, element: <EditSocietyMaster /> },
+  { path: `${import.meta.env.BASE_URL}society/editsocietymaster/:identifier`, element: <EditSocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/societyview`, element: <SocietyView /> },
   { path: `${import.meta.env.BASE_URL}parententity/parententity`, element: <ParentEntity /> },
   { path: `${import.meta.env.BASE_URL}property/propertymaster`, element: <PropertyMaster /> },

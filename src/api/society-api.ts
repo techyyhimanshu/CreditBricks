@@ -16,6 +16,15 @@ export const getAllSocietyApi = async (): Promise<any> => {
         throw error
     }
 }
+
+export const getSocietyDetailsApi = async (identifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/society/${identifier}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const getSocietyOwnerApi = async (societyIdentifier: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/society/${societyIdentifier}`)
@@ -36,7 +45,7 @@ export const updateSocietyApi = async (data: any, identifier: any): Promise<any>
                 formData.append(key, data[key]);
             }
         }
-        const response = await axiosInstance.patch(`/society/${identifier}`, formData)
+        const response = await axiosInstance.patch(`/society/sy/${identifier}`, formData)
         return response
     } catch (error) {
         throw error
