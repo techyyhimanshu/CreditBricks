@@ -11,6 +11,7 @@ export default function Complaints() {
 
   const [addcomplaint, setcomplaints] = useState(false);
   const [complaintview, setcomplaintview] = useState(false);
+  const [assign, setassign] = useState(false);
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -20,6 +21,10 @@ export default function Complaints() {
 
         case "complaintview":
           setcomplaintview(true);
+        break;
+
+        case "assign":
+          setassign(true);
         break;
 
     }
@@ -34,6 +39,10 @@ export default function Complaints() {
         case "complaintview":
           setcomplaintview(false);
           break;
+
+          case "assign":
+            setassign(false);
+            break;
 
     }
   };
@@ -78,7 +87,7 @@ export default function Complaints() {
         </div>
         <div className="right-content">
         <span className='float-end btn btn-primary btn-sm' onClick={() => viewDemoShow("addcomplaint")}><i className="bi bi-plus"></i> Add Complaint</span>
-          <Modal show={addcomplaint} >
+          <Modal show={addcomplaint} centered>
             <Modal.Header>
               <Modal.Title>Complaint</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addcomplaint"); }}>
@@ -129,28 +138,17 @@ export default function Complaints() {
     </Col>
     <Col xl={12}>
                   <Form.Group className="form-group mb-1">
-                    <Form.Label>Upload Photo</Form.Label>
-                    <Form.Control type="file" className='form-control' placeholder=''></Form.Control>
-                  </Form.Group>
-                </Col>
-                <Col xl={12}>
-                  <Form.Group className="form-group mb-1">
                     <Form.Label>Description</Form.Label>
                     <textarea className='form-control' />
                   </Form.Group>
                 </Col>
-<hr className='w-100 mt-3 mb-1'/>
-
-<Col xl={12} className='bg-light pb-2'>
+    <Col xl={12}>
                   <Form.Group className="form-group mb-1">
-                    <Form.Label>Assign To</Form.Label>
-                    <Select
-                      options={assigntoname}
-                      placeholder="Select name"
-                      classNamePrefix="Select2"
-                    />
+                    <Form.Label>Upload Photo</Form.Label>
+                    <Form.Control type="file" className='form-control' placeholder=''></Form.Control>
                   </Form.Group>
                 </Col>
+
 
               </Row>
             </Modal.Body>
@@ -165,7 +163,7 @@ export default function Complaints() {
             </Modal.Footer>
           </Modal>
 
-          <Modal show={complaintview} >
+          <Modal show={complaintview}  centered>
             <Modal.Header>
               <Modal.Title>Complaint View</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("complaintview"); }}>
@@ -218,6 +216,39 @@ export default function Complaints() {
                           </Row>
             </Modal.Body>
 
+          </Modal>
+
+          <Modal show={assign} centered>
+            <Modal.Header>
+              <Modal.Title>Assign To</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("assign"); }}>
+                x
+              </Button>
+            </Modal.Header>
+            <Modal.Body>
+            <Row>
+            <Col xl={12} className='bg-light pb-2'>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Assign To</Form.Label>
+                    <Select
+                      options={assigntoname}
+                      placeholder="Select name"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
+
+                          </Row>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("assign"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("assign"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
           </Modal>
 
         </div>
@@ -336,6 +367,7 @@ export default function Complaints() {
 
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => viewDemoShow("addcomplaint")}>Edit</Dropdown.Item>
+            <Dropdown.Item onClick={() => viewDemoShow("assign")}>Assign To</Dropdown.Item>
             <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown></td>
@@ -367,6 +399,7 @@ export default function Complaints() {
 
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => viewDemoShow("addcomplaint")}>Edit</Dropdown.Item>
+            <Dropdown.Item onClick={() => viewDemoShow("assign")}>Assign To</Dropdown.Item>
             <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown></td>
@@ -399,6 +432,7 @@ export default function Complaints() {
 
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => viewDemoShow("addcomplaint")}>Edit</Dropdown.Item>
+            <Dropdown.Item onClick={() => viewDemoShow("assign")}>Assign To</Dropdown.Item>
             <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown></td>
