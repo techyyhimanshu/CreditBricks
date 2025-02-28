@@ -170,7 +170,9 @@ export default function AddTenant() {
       const tenantDetails = {
         societyIdentifier: values.society.value,
         propertyIdentifier: values.property.value,
-        name: values.tenantName,
+        firstName: values.firstName,
+        middleName: values.middleName,
+        lastName: values.lastName,
         mobileNumber: values.mobileNumber,
         alternateMobileNumber: values.alternateMobileNumber,
         email: values.email,
@@ -261,7 +263,9 @@ export default function AddTenant() {
         initialValues={{
           society: { value: "", label: "" },
           property: { value: "", label: "" },
-          tenantName: "",
+          firstName: "",
+          middleName: "",
+          lastName: "",
           mobileNumber: "",
           alternateMobileNumber: "",
           email: "",
@@ -334,10 +338,32 @@ export default function AddTenant() {
 
                         <Col xl={4}>
                           <Form.Group className="form-group mb-1">
-                            <Form.Label>Tenant Name<span className="text-danger">*</span></Form.Label>
+                            <Form.Label>First Name<span className="text-danger">*</span></Form.Label>
                             <Field
                               type="text"
-                              name="tenantName"
+                              name="firstName"
+                              className='form-control'
+                              placeholder='Tenant name'
+                            ></Field>
+                          </Form.Group>
+                        </Col>
+                        <Col xl={4}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Middle Name</Form.Label>
+                            <Field
+                              type="text"
+                              name="middleName"
+                              className='form-control'
+                              placeholder='Tenant name'
+                            ></Field>
+                          </Form.Group>
+                        </Col>
+                        <Col xl={4}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Last Name<span className="text-danger">*</span></Form.Label>
+                            <Field
+                              type="text"
+                              name="lastName"
                               className='form-control'
                               placeholder='Tenant name'
                             ></Field>

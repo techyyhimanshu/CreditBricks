@@ -17,16 +17,16 @@ export default function AddMembersMaster() {
     firstName: "",
     middleName: "",
     lastName: "",
-    personMobilePhone: "",
+    mobileNumber: "",
     alternatePhone: "",
-    personEmail: "",
+    email: "",
     alternateEmail: "",
-    personBirthdate: "",
-    personGenderIdentity: "",
+    dateOfBirth: "",
+    gender: "",
     age: "",
     anniversary: "",
     profilePic: null,
-    aadharNo: "",
+    aadharNumber: "",
     panNo: "",
     passportNo: "",
     gstinNo: "",
@@ -48,16 +48,16 @@ export default function AddMembersMaster() {
         "firstName": values.firstName,
         "middleName": values.middleName,
         "lastName": values.lastName,
-        "personMobilePhone": values.personMobilePhone,
+        "mobileNumber": values.mobileNumber,
         "alternatePhone": values.alternatePhone,
-        "personEmail": values.personEmail,
+        "email": values.email,
         "alternateEmail": values.alternateEmail,
-        "personBirthdate": values.personBirthdate,
-        "personGenderIdentity": values.personGenderIdentity.value,
+        "dateOfBirth": values.dateOfBirth,
+        "gender": values.gender.value,
         "age": values.age,
         "anniversary": values.anniversary,
         "profilePic": values.profilePic,
-        "aadharNo": values.aadharNo,
+        "aadharNumber": values.aadharNumber,
         "panNo": values.panNo,
         "passportNo": values.passportNo,
         "gstinNo": values.gstinNo,
@@ -90,16 +90,16 @@ export default function AddMembersMaster() {
               firstName: currentMember?.firstName,
               middleName: currentMember?.middleName,
               lastName: currentMember?.lastName,
-              personMobilePhone: currentMember?.personMobilePhone,
+              mobileNumber: currentMember?.mobileNumber,
               alternatePhone: currentMember?.alternatePhone,
-              personEmail: currentMember?.personEmail,
+              email: currentMember?.email,
               alternateEmail: currentMember?.alternateEmail,
-              personBirthdate: currentMember?.personBirthdate,
-              personGenderIdentity: currentMember?.personGenderIdentity,
+              dateOfBirth: currentMember?.dateOfBirth,
+              gender: currentMember?.gender,
               age: currentMember?.age,
               anniversary: currentMember?.anniversary,
               profilePic: currentMember?.profilePic,
-              aadharNo: currentMember?.aadharNo,
+              aadharNumber: currentMember?.aadharNumber,
               panNo: currentMember?.panNo,
               passportNo: currentMember?.passportNo,
               gstinNo: currentMember?.gstinNo,
@@ -182,7 +182,7 @@ export default function AddMembersMaster() {
                                   Mobile Number <span className="text-danger">*</span></Form.Label>
                                 <Field
                                   type="text"
-                                  name="personMobilePhone"
+                                  name="mobileNumber"
                                   placeholder="Mobile Number"
                                   className="form-control"
                                 />
@@ -209,7 +209,7 @@ export default function AddMembersMaster() {
                                 <Form.Label>Email<span className="text-danger">*</span></Form.Label>
                                 <Field
                                   type="email"
-                                  name="personEmail"
+                                  name="email"
                                   placeholder="Email address"
                                   className="form-control"
                                 />
@@ -236,7 +236,7 @@ export default function AddMembersMaster() {
                                 <Form.Label>Date of Birth<span className="text-danger">*</span></Form.Label>
                                 <Field
                                   type="date"
-                                  name="personBirthdate"
+                                  name="dateOfBirth"
                                   placeholder=""
                                   className="form-control"
                                 />
@@ -250,8 +250,8 @@ export default function AddMembersMaster() {
                                 <Form.Label>Gender</Form.Label>
                                 <Select
                                   options={genderoption}
-                                  name="personGenderIdentity"
-                                  onChange={(selected) => setFieldValue("personGenderIdentity", selected)}
+                                  name="gender"
+                                  onChange={(selected) => setFieldValue("gender", selected)}
                                   placeholder="Select Gender"
                                   classNamePrefix="Select2"
                                 />
@@ -442,7 +442,7 @@ export default function AddMembersMaster() {
                                 <Form.Label>Aadhaar No.</Form.Label>
                                 <Field
                                   type="text"
-                                  name="aadharNo"
+                                  name="aadharNumber"
                                   placeholder="Aadhaar No."
                                   className="form-control"
                                 />

@@ -6,10 +6,10 @@ import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import stateCities from "../stateCity.json"
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { Uploader } from 'uploader';
 import { UploadButton } from 'react-uploader';
-import { addSocietyApi, updateSocietyApi } from '../../../api/society-api';
+import { addSocietyApi, getSocietyDetailsApi, updateSocietyApi } from '../../../api/society-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { handleApiError } from '../../../helpers/handle-api-error';
 // Define the types for the stateCities object
@@ -32,22 +32,29 @@ export default function EditSocietyMaster() {
     signatory: '',
     hsnCode: '',
     gstin: '',
-    bankName: '',
-    accountNumber: '',
-    branchName: '',
-    ifscCode: '',
-    chequeFavourable: '',
-    paymentQrFile: null
+    accountDetails: [{
+      bankName: '',
+      accountNumber: '',
+      branchName: '',
+      ifscCode: '',
+      chequeFavourable: '',
+      paymentQrFile: '',
+    }]
   });
-  const location = useLocation();
-  const society = location.state?.society;
-  if (!society) {
-    return <p>No society selected. Please go back.</p>;
-  }
+  const params = useParams()
+  const identifier = params.identifier as string
   useEffect(() => {
-    console.log(society)
-    setCurrentSociety(society);
-  }, [society])
+    const fetchSocietyDetails = async () => {
+      try {
+        const response = await getSocietyDetailsApi(identifier)
+        setCurrentSociety(response.data.data)
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast('error', errorMessage)
+      }
+    }
+    fetchSocietyDetails()
+  }, [])
 
   const countryOptions: any = [{ value: "India", label: "India" }]
 
@@ -63,7 +70,6 @@ export default function EditSocietyMaster() {
     setCityOptions(cities.map((city) => ({ value: city, label: city })));
   };
   const handleSubmit = (values: any) => {
-    console.log(values)
     const societyDataToUpdate = {
       societyName: values.societyName,
       societyManager: values.societyManager,
@@ -137,12 +143,12 @@ export default function EditSocietyMaster() {
               signatory: currentSociety?.signatory,
               hsnCode: currentSociety?.hsnCode,
               gstin: currentSociety?.gstin,
-              bankName: currentSociety?.bankName,
-              accountNumber: currentSociety?.accountNumber,
-              branchName: currentSociety?.branchName,
-              ifscCode: currentSociety?.ifscCode,
-              chequeFavourable: currentSociety?.chequeFavourable,
-              paymentQrFile: currentSociety?.paymentQrFile
+              bankName: currentSociety?.accountDetails[0]?.bankName,
+              accountNumber: currentSociety?.accountDetails[0]?.accountNumber,
+              branchName: currentSociety?.accountDetails[0]?.branchName,
+              ifscCode: currentSociety?.accountDetails[0]?.ifscCode,
+              chequeFavourable: currentSociety?.accountDetails[0]?.chequeFavourable,
+              paymentQrFile: currentSociety?.accountDetails[0]?.paymentQrFile
             }
             }
             // validationSchema={validationScWhema}

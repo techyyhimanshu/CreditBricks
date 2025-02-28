@@ -94,20 +94,11 @@ export default function SocietyMaster() {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
-              state={{ society: row }}>Edit</Link> </Dropdown.Item>
+            <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}society/editsocietymaster/${row.societyIdentifier}`}
+            >Edit</Link> </Dropdown.Item>
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)} >Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-
-        // <div>
-        //   <Link to={`${import.meta.env.BASE_URL}society/editsocietymaster`}
-        //     state={{ society: row }}
-        //     className="btn btn-light btn-sm">Edit</Link>
-
-        //   {/* <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button> */}
-        //   <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
-        // </div>
       ),
     },
   ]

@@ -12,6 +12,7 @@ const TowerMaster = lazy(() => import('../components/masters/towermaster'));
 const WingMaster = lazy(() => import('../components/masters/wingmaster'));
 const PropertyMaster = lazy(() => import('../components/masters/property/propertymaster'));
 const AddPropertyMaster = lazy(() => import('../components/masters/property/addpropertymaster'));
+const EditPropertyMaster = lazy(() => import('../components/masters/property/editpropertymaster'));
 const PropertyView = lazy(() => import('../components/masters/property/propertyview'));
 const Roles = lazy(() => import('../components/masters/roles'));
 const Users = lazy(() => import('../components/masters/users'));
@@ -22,12 +23,12 @@ const UserProfile = lazy(() => import('../components/userprofile/userprofile'));
 const MembersMaster = lazy(() => import('../components/masters/members/membersmaster'));
 const AddMembersMaster = lazy(() => import('../components/masters/members/addmembers'));
 const MembersProfile = lazy(() => import('../components/masters/members/membersProfile'));
-const ParentEntity= lazy(() => import('../components/parententity/parententity'));
-const Loans= lazy(() => import('../components/loans/loans'));
-const Tenant= lazy(() => import('../components/tenant/tenant'));
-const TenantView= lazy(() => import('../components/tenant/tenantview'));
-const AddTenant= lazy(() => import('../components/tenant/addtenant'));
-const Complaints= lazy(() => import('../components/complaints/complaints'));
+const ParentEntity = lazy(() => import('../components/parententity/parententity'));
+const Loans = lazy(() => import('../components/loans/loans'));
+const Tenant = lazy(() => import('../components/tenant/tenant'));
+const TenantView = lazy(() => import('../components/tenant/tenantview'));
+const AddTenant = lazy(() => import('../components/tenant/addtenant'));
+const Complaints = lazy(() => import('../components/complaints/complaints'));
 
 export const Routingdata = [
   //Dashboard
@@ -36,11 +37,12 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}accounts/accounts`, element: <Accounts /> },
   { path: `${import.meta.env.BASE_URL}society/societymaster`, element: <SocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/addsocietymaster`, element: <AddSocietyMaster /> },
-  { path: `${import.meta.env.BASE_URL}society/editsocietymaster`, element: <EditSocietyMaster /> },
+  { path: `${import.meta.env.BASE_URL}society/editsocietymaster/:identifier`, element: <EditSocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/societyview`, element: <SocietyView /> },
   { path: `${import.meta.env.BASE_URL}parententity/parententity`, element: <ParentEntity /> },
   { path: `${import.meta.env.BASE_URL}property/propertymaster`, element: <PropertyMaster /> },
   { path: `${import.meta.env.BASE_URL}property/addpropertymaster`, element: <AddPropertyMaster /> },
+  { path: `${import.meta.env.BASE_URL}property/editpropertymaster/:identifier`, element: <EditPropertyMaster /> },
   { path: `${import.meta.env.BASE_URL}property/propertyview`, element: <PropertyView /> },
   //Added tower master
   { path: `${import.meta.env.BASE_URL}masters/towermaster`, element: <TowerMaster /> },
@@ -56,7 +58,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}members/membersProfile`, element: <MembersProfile /> },
   { path: `${import.meta.env.BASE_URL}loans/loans`, element: <Loans /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenant`, element: <Tenant /> },
-  { path: `${import.meta.env.BASE_URL}tenant/tenantview`, element: <TenantView /> },
+  { path: `${import.meta.env.BASE_URL}tenant/tenantview/:identifier`, element: <TenantView /> },
   { path: `${import.meta.env.BASE_URL}tenant/addtenant`, element: <AddTenant /> },
   { path: `${import.meta.env.BASE_URL}complaints/complaints`, element: <Complaints /> }
 ];

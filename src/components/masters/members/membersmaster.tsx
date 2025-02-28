@@ -8,6 +8,8 @@ import "react-data-table-component-extensions/dist/index.css";
 import { Link } from "react-router-dom";
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { getAllMemberOrTenantsApi } from '../../../api/user-api';
+import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
+import { deleteMemberApi } from '../../../api/member-api';
 
 export default function MembersMaster() {
 
@@ -53,7 +55,7 @@ export default function MembersMaster() {
 
           <Dropdown.Menu>
             <Dropdown.Item>Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.memberIdentifier)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       ),
@@ -77,8 +79,9 @@ export default function MembersMaster() {
           {
             sno: index + 1,
             memberName: `${member.firstName} ${member.lastName}`,
+            memberIdentifier: member.identifier,
             memberType: member.role,
-            mobileNumber: member.personMobilePhone
+            mobileNumber: member.mobileNumber
           }
         ));
         setMemberData(formattedData);
@@ -90,6 +93,19 @@ export default function MembersMaster() {
     fetchAllProperty();
   }, [])
 
+  const handleDelete = async (memberIdentifier: string) => {
+    try {
+      const response = await deleteMemberApi(memberIdentifier)
+      if (response.status === 200) {
+        showToast("success", response.data.message)
+        // Remove the society from the table
+        setMemberData(memberData.filter((item: any) => item.memberIdentifier !== memberIdentifier));
+      }
+    } catch (error: any) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
 
   return (
     <Fragment>
@@ -126,7 +142,7 @@ export default function MembersMaster() {
           </Card>
         </Col>
       </Row>
-
+      <CustomToastContainer />
     </Fragment >
   );
 }

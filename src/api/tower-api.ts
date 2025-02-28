@@ -21,7 +21,7 @@ export const updateTowerApi = async (data: any, id: any): Promise<any> => {
     try {
         const dataToUpdate = {
             towerName: data.towerName,
-            societyId: data.societyId
+            societyIdentifier: data.societyIdentifier
         }
         const response = await axiosInstance.patch(`/tower/${id}`, dataToUpdate)
         return response
@@ -29,9 +29,9 @@ export const updateTowerApi = async (data: any, id: any): Promise<any> => {
         throw error
     }
 }
-export const deleteTowerApi = async (id: number): Promise<any> => {
+export const deleteTowerApi = async (identifier: string): Promise<any> => {
     try {
-        const response = await axiosInstance.delete(`/tower/${id}`)
+        const response = await axiosInstance.delete(`/tower/${identifier}`)
         return response
     } catch (error) {
         throw error

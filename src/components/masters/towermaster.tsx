@@ -19,7 +19,7 @@ export default function TowerMaster() {
     const [societyOwner, setSocietyOwner] = useState("");
 
     const [currentTower, setCurrentTower] = useState({
-        towerId: null,
+        towerIdentifier: null,
         ownerName: '',
         towerName: '',
         societyIdentifier: null,
@@ -32,7 +32,7 @@ export default function TowerMaster() {
             try {
                 const response = await getAllTowerApi();
                 const formattedData = response.data.data.map((item: any, index: number) => ({
-                    towerId: item.towerId,
+                    towerIdentifier: item.towerIdentifier,
                     sno: index + 1,
                     towerName: item.towerName,
                     ownerName: item.societyManager,
@@ -52,7 +52,7 @@ export default function TowerMaster() {
         // fetchTowerData();
     }, []);
     type Row = {
-        towerId: number;
+        towerIdentifier: string;
         sno: number;
         towerName: string;
         ownerName: string;
@@ -87,7 +87,7 @@ export default function TowerMaster() {
             cell: (row: Row) => (
                 <div>
                     <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button>
-                    <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
+                    <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row.towerIdentifier)} >Delete</button>
                 </div>
             ),
         },
@@ -159,13 +159,13 @@ export default function TowerMaster() {
         if (isEditing) {
             ; (async () => {
                 try {
-                    const response = await updateTowerApi(data, currentTower.towerId)
+                    const response = await updateTowerApi(data, currentTower.towerIdentifier)
                     if (response.status === 200) {
                         showToast("success", response.data.message)
                         // Update specific tower in the list
                         setTowerData(prevData =>
                             prevData.map(tower =>
-                                tower.towerId === currentTower.towerId
+                                tower.towerIdentifier === currentTower.towerIdentifier
                                     ? { ...tower, ...data, ownerName: societyOwner }
                                     : tower
                             )
@@ -187,7 +187,7 @@ export default function TowerMaster() {
                         // Add the new tower to the table
                         const newSociety = {
                             sno: towerData.length + 1,
-                            towerId: response.data.data.towerId,
+                            towerIdentifier: response.data.data.towerIdentifier,
                             towerName: response.data.data.towerName,
                             societyIdentifier: response.data.data.societyIdentifier,
                             societyName: societyData.filter((society) => society.societyIdentifier === response.data.data.societyIdentifier)[0].societyName,
@@ -205,21 +205,20 @@ export default function TowerMaster() {
 
 
     }
-    const handleDelete = (data: any) => {
-        console.log(data)
-            ; (async () => {
-                try {
-                    const response = await deleteTowerApi(data.towerId)
-                    if (response.status === 200) {
-                        showToast("success", response.data.message)
-                        // Remove the tower from the table
-                        setTowerData(prevData => prevData.filter(tower => tower.towerId !== data.towerId))
-                    }
-                } catch (error: any) {
-                    const errorMessage = handleApiError(error)
-                    showToast("error", errorMessage)
+    const handleDelete = (towerIdentifier: string) => {
+        ; (async () => {
+            try {
+                const response = await deleteTowerApi(towerIdentifier)
+                if (response.status === 200) {
+                    showToast("success", response.data.message)
+                    // Remove the tower from the table
+                    setTowerData(prevData => prevData.filter(tower => tower.towerIdentifier !== towerIdentifier))
                 }
-            })()
+            } catch (error: any) {
+                const errorMessage = handleApiError(error)
+                showToast("error", errorMessage)
+            }
+        })()
     }
     return (
         <Fragment>
@@ -234,7 +233,7 @@ export default function TowerMaster() {
                     <Modal show={showModal} onHide={() => setShowModal(false)} centered>
                         <Formik
                             initialValues={{
-                                towerId: null,
+                                towerIdentifier: null,
                                 towerName: currentTower?.towerName || "",
                                 ownerName: currentTower?.ownerName,
                                 society: { value: currentTower?.societyIdentifier || "", label: currentTower?.societyName || "" }
@@ -323,7 +322,7 @@ export default function TowerMaster() {
                                         columns={columns}
                                         data={towerData}
                                         pagination
-                                        keyField="towerId"
+                                        keyField="towerIdentifier"
                                     />
                                 </DataTableExtensions>
                             </div>
