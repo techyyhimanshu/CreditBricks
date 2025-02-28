@@ -42,3 +42,12 @@ export const addNewComplaintApi = async (data: any): Promise<any> => {
         throw error
     }
 }
+
+export const assignComplaintToStaffApi = async (data: any): Promise<any> => {
+    try {
+        const response = await axiosInstance.post(`/complaint/assign`, data)
+        return response
+    } catch (error) {
+        throw error
+    }
+}

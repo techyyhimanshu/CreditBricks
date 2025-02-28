@@ -5,10 +5,11 @@ import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, CardBody } f
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { Link } from "react-router-dom";
-import { addNewComplaintApi, getAllComplainCategoriesApi, getAllComplaintsApi, getAllPropertiesForDropdownApi } from '../../api/complaint-api';
+import { addNewComplaintApi, assignComplaintToStaffApi, getAllComplainCategoriesApi, getAllComplaintsApi, getAllPropertiesForDropdownApi } from '../../api/complaint-api';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
+import { getStaffForDropDownApi } from '../../api/staff-api';
 
 export default function Complaints() {
 
@@ -16,6 +17,11 @@ export default function Complaints() {
   const [complaintview, setcomplaintview] = useState(false);
   const [assign, setassign] = useState(false);
   const [complaintData, setComplaintData] = useState([]);
+  const [selectedStaff, setSelectedStaff] = useState({
+    value: '',
+    label: ''
+  });
+  const [staffData, setStaffData] = useState([]);
   const [filtersss, setFilters] = useState({
     propertyIdentifier: "",
     categoryId: null,
@@ -39,6 +45,7 @@ export default function Complaints() {
   });
   const [complaintCategoriesData, setComplaintCategoriesData] = useState([]);
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
+  const [complaintIdToAssign, setComplaintIdToAssign] = useState("");
 
 
   const viewDemoShow = (modal: any) => {
@@ -109,11 +116,12 @@ export default function Complaints() {
     { value: "low", label: "Low" }
   ]
 
-  const assigntoname = [
-    { value: "1", label: "Surender Sharma" },
-    { value: "2", label: "Purnima Verma" },
-    { value: "3", label: "Himanshu Bansal" }
-  ]
+  const assigntoname = staffData.map((staff: any) => {
+    return {
+      value: staff.staffIdentifier,
+      label: `${staff.firstName} ${staff.middleName ? staff.middleName : ""} ${staff.lastName}`
+    }
+  })
   useEffect(() => {
 
     fetchAllComplaints();
@@ -151,6 +159,17 @@ export default function Complaints() {
       }
     } catch (error) {
       console.error("Error fetching properties:", error);
+    }
+  }
+  const fetchAllStaffForDropDown = async () => {
+    try {
+      const response = await getStaffForDropDownApi()
+      if (response.status === 200) {
+        setStaffData(response.data.data);
+      }
+    } catch (error: any) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage);
     }
   }
   const handleSubmit = async (values: any) => {
@@ -194,6 +213,21 @@ export default function Complaints() {
       showToast("error", errorMessage);
     }
   };
+  const handleStaffAssignment = async () => {
+    const formattedData = {
+      complaintId: complaintIdToAssign,
+      staffIdentifier: selectedStaff.value
+    }
+    try {
+      const response = await assignComplaintToStaffApi(formattedData)
+      if (response.status === 200) {
+        showToast("success", response.data.message)
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
 
   return (
     <Fragment>
@@ -373,7 +407,10 @@ export default function Complaints() {
           <Modal show={assign} centered>
             <Modal.Header>
               <Modal.Title>Assign To</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("assign"); }}>
+              <Button variant="" className="btn btn-close" onClick={() => {
+                viewDemoClose("assign");
+
+              }}>
                 x
               </Button>
             </Modal.Header>
@@ -384,6 +421,9 @@ export default function Complaints() {
                     <Form.Label>Assign To</Form.Label>
                     <Select
                       options={assigntoname}
+                      // isSearchable={true}
+                      value={selectedStaff}
+                      onChange={(selected: any) => setSelectedStaff(selected)}
                       placeholder="Select name"
                       classNamePrefix="Select2"
                     />
@@ -396,7 +436,10 @@ export default function Complaints() {
               <Button variant="default" onClick={() => { viewDemoClose("assign"); }}>
                 Close
               </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("assign"); }}>
+              <Button variant="primary" onClick={() => {
+                handleStaffAssignment();
+                viewDemoClose("assign");
+              }}>
                 Save
               </Button>
 
@@ -534,7 +577,12 @@ export default function Complaints() {
 
                           <Dropdown.Menu>
                             <Dropdown.Item onClick={() => viewDemoShow("addcomplaint")}>Edit</Dropdown.Item>
-                            <Dropdown.Item onClick={() => viewDemoShow("assign")}>Assign To</Dropdown.Item>
+                            <Dropdown.Item onClick={() => {
+                              setComplaintIdToAssign(item.id)
+                              viewDemoShow("assign")
+                              fetchAllStaffForDropDown()
+                            }
+                            }>Assign To</Dropdown.Item>
                             <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown></td>
