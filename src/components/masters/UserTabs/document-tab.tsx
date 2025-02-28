@@ -62,7 +62,7 @@ const Document: React.FC<PersonalInfoProps> = ({ handleTabChange, setCompletedTa
     <>
       <Formik
         initialValues={{
-          aadharNo: '',
+          aadharNumber: '',
           panNo: '',
           passportNo: '',
           gstinNo: '',
@@ -80,9 +80,9 @@ const Document: React.FC<PersonalInfoProps> = ({ handleTabChange, setCompletedTa
                     type='text'
                     placeholder='Aadhar No'
                     className='form-control'
-                    name="aadharNo"
+                    name="aadharNumber"
                   />
-                  <ErrorMessage name="aadharNo" component="div" className="text-danger" />
+                  <ErrorMessage name="aadharNumber" component="div" className="text-danger" />
                 </Form.Group>
               </Col>
 

@@ -44,9 +44,9 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
         firstName: '',
         lastName: '',
         phone: '',
-        personEmail: '',
-        personBirthdate: '',
-        personGenderIdentity: '',
+        email: '',
+        dateOfBirth: '',
+        gender: '',
         address: '',
         country: '',
         state: '',
@@ -85,9 +85,9 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
     //     currentUser.username = "";
     //     currentUser.firstName = "";
     //     currentUser.lastName = "";
-    //     currentUser.personGenderIdentity = "";
-    //     currentUser.personBirthdate = "";
-    //     currentUser.personEmail = "";
+    //     currentUser.gender = "";
+    //     currentUser.dateOfBirth = "";
+    //     currentUser.email = "";
     //     currentUser.phone = "";
     //     currentUser.country = "";
     //     currentUser.state = "";
@@ -104,10 +104,10 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
     //         values.lastName = "",
     //         values.phone = "",
     //         values.alternatePhone = "",
-    //         values.personEmail = "",
-    //         values.personBirthdate = "",
-    //         values.personGenderIdentity.value = "",
-    //         values.personGenderIdentity.label = "",
+    //         values.email = "",
+    //         values.dateOfBirth = "",
+    //         values.gender.value = "",
+    //         values.gender.label = "",
     //         values.country.value = "",
     //         values.state.value = "",
     //         values.city.value = "",
@@ -121,15 +121,15 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
     const handleSubmit = (values: any) => {
         console.log(values)
         const data = {
-            salutation: values.personGenderIdentity.value === "Male" ? "Mr" : "Ms",
+            salutation: values.gender.value === "Male" ? "Mr" : "Ms",
             username: values.username,
             firstName: values.firstName,
             lastName: values.lastName,
             phone: values.phone,
             alternatePhone: values.alternatePhone,
-            personEmail: values.personEmail,
-            personBirthdate: values.personBirthdate,
-            personGenderIdentity: values.personGenderIdentity.value,
+            email: values.email,
+            dateOfBirth: values.dateOfBirth,
+            gender: values.gender.value,
             country: values.country.value,
             state: values.state.value,
             city: values.city.value,
@@ -189,7 +189,7 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
                         // Add the new user to the table
                         const newUser = {
                             sno: users.length + 1,
-                            personBirthdate: response.data.data.personBirthdate.split("T")[0],
+                            dateOfBirth: response.data.data.dateOfBirth.split("T")[0],
                             ...response.data.data
                         }
                         const username = response.data.data.username;
@@ -220,14 +220,14 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
                     password: "pass@12",
                     firstName: currentUser?.firstName || "",
                     lastName: currentUser?.lastName || "",
-                    personGenderIdentity: { value: currentUser?.personGenderIdentity || "", label: currentUser?.personGenderIdentity || "" },
-                    personEmail: currentUser?.personEmail || "",
+                    gender: { value: currentUser?.gender || "", label: currentUser?.gender || "" },
+                    email: currentUser?.email || "",
                     phone: currentUser?.phone || "",
                     alternatePhone: currentUser?.alternatePhone || "",
                     anniversary: currentUser?.anniversary || "",
                     recordType: { value: currentUser.recordType, label: currentUser.recordType },
                     memberType: { value: currentUser.memberType, label: currentUser.memberType },
-                    personBirthdate: currentUser?.personBirthdate,
+                    dateOfBirth: currentUser?.dateOfBirth,
                     country: { value: currentUser.country, label: currentUser.country }, // Update this
                     state: { value: currentUser.state, label: currentUser.state },
                     city: { value: currentUser.city, label: currentUser.city },
@@ -303,15 +303,15 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
                                     <div className="SlectBox">
                                         <Select
                                             options={gender}
-                                            value={values.personGenderIdentity}
+                                            value={values.gender}
                                             placeholder="Select Gender"
                                             onChange={(selected) => {
-                                                setFieldValue("personGenderIdentity", selected);
+                                                setFieldValue("gender", selected);
                                             }}
                                             classNamePrefix='Select2' className="multi-select"
                                         />
-                                        {touched.personGenderIdentity?.value && errors.personGenderIdentity?.value && (
-                                            <div className="text-danger">{errors.personGenderIdentity.value}</div>
+                                        {touched.gender?.value && errors.gender?.value && (
+                                            <div className="text-danger">{errors.gender.value}</div>
                                         )}
                                     </div>
 
@@ -328,9 +328,9 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
                                         type='text'
                                         placeholder='Email'
                                         className='form-control'
-                                        name="personEmail"
+                                        name="email"
                                     />
-                                    <ErrorMessage name="personEmail" component="div" className="text-danger" />
+                                    <ErrorMessage name="email" component="div" className="text-danger" />
                                 </Form.Group>
                             </Col>
 
@@ -374,13 +374,13 @@ const PersonalInfo: React.FC<PersonalInfoProps> = ({ handleTabChange, setComplet
                                             type='date'
                                             placeholder='dd/mm/yyyy'
                                             className='form-control'
-                                            name="personBirthdate"
+                                            name="dateOfBirth"
 
                                         />
 
                                     </div>
-                                    {touched.personBirthdate && errors.personBirthdate && (
-                                        <div className="text-danger">{errors.personBirthdate}</div>
+                                    {touched.dateOfBirth && errors.dateOfBirth && (
+                                        <div className="text-danger">{errors.dateOfBirth}</div>
                                     )}
                                 </Form.Group>
                             </Col>

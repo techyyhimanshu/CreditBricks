@@ -145,9 +145,9 @@ export default function Users() {
     firstName: string;
     lastName: string;
     phone: string;
-    personEmail: string;
-    personBirthdate: string;
-    personGenderIdentity: string;
+    email: string;
+    dateOfBirth: string;
+    gender: string;
     address: string;
     country: string;
     state: string;
@@ -183,7 +183,7 @@ export default function Users() {
     },
     {
       name: 'Email',
-      selector: (row: Row) => row.personEmail,
+      selector: (row: Row) => row.email,
       sortable: true,
     },
 
@@ -214,9 +214,9 @@ export default function Users() {
           lastName: member.lastName,
           salutation: member.salutation,
           phone: member.phone,
-          personEmail: member.personEmail,
-          personBirthdate: member.personBirthdate,
-          personGenderIdentity: member.personGenderIdentity,
+          email: member.email,
+          dateOfBirth: member.dateOfBirth,
+          gender: member.gender,
           country: member.country,
           state: member.state,
           city: member.city,
@@ -243,9 +243,9 @@ export default function Users() {
   //   currentUser.username = "";
   //   currentUser.firstName = "";
   //   currentUser.lastName = "";
-  //   currentUser.personGenderIdentity = "";
-  //   currentUser.personBirthdate = "";
-  //   currentUser.personEmail = "";
+  //   currentUser.gender = "";
+  //   currentUser.dateOfBirth = "";
+  //   currentUser.email = "";
   //   currentUser.phone = "";
   //   currentUser.country = "";
   //   currentUser.state = "";
@@ -255,7 +255,7 @@ export default function Users() {
   // };
 
   // const openEditModal = (member: any) => {
-  //   console.log(member.personBirthdate
+  //   console.log(member.dateOfBirth
   //   )
   //   console.log("USER", member)
   //   setIsEditing(true);

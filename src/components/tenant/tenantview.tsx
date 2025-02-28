@@ -12,7 +12,9 @@ export default function TenantView() {
   const [discontinue, setdiscontinue] = useState(false);
   const [tenantDetails, setTenantDetails] = useState(
     {
-      name: '',
+      firstName: '',
+      middleName: '',
+      lastName: '',
       email: '',
       mobileNumber: '',
       alternateMobileNumber: '',
@@ -101,7 +103,7 @@ export default function TenantView() {
               src={imagesData('female1')}
               className="wd-100 rounded-5"
             />
-            <span className='ms-3'> Mr. {tenantDetails?.name} <Link to={`${import.meta.env.BASE_URL}tenant/addtenant`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span></span>
+            <span className='ms-3'> Mr. {tenantDetails.firstName} <Link to={`${import.meta.env.BASE_URL}tenant/addtenant`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span></span>
 
         </div>
       </div>
@@ -126,7 +128,7 @@ export default function TenantView() {
 
                 <Col xl={6}>
                   <FormLabel>Tenant Name</FormLabel>
-                  <p className='tx-15'>{tenantDetails.name}</p>
+                  <p className='tx-15'>{`${tenantDetails.firstName} ${tenantDetails.middleName} ${tenantDetails.lastName}`}</p>
                 </Col>
 
                 <Col xl={6}>

@@ -81,7 +81,7 @@ export default function MembersMaster() {
             memberName: `${member.firstName} ${member.lastName}`,
             memberIdentifier: member.identifier,
             memberType: member.role,
-            mobileNumber: member.personMobilePhone
+            mobileNumber: member.mobileNumber
           }
         ));
         setMemberData(formattedData);

@@ -22,7 +22,7 @@ export default function Tenant() {
           const formattedData = response.data.data.map((item: any, index: number) => ({
             sno: index + 1,
             tenantIdentifier: item.tenantIdentifier,
-            name: item.name,
+            name: `${item.firstName} ${item.middleName ? item.middleName : ""} ${item.lastName}`,
             mobileNumber: item.mobileNumber,
             email: item.email,
             address: item.address

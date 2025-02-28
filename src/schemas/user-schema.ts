@@ -40,17 +40,17 @@ export const addUserValidationSchema = Yup.object({
         .required("Last Name is required")
         .min(2, "Last Name must be at least 2 characters")
         .max(50, "Last Name must be less than 50 characters"),
-    personGenderIdentity: Yup.object().shape({
+    gender: Yup.object().shape({
         value: Yup.string().required("Gender is required"),
         label: Yup.string(),
     }),
-    personEmail: Yup.string()
+    email: Yup.string()
         .required("Email is required")
         .email("Invalid email address"),
     phone: Yup.string()
         .required("Phone number is required")
         .matches(/^[0-9]{10}$/, "Phone number must be exactly 10 digits"),
-    personBirthdate: Yup.date()
+    dateOfBirth: Yup.date()
         .required("Date of Birth is required")
         .max(new Date(), "Date of Birth cannot be in the future"),
     country: Yup.object()
@@ -90,17 +90,17 @@ export const updateUserValidationSchema = Yup.object({
         .required("Last Name is required")
         .min(2, "Last Name must be at least 2 characters")
         .max(50, "Last Name must be less than 50 characters"),
-    personEmail: Yup.string()
+    email: Yup.string()
         .required("Email is required")
         .email("Invalid email address"),
     phone: Yup.string()
         .required("Phone number is required")
         .matches(/^[0-9]{10}$/, "Phone number must be exactly 10 digits"),
-    personGenderIdentity: Yup.object().shape({
+    gender: Yup.object().shape({
         value: Yup.string().required("Gender is required"),
         label: Yup.string(),
     }),
-    personBirthdate: Yup.date()
+    dateOfBirth: Yup.date()
         .required("Date of Birth is required")
         .max(new Date(), "Date of Birth cannot be in the future"),
     role: Yup.object()
@@ -133,7 +133,7 @@ export const updateUserValidationSchema = Yup.object({
 });
 
 export const userDocumentValidationSchema = Yup.object({
-    aadharNo: Yup.string()
+    aadharNumber: Yup.string()
         .required("Aadhar No. is required")
         .matches(/^\d{12}$/, "Aadhar No. must be a 12-digit number"),
 
