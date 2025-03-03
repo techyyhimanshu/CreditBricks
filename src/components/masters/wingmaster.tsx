@@ -24,7 +24,7 @@ export default function WingMaster() {
         towerName: null,
         societyIdentifier: null,
         societyName: "",
-        ownerName: ""
+      //  ownerName: ""
     });
     const [isEditing, setIsEditing] = useState(false);
     useEffect(() => {
@@ -83,11 +83,11 @@ export default function WingMaster() {
             selector: (row: Row) => row.societyName,
             sortable: true,
         },
-        {
-            name: 'Owner',
-            selector: (row: Row) => row.ownerName,
-            sortable: true,
-        },
+        // {
+        //     name: 'Owner',
+        //     selector: (row: Row) => row.ownerName,
+        //     sortable: true,
+        // },
         {
             name: 'Action',
             sortable: true,
@@ -305,7 +305,7 @@ export default function WingMaster() {
                                             )}
 
                                         </Form.Group>
-                                        <Form.Group className="form-group">
+                                        {/* <Form.Group className="form-group">
                                             <Form.Label>Owner</Form.Label>
 
                                             <Field
@@ -316,7 +316,7 @@ export default function WingMaster() {
                                                 className="form-control"
                                             />
 
-                                        </Form.Group>
+                                        </Form.Group> */}
                                         <Form.Group className="form-group">
                                             <Form.Label>
                                                 Tower

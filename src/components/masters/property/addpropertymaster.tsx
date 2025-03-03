@@ -500,17 +500,11 @@ export default function AddPropertyMaster() {
 
 
 
-                            {/* <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Designation</Form.Label>
-                          <FormControl
-                            type="text"
-                            name="designation"
-                            placeholder="Designation"
-                            className="form-control"
-                          />
+                             <Col xl={4}>
+                        <Form.Group className="form-group pt-1">
+                      <Link to={`${import.meta.env.BASE_URL}tenant/addtenant`} className='btn mt-4 btn-default'>Add Tenant</Link>
                         </Form.Group>
-                      </Col> */}
+                      </Col>
 
                           </Row>
 

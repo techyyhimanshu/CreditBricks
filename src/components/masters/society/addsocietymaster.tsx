@@ -364,7 +364,7 @@ export default function AddSocietyMaster() {
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
-                              <Form.Label>Society Manager <span className="text-danger">*</span></Form.Label>
+                              <Form.Label>Society Manager</Form.Label>
                               <Field
                                 type="text"
                                 name="societyManager"

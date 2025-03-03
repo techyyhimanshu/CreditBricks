@@ -20,7 +20,7 @@ export default function TowerMaster() {
 
     const [currentTower, setCurrentTower] = useState({
         towerIdentifier: null,
-        ownerName: '',
+    //    ownerName: '',
         towerName: '',
         societyIdentifier: null,
         societyName: ''
@@ -55,7 +55,7 @@ export default function TowerMaster() {
         towerIdentifier: string;
         sno: number;
         towerName: string;
-        ownerName: string;
+      //  ownerName: string;
         societyIdentifier: number;
         societyName: string;
     };
@@ -76,11 +76,11 @@ export default function TowerMaster() {
             selector: (row: Row) => row.societyName,
             sortable: true,
         },
-        {
-            name: 'Owner',
-            selector: (row: Row) => row.ownerName,
-            sortable: true,
-        },
+        // {
+        //     name: 'Owner',
+        //     selector: (row: Row) => row.ownerName,
+        //     sortable: true,
+        // },
         {
             name: 'Action',
             sortable: true,
@@ -269,7 +269,7 @@ export default function TowerMaster() {
                                             )}
 
                                         </Form.Group>
-                                        <Form.Group className="form-group">
+                                        {/* <Form.Group className="form-group">
                                             <Form.Label>Owner</Form.Label>
                                             <Field
                                                 type="text"
@@ -279,7 +279,7 @@ export default function TowerMaster() {
                                                 className="form-control"
                                             />
                                             <ErrorMessage name="ownerName" component="div" className="text-danger" />
-                                        </Form.Group>
+                                        </Form.Group> */}
                                         <Form.Group className="form-group">
                                             <Form.Label>Tower/Block Name <span className="text-danger">*</span></Form.Label>
                                             <Field
