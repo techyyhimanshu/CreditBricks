@@ -551,7 +551,12 @@ export default function Complaints() {
                         }} className='text-info cursor'>{item.id}</span></td>
                         <td>{item.property?.propertyName}</td>
                         <td>{item.category.name}</td>
-                        <td>Neeraj Singh</td>
+                        <td>
+                          {`${item.complaintAllocation?.staff?.firstName || ""} 
+     ${item.complaintAllocation?.staff?.middleName || ""} 
+     ${item.complaintAllocation?.staff?.lastName || ""}`.trim()}
+                        </td>
+
                         <td>{item.createdAt}</td>
                         <td>{item.status}</td>
                         {/* <td> <Dropdown >
