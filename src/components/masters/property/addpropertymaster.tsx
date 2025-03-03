@@ -67,8 +67,11 @@ export default function AddPropertyMaster() {
   const [wingOptions, setWingOptions] = useState<any[]>([]);
   const [tenantOptions, setTenantOptions] = useState<any[]>([]);
   const [memberOptions, setMemberOptions] = useState<any[]>([]);
+  const [co_OwnerOptions, setCo_OwnerOptions] = useState<any[]>([]);
+  const [thirdOwnerOptions, setThirdOwnerOptions] = useState<any[]>([]);
+  const [fourthOwnerOptions, setFourthOwnerOptions] = useState<any[]>([]);
+  const [fifthOwnerOptions, setFifthOwnerOptions] = useState<any[]>([]);
 
-  const societyname: any = [{ value: "1", label: "Select Society" }]
 
   const propertystatus = [
     { value: "Sold", label: "Sold" },
@@ -231,6 +234,12 @@ export default function AddPropertyMaster() {
       showToast("success", "Property added successfully")
     }
   }
+  const handleMemberChange = async (identifier: string) => {
+    setCo_OwnerOptions((prevData) => {
+      const updatedData = prevData.filter((member: any) => member.value !== identifier);
+      return updatedData;
+    });
+  };
 
   return (
     <Fragment>
@@ -299,7 +308,7 @@ export default function AddPropertyMaster() {
         }}
         onSubmit={handleSubmit}
       >
-        {({ setFieldValue, values, errors, touched }) => (
+        {({ setFieldValue }) => (
           <FormikForm>
 
             <Row>
@@ -339,7 +348,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Owner name"
                                   className="form-control"
                                 />
-                               
+
                               </Form.Group>
                             </Col> */}
 
@@ -526,7 +535,11 @@ export default function AddPropertyMaster() {
                                 <Select
                                   options={memberOptions}
                                   name="member"
-                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  onChange={(selected) => {
+                                    setFieldValue("member", selected)
+                                    handleMemberChange(selected.value)
+                                  }
+                                  }
                                   placeholder="Select Member"
                                   classNamePrefix="Select2"
                                 />
@@ -537,11 +550,12 @@ export default function AddPropertyMaster() {
                             <Col xl={4}>
                               <Form.Group className="form-group">
                                 <Form.Label>Co Owner </Form.Label>
-                                <FormControl
-                                  type="text"
-                                  name="coOwner"
-                                  placeholder="Co Owner"
-                                  className="form-control"
+                                <Select
+                                  options={co_OwnerOptions}
+                                  name="member"
+                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  placeholder="Select Co Owner"
+                                  classNamePrefix="Select2"
                                 />
                                 {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                               </Form.Group>
@@ -551,11 +565,12 @@ export default function AddPropertyMaster() {
                             <Col xl={4}>
                               <Form.Group className="form-group">
                                 <Form.Label>Third Owner</Form.Label>
-                                <FormControl
-                                  type="text"
-                                  name="thirdOwner"
-                                  placeholder="Third Owner"
-                                  className="form-control"
+                                <Select
+                                  options={memberOptions}
+                                  name="member"
+                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  placeholder="Select Third Owner"
+                                  classNamePrefix="Select2"
                                 />
                                 {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                               </Form.Group>
@@ -565,11 +580,12 @@ export default function AddPropertyMaster() {
                             <Col xl={4}>
                               <Form.Group className="form-group">
                                 <Form.Label>Fourth Owner</Form.Label>
-                                <FormControl
-                                  type="text"
-                                  name="fourthOwner"
-                                  placeholder="Fourth Owner"
-                                  className="form-control"
+                                <Select
+                                  options={memberOptions}
+                                  name="member"
+                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  placeholder="Select Fourth Owner"
+                                  classNamePrefix="Select2"
                                 />
                                 {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
                               </Form.Group>
@@ -580,11 +596,12 @@ export default function AddPropertyMaster() {
                             <Col xl={4}>
                               <Form.Group className="form-group">
                                 <Form.Label>Fifth Owner</Form.Label>
-                                <FormControl
-                                  type="text"
-                                  name="fifthOwner"
-                                  placeholder="Fifth Owner"
-                                  className="form-control"
+                                <Select
+                                  options={memberOptions}
+                                  name="member"
+                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  placeholder="Select Fifth Owner"
+                                  classNamePrefix="Select2"
                                 />
                                 {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
                               </Form.Group>
@@ -597,7 +614,7 @@ export default function AddPropertyMaster() {
                                 <FormControl
                                   type="text"
                                   name="previousOwner"
-                                  placeholder="Previous Owner"
+                                  disabled={true}
                                   className="form-control"
                                 />
                                 {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
