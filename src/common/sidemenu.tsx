@@ -65,7 +65,14 @@ export const MENUITEMS = [
             active: false,
           },
 
-
+          {
+            path: `${import.meta.env.BASE_URL}vendor/vendormaster`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Vendor",
+            type: "link",
+            selected: false,
+            active: false,
+          },
           {
             path: `${import.meta.env.BASE_URL}masters/roles`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
