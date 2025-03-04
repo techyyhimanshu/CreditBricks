@@ -138,7 +138,6 @@ export default function AddTenant() {
         value: item.propertyIdentifier,
         label: item.propertyName ? item.propertyName : item.flatNumber,
       }));
-      console.log(formattedData)
       setPropertyOptions(formattedData);
     } catch (error) {
       const errorMessage = handleApiError(error)
@@ -146,7 +145,6 @@ export default function AddTenant() {
     }
   }
   const handleAddNewVehicle = () => {
-    console.log(vehicleFormData)
 
     if (editingIndex !== null) {
       // Update existing row
@@ -212,11 +210,9 @@ export default function AddTenant() {
           formData.append("vehicleRCFiles", vehicle.vehicleRC);
         }
       });
-      console.log([...formData]);
       // Step 3: API Call
       const response = await addTenantApi(formData)
       if (response.status === 201 || response.status === 200) {
-        console.log(response)
         showToast("success", response.data.message);
       }
     } catch (error) {
@@ -225,7 +221,6 @@ export default function AddTenant() {
     }
   }
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files)
 
     if (e.target.files && e.target.files.length > 0) {
       setVehicleFormData(prevState => ({
@@ -243,7 +238,6 @@ export default function AddTenant() {
   };
   const handleVehicleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    console.log(name, value)
     setVehicleFormData(prevState => ({
       ...prevState,
       [name]: value

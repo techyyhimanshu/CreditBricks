@@ -129,7 +129,6 @@ export default function PropertyMaster() {
       try {
         const response = await getAllPropertyApi()
         const data = response.data.data
-        console.log(data)
         const formattedData = data.map((property: any, index: number) => (
           {
             sno: index + 1,

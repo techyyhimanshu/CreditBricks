@@ -202,12 +202,10 @@ export default function AddSocietyMaster() {
         }
       });
 
-      console.log([...formData]); // Debugging
 
       // Step 3: API Call
       const response = await addSocietyApi(formData)
       if (response.status === 201 || response.status === 200) {
-        console.log(response)
         showToast("success", response.data.message);
       }
     } catch (error) {

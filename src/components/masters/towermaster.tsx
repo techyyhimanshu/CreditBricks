@@ -20,7 +20,7 @@ export default function TowerMaster() {
 
     const [currentTower, setCurrentTower] = useState({
         towerIdentifier: null,
-    //    ownerName: '',
+        //    ownerName: '',
         towerName: '',
         societyIdentifier: null,
         societyName: ''
@@ -55,7 +55,7 @@ export default function TowerMaster() {
         towerIdentifier: string;
         sno: number;
         towerName: string;
-      //  ownerName: string;
+        //  ownerName: string;
         societyIdentifier: number;
         societyName: string;
     };
@@ -141,7 +141,6 @@ export default function TowerMaster() {
     };
 
     const openEditModal = async (tower: any) => {
-        console.log(tower)
         await fetchSocietiesForDropDown()
         setIsEditing(true);
         setCurrentTower(tower);
@@ -155,7 +154,6 @@ export default function TowerMaster() {
             societyIdentifier: values.society.value,
             societyName: values.society.label,
         }
-        console.log(data)
         if (isEditing) {
             ; (async () => {
                 try {

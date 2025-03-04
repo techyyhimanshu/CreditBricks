@@ -181,7 +181,6 @@ export default function Complaints() {
     }
   }
   const handleSubmit = async (values: any) => {
-    console.log(values)
     const formattedData = {
       propertyIdentifier: values.property.value,
       categoryId: values.complaintCategory.value,
@@ -215,7 +214,6 @@ export default function Complaints() {
       if (response.status === 200) {
         setComplaintData(response.data.data);
       }
-      console.log(updatedFilters); // Debugging filter values
     } catch (error) {
       const errorMessage = handleApiError(error);
       showToast("error", errorMessage);
@@ -562,7 +560,6 @@ export default function Complaints() {
                         <td><span onClick={() => {
                           setComplaintToView(item);
                           viewDemoShow("complaintview")
-                          console.log(complaintToView)
                         }} className='text-info cursor'>{item.id}</span></td>
                         <td>{item.property?.propertyName}</td>
                         <td>{item.category.name}</td>

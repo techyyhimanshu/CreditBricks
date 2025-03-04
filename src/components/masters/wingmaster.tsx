@@ -137,7 +137,6 @@ export default function WingMaster() {
                 value: item.towerIdentifier,
                 label: item.towerName,
             }));
-            console.log(formattedData)
             setTowerOptions(formattedData);
         } catch (error) {
             const errorMessage = handleApiError(error)
@@ -168,7 +167,6 @@ export default function WingMaster() {
     };
 
     const openEditModal = async (wing: any) => {
-        console.log(wing)
         await fetchSocietiesForDropDown()
         setIsEditing(true);
         setCurrentWing(wing);
@@ -176,7 +174,6 @@ export default function WingMaster() {
     };
 
     const handleSubmit = (values: any) => {
-        console.log(values)
         const data = {
             wingName: values.wingName,
             towerIdentifier: values.tower?.value,
@@ -237,7 +234,6 @@ export default function WingMaster() {
 
     }
     const handleDelete = (data: any) => {
-        console.log(data)
             ; (async () => {
                 try {
                     const response = await deleteWingApi(data.wingIdentifier)

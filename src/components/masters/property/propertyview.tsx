@@ -8,7 +8,6 @@ export default function PropertyView() {
   if (!propertyData) {
     return <p>No property data available.</p>;
   }
-  console.log(propertyData)
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">

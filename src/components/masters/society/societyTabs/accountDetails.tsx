@@ -132,7 +132,6 @@ function AccountDetails() {
             return bank;
         });
 
-        console.log(data);
     };
 
 
