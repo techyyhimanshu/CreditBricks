@@ -44,8 +44,16 @@ export default function AddPropertyMaster() {
     flatRegistrationNumber: '',
     dateOfAgreement: "",
     dateOfRegistration: "",
-    memberName: null,
-    memberIdentifier: null,
+    firstOwnerIdentifier: null,
+    firstOwnerName: null,
+    coOwnerName: null,
+    coOwnerIdentifier: null,
+    thirdOwnerIdentifier: null,
+    thirdOwnerName: null,
+    fourthOwnerIdentifier: null,
+    fourthOwnerName: null,
+    fifthOwnerName: null,
+    fifthOwnerIdentifier: null,
     tenantName: null,
     tenantIdentifier: null,
     rentAgreementStartDate: "",
@@ -212,7 +220,13 @@ export default function AddPropertyMaster() {
       flatRegistrationNumber: values.flatRegistrationNumber,
       dateOfAgreement: values.dateOfAgreement,
       dateOfRegistration: values.dateOfRegistration,
-      memberIdentifier: values.member.value,
+
+      firstOwnerIdentifier: values.firstOwner.value,
+      coOwnerIdentifier: values.coOwner.value,
+      thirdOwnerIdentifier: values.thirdOwner.value,
+      fourthOwnerIdentifier: values.fourthOwner.value,
+      fifthOwnerIdentifier: values.fifthOwner.value,
+
       tenantIdentifier: values.tenant.value,
       rentAgreementStartDate: values.rentAgreementStartDate,
       rentAgreementEndDate: values.rentAgreementEndDate,
@@ -228,19 +242,30 @@ export default function AddPropertyMaster() {
       monthlyPaidArrears: values.monthlyPaidArrears,
       monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto
     }
-
     const response = await addPropertyApi(formattedData)
     if (response.status === 201 || response.status === 200) {
       showToast("success", "Property added successfully")
     }
   }
   const handleMemberChange = async (identifier: string) => {
-    setCo_OwnerOptions((prevData) => {
-      const updatedData = prevData.filter((member: any) => member.value !== identifier);
-      return updatedData;
-    });
+
+    const updatedData = memberOptions.filter((member: any) => member.value !== identifier);
+    setCo_OwnerOptions(updatedData);
+
+  };
+  const handleCoOwnerChange = async (identifier: string) => {
+    const updatedData = co_OwnerOptions.filter((coOwner: any) => coOwner.value !== identifier);
+    setThirdOwnerOptions(updatedData);
+  };
+  const handleThirdOwnerChange = async (identifier: string) => {
+    const updatedData = thirdOwnerOptions.filter((thirdOwner: any) => thirdOwner.value !== identifier);
+    setFourthOwnerOptions(updatedData);
   };
 
+  const handleFourthOwnerChange = async (identifier: string) => {
+    const updatedData = fourthOwnerOptions.filter((fourthOwner: any) => fourthOwner.value !== identifier);
+    setFifthOwnerOptions(updatedData);
+  };
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -275,7 +300,15 @@ export default function AddPropertyMaster() {
 
           dateOfRegistration: currentProperty?.dateOfRegistration,
 
-          member: { value: currentProperty?.memberIdentifier, label: currentProperty?.memberName },
+          firstOwner: { value: currentProperty?.firstOwnerIdentifier, label: currentProperty?.firstOwnerName },
+
+          coOwner: { value: currentProperty?.coOwnerIdentifier, label: currentProperty?.coOwnerName },
+
+          thirdOwner: { value: currentProperty?.thirdOwnerIdentifier, label: currentProperty?.thirdOwnerName },
+
+          fourthOwner: { value: currentProperty?.fourthOwnerIdentifier, label: currentProperty?.fourthOwnerName },
+
+          fifthOwner: { value: currentProperty?.fifthOwnerIdentifier, label: currentProperty?.fifthOwnerName },
 
           tenant: { value: currentProperty?.tenantIdentifier, label: currentProperty?.tenantName },
 
@@ -500,11 +533,12 @@ export default function AddPropertyMaster() {
 
 
 
-                             <Col xl={4}>
-                        <Form.Group className="form-group pt-1">
-                      <Link to={`${import.meta.env.BASE_URL}tenant/addtenant`} className='btn mt-4 btn-default'>Add Tenant</Link>
-                        </Form.Group>
-                      </Col>
+                            <Col xl={4}>
+                              <Form.Group className="form-group pt-1">
+                                {/* <Button disabled={true} className='btn mt-4 btn-default'>Add Tenant</Button> */}
+                                <Link style={{ display: "grid" }} to={`${import.meta.env.BASE_URL}tenant/addtenant`} className='btn mt-4 btn-default'>Add Tenant</Link>
+                              </Form.Group>
+                            </Col>
 
                           </Row>
 
@@ -528,9 +562,9 @@ export default function AddPropertyMaster() {
                                 <Form.Label>Member</Form.Label>
                                 <Select
                                   options={memberOptions}
-                                  name="member"
+                                  name="firstOwner"
                                   onChange={(selected) => {
-                                    setFieldValue("member", selected)
+                                    setFieldValue("firstOwner", selected)
                                     handleMemberChange(selected.value)
                                   }
                                   }
@@ -546,8 +580,11 @@ export default function AddPropertyMaster() {
                                 <Form.Label>Co Owner </Form.Label>
                                 <Select
                                   options={co_OwnerOptions}
-                                  name="member"
-                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  name="coOwner"
+                                  onChange={(selected) => {
+                                    setFieldValue("coOwner", selected)
+                                    handleCoOwnerChange(selected.value)
+                                  }}
                                   placeholder="Select Co Owner"
                                   classNamePrefix="Select2"
                                 />
@@ -560,9 +597,13 @@ export default function AddPropertyMaster() {
                               <Form.Group className="form-group">
                                 <Form.Label>Third Owner</Form.Label>
                                 <Select
-                                  options={memberOptions}
-                                  name="member"
-                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  options={thirdOwnerOptions}
+                                  name="thirdOwner"
+                                  onChange={(selected) => {
+                                    handleThirdOwnerChange(selected.value)
+                                    setFieldValue("thirdOwner", selected)
+                                  }
+                                  }
                                   placeholder="Select Third Owner"
                                   classNamePrefix="Select2"
                                 />
@@ -575,9 +616,12 @@ export default function AddPropertyMaster() {
                               <Form.Group className="form-group">
                                 <Form.Label>Fourth Owner</Form.Label>
                                 <Select
-                                  options={memberOptions}
-                                  name="member"
-                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  options={fourthOwnerOptions}
+                                  name="fourthOwner"
+                                  onChange={(selected) => {
+                                    handleFourthOwnerChange(selected.value)
+                                    setFieldValue("fourthOwner", selected)
+                                  }}
                                   placeholder="Select Fourth Owner"
                                   classNamePrefix="Select2"
                                 />
@@ -591,9 +635,9 @@ export default function AddPropertyMaster() {
                               <Form.Group className="form-group">
                                 <Form.Label>Fifth Owner</Form.Label>
                                 <Select
-                                  options={memberOptions}
-                                  name="member"
-                                  onChange={(selected) => setFieldValue("member", selected)}
+                                  options={fifthOwnerOptions}
+                                  name="fifthOwner"
+                                  onChange={(selected) => setFieldValue("fifthOwner", selected)}
                                   placeholder="Select Fifth Owner"
                                   classNamePrefix="Select2"
                                 />

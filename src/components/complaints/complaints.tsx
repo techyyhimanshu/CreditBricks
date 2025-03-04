@@ -42,6 +42,14 @@ export default function Complaints() {
     property: {
       propertyName: ""
     },
+    complaintAllocation: {
+      staff: {
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        mobileNumber: ""
+      }
+    }
   });
   const [complaintCategoriesData, setComplaintCategoriesData] = useState([]);
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
@@ -389,10 +397,17 @@ export default function Complaints() {
               <hr />
               <Row>
                 <Col xl={6}>
-                  <p className='mb-0 text-muted'>Assign To</p>
-                  <p className='tx-15 mb-1 tx-semibold'>Neeraj Singh</p>
-                  <p>+91 9876543212</p>
+                  <p className="mb-0 text-muted">Assign To</p>
+                  <p className="tx-15 mb-1 tx-semibold">
+                    {[
+                      complaintToView.complaintAllocation?.staff?.firstName,
+                      complaintToView.complaintAllocation?.staff?.middleName,
+                      complaintToView.complaintAllocation?.staff?.lastName
+                    ].filter(Boolean).join(" ")}
+                  </p>
+                  <p>{complaintToView.complaintAllocation?.staff?.mobileNumber}</p>
                 </Col>
+
                 <Col xl={6} className='text-end'>
                   <p className='mb-0 text-muted'>Status</p>
                   <p className='tx-15 tx-semibold'><i className='bi bi-check-circle text-success tx-18'></i>&nbsp; {complaintToView.status}</p>
@@ -484,7 +499,7 @@ export default function Complaints() {
                   </Form.Group>
                 </Col>
 
-                <Col xl={2}>
+                <Col xl={3}>
                   <Form.Group className="form-group">
                     <Form.Label>Priority </Form.Label>
                     <Select
@@ -497,7 +512,7 @@ export default function Complaints() {
                   </Form.Group>
                 </Col>
 
-                <Col xl={2}>
+                <Col xl={3}>
                   <Form.Group className="form-group">
                     <Form.Label>Status </Form.Label>
                     <Select
