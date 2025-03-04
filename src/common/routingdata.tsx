@@ -23,6 +23,9 @@ const UserProfile = lazy(() => import('../components/userprofile/userprofile'));
 const MembersMaster = lazy(() => import('../components/masters/members/membersmaster'));
 const AddMembersMaster = lazy(() => import('../components/masters/members/addmembers'));
 const MembersProfile = lazy(() => import('../components/masters/members/membersProfile'));
+const VendorMaster = lazy(() => import('../components/masters/vendor/vendormaster'));
+const AddVendorMaster = lazy(() => import('../components/masters/vendor/addvendormaster'));
+const VendorView = lazy(() => import('../components/masters/vendor/vendorview'));
 const ParentEntity = lazy(() => import('../components/parententity/parententity'));
 const Loans = lazy(() => import('../components/loans/loans'));
 const Tenant = lazy(() => import('../components/tenant/tenant'));
@@ -56,6 +59,9 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}members/membersmaster`, element: <MembersMaster /> },
   { path: `${import.meta.env.BASE_URL}members/addmembers`, element: <AddMembersMaster /> },
   { path: `${import.meta.env.BASE_URL}members/membersProfile`, element: <MembersProfile /> },
+  { path: `${import.meta.env.BASE_URL}vendor/vendormaster`, element: <VendorMaster /> },
+  { path: `${import.meta.env.BASE_URL}vendor/addvendormaster`, element: <AddVendorMaster /> },
+  { path: `${import.meta.env.BASE_URL}vendor/vendorview`, element: <VendorView /> },
   { path: `${import.meta.env.BASE_URL}loans/loans`, element: <Loans /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenant`, element: <Tenant /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenantview/:identifier`, element: <TenantView /> },
