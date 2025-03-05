@@ -1,27 +1,37 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, CardBody } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-import { Link } from "react-router-dom";
-import { addNewComplaintApi, assignComplaintToStaffApi, getAllComplainCategoriesApi, getAllComplaintsApi, getAllPropertiesForDropdownApi } from '../../api/complaint-api';
-import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
+import { addNewComplaintApi, assignComplaintToVendorApi, getAllComplainCategoriesApi, getAllComplaintsApi, getAllPropertiesForDropdownApi } from '../../api/complaint-api';
+import { Formik, Form as FormikForm, Field } from 'formik';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getStaffForDropDownApi } from '../../api/staff-api';
+import { getVendorForDropDownApi } from '../../api/vendor-api';
 
 export default function Complaints() {
 
   const [addcomplaint, setcomplaints] = useState(false);
   const [complaintview, setcomplaintview] = useState(false);
   const [assign, setassign] = useState(false);
-  const [complaintData, setComplaintData] = useState([]);
-  const [selectedStaff, setSelectedStaff] = useState({
+  const [complaintData, setComplaintData] = useState([
+    {
+      id: "",
+      complaintId: "",
+      categoryName: "",
+      propertyName: "",
+      contactPersonName: "",
+      createdAt: "",
+      status: "",
+      priority: ""
+    }
+  ]);
+  const [selectedVendor, setSelectedVendor] = useState({
     value: '',
     label: ''
   });
-  const [staffData, setStaffData] = useState([]);
+  const [vendorData, setVendorData] = useState([]);
   const [filtersss, setFilters] = useState({
     propertyIdentifier: "",
     categoryId: null,
@@ -43,17 +53,18 @@ export default function Complaints() {
       propertyName: ""
     },
     complaintAllocation: {
-      staff: {
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        mobileNumber: ""
+      vendor: {
+        contactPersonName: "",
+        contactPersonNumber: ""
       }
     }
   });
   const [complaintCategoriesData, setComplaintCategoriesData] = useState([]);
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
-  const [complaintIdToAssign, setComplaintIdToAssign] = useState("");
+  const [complaintIdToAssign, setComplaintIdToAssign] = useState({
+    id: "",
+    contactPersonName: ""
+  });
 
 
   const viewDemoShow = (modal: any) => {
@@ -124,10 +135,10 @@ export default function Complaints() {
     { value: "low", label: "Low" }
   ]
 
-  const assigntoname = staffData.map((staff: any) => {
+  const assigntoname = vendorData.map((vendor: any) => {
     return {
-      value: staff.staffIdentifier,
-      label: `${staff.firstName} ${staff.middleName ? staff.middleName : ""} ${staff.lastName}`
+      value: vendor.vendorIdentifier,
+      label: vendor.contactPersonName
     }
   })
   useEffect(() => {
@@ -140,7 +151,18 @@ export default function Complaints() {
     try {
       const response = await getAllComplaintsApi()
       if (response.status === 200) {
-        setComplaintData(response.data.data);
+        const formattedData = response.data.data.map((complaint: any) => {
+          return {
+            id: complaint.id,
+            categoryName: complaint.category.name,
+            propertyName: complaint.property.propertyName,
+            contactPersonName: complaint.complaintAllocation?.vendor.contactPersonName,
+            createdAt: complaint.createdAt,
+            status: complaint.status,
+            priority: complaint.priority,
+          }
+        })
+        setComplaintData(formattedData);
       }
     } catch (error) {
       const errorMessage = handleApiError(error);
@@ -169,11 +191,11 @@ export default function Complaints() {
       console.error("Error fetching properties:", error);
     }
   }
-  const fetchAllStaffForDropDown = async () => {
+  const fetchAllVendorForDropDown = async () => {
     try {
-      const response = await getStaffForDropDownApi()
+      const response = await getVendorForDropDownApi()
       if (response.status === 200) {
-        setStaffData(response.data.data);
+        setVendorData(response.data.data);
       }
     } catch (error: any) {
       const errorMessage = handleApiError(error)
@@ -219,21 +241,32 @@ export default function Complaints() {
       showToast("error", errorMessage);
     }
   };
-  const handleStaffAssignment = async () => {
+  const handleVendorAssignment = async () => {
     const formattedData = {
-      complaintId: complaintIdToAssign,
-      staffIdentifier: selectedStaff.value
-    }
+      complaintId: complaintIdToAssign.id,
+      vendorIdentifier: selectedVendor.value
+    };
     try {
-      const response = await assignComplaintToStaffApi(formattedData)
+      const response = await assignComplaintToVendorApi(formattedData);
       if (response.status === 200) {
-        showToast("success", response.data.message)
+        showToast("success", response.data.message);
       }
+
+      setComplaintData(prevData =>
+        prevData.map(complaint =>
+          complaint.id === complaintIdToAssign.id
+            ? { ...complaint, contactPersonName: selectedVendor.label }
+            : complaint
+        )
+      );
+
+      viewDemoClose("assigncomplaint");
     } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
     }
-  }
+  };
+
 
   return (
     <Fragment>
@@ -397,13 +430,9 @@ export default function Complaints() {
                 <Col xl={6}>
                   <p className="mb-0 text-muted">Assign To</p>
                   <p className="tx-15 mb-1 tx-semibold">
-                    {[
-                      complaintToView.complaintAllocation?.staff?.firstName,
-                      complaintToView.complaintAllocation?.staff?.middleName,
-                      complaintToView.complaintAllocation?.staff?.lastName
-                    ].filter(Boolean).join(" ")}
+                    {complaintToView.complaintAllocation?.vendor.contactPersonName}
                   </p>
-                  <p>{complaintToView.complaintAllocation?.staff?.mobileNumber}</p>
+                  <p>{complaintToView.complaintAllocation?.vendor?.contactPersonNumber}</p>
                 </Col>
 
                 <Col xl={6} className='text-end'>
@@ -435,8 +464,8 @@ export default function Complaints() {
                     <Select
                       options={assigntoname}
                       // isSearchable={true}
-                      value={selectedStaff}
-                      onChange={(selected: any) => setSelectedStaff(selected)}
+                      value={selectedVendor}
+                      onChange={(selected: any) => setSelectedVendor(selected)}
                       placeholder="Select name"
                       classNamePrefix="Select2"
                     />
@@ -450,7 +479,7 @@ export default function Complaints() {
                 Close
               </Button>
               <Button variant="primary" onClick={() => {
-                handleStaffAssignment();
+                handleVendorAssignment();
                 viewDemoClose("assign");
               }}>
                 Save
@@ -561,12 +590,10 @@ export default function Complaints() {
                           setComplaintToView(item);
                           viewDemoShow("complaintview")
                         }} className='text-info cursor'>{item.id}</span></td>
-                        <td>{item.property?.propertyName}</td>
-                        <td>{item.category.name}</td>
+                        <td>{item.propertyName}</td>
+                        <td>{item.categoryName}</td>
                         <td>
-                          {`${item.complaintAllocation?.staff?.firstName || ""} 
-     ${item.complaintAllocation?.staff?.middleName || ""} 
-     ${item.complaintAllocation?.staff?.lastName || ""}`.trim()}
+                          {item.contactPersonName || "-"}
                         </td>
 
                         <td>{item.createdAt}</td>
@@ -595,9 +622,9 @@ export default function Complaints() {
                           <Dropdown.Menu>
                             <Dropdown.Item onClick={() => viewDemoShow("addcomplaint")}>Edit</Dropdown.Item>
                             <Dropdown.Item onClick={() => {
-                              setComplaintIdToAssign(item.id)
+                              setComplaintIdToAssign(item)
                               viewDemoShow("assign")
-                              fetchAllStaffForDropDown()
+                              fetchAllVendorForDropDown()
                             }
                             }>Assign To</Dropdown.Item>
                             <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>

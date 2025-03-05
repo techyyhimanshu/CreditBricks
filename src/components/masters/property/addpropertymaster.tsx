@@ -79,6 +79,10 @@ export default function AddPropertyMaster() {
   const [thirdOwnerOptions, setThirdOwnerOptions] = useState<any[]>([]);
   const [fourthOwnerOptions, setFourthOwnerOptions] = useState<any[]>([]);
   const [fifthOwnerOptions, setFifthOwnerOptions] = useState<any[]>([]);
+  const [coOwnerDisabled, setCoOwnerDisabled] = useState(true);
+  const [thirdOwnerDisabled, setThirdOwnerDisabled] = useState(true);
+  const [fourthOwnerDisabled, setFourthOwnerDisabled] = useState(true);
+  const [fifthOwnerDisabled, setFifthOwnerDisabled] = useState(true);
 
 
   const propertystatus = [
@@ -566,6 +570,7 @@ export default function AddPropertyMaster() {
                                   onChange={(selected) => {
                                     setFieldValue("firstOwner", selected)
                                     handleMemberChange(selected.value)
+                                    setCoOwnerDisabled(false)
                                   }
                                   }
                                   placeholder="Select Member"
@@ -581,9 +586,11 @@ export default function AddPropertyMaster() {
                                 <Select
                                   options={co_OwnerOptions}
                                   name="coOwner"
+                                  isDisabled={coOwnerDisabled}
                                   onChange={(selected) => {
                                     setFieldValue("coOwner", selected)
                                     handleCoOwnerChange(selected.value)
+                                    setThirdOwnerDisabled(false)
                                   }}
                                   placeholder="Select Co Owner"
                                   classNamePrefix="Select2"
@@ -599,9 +606,11 @@ export default function AddPropertyMaster() {
                                 <Select
                                   options={thirdOwnerOptions}
                                   name="thirdOwner"
+                                  isDisabled={thirdOwnerDisabled}
                                   onChange={(selected) => {
                                     handleThirdOwnerChange(selected.value)
                                     setFieldValue("thirdOwner", selected)
+                                    setFourthOwnerDisabled(false)
                                   }
                                   }
                                   placeholder="Select Third Owner"
@@ -618,9 +627,11 @@ export default function AddPropertyMaster() {
                                 <Select
                                   options={fourthOwnerOptions}
                                   name="fourthOwner"
+                                  isDisabled={fourthOwnerDisabled}
                                   onChange={(selected) => {
                                     handleFourthOwnerChange(selected.value)
                                     setFieldValue("fourthOwner", selected)
+                                    setFifthOwnerDisabled(false)
                                   }}
                                   placeholder="Select Fourth Owner"
                                   classNamePrefix="Select2"
@@ -637,6 +648,7 @@ export default function AddPropertyMaster() {
                                 <Select
                                   options={fifthOwnerOptions}
                                   name="fifthOwner"
+                                  isDisabled={fifthOwnerDisabled}
                                   onChange={(selected) => setFieldValue("fifthOwner", selected)}
                                   placeholder="Select Fifth Owner"
                                   classNamePrefix="Select2"
