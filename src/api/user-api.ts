@@ -66,13 +66,11 @@ export const getAllUserPropertyApi = async (): Promise<any> => {
 export const addUserLoanApi = async (data: any): Promise<any> => {
     try {
         const formData = new FormData();
-        console.log("data", data);
 
         // If data is an array, loop through each item
         if (Array.isArray(data)) {
             // Loop through each loan in the array
             for (const loan of data) {
-                console.log("Processing loan:", loan);
                 for (const key in loan) {
 
                     if (key === 'loanFile' && loan[key]) {
@@ -100,7 +98,6 @@ export const addUserLoanApi = async (data: any): Promise<any> => {
             }
         }
 
-        console.log("formData:", formData);
 
         // Send form data to the API
         const response = await axios.post(`${baseUrl}/admin/user/loan/new`, formData, {

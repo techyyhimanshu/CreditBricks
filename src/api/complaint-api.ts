@@ -43,7 +43,7 @@ export const addNewComplaintApi = async (data: any): Promise<any> => {
     }
 }
 
-export const assignComplaintToStaffApi = async (data: any): Promise<any> => {
+export const assignComplaintToVendorApi = async (data: any): Promise<any> => {
     try {
         const response = await axiosInstance.post(`/complaint/assign`, data)
         return response

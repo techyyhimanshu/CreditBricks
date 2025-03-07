@@ -1,9 +1,9 @@
 import axiosInstance from "./axiosInstance"
 
 
-export const getStaffForDropDownApi = async () => {
+export const getVendorForDropDownApi = async () => {
     try {
-        const response = await axiosInstance.get(`/staff/ddl`)
+        const response = await axiosInstance.get(`/vendor/ddl`)
         return response
     } catch (error) {
         throw error

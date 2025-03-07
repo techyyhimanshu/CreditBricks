@@ -74,7 +74,6 @@ export default function MembersMaster() {
       try {
         const memberResponse = await getAllMemberOrTenantsApi()
         const memberData = memberResponse.data.data
-        console.log(memberData)
         const formattedData = memberData.map((member: any, index: number) => (
           {
             sno: index + 1,
