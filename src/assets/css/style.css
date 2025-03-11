@@ -21694,7 +21694,7 @@ table.dataTable.dtr-inline.collapsed>tbody>tr>th.dtr-control:before {
 }
 
 .fade.modal.show {
-    z-index: 100001;
+    z-index: 10000;
 }
 
 .simple-navigation .nav-tabs .nav-item a:hover {
@@ -85528,7 +85528,7 @@ video.bg-video {
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
-    border: 1px solid #8f1480;
+    border: 1px solid #666;
     -webkit-print-color-adjust: exact;
     color-adjust: exact;
     print-color-adjust: exact;
