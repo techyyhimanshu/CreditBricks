@@ -85913,3 +85913,7 @@ width: 100%;
 .society_select{max-width: 360px;
     width: 360px;
     margin-inline-start: -280px;}
+    .applicationbox{border:1px solid #ccc; padding:10px; text-align:center; color:#000; font-size:14px; border-radius:8px; margin-bottom: 20px;}
+    .applicationbox img{width:50px}
+    .applicationbox p{margin-top:10px; width:100%; display:block}
+    .applicationbox:hover, .applicationbox.selected{background:#f3f3f3; cursor: pointer;}
