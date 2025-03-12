@@ -9,3 +9,11 @@ export const getVendorForDropDownApi = async () => {
         throw error
     }
 }
+export const addNewVendorApi = async (data: any) => {
+    try {
+        const response = await axiosInstance.post(`/vendor/new`, data)
+        return response
+    } catch (error) {
+        throw error
+    }
+}

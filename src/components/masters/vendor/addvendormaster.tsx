@@ -1,42 +1,73 @@
 
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment } from 'react';
 // import { Link } from "react-router-dom";
 import { Col, Card, Row, Accordion, Button, Form } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-import { Formik, Field, Form as FormikForm, ErrorMessage, FastField } from 'formik';
+import { Formik, Field, Form as FormikForm } from 'formik';
 import { Link } from "react-router-dom";
-import { validateHeaderValue } from 'http';
+import { addNewVendorApi } from '../../../api/vendor-api';
+import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
+import { handleApiError } from '../../../helpers/handle-api-error';
 
 const product = [
-  { value: "1", label: "Lift" },
-  { value: "2", label: "Pest Control" },
-  { value: "3", label: "Electrician" },
-  { value: "4", label: "Waterman" },
-  { value: "5", label: "Security" },
-  { value: "6", label: "Housekeeping " },
+  { value: "Lift", label: "Lift" },
+  { value: "Pest Control", label: "Pest Control" },
+  { value: "Electrician", label: "Electrician" },
+  { value: "Waterman", label: "Waterman" },
+  { value: "Security", label: "Security" },
+  { value: "Housekeeping", label: "Housekeeping " },
 ]
 
 const servicetype = [
-  { value: "1", label: "AMC" },
-  { value: "2", label: "On Request" },
+  { value: "AMC", label: "AMC" },
+  { value: "On Request", label: "On Request" },
 ]
 
 const frequency = [
-  { value: "1", label: "Monthly" },
-  { value: "2", label: "Quarterly" },
-  { value: "1", label: "Half Yearly" },
-  { value: "2", label: "Yearly " },
+  { value: "Monthy", label: "Monthly" },
+  { value: "Quarterly", label: "Quarterly" },
+  { value: "Half Yearly", label: "Half Yearly" },
+  { value: "Yearly", label: "Yearly " },
 ]
 
 const contactvalue = [
-  { value: "1", label: "Basic" },
-  { value: "2", label: "GST" },
+  { value: "Basic", label: "Basic" },
+  { value: "GST", label: "GST" },
 ]
 
 export default function AddVendorMaster() {
 
-
+  const handleSubmit = async (values: any) => {
+    try {
+      const formattedData = {
+        vendorName: values.vendorName,
+        vendorAddress: values.vendorAddress,
+        gstin: values.gstin,
+        pan: values.pan,
+        product: values.product.value,
+        serviceType: values.serviceType.value,
+        frequency: values.frequency.value,
+        contactPersonNumber: values.contactPersonNumber,
+        contactPersonName: values.contactPersonName,
+        contactValue: values.contactValue.value,
+        contractStartDate: values.contractStartDate,
+        contractEndDate: values.contractEndDate,
+        totalPeriodCalculation: values.totalPeriodCalculation,
+        bankName: values.bankName,
+        accountNumber: values.accountNumber,
+        ifsc: values.ifsc,
+        branchName: values.branchName
+      }
+      const response = await addNewVendorApi(formattedData)
+      if (response.status === 200) {
+        showToast("success", "Vendor created successfully")
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
 
   return (
     <Fragment>
@@ -66,7 +97,9 @@ export default function AddVendorMaster() {
           accountNumber: "",
           branchName: "",
           ifsc: "",
-        }}>
+        }}
+        onSubmit={handleSubmit}
+      >
         {({ setFieldValue, values }) => (
           <FormikForm>
             <Row>
@@ -364,7 +397,7 @@ export default function AddVendorMaster() {
           </FormikForm>
         )}
       </Formik>
-
+      <CustomToastContainer />
     </Fragment >
   );
 }
