@@ -239,10 +239,10 @@ export default function AddPropertyMaster() {
       rentAgreementFile: values.rentAgreementFile,
       policeVerificationDocFile: values.policeVerificationDocFile,
       intercomNumber: values.intercomNumber,
-      consumerElectricityNumber: values.consumerElectricityNumber,
+      electricityNumber: values.consumerElectricityNumber,
       gasConnectionNumber: values.gasConnectionNumber,
-      monthlyPaidMaintenance: values.monthlyPaidMaintenance,
-      monthlyPaidMaintenanceUpto: values.monthlyPaidMaintenanceUpto,
+      monthlyMaintenance: values.monthlyPaidMaintenance,
+      monthlyMaintenanceUpto: values.monthlyPaidMaintenanceUpto,
       monthlyPaidArrears: values.monthlyPaidArrears,
       monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto
     }
