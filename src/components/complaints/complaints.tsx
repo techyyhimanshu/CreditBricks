@@ -234,7 +234,18 @@ export default function Complaints() {
     try {
       const response = await getAllComplaintsApi(updatedFilters); // Pass filters correctly
       if (response.status === 200) {
-        setComplaintData(response.data.data);
+        const formattedData = response.data.data.map((complaint: any) => {
+          return {
+            id: complaint.id,
+            categoryName: complaint.category.name,
+            propertyName: complaint.property.propertyName,
+            contactPersonName: complaint.complaintAllocation?.vendor.contactPersonName,
+            createdAt: complaint.createdAt,
+            status: complaint.status,
+            priority: complaint.priority,
+          }
+        })
+        setComplaintData(formattedData);
       }
     } catch (error) {
       const errorMessage = handleApiError(error);
