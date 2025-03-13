@@ -28,6 +28,9 @@ export default function Applications() {
   const [addswimmingpool, setaddswimmingpool] = useState(false);
   const [addclubhouse, setaddclubhouse] = useState(false);
   const [addplayarea, setaddplayarea] = useState(false);
+  const [addturfarea, setaddturfarea] = useState(false);
+  const [addrentagreement, setaddrentagreement] = useState(false);
+  const [addsharecerificate, setaddsharecerificate] = useState(false);
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -106,6 +109,20 @@ export default function Applications() {
           setapplication(false);
            break;
 
+           case "addturfarea":
+          setaddturfarea(true);
+          setapplication(false);
+           break;
+
+           case "addrentagreement":
+            setaddrentagreement(true);
+          setapplication(false);
+           break;
+
+           case "addsharecerificate":
+            setaddsharecerificate(true);
+          setapplication(false);
+           break;
     }
   };
 
@@ -170,6 +187,18 @@ export default function Applications() {
 
              case "addplayarea":
             setaddplayarea(false);
+             break;
+
+             case "addturfarea":
+            setaddturfarea(false);
+             break;
+
+             case "addrentagreement":
+              setaddrentagreement(false);
+             break;
+
+             case "addsharecerificate":
+              setaddsharecerificate(false);
              break;
 
     }
@@ -299,6 +328,21 @@ export default function Applications() {
     { value: "3", label: "Parking Area" },
   ]
 
+  const sportactivity = [
+    { value: "1", label: "Football" },
+    { value: "2", label: "Cricket" },
+    { value: "3", label: "Hockey" },
+    { value: "2", label: "Badminton" },
+    { value: "3", label: "Volley Ball" },
+    { value: "2", label: "Basketball" },
+    { value: "3", label: "Other" },
+  ]
+
+  const flattype = [
+    { value: "1", label: "1BHK" },
+    { value: "2", label: "2BHK" },
+
+  ];
 
   return (
     <Fragment>
@@ -403,21 +447,21 @@ export default function Applications() {
                 </Col>
 
                 <Col xl={3}>
-                  <div className='applicationbox'>
+                  <div className='applicationbox' onClick={() => { viewDemoShow("addturfarea"); }}>
                     <img alt="" src={imagesData('turfarea')} />
                     <p>Turf Area</p>
                   </div>
                 </Col>
 
                 <Col xl={3}>
-                  <div className='applicationbox'>
+                  <div className='applicationbox' onClick={() => { viewDemoShow("addrentagreement"); }}>
                     <img alt="" src={imagesData('rentagreement')} />
                     <p>Rent Agreement</p>
                   </div>
                 </Col>
 
                 <Col xl={3}>
-                  <div className='applicationbox'>
+                  <div className='applicationbox' onClick={() => { viewDemoShow("addsharecerificate"); }}>
                     <img alt="" src={imagesData('sharecertificate')} />
                     <p> Share Certificate</p>
                   </div>
@@ -2421,7 +2465,7 @@ export default function Applications() {
             </Modal.Footer>
           </Modal>
 
-    {/* Add Banquet Hall */}
+    {/* Add Play Area */}
     <Modal show={addplayarea} size='lg' centered>
             <Modal.Header>
               <Modal.Title>Play Area</Modal.Title>
@@ -2623,6 +2667,540 @@ export default function Applications() {
                 Close
               </Button>
               <Button variant="primary" onClick={() => { viewDemoClose("addplayarea"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
+
+
+ {/* Add Turf Area */}
+ <Modal show={addturfarea} centered>
+            <Modal.Header>
+              <Modal.Title>Turf Area</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addturfarea"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body>
+              <Row>
+
+
+                <Col xl="12">
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>No of Participants</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Number"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Sport Activity</Form.Label>
+                    <Select
+                      options={sportactivity}
+                      placeholder="Select activity"
+                      classNamePrefix="Select2"
+                    />
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+
+
+
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label clas>Do you have passes for all the participants?</Form.Label>
+                   <Row>
+
+                      <Col lg={2} className='mt-2'>
+
+                        <Form.Check type="radio" label="Yes" name="participants" />
+                      </Col>
+                      <Col lg={2} className='mt-2'>
+
+                        <Form.Check type="radio" label="No" name="participants" />
+                      </Col>
+
+     </Row>
+
+                  </Form.Group>
+                </Col>
+
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label clas>Do you have game resources for all the participants?</Form.Label>
+                   <Row>
+
+                      <Col lg={2} className='mt-2'>
+
+                        <Form.Check type="radio" label="Yes" name="participants" />
+                      </Col>
+                      <Col lg={2} className='mt-2'>
+
+                        <Form.Check type="radio" label="No" name="participants" />
+                      </Col>
+
+     </Row>
+
+                  </Form.Group>
+                </Col>
+
+                <Col xl={12}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Remarks
+                      <small className='text-muted float-end'>max 250 Character</small>
+                    </Form.Label>
+                    <textarea className="form-control" placeholder='Remarks' cols="60" rows="5"></textarea>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col lg={12} className='tx-bold'>
+
+                  <Form.Check type="checkbox" label="Terms and Conditions" />
+                </Col>
+              </Row>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("addturfarea"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("addturfarea"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
+
+           {/* Add Rent Agreement */}
+    <Modal show={addrentagreement} size='lg' centered>
+            <Modal.Header>
+              <Modal.Title>Rent Agreement</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addrentagreement"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body>
+              <Row>
+                <Col xl="6">
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label>Flat Type</Form.Label>
+                    <Select
+                      options={flattype}
+                      placeholder="Select type"
+                      classNamePrefix="Select2"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl="6">
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label>Property Description</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="2 BHK Apartment, Fully Furnished, etc."
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label>Monthly Rent</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter amount"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label>Deposit Amount</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter amount"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label>Mode of Payment</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="e.g., Bank Transfer, Cash, etc."
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={6}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Due Date of Rent Payment</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="e.g., 1st of every month"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label clas>Electricity</Form.Label>
+                    <Row>
+
+                      <Col lg={4} className='mt-2'>
+
+                        <Form.Check type="radio" label="Tenant" name="Electricity" />
+                      </Col>
+                      <Col lg={4} className='mt-2'>
+
+                        <Form.Check type="radio" label="Owner" name="Electricity" />
+                      </Col>
+
+                    </Row>
+
+
+                  </Form.Group>
+                </Col>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group">
+                    <Form.Label clas>Water Charges</Form.Label>
+                    <Row>
+
+                      <Col lg={4} className='mt-2'>
+
+                        <Form.Check type="radio" label="Tenant" name="WaterCharges" />
+                      </Col>
+                      <Col lg={4} className='mt-2'>
+
+                        <Form.Check type="radio" label="Owner" name="WaterCharges" />
+                      </Col>
+
+                    </Row>
+
+
+                  </Form.Group>
+                </Col>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label clas>Maintenance Charges</Form.Label>
+                    <Row>
+
+                      <Col lg={4} className='mt-2'>
+
+                        <Form.Check type="radio" label="Tenant" name="MaintenanceCharges" />
+                      </Col>
+                      <Col lg={4} className='mt-2'>
+
+                        <Form.Check type="radio" label="Owner" name="MaintenanceCharges" />
+                      </Col>
+
+                    </Row>
+
+
+                  </Form.Group>
+                </Col>
+                <Col xl={6}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Other Charges <small className='text-muted'>(Specify if Any)</small></Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Other charges"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+                <Col xl={12}>
+                <strong>If the renewal is for the same tenant</strong>
+                </Col>
+                <Col xl={4}>
+                  <Form.Group className="form-group mt-3">
+                    <Form.Label>Name of the Tenant</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Name"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group mt-3">
+                    <Form.Label>Tenant Contact Details</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="details"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={4}>
+                  <Form.Group className="form-group mt-3">
+                    <Form.Label>Parking Details</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="details"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+
+              </Row>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("addrentagreement"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("addrentagreement"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
+
+                 {/* Add Share Certificate */}
+    <Modal show={addsharecerificate} size='lg' centered>
+            <Modal.Header>
+              <Modal.Title>Share Certificate</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addsharecerificate"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body>
+              <Row>
+
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Have the following documents been submitted to
+                    the society office?</Form.Label>
+
+                    <Row>
+                    <Col lg={6}>
+                    <Form.Label className='text-muted'>Flat Agreement Copy</Form.Label>
+                    </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="Yes" name="FlatAgreementCopy" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="No" name="FlatAgreementCopy" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+<Form.Check type="radio" label="N/A" name="FlatAgreementCopy" />
+</Col>
+
+                    </Row>
+
+                    <Row>
+                    <Col lg={6}>
+                    <Form.Label className='text-muted'>Home Loan Sanction Letter</Form.Label>
+                    </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="Yes" name="homeloansanctionletter" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="No" name="homeloansanctionletter" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+<Form.Check type="radio" label="N/A" name="homeloansanctionletter" />
+</Col>
+
+                    </Row>
+
+
+                    <Row>
+                    <Col lg={6}>
+                    <Form.Label className='text-muted'>Flat Registration Details </Form.Label>
+                    </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="Yes" name="flatregistrationdetails" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="No" name="flatregistrationdetails" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+<Form.Check type="radio" label="N/A" name="flatregistrationdetails" />
+</Col>
+
+                    </Row>
+
+
+                  </Form.Group>
+                </Col>
+
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Applicable only to flat resale transactions</Form.Label>
+
+                    <Row>
+                    <Col lg={6}>
+                    <Form.Label className='text-muted'>Flat Agreement Copy</Form.Label>
+                    </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="Yes" name="FlatAgreementCopy1" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="No" name="FlatAgreementCopy1" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+<Form.Check type="radio" label="N/A" name="FlatAgreementCopy1" />
+</Col>
+
+                    </Row>
+
+                    <Row>
+                    <Col lg={6}>
+                    <Form.Label className='text-muted'>Home Loan Sanction Letter</Form.Label>
+                    </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="Yes" name="homeloansanctionletter1" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="No" name="homeloansanctionletter1" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+<Form.Check type="radio" label="N/A" name="homeloansanctionletter1" />
+</Col>
+
+                    </Row>
+
+
+                    <Row>
+                    <Col lg={6}>
+                    <Form.Label className='text-muted'>Flat Registration Details </Form.Label>
+                    </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="Yes" name="flatregistrationdetails1" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="No" name="flatregistrationdetails1" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+<Form.Check type="radio" label="N/A" name="flatregistrationdetails1" />
+</Col>
+
+                    </Row>
+
+
+                  </Form.Group>
+                </Col>
+
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label>Applicable only to rented flats</Form.Label>
+
+                    <Row>
+                    <Col lg={6}>
+                    <Form.Label className='text-muted'>Rent Agreement Copy</Form.Label>
+                    </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="Yes" name="RentAgreementCopy" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="No" name="RentAgreementCopy" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+<Form.Check type="radio" label="N/A" name="RentAgreementCopy" />
+</Col>
+
+                    </Row>
+
+                    <Row>
+                    <Col lg={6}>
+                    <Form.Label className='text-muted'>Police Verification</Form.Label>
+                    </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="Yes" name="PoliceVerification" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+                        <Form.Check type="radio" label="No" name="PoliceVerification" />
+                      </Col>
+                      <Col lg={2} className='mt-3'>
+
+<Form.Check type="radio" label="N/A" name="PoliceVerification" />
+</Col>
+
+                    </Row>
+
+                  </Form.Group>
+                </Col>
+
+                <Col xl={6}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Maintenance Outstanding</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder=""
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+              </Row>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("addsharecerificate"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("addsharecerificate"); }}>
                 Save
               </Button>
 
