@@ -3306,6 +3306,50 @@ export default function Applications() {
                       </Dropdown.Menu>
                     </Dropdown></td>
                   </tr>
+                  <tr>
+                    <td>2</td>
+                    <td><span className='text-info cursor'>#565767</span></td>
+                    <td>A101</td>
+                    <td>Parking</td>
+                    <td>Rajesh </td>
+
+                    <td>02/3/2025</td>
+                    <td>Pending</td>
+
+                    <td><Dropdown >
+                      <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                        Action
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        <Dropdown.Item >Edit</Dropdown.Item>
+                        <Dropdown.Item>Assign To</Dropdown.Item>
+                        <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown></td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td><span className='text-info cursor'>#565767</span></td>
+                    <td>A101</td>
+                    <td>Celebration</td>
+                    <td>Rajesh </td>
+
+                    <td>02/3/2025</td>
+                    <td>Pending</td>+
+
+                    <td><Dropdown >
+                      <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                        Action
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        <Dropdown.Item >Edit</Dropdown.Item>
+                        <Dropdown.Item>Assign To</Dropdown.Item>
+                        <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown></td>
+                  </tr>
 
                 </tbody>
               </table>
