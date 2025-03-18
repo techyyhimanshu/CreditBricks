@@ -147,7 +147,7 @@ export const MENUITEMS = [
         icon: (
           <i className="side-menu__icon bi bi-window-sidebar"></i>
         ),
-        path: ``,
+        path: `${import.meta.env.BASE_URL}applications/applications`,
         type: "link",
         active: false,
         selected: false,
@@ -213,7 +213,7 @@ export const MENUITEMS = [
         title: "Notices",
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
-        path: ``,
+        path: `${import.meta.env.BASE_URL}notices/notices`,
         type: "link",
         selected: false,
         active: false,
@@ -223,7 +223,7 @@ export const MENUITEMS = [
         title: "Announcements",
         icon: (<i className="side-menu__icon bi bi-megaphone"></i>
         ),
-        path: ``,
+        path: `${import.meta.env.BASE_URL}announcement/announcement`,
         type: "link",
         selected: false,
         active: false,

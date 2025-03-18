@@ -65,6 +65,27 @@ import totalinvoice from '../assets/img/totalinvoive.png';
 
 import pdficon from '../assets/img/pdf.png';
 
+// applications icon
+import gatepass from '../assets/applicationicon/gatepass.webp';
+import changename from '../assets/applicationicon/ChangeName.webp';
+import conatctupdate from '../assets/applicationicon/contactupdate.webp';
+import parking from '../assets/applicationicon/parking.webp';
+import flatresale from '../assets/applicationicon/flateresale.webp';
+import interiorwork from '../assets/applicationicon/interiorwork.webp';
+import celebration from '../assets/applicationicon/celebration.webp';
+import theater from '../assets/applicationicon/theater.webp';
+import banquethall from '../assets/applicationicon/banquethall.webp';
+import clubhouse from '../assets/applicationicon/clubhouse.webp';
+import swimmingpool from '../assets/applicationicon/swimmingpool.webp';
+import playarea from '../assets/applicationicon/playarea.webp';
+import turfarea from '../assets/applicationicon/turfarea.webp';
+import rentagreement from '../assets/applicationicon/rentagreement.webp';
+import sharecertificate from '../assets/applicationicon/sharecertificate.webp';
+import nomination from '../assets/applicationicon/nomination.webp';
+import badminton from '../assets/applicationicon/badminton.webp';
+import foodcourt from '../assets/applicationicon/foodcourt.webp';
+import others from '../assets/applicationicon/others.webp';
+
 export const imagesData = (idx: any) => {
   const images :any = {
     evaluationfrm,applicationfrm, feedbackfrm,
@@ -73,7 +94,7 @@ export const imagesData = (idx: any) => {
     female11 ,chrome, edge, email, firefox, opera,  safari,
     us, italy, spain, india, french, mexico, singapore, poland, austria, russia, germany, argentina, brazil, uae, china, uk,
     malaysia, canada, favicon,faviconwhite, logo, logowhite , mainlogo, bgimg, bgimg1, bgimg2, bgimg3, bgimg4, logibg, totalbalance, totalreceipt, totalinvoice,
-    pdficon
+    pdficon, gatepass, conatctupdate,changename, parking, flatresale, interiorwork, celebration, theater, banquethall,clubhouse, swimmingpool, playarea, turfarea, rentagreement, sharecertificate, nomination, badminton, foodcourt, others
 
   };
   return images[idx];

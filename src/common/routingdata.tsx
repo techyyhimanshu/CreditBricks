@@ -32,6 +32,9 @@ const Tenant = lazy(() => import('../components/tenant/tenant'));
 const TenantView = lazy(() => import('../components/tenant/tenantview'));
 const AddTenant = lazy(() => import('../components/tenant/addtenant'));
 const Complaints = lazy(() => import('../components/complaints/complaints'));
+const Applications = lazy(() => import('../components/applications/applications'));
+const Notices = lazy(() => import('../components/notices/notices'));
+const Announcements = lazy(() => import('../components/announcement/announcement'));
 
 export const Routingdata = [
   //Dashboard
@@ -66,7 +69,10 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}tenant/tenant`, element: <Tenant /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenantview/:identifier`, element: <TenantView /> },
   { path: `${import.meta.env.BASE_URL}tenant/addtenant`, element: <AddTenant /> },
-  { path: `${import.meta.env.BASE_URL}complaints/complaints`, element: <Complaints /> }
+  { path: `${import.meta.env.BASE_URL}complaints/complaints`, element: <Complaints /> },
+  { path: `${import.meta.env.BASE_URL}applications/applications`, element: <Applications /> },
+  { path: `${import.meta.env.BASE_URL}notices/notices`, element: <Notices /> },
+  { path: `${import.meta.env.BASE_URL}announcement/announcement`, element: <Announcements /> }
 ];
 
 export const Sidebarcomponents = [
