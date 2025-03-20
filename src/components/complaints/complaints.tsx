@@ -9,18 +9,21 @@ import { Formik, Form as FormikForm, Field } from 'formik';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { getVendorForDropDownApi } from '../../api/vendor-api';
+import { getAllSocietyApi } from '../../api/society-api';
 
 export default function Complaints() {
 
   const [addcomplaint, setcomplaints] = useState(false);
   const [complaintview, setcomplaintview] = useState(false);
   const [assign, setassign] = useState(false);
+  const [societyData, setSocietyData] = useState<any[]>([]);
   const [complaintData, setComplaintData] = useState([
     {
       id: "",
       complaintId: "",
       categoryName: "",
       propertyName: "",
+      societyName:"",
       contactPersonName: "",
       createdAt: "",
       status: "",
@@ -34,6 +37,7 @@ export default function Complaints() {
   const [vendorData, setVendorData] = useState([]);
   const [filtersss, setFilters] = useState({
     propertyIdentifier: "",
+    societyIdentifier: "",
     categoryId: null,
     status: "",
     priority: "",
@@ -146,6 +150,7 @@ export default function Complaints() {
     fetchAllComplaints();
     fetchAllPropertiesForDropDown()
     fetchAllComplaintCategories()
+    fetchSocietiesForDropDown()
   }, []);
   const fetchAllComplaints = async () => {
     try {
@@ -191,6 +196,21 @@ export default function Complaints() {
       console.error("Error fetching properties:", error);
     }
   }
+  const fetchSocietiesForDropDown = async () => {
+    try {
+      const response = await getAllSocietyApi();
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.societyIdentifier,
+        label: item.societyName,
+      }));
+      setSocietyData(formattedData);
+      console.log(formattedData)
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+
   const fetchAllVendorForDropDown = async () => {
     try {
       const response = await getVendorForDropDownApi()
@@ -205,6 +225,7 @@ export default function Complaints() {
   const handleSubmit = async (values: any) => {
     const formattedData = {
       propertyIdentifier: values.property.value,
+      societyIdentifier: values.society.value,
       categoryId: values.complaintCategory.value,
       description: values.complaintDescription,
       priority: values.priority.value,
@@ -290,6 +311,7 @@ export default function Complaints() {
             viewDemoShow("addcomplaint")
             fetchAllComplaintCategories()
             fetchAllPropertiesForDropDown()
+            
           }}><i className="bi bi-plus"></i> Add Complaint</span>
           <Modal show={addcomplaint} centered>
             <Modal.Header>
@@ -300,6 +322,7 @@ export default function Complaints() {
             </Modal.Header>
             <Formik initialValues={{
               property: { value: "", label: "" },
+              society: { value: "", label: "" },
               complaintCategory: { value: "", label: "" },
               complaintDescription: "",
               priority: { value: "", label: "" },
@@ -321,6 +344,18 @@ export default function Complaints() {
                         </Form.Group>
                       </Col>
 
+                      <Col xl={12}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society</Form.Label>
+                          <Select
+                            options={societyData}
+                            name="society"
+                            onChange={(selected) => setFieldValue("society", selected)}
+                            placeholder="Select society"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
                       <Col xl={12}>
                         <Form.Group className="form-group mb-1">
                           <Form.Label>Property</Form.Label>
@@ -511,6 +546,18 @@ export default function Complaints() {
             </CardHeader>
             <Card.Body className='pt-0 pb-1'>
               <Row>
+                <Col xl={3}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Society</Form.Label>
+                    <Select
+                      options={societyData}
+                      placeholder="Select society"
+                      onChange={(selected) => { handleFilterChange("societyIdentifier", selected?.value) }}
+                      classNamePrefix="Select2"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
                 <Col xl={3}>
                   <Form.Group className="form-group">
                     <Form.Label>Property</Form.Label>

@@ -5,28 +5,27 @@ import { Col, Row, Card, Accordion, Button, Form, Modal, FormControl } from "rea
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 // import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
-import stateCities from "../stateCity.json"
+// import stateCities from "../stateCity.json"
 import { Link } from "react-router-dom";
-import { Uploader } from 'uploader';
-import { UploadButton } from 'react-uploader';
+// import { Uploader } from 'uploader';
+// import { UploadButton } from 'react-uploader';
 import { getAllSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../../api/society-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
-import { getAllWingApi } from '../../../api/wing-api';
-import { Formik, Form as FormikForm, ErrorMessage, Field } from 'formik';
+// import { getAllWingApi } from '../../../api/wing-api';
+import { Formik, Form as FormikForm, Field } from 'formik';
 import { getMemberForDropDownApi } from '../../../api/user-api';
-import { addPropertyApi } from '../../../api/property-api';
+import { addPropertyApi, getTenantOptions } from '../../../api/property-api';
 // Define the types for the stateCities object
-interface StateCities {
-  [key: string]: string[]; // Index signature
-}
-const uploader = Uploader({
-  // Get production API keys from Upload.io
-  apiKey: 'free'
-});
-const stateCitiesTyped: StateCities = stateCities;
+// interface StateCities {
+//   [key: string]: string[]; 
+// }
+// const uploader = Uploader({
+//   apiKey: 'free'
+// });
+// const stateCitiesTyped: StateCities = stateCities;
 export default function AddPropertyMaster() {
-  const [currentProperty, setCurrentProperty] = useState({
+  const [currentProperty,] = useState({
     propertyId: null,
     propertyName: '',
     status: null,
@@ -134,6 +133,8 @@ export default function AddPropertyMaster() {
       await fetchSocietiesForDropDown();
       // await fetchTenantsForDropDown();
       await fetchMembersForDropDown();
+
+      await fetchTenantOptions()
     })()
   }, [])
   const [flatsoldmodalshow, setflatsoldmodal] = useState(false);
@@ -177,6 +178,19 @@ export default function AddPropertyMaster() {
       showToast("error", errorMessage)
     }
   }
+  const fetchTenantOptions = async () => {
+    try {
+      const response = await getTenantOptions();
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.tenantIdentifier,
+        label: `${item.firstName} ${item.middleName} ${item.lastName}`,
+      }));
+      setTenantOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
   const fetchMembersForDropDown = async () => {
     try {
       const response = await getMemberForDropDownApi();
@@ -190,15 +204,15 @@ export default function AddPropertyMaster() {
       showToast("error", errorMessage)
     }
   }
-  const viewDemoShow = (modal: any) => {
-    switch (modal) {
+  // const viewDemoShow = (modal: any) => {
+  //   switch (modal) {
 
-      case "flatsoldmodalshow":
-        setflatsoldmodal(true);
-        break;
+  //     case "flatsoldmodalshow":
+  //       setflatsoldmodal(true);
+  //       break;
 
-    }
-  };
+  //   }
+  // };
 
   const viewDemoClose = (modal: any) => {
     switch (modal) {
@@ -210,7 +224,7 @@ export default function AddPropertyMaster() {
     }
   };
   const handleSubmit = async (values: any) => {
-    const formattedData = {
+    const formattedData:any = {
       propertyName: values.propertyName,
       status: values.status.value,
       narration: values.narration.value,
@@ -244,7 +258,11 @@ export default function AddPropertyMaster() {
       monthlyMaintenance: values.monthlyPaidMaintenance,
       monthlyMaintenanceUpto: values.monthlyPaidMaintenanceUpto,
       monthlyPaidArrears: values.monthlyPaidArrears,
-      monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto
+      monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto,
+    }
+    if (formattedData.dealType === "Self Occupied") {
+      formattedData.isPrimary = values.primaryProperty === "yes" ? true : false
+      formattedData.tenantIdentifier=null
     }
     const response = await addPropertyApi(formattedData)
     if (response.status === 201 || response.status === 200) {
@@ -296,7 +314,8 @@ export default function AddPropertyMaster() {
 
           floorNumber: currentProperty?.floorNumber,
 
-          dealType: currentProperty?.dealType,
+          // dealType: currentProperty?.dealType,
+          dealType: { value: currentProperty?.dealType, label: currentProperty?.dealType },
 
           flatRegistrationNumber: currentProperty?.flatRegistrationNumber,
 
@@ -342,10 +361,12 @@ export default function AddPropertyMaster() {
 
           monthlyPaidArrearsUpto: currentProperty?.monthlyPaidArrearsUpto,
 
+          primaryProperty: ''
+
         }}
         onSubmit={handleSubmit}
       >
-        {({ setFieldValue }) => (
+        {({ setFieldValue, values }) => (
           <FormikForm>
 
             <Row>
@@ -534,15 +555,65 @@ export default function AddPropertyMaster() {
                                 {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                               </Form.Group>
                             </Col>
+                            {
+                              ["Rented", "Rent", "Lease"].includes(values?.dealType?.label || "") && <Col xl={4}>
+                                <Form.Group className="form-group">
+                                  <Form.Label>Tenant</Form.Label>
+                                  <Select
+                                    options={tenantOptions}
+                                    name='tenant'
+                                    onChange={(selected) => setFieldValue("tenant", selected)}
+                                    placeholder="Select tenant"
+                                    classNamePrefix="Select2"
+                                  />
+                                  {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                                </Form.Group>
+                              </Col>
+                            }
 
+                            {
+                              ["Rented", "Rent", "Lease"].includes(values?.dealType?.label || "") &&
+                              <Col xl={4}>
+                                <Form.Group className="form-group pt-1">
+                                  {/* <Button disabled={true} className='btn mt-4 btn-default'>Add Tenant</Button> */}
+                                  <Link style={{ display: "grid" }} to={`${import.meta.env.BASE_URL}tenant/addtenant`} className='btn mt-4 btn-default'>Add Tenant</Link>
+                                </Form.Group>
+                              </Col>
+                            }
+                            {
+                              ["Self Occupied"].includes(values?.dealType?.label || "") &&
+                              <Col xl={4}>
+                                <Form.Group className="form-group">
+                                  <Form.Label>Primary Property</Form.Label>
 
+                                  <div className="d-flex align-items-center">
+                                    {/* Primary Radio Button */}
+                                    <div className="me-3">
+                                      <Field
+                                        type="radio"
+                                        name="primaryProperty"
+                                        value="yes"
+                                        checked={values.primaryProperty === "yes"}
+                                        onChange={() => setFieldValue("primaryProperty", "yes")}
+                                      />
+                                      <label htmlFor="yes" className="ms-2">Yes</label>
+                                    </div>
 
-                            <Col xl={4}>
-                              <Form.Group className="form-group pt-1">
-                                {/* <Button disabled={true} className='btn mt-4 btn-default'>Add Tenant</Button> */}
-                                <Link style={{ display: "grid" }} to={`${import.meta.env.BASE_URL}tenant/addtenant`} className='btn mt-4 btn-default'>Add Tenant</Link>
-                              </Form.Group>
-                            </Col>
+                                    {/* Secondary Radio Button */}
+                                    <div>
+                                      <Field
+                                        type="radio"
+                                        name="primaryProperty"
+                                        value="no"
+                                        checked={values.primaryProperty === "no"}
+                                        onChange={() => setFieldValue("primaryProperty", "no")}
+                                      />
+                                      <label htmlFor="no" className="ms-2">No</label>
+                                    </div>
+                                  </div>
+                                </Form.Group>
+                              </Col>
+                            }
 
                           </Row>
 

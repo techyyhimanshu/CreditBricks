@@ -18,6 +18,7 @@ export default function PropertyMaster() {
     memberName: string;
     propertyIdentifier: string;
     societyIdentifier: string;
+    memberIdentifier: string;
     societyName: string;
     flatRegistrationNumber: string;
     flatNumber: string;
@@ -53,7 +54,7 @@ export default function PropertyMaster() {
     {
       name: 'Property Name',
       cell: (row: Row) => (
-        <Link to={`${import.meta.env.BASE_URL}property/propertyview`}
+        <Link to={`${import.meta.env.BASE_URL}property/propertyview/${row.propertyIdentifier}`}
           state={{ propertyData: row }} className='text-info'>{row.propertyName}</Link>
       ),
       sortable: true,
@@ -61,14 +62,14 @@ export default function PropertyMaster() {
     {
       name: 'Member Name',
       cell: (row: Row) => (
-        <Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>{row.memberName}</Link>
+        <Link to={`${import.meta.env.BASE_URL}members/membersProfile/${row.memberIdentifier}`} className='text-info'>{row.memberName}</Link>
       ),
       sortable: true,
     },
     {
       name: 'Society',
       cell: (row: Row) => (
-        <Link to={``} className='text-info'>{row.societyName}</Link>
+        <Link to={`${import.meta.env.BASE_URL}society/societyview/${row.societyIdentifier}`} className='text-info'>{row.societyName}</Link>
       ),
       sortable: true,
     },
@@ -136,6 +137,8 @@ export default function PropertyMaster() {
             propertyIdentifier: property.propertyIdentifier,
             memberName: property.propertyMembers.length > 0 ? property.propertyMembers[0].member.firstName + " " + property.propertyMembers[0].member.lastName : 'Not available',
             societyName: property.societyName,
+            societyIdentifier: property.societyIdentifier,
+            memberIdentifier: property.propertyMembers.length > 0 ? property.propertyMembers[0].memberIdentifier:"",
             flatRegistrationNumber: property.flatRegistrationNumber,
             flatNumber: property.flatNumber,
             wingName: property.wingName,

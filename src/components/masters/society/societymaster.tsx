@@ -62,7 +62,11 @@ export default function SocietyMaster() {
     },
     {
       name: 'Society Name',
-      selector: (row: Row) => row.societyName,
+      // selector: (row: Row) => row.societyName,
+      cell: (row: Row) => (
+        <Link to={`${import.meta.env.BASE_URL}society/societyview/${row.societyIdentifier}`}
+          state={{ propertyData: row }} className='text-info'>{row.societyName}</Link>
+      ),
       sortable: true,
     },
     {
@@ -270,38 +274,38 @@ export default function SocietyMaster() {
         <div className="right-content">
           <Link to={`${import.meta.env.BASE_URL}society/addsocietymaster`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Society</Link>
 
-          <button type="button" className="btn btn-default p-1 pe-2 ps-2 me-1"  onClick={() => viewDemoShow("bulkupload")}><i className="bi bi-upload"></i> Bulk Upload</button>
+          <button type="button" className="btn btn-default p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("bulkupload")}><i className="bi bi-upload"></i> Bulk Upload</button>
           <Modal centered show={bulkupload}>
-                      <Modal.Header>
-                        <Modal.Title>Bulk Upload</Modal.Title>
-                        <Button variant="" className="btn btn-close"  onClick={() => viewDemoClose("bulkupload")}>
-                          x
-                        </Button>
-                      </Modal.Header>
-                      <Modal.Body>
+            <Modal.Header>
+              <Modal.Title>Bulk Upload</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => viewDemoClose("bulkupload")}>
+                x
+              </Button>
+            </Modal.Header>
+            <Modal.Body>
 
-                        <p>Browse or Drop the file</p>
-                        <Form.Group className="form-group">
-                          <div className='textnone'>
-                            <input type='file' className='fileupload' />
-                            <p>Drag & Drop your file here or click</p>
-                          </div>
-
-
-                        </Form.Group>
+              <p>Browse or Drop the file</p>
+              <Form.Group className="form-group">
+                <div className='textnone'>
+                  <input type='file' className='fileupload' />
+                  <p>Drag & Drop your file here or click</p>
+                </div>
 
 
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button variant="default" onClick={() => { viewDemoClose("bulkupload"); }}>
-                          Close
-                        </Button>
-                        <Button variant="primary" onClick={() => { viewDemoClose("bulkupload"); }}>
-                          Save
-                        </Button>
+              </Form.Group>
 
-                      </Modal.Footer>
-                    </Modal>
+
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("bulkupload"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("bulkupload"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
 
           <Modal show={showModal} size="lg" onHide={() => setShowModal(false)} centered>
             <Formik

@@ -34,7 +34,7 @@ export default function MembersMaster() {
     {
       name: 'Member Name',
       cell: (row: Row) => (
-        <Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>{row.memberName}</Link>
+        <Link to={`${import.meta.env.BASE_URL}members/membersProfile/${row.memberIdentifier}`} className='text-info'>{row.memberName}</Link>
       ),
       sortable: true,
     },

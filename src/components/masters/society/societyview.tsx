@@ -1,11 +1,31 @@
 
 import { Fragment, useEffect, useState } from 'react';
-import { Col, Row, Card, Accordion, Form, Dropdown, Tabs, Tab, FormLabel, FormCheck, Button, Modal, FormControl } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Col, Row, Card, Form, Dropdown, Tabs, Tab, FormLabel, FormCheck, Button, Modal, FormControl } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
 import Select from "react-select";
+import { getSocietyDetailsApi } from '../../../api/society-api';
+import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
+import { deletePropertyApi } from '../../../api/property-api';
+import { handleApiError } from '../../../helpers/handle-api-error';
 
 export default function SocietyView() {
+  const [singleSocietyData, setSingleSocietydata] = useState<any>([])
+  const params = useParams()
+  const identifier = params.identifier as string
 
+  useEffect(() => {
+    const fetchPropertyData = async () => {
+      try {
+        const response = await getSocietyDetailsApi(identifier)
+        setSingleSocietydata(response?.data?.data || [])
+      } catch (error) {
+
+      }
+    }
+    if (identifier) {
+      fetchPropertyData()
+    }
+  }, [])
   const chargename = [
     { value: "1", label: "--None--" },
     { value: "2", label: "Lift Charges" },
@@ -65,11 +85,23 @@ export default function SocietyView() {
 
     }
   };
+
+  const handleDelete = async (propertyIdentifier: string) => {
+    try {
+      const response = await deletePropertyApi(propertyIdentifier)
+      if (response.status === 200) {
+        showToast("success", response.data.message)
+      }
+    } catch (error: any) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}society/societymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Society View</span>
+          <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}society/societymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Society - {singleSocietyData?.societyName || "N/A"}</span>
         </div>
       </div>
 
@@ -91,51 +123,51 @@ export default function SocietyView() {
                             <Row>
                               <Col xl={12}>
                                 <FormLabel>Society Name</FormLabel>
-                                <p className='tx-15'>Mohan Areca Co-Op Housing Society Limited</p>
+                                <p className='tx-15'>{singleSocietyData?.societyName || "N/A"}</p>
                               </Col>
 
 
                               <Col xl={6}>
                                 <FormLabel>Society Contact Number</FormLabel>
-                                <p className='tx-15'>-</p>
+                                <p className='tx-15'>{singleSocietyData?.contactNumber || "N/A"}</p>
                               </Col>
 
                               <Col xl={6}>
                                 <FormLabel>Society Email</FormLabel>
-                                <p className='tx-15'>Mohan12@gmail.com</p>
+                                <p className='tx-15'>{singleSocietyData?.email || "N/A"}</p>
                               </Col>
 
                               <Col xl={6}>
                                 <FormLabel>Society Manager</FormLabel>
-                                <p className='tx-15'>Mohan Areca</p>
+                                <p className='tx-15'>{singleSocietyData?.societyManager || "N/A"}</p>
                               </Col>
 
 
                               <Col xl={6}>
                                 <FormLabel>Address</FormLabel>
-                                <p className='tx-15'>-</p>
+                                <p className='tx-15'>{singleSocietyData?.address || "N/A"}</p>
                               </Col>
 
 
 
                               <Col xl={6}>
                                 <FormLabel>Country</FormLabel>
-                                <p className='tx-15 col-sm-11 p-0'>India</p>
+                                <p className='tx-15 col-sm-11 p-0'>{singleSocietyData?.country || "N/A"}</p>
                               </Col>
 
                               <Col xl={6}>
                                 <FormLabel>State</FormLabel>
-                                <p className='tx-1 p-0'>Delhi</p>
+                                <p className='tx-1 p-0'>{singleSocietyData?.state || "N/A"}</p>
                               </Col>
 
                               <Col xl={6}>
                                 <FormLabel>City</FormLabel>
-                                <p className='tx-15'>Delhi</p>
+                                <p className='tx-15'>{singleSocietyData?.city || "N/A"}</p>
                               </Col>
 
                               <Col xl={6}>
                                 <FormLabel>Pincode</FormLabel>
-                                <p className='tx-15'>110092</p>
+                                <p className='tx-15'>{singleSocietyData?.pincode || "N/A"}</p>
                               </Col>
 
 
@@ -149,18 +181,18 @@ export default function SocietyView() {
                             <Row>
                               <Col xl={12}>
                                 <FormLabel>Interest Calculation Type</FormLabel>
-                                <p className='tx-15'>Bill Date</p>
+                                <p className='tx-15'>{singleSocietyData?.interestCalculationType || "N/A"}</p>
                               </Col>
 
 
                               <Col xl={6}>
                                 <FormLabel>Annual Rate of Interest</FormLabel>
-                                <p className='tx-15'>0.00%</p>
+                                <p className='tx-15'>{singleSocietyData?.annualRateOfInterest || "N/A"}</p>
                               </Col>
 
                               <Col xl={6}>
                                 <FormLabel>Rate of Interest</FormLabel>
-                                <p className='tx-15'>0.0000000000%</p>
+                                <p className='tx-15'>{singleSocietyData?.rateOfInterest || "N/A"}</p>
                               </Col>
 
 
@@ -176,19 +208,17 @@ export default function SocietyView() {
                             <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Society Document Details</h5>
                             <Row>
                               <Col xl={12} className='mb-1 tx-12'>Society Registration Number</Col>
-                              <Col xl={12} className='tx-semibold mb-2 tx-14 text-muted'>TNA/AMB/HSG/(TC)/35606/2022-27</Col>
+                              <Col xl={12} className='tx-semibold mb-2 tx-14 text-muted'>{singleSocietyData?.registrationNumber || "N/A"}</Col>
                               <Col xl={5} className='mb-1 tx-12'>TAN number</Col>
-                              <Col xl={7} className='tx-semibold tx-12'>-</Col>
+                              <Col xl={7} className='tx-semibold tx-12'>{singleSocietyData?.tanNumber || "N/A"}</Col>
                               <Col xl={5} className='mb-1 tx-12'>PAN No</Col>
-                              <Col xl={7} className='tx-semibold tx-12'>-</Col>
-                              <Col xl={5} className='mb-1 tx-12'>TAN Number</Col>
-                              <Col xl={7} className='tx-semibold tx-12'>-</Col>
+                              <Col xl={7} className='tx-semibold tx-12'>{singleSocietyData?.panNumber || "N/A"}</Col>
                               <Col xl={5} className='mb-1 tx-12'>Signatory</Col>
-                              <Col xl={7} className='tx-semibold tx-12'>-</Col>
+                              <Col xl={7} className='tx-semibold tx-12'>{singleSocietyData?.signatory || "N/A"}</Col>
                               <Col xl={5} className='mb-1 tx-12'>HSN Code</Col>
-                              <Col xl={7} className='tx-semibold tx-12'>-</Col>
+                              <Col xl={7} className='tx-semibold tx-12'>{singleSocietyData?.hsnCode || "N/A"}</Col>
                               <Col xl={5} className='mb-1 tx-12'>GSTIN</Col>
-                              <Col xl={7} className='tx-semibold tx-12'>-</Col>
+                              <Col xl={7} className='tx-semibold tx-12'>{singleSocietyData?.gstin || "N/A"}</Col>
                             </Row>
                           </Card.Body>
                         </Card>
@@ -198,8 +228,7 @@ export default function SocietyView() {
                         <Card>
                           <Card.Body>
                             <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Society Accounts Details</h5>
-                            <Row>
-
+                            {/* <Row>
                               <Col xl={5} className='mb-1 tx-12'>Society Bank Name</Col>
                               <Col xl={7} className='tx-semibold tx-12'>Union Bank of India</Col>
                               <Col xl={5} className='mb-1 tx-12'>Account Number</Col>
@@ -213,7 +242,64 @@ export default function SocietyView() {
                               <Col xl={12} className='mt-2 tx-12'>
                                 <img src='https://static.wixstatic.com/media/794e6d_d0eb1012228446ba8436ac24a1f5ad00~mv2.jpeg/v1/fill/w_440,h_380,al_c,q_80,usm_0.33_1.00_0.00,enc_avif,quality_auto/Union%20Bank%20QR%20Code.jpeg' />
                               </Col>
-                            </Row>
+                            </Row> */}
+                            {singleSocietyData?.accountDetails?.length > 0 ? (
+                              singleSocietyData?.accountDetails.map((account: any, index: number) => (
+                                <div key={account.accountId}>
+                                  <Row className="mt-2">
+                                    {/* Bank Name */}
+                                    <Col xl={5} className='mb-1 tx-12'>Society Bank Name</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>
+                                      {account.bankName || "N/A"}
+                                    </Col>
+                                  </Row>
+
+                                  <Row className="mt-2">
+                                    {/* Account Number */}
+                                    <Col xl={5} className='mb-1 tx-12'>Account Number</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>
+                                      {account.accountNumber || "N/A"}
+                                    </Col>
+                                  </Row>
+
+                                  <Row className="mt-2">
+                                    {/* Branch Name */}
+                                    <Col xl={5} className='mb-1 tx-12'>Branch Name</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>
+                                      {account.branchName || "N/A"}
+                                    </Col>
+                                  </Row>
+
+                                  <Row className="mt-2">
+                                    {/* IFSC Code */}
+                                    <Col xl={5} className='mb-1 tx-12 '>IFSC Code</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>
+                                      {account.ifscCode || "N/A"}
+                                    </Col>
+                                  </Row>
+
+                                  <Row className="mt-2">
+                                    {/* Cheque Favourable */}
+                                    <Col xl={5} className='mb-1 tx-12'>Cheque Favourable</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>
+                                      {account.chequeFavourable || "N/A"}
+                                    </Col>
+                                  </Row>
+
+                                  <Row className="mt-2">
+                                    {/* QR Code Image */}
+                                    <Col xl={12} className='mt-2 tx-12'>
+                                      <img src={account.paymentQrPath || 'https://static.wixstatic.com/media/794e6d_d0eb1012228446ba8436ac24a1f5ad00~mv2.jpeg/v1/fill/w_440,h_380,al_c,q_80,usm_0.33_1.00_0.00,enc_avif,quality_auto/Union%20Bank%20QR%20Code.jpeg'} alt="QR Code" />
+                                    </Col>
+                                  </Row>
+
+                                  {/* Add a little space between the accounts */}
+                                  {index < singleSocietyData.accountDetails.length - 1 && <hr />}
+                                </div>
+                              ))
+                            ) : (
+                              <p>No account details available.</p>
+                            )}
                           </Card.Body>
                         </Card>
 
@@ -243,49 +329,93 @@ export default function SocietyView() {
                                 <th>Action</th>
                               </tr>
                             </thead>
+                            {/* <tbody>
+                              <tr>
+                                <td>1</td>
+                                <td><Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link></td>
+                                <td>A</td>
+                                <td><Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kumar Pandia</Link></td>
+                                <td>995</td>
+                                <td>2BHK</td>
+                                <td><Link to={``} className='text-info'>Sursbhi Verma</Link></td>
+                                <td>Occupied</td>
+                                <td><Dropdown >
+                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                    Action
+                                  </Dropdown.Toggle>
+
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}property/addpropertymaster`}>Edit</Link></Dropdown.Item>
+                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown></td>
+                              </tr>
+
+                              <tr>
+                                <td>1</td>
+                                <td><Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link></td>
+                                <td>A</td>
+                                <td><Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kumar Pandia</Link></td>
+                                <td>995</td>
+                                <td>2BHK</td>
+                                <td><Link to={``} className='text-info'>Sursbhi Verma</Link></td>
+                                <td>Occupied</td>
+                                <td><Dropdown >
+                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                    Action
+                                  </Dropdown.Toggle>
+
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}property/addpropertymaster`}>Edit</Link></Dropdown.Item>
+                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown></td>
+                              </tr>
+
+                            </tbody> */}
                             <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td><Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link></td>
-                                <td>A</td>
-                                <td><Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kumar Pandia</Link></td>
-                                <td>995</td>
-                                <td>2BHK</td>
-                                <td><Link to={``} className='text-info'>Sursbhi Verma</Link></td>
-                                <td>Occupied</td>
-                                <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
+                              {singleSocietyData.properties?.map((property: any, index: number) => (
+                                <tr key={property.propertyIdentifier}>
+                                  <td>{index + 1}</td>
+                                  <td>
+                                    <Link to={`${import.meta.env.BASE_URL}property/propertyview/${property.propertyIdentifier}`} className="text-info">
+                                      {property.propertyName || "N/A"}
+                                    </Link>
+                                  </td>
+                                  <td>{property.wing?.wingName || "N/A"}</td>
+                                  <td>
+                                    <Link to={`${import.meta.env.BASE_URL}members/membersProfile/${property?.member?.memberIdentifier}`} className="text-info">
+                                      {`${property?.member?.firstName} ${property?.member?.middleName} ${property?.member?.lastName}`}
+                                    </Link>
+                                  </td>
+                                  <td>{property.area || "N/A"}</td>
+                                  <td>{property.narration || "N/A"}</td>
+                                  <td>
+                                    {
+                                      property.tenant?
+                                      <Link to={property.tenant ? `${import.meta.env.BASE_URL}tenant/${property.tenant.tenantIdentifier}` : "#"} className="text-info">
+                                    {`${property?.tenant?.firstName||""} ${property?.tenant?.middleName||""} ${property?.tenant?.lastName||""}`}
+                                    </Link>:"N/A"
+                                    }
+                                    
+                                  </td>
+                                  <td>{property.status || "N/A"}</td>
+                                  <td>
+                                    <Dropdown>
+                                      <Dropdown.Toggle variant="light" className="btn-sm" id="dropdown-basic">
+                                        Action
+                                      </Dropdown.Toggle>
 
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}property/addpropertymaster`}>Edit</Link></Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-
-                              <tr>
-                                <td>1</td>
-                                <td><Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link></td>
-                                <td>A</td>
-                                <td><Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kumar Pandia</Link></td>
-                                <td>995</td>
-                                <td>2BHK</td>
-                                <td><Link to={``} className='text-info'>Sursbhi Verma</Link></td>
-                                <td>Occupied</td>
-                                <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
-
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}property/addpropertymaster`}>Edit</Link></Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-
+                                      <Dropdown.Menu>
+                                        <Dropdown.Item>
+                                          <Link to={`${import.meta.env.BASE_URL}property/editpropertymaster/${property.propertyIdentifier}`}>Edit</Link>
+                                        </Dropdown.Item>
+                                        <Dropdown.Item className="text-danger" onClick={() => handleDelete(property.propertyIdentifier)}>Delete</Dropdown.Item>
+                                      </Dropdown.Menu>
+                                    </Dropdown>
+                                  </td>
+                                </tr>
+                              ))}
                             </tbody>
                           </table>
                         </div>
@@ -382,124 +512,124 @@ export default function SocietyView() {
                                   <Form.Label>Charge Number</Form.Label>
                                   <p className='form-control bg-light'></p>
                                 </Form.Group>
-                               </Col>
-                               <Col xl={6}></Col>
-                               <Col xl={6}>
+                              </Col>
+                              <Col xl={6}></Col>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Charge Name<span className="text-danger">*</span></Form.Label>
                                   <Select
-                                options={chargename}
-                                placeholder="Select name"
-                                classNamePrefix="Select2"
-                              />
+                                    options={chargename}
+                                    placeholder="Select name"
+                                    classNamePrefix="Select2"
+                                  />
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Is Active</Form.Label>
-                                 <FormCheck type="checkbox" className='ms-3 mt-2 me-1'></FormCheck>
+                                  <FormCheck type="checkbox" className='ms-3 mt-2 me-1'></FormCheck>
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Charge Master Type</Form.Label>
                                   <Select
-                                options={chargemastertype}
-                                placeholder="Search Properties"
-                                isMulti
-                                classNamePrefix="Select2"
-                              />
+                                    options={chargemastertype}
+                                    placeholder="Search Properties"
+                                    isMulti
+                                    classNamePrefix="Select2"
+                                  />
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Charge Type<span className="text-danger">*</span></Form.Label>
                                   <Select
-                                options={chargetype}
-                                placeholder="Select Type"
-                                isMulti
-                                classNamePrefix="Select2"
-                              />
+                                    options={chargetype}
+                                    placeholder="Select Type"
+                                    isMulti
+                                    classNamePrefix="Select2"
+                                  />
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Property</Form.Label>
                                   <Select
-                                options={property}
-                                placeholder="Select Properties"
-                                isMulti
-                                classNamePrefix="Select2"
-                              />
+                                    options={property}
+                                    placeholder="Select Properties"
+                                    isMulti
+                                    classNamePrefix="Select2"
+                                  />
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Society Name<span className="text-danger">*</span></Form.Label>
                                   <Select
-                                options={societyname}
-                                placeholder="Search Society"
-                                isMulti
-                                classNamePrefix="Select2"
-                              />
+                                    options={societyname}
+                                    placeholder="Search Society"
+                                    isMulti
+                                    classNamePrefix="Select2"
+                                  />
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Wing</Form.Label>
                                   <Select
-                                options={wing}
-                                placeholder="Search Wing"
-                                isMulti
-                                classNamePrefix="Select2"
-                              />
+                                    options={wing}
+                                    placeholder="Search Wing"
+                                    isMulti
+                                    classNamePrefix="Select2"
+                                  />
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Billing Type<span className="text-danger">*</span></Form.Label>
                                   <Select
-                                options={billingtype}
-                                placeholder="Select Type"
-                                isMulti
-                                classNamePrefix="Select2"
-                              />
+                                    options={billingtype}
+                                    placeholder="Select Type"
+                                    isMulti
+                                    classNamePrefix="Select2"
+                                  />
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Start Date<span className="text-danger">*</span></Form.Label>
-                                 <FormControl type="date" className='form-control'></FormControl>
+                                  <FormControl type="date" className='form-control'></FormControl>
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>End Date<span className="text-danger">*</span></Form.Label>
-                                 <FormControl type="date" className='form-control'></FormControl>
+                                  <FormControl type="date" className='form-control'></FormControl>
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
-                               <Col xl={6}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>GST %</Form.Label>
-                                 <FormControl type="text" className='form-control' placeholder='0.00%'></FormControl>
+                                  <FormControl type="text" className='form-control' placeholder='0.00%'></FormControl>
                                 </Form.Group>
-                               </Col>
+                              </Col>
 
                             </Row>
                           </Modal.Body>
                           <Modal.Footer>
-                          <Button variant="default" onClick={() => { viewDemoClose("addcharge"); }}>
+                            <Button variant="default" onClick={() => { viewDemoClose("addcharge"); }}>
                               Close
                             </Button>
                             <Button variant="primary" onClick={() => { viewDemoClose("addcharge"); }}>
@@ -568,7 +698,7 @@ export default function SocietyView() {
                                   </Dropdown.Toggle>
 
                                   <Dropdown.Menu>
-                                  <Dropdown.Item onClick={() => viewDemoShow("addcharge")}>Edit</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => viewDemoShow("addcharge")}>Edit</Dropdown.Item>
                                     <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
                                   </Dropdown.Menu>
                                 </Dropdown></td>
@@ -595,100 +725,100 @@ export default function SocietyView() {
                 </Tab>
 
                 <Tab eventKey="Tower" title="Tower">
-                <Card className='m-3 mb-5'>
-                      <Card.Body>
-                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Tower Details</h5>
-                        <div className='p-0 mt-4'>
-                          <table className='table'>
-                            <thead>
-                              <tr>
-                                <th width="100">S.No.</th>
-                                <th>Tower/Block Name</th>
-                               <th width="100">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td>A</td>
-                               <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
+                  <Card className='m-3 mb-5'>
+                    <Card.Body>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Tower Details</h5>
+                      <div className='p-0 mt-4'>
+                        <table className='table'>
+                          <thead>
+                            <tr>
+                              <th >S.No.</th>
+                              <th>Tower/Block Name</th>
+                              <th >Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>A</td>
+                              <td><Dropdown >
+                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                  Action
+                                </Dropdown.Toggle>
 
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>Edit</Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-                              <tr>
-                                <td>2</td>
-                                <td>A</td>
-                               <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
-
-                                  <Dropdown.Menu>
+                                <Dropdown.Menu>
                                   <Dropdown.Item>Edit</Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </Card.Body>
-                    </Card>
+                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown></td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>A</td>
+                              <td><Dropdown >
+                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                  Action
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                  <Dropdown.Item>Edit</Dropdown.Item>
+                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </Card.Body>
+                  </Card>
                 </Tab>
                 <Tab eventKey="Wing" title="Wing">
-                <Card className='m-3 mb-5'>
-                      <Card.Body>
-                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Wing Details</h5>
-                        <div className='p-0 mt-4'>
-                          <table className='table'>
-                            <thead>
-                              <tr>
-                                <th width="100">S.No.</th>
-                                <th>Wing</th>
-                               <th width="100">Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td>A</td>
-                               <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
+                  <Card className='m-3 mb-5'>
+                    <Card.Body>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Wing Details</h5>
+                      <div className='p-0 mt-4'>
+                        <table className='table'>
+                          <thead>
+                            <tr>
+                              <th >S.No.</th>
+                              <th>Wing</th>
+                              <th >Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>A</td>
+                              <td><Dropdown >
+                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                  Action
+                                </Dropdown.Toggle>
 
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>Edit</Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-                              <tr>
-                                <td>2</td>
-                                <td>A</td>
-                               <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
-
-                                  <Dropdown.Menu>
+                                <Dropdown.Menu>
                                   <Dropdown.Item>Edit</Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </Card.Body>
-                    </Card>
+                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown></td>
+                            </tr>
+                            <tr>
+                              <td>2</td>
+                              <td>A</td>
+                              <td><Dropdown >
+                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                  Action
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                  <Dropdown.Item>Edit</Dropdown.Item>
+                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </Card.Body>
+                  </Card>
 
 
                 </Tab>
@@ -699,7 +829,7 @@ export default function SocietyView() {
 
       </Row>
 
-
+      <CustomToastContainer />
     </Fragment >
   );
 }
