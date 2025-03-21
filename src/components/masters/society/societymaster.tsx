@@ -22,7 +22,7 @@ export default function SocietyMaster() {
   const [showModal, setShowModal] = useState(false);
   const [bulkupload, setbulkupload] = useState(false);
   const [societyData, setSocietyData] = useState<any[]>([]);
-  const [currentSociety, setCurrentSociety] = useState({
+  const [currentSociety, ] = useState({
     societyIdentifier: '',
     societyName: '',
     address: '',
@@ -32,7 +32,7 @@ export default function SocietyMaster() {
   });
 
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, ] = useState(false);
   type Row = {
     societyIdentifier: string;
     sno: number;
