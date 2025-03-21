@@ -448,7 +448,7 @@ export default function Complaints() {
                 </Col>
                 <Col xl={8} className='p-0'>
                   <p className='tx-16 mb-0 mt-2 tx-semibold'>{complaintToView.id}</p>
-                  <p className='mb-1 tx-16 '>{complaintToView.property.propertyName}</p>
+                  <p className='mb-1 tx-16 '>{complaintToView?.property?.propertyName}</p>
 
                 </Col>
               </Row>
@@ -456,7 +456,7 @@ export default function Complaints() {
               <Row>
                 <Col xl={6}>
                   <p className='mb-0 text-muted'>Complaint Category</p>
-                  <p className='tx-15 tx-semibold'>{complaintToView.category.name}s</p>
+                  <p className='tx-15 tx-semibold'>{complaintToView?.category?.name}s</p>
                 </Col>
                 <Col xl={6} className='text-end'>
                   <p className='mb-0 text-muted'>Priority</p>
@@ -476,7 +476,7 @@ export default function Complaints() {
                 <Col xl={6}>
                   <p className="mb-0 text-muted">Assign To</p>
                   <p className="tx-15 mb-1 tx-semibold">
-                    {complaintToView.complaintAllocation?.vendor.contactPersonName}
+                    {complaintToView.complaintAllocation?.vendor?.contactPersonName}
                   </p>
                   <p>{complaintToView.complaintAllocation?.vendor?.contactPersonNumber}</p>
                 </Col>

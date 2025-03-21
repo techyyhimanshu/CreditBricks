@@ -15,7 +15,7 @@ import { showToast, CustomToastContainer } from '../../../common/services/toastS
 // import { getAllWingApi } from '../../../api/wing-api';
 import { Formik, Form as FormikForm, Field } from 'formik';
 import { getMemberForDropDownApi } from '../../../api/user-api';
-import { getSinglePropertyDetailsApi, getTenantOptions } from '../../../api/property-api';
+import { getSinglePropertyDetailsApi, getTenantOptions, updatePropertyApi } from '../../../api/property-api';
 // Define the types for the stateCities object
 // interface StateCities {
 //     [key: string]: string[];
@@ -24,6 +24,7 @@ import { getSinglePropertyDetailsApi, getTenantOptions } from '../../../api/prop
 interface Member {
     memberIdentifier: string;
     ownership: number;
+    isPrimary?:boolean;
     member: {
         firstName: string;
         middleName: string;
@@ -83,10 +84,10 @@ interface Property {
     rentAgreementFile: string | null;
     policeVerificationDocFile: string | null;
     intercomNumber: string;
-    consumerElectricityNumber: string;
+    electricityNumber: string;
     gasConnectionNumber: string;
-    monthlyPaidMaintenance: string;
-    monthlyPaidMaintenanceUpto: string;
+    monthlyMaintenance: string;
+    monthlyMaintenanceUpto: string;
     monthlyPaidArrears: string;
     monthlyPaidArrearsUpto: string;
     isPrimary: boolean;
@@ -129,10 +130,10 @@ export default function EditPropertyMaster() {
         rentAgreementFile: null,
         policeVerificationDocFile: null,
         intercomNumber: "",
-        consumerElectricityNumber: "",
+        electricityNumber: "",
         gasConnectionNumber: "",
-        monthlyPaidMaintenance: "",
-        monthlyPaidMaintenanceUpto: "",
+        monthlyMaintenance: "",
+        monthlyMaintenanceUpto: "",
         monthlyPaidArrears: "",
         monthlyPaidArrearsUpto: "",
         isPrimary: false
@@ -334,19 +335,18 @@ export default function EditPropertyMaster() {
             rentAgreementFile: values.rentAgreementFile,
             policeVerificationDocFile: values.policeVerificationDocFile,
             intercomNumber: values.intercomNumber,
-            consumerElectricityNumber: values.consumerElectricityNumber,
+            consumerElectricityNumber: values.electricityNumber,
             gasConnectionNumber: values.gasConnectionNumber,
-            monthlyPaidMaintenance: values.monthlyPaidMaintenance,
-            monthlyPaidMaintenanceUpto: values.monthlyPaidMaintenanceUpto,
+            monthlyPaidMaintenance: values.monthlyMaintenance,
+            monthlyPaidMaintenanceUpto: values.monthlyMaintenanceUpto,
             monthlyPaidArrears: values.monthlyPaidArrears,
             monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto
         }
-        console.log(formattedData)
 
-        // const response = await addPropertyApi(formattedData)
-        // if (response.status === 201 || response.status === 200) {
-        //     showToast("success", "Property added successfully")
-        // }
+        const response = await updatePropertyApi(formattedData,identifier)
+        if (response.status === 201 || response.status === 200) {
+            showToast("success", "Property updated successfully")
+        }
     }
 
     const handleMemberChange = async (identifier: string) => {
@@ -444,19 +444,19 @@ export default function EditPropertyMaster() {
 
                         intercomNumber: currentProperty?.intercomNumber,
 
-                        consumerElectricityNumber: currentProperty?.consumerElectricityNumber,
+                        electricityNumber: currentProperty?.electricityNumber,
 
                         gasConnectionNumber: currentProperty?.gasConnectionNumber,
 
-                        monthlyPaidMaintenance: currentProperty?.monthlyPaidMaintenance,
+                        monthlyMaintenance: currentProperty?.monthlyMaintenance,
 
-                        monthlyPaidMaintenanceUpto: currentProperty?.monthlyPaidMaintenanceUpto,
+                        monthlyMaintenanceUpto: currentProperty?.monthlyMaintenanceUpto,
 
                         monthlyPaidArrears: currentProperty?.monthlyPaidArrears,
 
                         monthlyPaidArrearsUpto: currentProperty?.monthlyPaidArrearsUpto,
 
-                        primaryProperty: currentProperty?.isPrimary ? "yes" : "no"
+                        primaryProperty: currentProperty?.propertyMembers[0]?.isPrimary ? "yes" : "no"
 
                     }}
                     onSubmit={handleSubmit}
@@ -1081,7 +1081,7 @@ export default function EditPropertyMaster() {
                                                                         <Form.Label>Consumer Electricity Number </Form.Label>
                                                                         <Field
                                                                             type="text"
-                                                                            name="consumerElectricityNumber"
+                                                                            name="electricityNumber"
                                                                             placeholder="Consumer Electricity Number"
                                                                             className="form-control"
                                                                         />
@@ -1122,7 +1122,7 @@ export default function EditPropertyMaster() {
                                                                             Monthly Paid Maintenance to Builder</Form.Label>
                                                                         <Field
                                                                             type="text"
-                                                                            name="monthlyPaidMaintenance"
+                                                                            name="monthlyMaintenance"
                                                                             placeholder="Monthly Paid Maintenance to Builder"
                                                                             className="form-control"
                                                                         />
@@ -1136,7 +1136,7 @@ export default function EditPropertyMaster() {
                                                                             Monthly Paid Maintenance to Builder Upto</Form.Label>
                                                                         <Field
                                                                             type="date"
-                                                                            name="monthlyPaidMaintenanceUpto"
+                                                                            name="monthlyMaintenanceUpto"
                                                                             placeholder="Monthly Paid Maintenance to Builder Upto"
                                                                             className="form-control"
                                                                         />

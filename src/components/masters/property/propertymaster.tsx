@@ -141,7 +141,7 @@ export default function PropertyMaster() {
             memberIdentifier: property.propertyMembers.length > 0 ? property.propertyMembers[0].memberIdentifier:"",
             flatRegistrationNumber: property.flatRegistrationNumber,
             flatNumber: property.flatNumber,
-            wingName: property.wingName,
+            wingName: property?.wing?.wingName||"",
             status: property.status,
             floorNumber: property.floorNumber,
             narration: property.narration,
