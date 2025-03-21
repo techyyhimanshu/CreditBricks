@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
 import { Col, Row, Card, Dropdown, Modal, Form, Button, CardBody } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
@@ -9,6 +9,8 @@ import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
+import { getAllNoticeApi } from '../../api/notice-api';
+import { handleApiError } from '../../helpers/handle-api-error';
 
 export default function Notices() {
 
@@ -17,18 +19,18 @@ export default function Notices() {
   const columns = [
     {
       name: 'S.No',
-      selector: row => row.sno,
+      selector: (row:any) => row.sno,
       sortable: true,
       width: '80px'
     },
     {
       name: 'Society',
-      selector: row => row.society,
+      selector: (row:any) => row.societyIdentifier,
       sortable: true,
     },
     {
       name: 'Notice Type',
-      cell: (row: Row) => (
+      cell: (row: any) => (
         <span className='text-info cursor' onClick={() => viewDemoShow("viewnotice")}>General Notice</span>
       ),
       sortable: true,
@@ -36,22 +38,22 @@ export default function Notices() {
 
     {
       name: 'Notice Subject',
-      selector: row => row.noticesubject,
+      selector: (row:any) => row.noticeSubject,
       sortable: true,
     },
     {
       name: 'Start Date',
-      selector: row => row.startdt,
+      selector: (row:any) => row.startDate,
       sortable: true,
     },
     {
       name: 'Valid Date',
-      selector: row => row.validdt,
+      selector: (row:any) => row.validDate,
       sortable: true,
     },
     {
       name: 'Like & Dislike',
-      cell: (row: Row) => (
+      cell: (row: any) => (
         <span className='cursor'><span className='text-success'>12 <i className="fa fa-thumbs-up"></i></span> <span className="ms-2 text-muted">5 <i className="fa fa-thumbs-down"></i></span> </span>
       ),
       sortable: true,
@@ -78,50 +80,44 @@ export default function Notices() {
     },
   ];
 
-  const data = [
-    {
-      sno: 1,
-      society:'',
-      noticetype: '',
-      noticesubject: 'Society Meeting',
-      startdt: '12/03/2025 12:30 pm',
-      validdt: '20/03/2025 12:30 pm',
-      action: ''
+  const [noticedata, setNoticedata] = useState<any>([]);
 
-    },
-    {
-      sno: 2,
-      society:'',
-      noticetype: '',
-      noticesubject: 'Society Meeting',
-      startdt: '12/03/2025 12:30 pm',
-      validdt: '20/03/2025 12:30 pm',
-      action: ''
-    },
-    {
-      sno: 3,
-      society:'',
-      noticetype: '',
-      noticesubject: 'Society Meeting',
-      startdt: '12/03/2025 12:30 pm',
-      validdt: '20/03/2025 12:30 pm',
-      action: ''
+  const tableData = {
+    columns,
+    data: noticedata
+  };
 
-    },
-    {
-      sno: 4,
-      society:'',
-      noticetype: '',
-      noticesubject: 'Society Meeting',
-      startdt: '12/03/2025 12:30 pm',
-      validdt: '20/03/2025 12:30 pm',
-      action: ''
-    }
-  ]
+ 
 
 
   const [addnotices, setaddnotices] = useState(false);
   const [viewnotice, setviewnotice] = useState(false);
+
+  useEffect(() => {
+      const fetchAllProperty = async () => {
+        try {
+          const response = await getAllNoticeApi()
+          const data = response.data.data
+          const formattedData = data.map((notice: any, index: number) => (
+            {
+              sno: index + 1,
+              noticetype: notice.noticeType,
+              noticeSubject: notice.noticeSubject,
+              message: notice.message,
+              startDate: notice.startDate,
+              validDate: notice.validDate,
+              societyIdentifier: notice.societyIdentifier,
+              id:notice.id
+            }
+          ));
+          setNoticedata(formattedData);
+        } catch (error) {
+          console.log(error)
+          handleApiError(error)
+        }
+      }
+      fetchAllProperty();
+    }, [])
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -151,10 +147,11 @@ export default function Notices() {
 
 
 
-  const tableData = {
-    columns,
-    data
-  };
+
+  // const tableData = {
+  //   columns,
+  //   data
+  // };
 
   const noticetype = [
     { value: "1", label: "General Notice" },
@@ -264,7 +261,7 @@ export default function Notices() {
                 <DataTableExtensions {...tableData}>
                   <DataTable
                     columns={columns}
-                    data={data}
+                    data={noticedata}
                     pagination
 
 

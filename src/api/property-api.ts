@@ -7,16 +7,32 @@ export const addPropertyApi = async (data: any): Promise<any> => {
             formData.append(key, data[key]);
 
         }
-        console.log("formdata", formData)
         const response = await axiosInstance.post(`/property/p/new`, formData)
         return response
     } catch (error) {
+        console.log(error)
         throw error
     }
 }
 export const getAllPropertyApi = async (): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/property/all`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getSinglePropertyDetailsApi = async (propertyId: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/property/${propertyId}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getTenantOptions = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/tenant/ddl`)
         return response
     } catch (error) {
         throw error

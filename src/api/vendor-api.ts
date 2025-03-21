@@ -17,3 +17,19 @@ export const addNewVendorApi = async (data: any) => {
         throw error
     }
 }
+export const getAllVendorApi = async () => {
+    try {
+        const response = await axiosInstance.get(`/vendor`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getVendorDetail = async (identifier:string) => {
+    try {
+        const response = await axiosInstance.get(`/vendor/${identifier}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}

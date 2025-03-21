@@ -100,7 +100,7 @@ export default function AddVendorMaster() {
         }}
         onSubmit={handleSubmit}
       >
-        {({ setFieldValue, values }) => (
+        {({ setFieldValue }) => (
           <FormikForm>
             <Row>
               <Col xl={12}>
