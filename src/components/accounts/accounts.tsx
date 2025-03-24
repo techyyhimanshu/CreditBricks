@@ -12,117 +12,117 @@ import { freeze } from '@reduxjs/toolkit';
 
 
 
-const data = [
-  {
-    id: 1,
-    sno: '1',
-    name: '',
-    invoicenumber: '1',
-    property: '800',
-    invctype: 'Maintenance',
-    invcdt: '8/16/2024',
-    duedt: '4/15/2024',
-    totalamt: '₹2,850.00',
-    totalpaidamt: '₹2,850.00',
-    totaloutstanding: '₹0.00',
-    status: 'Paid'
-  },
-  {
-    id: 2,
-    sno: '2',
-    name: '',
-    invoicenumber: '1',
-    property: '800',
-    invctype: 'Maintenance',
-    invcdt: '8/16/2024',
-    duedt: '4/15/2024',
-    totalamt: '₹2,850.00',
-    totalpaidamt: '₹2,850.00',
-    totaloutstanding: '₹0.00',
-    status: 'Paid'
-  },
-  {
-    id: 3,
-    sno: '3',
-    name: '',
-    invoicenumber: '1',
-    property: '800',
-    invctype: 'Maintenance',
-    invcdt: '8/16/2024',
-    duedt: '4/15/2024',
-    totalamt: '₹2,850.00',
-    totalpaidamt: '₹2,850.00',
-    totaloutstanding: '₹0.00',
-    status: 'Paid'
-  },
-  {
-    id: 4,
-    sno: '4',
-    name: '',
-    invoicenumber: '1',
-    property: '800',
-    invctype: 'Maintenance',
-    invcdt: '8/16/2024',
-    duedt: '4/15/2024',
-    totalamt: '₹2,850.00',
-    totalpaidamt: '₹2,850.00',
-    totaloutstanding: '₹0.00',
-    status: 'Unpaid'
-  },
-  {
-    id: 5,
-    sno: '5',
-    name: '',
-    invoicenumber: '1',
-    property: '800',
-    invctype: 'Maintenance',
-    invcdt: '8/16/2024',
-    duedt: '4/15/2024',
-    totalamt: '₹2,850.00',
-    totalpaidamt: '₹2,850.00',
-    totaloutstanding: '₹0.00',
-    status: 'Unpaid'
-  },
-  {
-    id: 6,
-    sno: '6',
-    name: '',
-    invoicenumber: '1',
-    property: '800',
-    invctype: 'Maintenance',
-    invcdt: '8/16/2024',
-    duedt: '4/15/2024',
-    totalamt: '₹2,850.00',
-    totalpaidamt: '₹2,850.00',
-    totaloutstanding: '₹0.00',
-  },
-  {
-    id: 7,
-    sno: '7',
-    name: '',
-    invoicenumber: '1',
-    property: '800',
-    invctype: 'Maintenance',
-    invcdt: '8/16/2024',
-    duedt: '4/15/2024',
-    totalamt: '₹2,850.00',
-    totalpaidamt: '₹2,850.00',
-    totaloutstanding: '₹0.00',
-  },
-  {
-    id: 8,
-    sno: '8',
-    name: '',
-    invoicenumber: '1',
-    property: '800',
-    invctype: 'Maintenance',
-    invcdt: '8/16/2024',
-    duedt: '4/15/2024',
-    totalamt: '₹2,850.00',
-    totalpaidamt: '₹2,850.00',
-    totaloutstanding: '₹0.00',
-  },
-]
+// const data = [
+//   {
+//     id: 1,
+//     sno: '1',
+//     name: '',
+//     invoicenumber: '1',
+//     property: '800',
+//     invctype: 'Maintenance',
+//     invcdt: '8/16/2024',
+//     duedt: '4/15/2024',
+//     totalamt: '₹2,850.00',
+//     totalpaidamt: '₹2,850.00',
+//     totaloutstanding: '₹0.00',
+//     status: 'Paid'
+//   },
+//   {
+//     id: 2,
+//     sno: '2',
+//     name: '',
+//     invoicenumber: '1',
+//     property: '800',
+//     invctype: 'Maintenance',
+//     invcdt: '8/16/2024',
+//     duedt: '4/15/2024',
+//     totalamt: '₹2,850.00',
+//     totalpaidamt: '₹2,850.00',
+//     totaloutstanding: '₹0.00',
+//     status: 'Paid'
+//   },
+//   {
+//     id: 3,
+//     sno: '3',
+//     name: '',
+//     invoicenumber: '1',
+//     property: '800',
+//     invctype: 'Maintenance',
+//     invcdt: '8/16/2024',
+//     duedt: '4/15/2024',
+//     totalamt: '₹2,850.00',
+//     totalpaidamt: '₹2,850.00',
+//     totaloutstanding: '₹0.00',
+//     status: 'Paid'
+//   },
+//   {
+//     id: 4,
+//     sno: '4',
+//     name: '',
+//     invoicenumber: '1',
+//     property: '800',
+//     invctype: 'Maintenance',
+//     invcdt: '8/16/2024',
+//     duedt: '4/15/2024',
+//     totalamt: '₹2,850.00',
+//     totalpaidamt: '₹2,850.00',
+//     totaloutstanding: '₹0.00',
+//     status: 'Unpaid'
+//   },
+//   {
+//     id: 5,
+//     sno: '5',
+//     name: '',
+//     invoicenumber: '1',
+//     property: '800',
+//     invctype: 'Maintenance',
+//     invcdt: '8/16/2024',
+//     duedt: '4/15/2024',
+//     totalamt: '₹2,850.00',
+//     totalpaidamt: '₹2,850.00',
+//     totaloutstanding: '₹0.00',
+//     status: 'Unpaid'
+//   },
+//   {
+//     id: 6,
+//     sno: '6',
+//     name: '',
+//     invoicenumber: '1',
+//     property: '800',
+//     invctype: 'Maintenance',
+//     invcdt: '8/16/2024',
+//     duedt: '4/15/2024',
+//     totalamt: '₹2,850.00',
+//     totalpaidamt: '₹2,850.00',
+//     totaloutstanding: '₹0.00',
+//   },
+//   {
+//     id: 7,
+//     sno: '7',
+//     name: '',
+//     invoicenumber: '1',
+//     property: '800',
+//     invctype: 'Maintenance',
+//     invcdt: '8/16/2024',
+//     duedt: '4/15/2024',
+//     totalamt: '₹2,850.00',
+//     totalpaidamt: '₹2,850.00',
+//     totaloutstanding: '₹0.00',
+//   },
+//   {
+//     id: 8,
+//     sno: '8',
+//     name: '',
+//     invoicenumber: '1',
+//     property: '800',
+//     invctype: 'Maintenance',
+//     invcdt: '8/16/2024',
+//     duedt: '4/15/2024',
+//     totalamt: '₹2,850.00',
+//     totalpaidamt: '₹2,850.00',
+//     totaloutstanding: '₹0.00',
+//   },
+// ]
 
 const receiptcolumns = [
   {
@@ -221,6 +221,19 @@ export default function Accounts() {
   const [cash, setcash] = useState(false);
   const [cheque, setcheque] = useState(false);
   const [otpverify, setotpverify] = useState(false);
+  const [amountToPay,setAmountToPay] = useState(0)
+  const [denominations, setDenominations] = useState([
+    { value: 1000, count: 0, total: 0 },
+    { value: 500, count: 0, total: 0 },
+    { value: 200, count: 0, total: 0 },
+    { value: 100, count: 0, total: 0 },
+    { value: 50, count: 0, total: 0 },
+    { value: 20, count: 0, total: 0 },
+    { value: 10, count: 0, total: 0 },
+    { value: 5, count: 0, total: 0 },
+    { value: 2, count: 0, total: 0 },
+    { value: 1, count: 0, total: 0 },
+  ]);
 
   const propertyoption = [
     { value: "1", label: "A101" },
@@ -245,19 +258,19 @@ export default function Accounts() {
       name: 'Name',
       selector: (row: any) => row.name,
       sortable: true,
-       width: '82px'
+      width: '82px'
     },
     {
       name: 'Inv No',
       selector: (row: any) => row.invoiceNumber,
       sortable: true,
-       width: '220px'
+      width: '220px'
     },
 
     {
       name: 'Property',
       cell: (row: any) => (
-        <Link to={`${import.meta.env.BASE_URL}property/propertyview/${row.propertyIdentifier}`} className='text-info'>A101</Link>
+        <Link to={`${import.meta.env.BASE_URL}property/propertyview/${row.propertyIdentifier}`} className='text-info'>{row.propertyName||""}</Link>
       ),
       sortable: true,
       width: "110px"
@@ -302,7 +315,7 @@ export default function Accounts() {
     },
     {
       name: 'Status',
-      cell: (row:any) => (
+      cell: (row: any) => (
         <span className={` ${row.status === 'Unpaid' ? 'text-danger' : 'text-success'}`}>
           {row.status}
         </span>
@@ -315,19 +328,31 @@ export default function Accounts() {
       name: 'Action',
       position: 'fixed',
       sortable: true,
-      cell: () => <Dropdown>
+      cell: (row:any) => <Dropdown>
         <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
           Action
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
           <Dropdown.Item>Edit</Dropdown.Item>
-          <Dropdown.Item onClick={() => { viewDemoShow("paynow"); }}>Pay Now</Dropdown.Item>
+          <Dropdown.Item onClick={() => { setAmountToPay(row.totalOutstanding),viewDemoShow("paynow"); }}>Pay Now</Dropdown.Item>
           <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>,
     },
   ];
+
+  const handleCountChange = (index: number, value: number) => {
+    const updatedDenominations = [...denominations];
+    updatedDenominations[index].count = value;
+    updatedDenominations[index].total = updatedDenominations[index].value * value;
+
+    setDenominations(updatedDenominations);
+  };
+
+  const calculateGrandTotal = () => {
+    return denominations.reduce((total, denomination) => total + denomination.total, 0);
+  };
 
 
   // const tableData = {
@@ -338,7 +363,7 @@ export default function Accounts() {
   // };
   const tableData = {
     columns,
-    data:accountdata
+    data: accountdata
   };
 
   const fetchAllAccounts = async () => {
@@ -357,7 +382,7 @@ export default function Accounts() {
           totalAmount: account?.totalAmount,
           totalPaidAmount: account?.totalPaidAmount,
           propertyIdentifier: account.propertyIdentifier,
-          totalOutstanding: Number(account.totalAmount)-Number(account.totalPaidAmount)
+          totalOutstanding: Number(account.totalAmount) - Number(account.totalPaidAmount)
         }
 
       ));
@@ -384,22 +409,22 @@ export default function Accounts() {
         setpaynow(true);
         break;
 
-        case "cash":
-          setcash(true);
-          setpaynow(false);
-          break;
+      case "cash":
+        setcash(true);
+        setpaynow(false);
+        break;
 
-          case "cheque":
-             setcheque(true);
-           setpaynow(false);
-            break;
+      case "cheque":
+        setcheque(true);
+        setpaynow(false);
+        break;
 
-          case "otpverify":
-            setotpverify(true);
-            setcheque(false);
-            setpaynow(false);
-            setcash(false);
-           break;
+      case "otpverify":
+        setotpverify(true);
+        setcheque(false);
+        setpaynow(false);
+        setcash(false);
+        break;
 
       case "select":
         setSelect(true);
@@ -441,21 +466,21 @@ export default function Accounts() {
         setExportreceipt(false);
         break;
 
-        case "paynow":
-          setpaynow(false);
-          break;
+      case "paynow":
+        setpaynow(false);
+        break;
 
-          case "cash":
-            setcash(false);
-            break;
+      case "cash":
+        setcash(false);
+        break;
 
-            case "cheque":
-              setcheque(false);
-              break;
+      case "cheque":
+        setcheque(false);
+        break;
 
-              case "otpverify":
-                setotpverify(false);
-              break;
+      case "otpverify":
+        setotpverify(false);
+        break;
 
     }
   };
@@ -873,24 +898,24 @@ export default function Accounts() {
             </Modal.Header>
 
             <Modal.Body className='bg-light pt-4'>
-<Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> 22,700.00</Col>
-<Card className='m-3 p-4'>
-<h5>Choose your payment method</h5>
-<ul className='list-unstyled paymentmode mb-2'>
-  <li onClick={() => { viewDemoShow("cash"); }}>
-  <img alt="" src={imagesData('cash')} />
-    <span>Cash</span>
-  </li>
-  <li onClick={() => { viewDemoShow("cheque"); }}>
-  <img alt="" src={imagesData('cheque')} />
-    <span>Cheque</span>
-  </li>
-  <li>
-  <img alt="" src={imagesData('online')} />
-    <span>Online</span>
-  </li>
-  </ul>
-</Card>
+              <Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> {amountToPay}</Col>
+              <Card className='m-3 p-4'>
+                <h5>Choose your payment method</h5>
+                <ul className='list-unstyled paymentmode mb-2'>
+                  <li onClick={() => { viewDemoShow("cash"); }}>
+                    <img alt="" src={imagesData('cash')} />
+                    <span>Cash</span>
+                  </li>
+                  <li onClick={() => { viewDemoShow("cheque"); }}>
+                    <img alt="" src={imagesData('cheque')} />
+                    <span>Cheque</span>
+                  </li>
+                  <li>
+                    <img alt="" src={imagesData('online')} />
+                    <span>Online</span>
+                  </li>
+                </ul>
+              </Card>
             </Modal.Body>
 
           </Modal>
@@ -905,127 +930,148 @@ export default function Accounts() {
 
             <Modal.Body className='bg-light p-0'>
 
-<Card className='m-3 p-3'>
-  <Row>
-    <Col xl={6} className='border border-right pe-5'>
-    <h6>Enter the denomination:</h6>
-<table className='table cashtable'>
-  <thead>
-    <tr>
-      <th>Currency</th>
-      <th></th>
-      <th>Number Count</th>
-      <th></th>
-      <th className='text-end'>Total</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>2000</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' value={5} type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>10,000</td>
-    </tr>
-    <tr>
-      <td>1000</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' value={8} type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>8,000</td>
-    </tr>
-    <tr>
-      <td>500</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' value={4} type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>2,000</td>
-    </tr>
-    <tr>
-      <td>200</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' value={6} type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>1,200</td>
-    </tr>
-    <tr>
-      <td>100</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' value={5} type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>500</td>
-    </tr>
-    <tr>
-      <td>50</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' value={2} type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>100</td>
-    </tr>
-    <tr>
-      <td>20</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>0</td>
-    </tr>
-    <tr>
-      <td>10</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>0</td>
-    </tr>
-    <tr>
-      <td>5</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>0</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>0</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>X</td>
-      <td><Form.Control className='form-control' type="text"></Form.Control></td>
-      <td>=</td>
-      <td className='text-end tx-semibold'>0</td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <th colSpan={4} className='text-white tx-semibold'>Grand Total</th>
-     <th className='text-end text-white'>22,700</th>
-    </tr>
-  </tfoot>
-</table>
-    </Col>
-    <Col xl={6} className='pt-5 ps-4'>
-    <Col xl={12} className='w-100 tx-26 text-center tx-bold mb-5'><i className="fa fa-rupee"></i> 22,700.00</Col>
-    <FormGroup>
-    <FormLabel className='text-black'>Total Amount (in words)</FormLabel>
-    <Form.Control className='form-control' placeholder='Enter amount in words' type="text"></Form.Control>
-    </FormGroup>
-    <hr/>
-    <FormGroup className='mt-3'>
-    <FormLabel className='text-black'>Mobile Number</FormLabel>
-    <Form.Control className='form-control' placeholder='Enter Number' type="text"></Form.Control>
-    </FormGroup>
+              <Card className='m-3 p-3'>
+                <Row>
+                  <Col xl={6} className='border border-right pe-5'>
+                    <h6>Enter the denomination:</h6>
+                    <table className='table cashtable'>
+                      <thead>
+                        <tr>
+                          <th>Currency</th>
+                          <th></th>
+                          <th>Number Count</th>
+                          <th></th>
+                          <th className='text-end'>Total</th>
+                        </tr>
+                      </thead>
+                      {/* <tbody>
+                        <tr>
+                          <td>2000</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' value={5} type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>10,000</td>
+                        </tr>
+                        <tr>
+                          <td>1000</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' value={8} type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>8,000</td>
+                        </tr>
+                        <tr>
+                          <td>500</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' value={4} type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>2,000</td>
+                        </tr>
+                        <tr>
+                          <td>200</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' value={6} type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>1,200</td>
+                        </tr>
+                        <tr>
+                          <td>100</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' value={5} type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>500</td>
+                        </tr>
+                        <tr>
+                          <td>50</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' value={2} type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>100</td>
+                        </tr>
+                        <tr>
+                          <td>20</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>0</td>
+                        </tr>
+                        <tr>
+                          <td>10</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>0</td>
+                        </tr>
+                        <tr>
+                          <td>5</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>0</td>
+                        </tr>
+                        <tr>
+                          <td>2</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>0</td>
+                        </tr>
+                        <tr>
+                          <td>1</td>
+                          <td>X</td>
+                          <td><Form.Control className='form-control' type="text"></Form.Control></td>
+                          <td>=</td>
+                          <td className='text-end tx-semibold'>0</td>
+                        </tr>
+                      </tbody> */}
+                      <tbody>
+                        {denominations.map((denomination, index) => (
+                          <tr key={index}>
+                            <td>{denomination.value}</td>
+                            <td>X</td>
+                            <td>
+                              <Form.Control
+                                className="form-control"
+                                type="number"
+                                value={denomination.count}
+                                min="0"
+                                onChange={(e) => handleCountChange(index, Number(e.target.value))}
+                              />
+                            </td>
+                            <td>=</td>
+                            <td className="text-end tx-semibold">
+                              {denomination.total.toLocaleString()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <th colSpan={4} className='text-white tx-semibold'>Grand Total</th>
+                          <th className='text-end text-white'>{calculateGrandTotal().toLocaleString()}</th>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </Col>
+                  <Col xl={6} className='pt-5 ps-4'>
+                    <Col xl={12} className='w-100 tx-26 text-center tx-bold mb-5'><i className="fa fa-rupee"></i> {calculateGrandTotal().toLocaleString()}</Col>
+                    <FormGroup>
+                      <FormLabel className='text-black'>Total Amount (in words)</FormLabel>
+                      <Form.Control className='form-control' placeholder='Enter amount in words' type="text"></Form.Control>
+                    </FormGroup>
+                    <hr />
+                    <FormGroup className='mt-3'>
+                      <FormLabel className='text-black'>Mobile Number</FormLabel>
+                      <Form.Control className='form-control' placeholder='Enter Number' type="text"></Form.Control>
+                    </FormGroup>
 
-    <FormGroup className='mt-5'>
-<Button className='btn btn-primary w-100' type='button'  onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
-    </FormGroup>
+                    <FormGroup className='mt-5'>
+                      <Button className='btn btn-primary w-100' type='button' onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
+                    </FormGroup>
 
-    </Col>
-  </Row>
+                  </Col>
+                </Row>
 
-</Card>
+              </Card>
             </Modal.Body>
 
           </Modal>
@@ -1039,48 +1085,48 @@ export default function Accounts() {
             </Modal.Header>
 
             <Modal.Body className='bg-light pt-2'>
-<Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> 22,700.00</Col>
-<Card className='m-2 p-3'>
-<FormGroup>
-  <FormLabel>Cheque Date</FormLabel>
-  <Form.Control className='form-control' type="date"/>
-</FormGroup>
+              <Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> {amountToPay}</Col>
+              <Card className='m-2 p-3'>
+                <FormGroup>
+                  <FormLabel>Cheque Date</FormLabel>
+                  <Form.Control className='form-control' type="date" />
+                </FormGroup>
 
-<FormGroup>
-  <FormLabel>Cheque Number</FormLabel>
-  <Form.Control className='form-control' type="text"/>
-</FormGroup>
+                <FormGroup>
+                  <FormLabel>Cheque Number</FormLabel>
+                  <Form.Control className='form-control' type="text" />
+                </FormGroup>
 
-<FormGroup>
-  <FormLabel>Bank Name</FormLabel>
-  <Form.Control className='form-control' type="text"/>
-</FormGroup>
+                <FormGroup>
+                  <FormLabel>Bank Name</FormLabel>
+                  <Form.Control className='form-control' type="text" />
+                </FormGroup>
 
-<FormGroup>
-  <FormLabel>Branch</FormLabel>
-  <Form.Control className='form-control' type="text"/>
-</FormGroup>
+                <FormGroup>
+                  <FormLabel>Branch</FormLabel>
+                  <Form.Control className='form-control' type="text" />
+                </FormGroup>
 
-<FormGroup>
-  <FormLabel>Amount (in figures)</FormLabel>
-  <Form.Control className='form-control' type="text"/>
-</FormGroup>
+                <FormGroup>
+                  <FormLabel>Amount (in figures)</FormLabel>
+                  <Form.Control className='form-control' type="text" />
+                </FormGroup>
 
-<FormGroup>
-  <FormLabel>Amount (in words)</FormLabel>
-  <Form.Control className='form-control' type="text"/>
-</FormGroup>
+                <FormGroup>
+                  <FormLabel>Amount (in words)</FormLabel>
+                  <Form.Control className='form-control' type="text" />
+                </FormGroup>
 
-<FormGroup>
-  <FormLabel>Mobile Number</FormLabel>
-  <Form.Control className='form-control' placeholder='Enter mobile number for verification' type="text"/>
-</FormGroup>
+                <FormGroup>
+                  <FormLabel>Mobile Number</FormLabel>
+                  <Form.Control className='form-control' placeholder='Enter mobile number for verification' type="text" />
+                </FormGroup>
 
-<FormGroup>
-<Button className='btn btn-primary w-100 mt-3' type="button"  onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
-</FormGroup>
+                <FormGroup>
+                  <Button className='btn btn-primary w-100 mt-3' type="button" onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
+                </FormGroup>
 
-</Card>
+              </Card>
             </Modal.Body>
 
           </Modal>
@@ -1096,35 +1142,35 @@ export default function Accounts() {
 
             <Modal.Body className='p-5 text-center'>
 
-  <h4 className='text-black'>OTP Verification</h4>
-  <p>Enter the 4 digit verification code</p>
-<Row>
-<Col xl={2}></Col>
-<Col xl={2}>
-<Form.Control className='form-control' type="text"/>
-</Col>
+              <h4 className='text-black'>OTP Verification</h4>
+              <p>Enter the 4 digit verification code</p>
+              <Row>
+                <Col xl={2}></Col>
+                <Col xl={2}>
+                  <Form.Control className='form-control' type="text" />
+                </Col>
 
-<Col xl={2}>
-<Form.Control className='form-control' type="text"/>
-</Col>
+                <Col xl={2}>
+                  <Form.Control className='form-control' type="text" />
+                </Col>
 
-<Col xl={2}>
-<Form.Control className='form-control' type="text"/>
-</Col>
+                <Col xl={2}>
+                  <Form.Control className='form-control' type="text" />
+                </Col>
 
-<Col xl={2}>
-<Form.Control className='form-control' type="text"/>
-</Col>
-<Col xl={2}></Col>
-</Row>
+                <Col xl={2}>
+                  <Form.Control className='form-control' type="text" />
+                </Col>
+                <Col xl={2}></Col>
+              </Row>
 
 
-<FormGroup>
-  <Col xl={8} className='m-auto'>
-<Button className='btn btn-primary w-100 mt-4' type="button">Verify</Button>
-</Col>
-</FormGroup>
-<p className='text-info w-100 text-center mt-4'>Resend OTP</p>
+              <FormGroup>
+                <Col xl={8} className='m-auto'>
+                  <Button className='btn btn-primary w-100 mt-4' type="button">Verify</Button>
+                </Col>
+              </FormGroup>
+              <p className='text-info w-100 text-center mt-4'>Resend OTP</p>
 
             </Modal.Body>
 
