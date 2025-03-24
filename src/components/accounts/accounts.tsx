@@ -457,6 +457,18 @@ export default function Accounts() {
 
       case "cashview":
         setcashview(false);
+        setDenominations([
+          { value: 1000, count: 0, total: 0 },
+          { value: 500, count: 0, total: 0 },
+          { value: 200, count: 0, total: 0 },
+          { value: 100, count: 0, total: 0 },
+          { value: 50, count: 0, total: 0 },
+          { value: 20, count: 0, total: 0 },
+          { value: 10, count: 0, total: 0 },
+          { value: 5, count: 0, total: 0 },
+          { value: 2, count: 0, total: 0 },
+          { value: 1, count: 0, total: 0 },
+        ])
         break;
 
 

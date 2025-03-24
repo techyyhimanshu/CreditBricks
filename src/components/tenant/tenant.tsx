@@ -110,9 +110,9 @@ export default function Tenant() {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => viewDemoShow("addloan")}>Edit </Dropdown.Item>
+            {/* <Dropdown.Item onClick={() => viewDemoShow("addloan")}>Edit </Dropdown.Item> */}
             <Dropdown.Item>
-                <Link to={`${import.meta.env.BASE_URL}tenant/updateTenant/${row.tenantIdentifier}`}>Edit 2</Link>
+                <Link to={`${import.meta.env.BASE_URL}tenant/updateTenant/${row.tenantIdentifier}`}>Edit</Link>
             </Dropdown.Item>
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.tenantIdentifier)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
