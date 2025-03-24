@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Modal, Button, Form, Tooltip, OverlayTrigger } from "react-bootstrap";
+import { Col, Row, Card, Modal, Button, Form, Dropdown } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
@@ -22,7 +22,21 @@ const columns = [
   {
     name: 'Action',
     sortable: true,
-    cell: () => <div><button type="button" className="btn btn-light btn-sm">Edit</button><button type="button" className="btn bg-info-transparent ms-2 btn-sm">Delete</button></div>,
+
+    cell: () => (
+      <Dropdown >
+        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+          Action
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item >Edit </Dropdown.Item>
+          <Dropdown.Item className='text-danger' >Delete</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+
+    ),
+
 
   },
 ];

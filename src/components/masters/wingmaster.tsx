@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Modal, Button, Form } from "react-bootstrap";
+import { Col, Row, Card, Modal, Button, Form, Dropdown } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
@@ -91,12 +91,27 @@ export default function WingMaster() {
         {
             name: 'Action',
             sortable: true,
+
+
             cell: (row: Row) => (
-                <div>
-                    <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button>
-                    <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
-                </div>
-            ),
+                <Dropdown >
+                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                    Action
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => openEditModal(row)}>Edit </Dropdown.Item>
+                    <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)}>Delete</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+
+              ),
+            // cell: (row: Row) => (
+            //     <div>
+            //         <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button>
+            //         <button type="button" className="btn bg-info-transparent ms-2 btn-sm" onClick={() => handleDelete(row)} >Delete</button>
+            //     </div>
+            // ),
         },
     ]
     const tableData = {
