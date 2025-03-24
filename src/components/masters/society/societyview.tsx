@@ -99,7 +99,7 @@ export default function SocietyView() {
     }
   }
 
-  
+
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -400,7 +400,7 @@ export default function SocietyView() {
                                     {`${property?.tenant?.firstName||""} ${property?.tenant?.middleName||""} ${property?.tenant?.lastName||""}`}
                                     </Link>:"N/A"
                                     }
-                                    
+
                                   </td>
                                   <td>{property.status || "N/A"}</td>
                                   <td>
@@ -717,7 +717,7 @@ export default function SocietyView() {
                   </div>
 
                 </Tab>
-                <Tab eventKey="Accounts" title={<Link to={`${import.meta.env.BASE_URL}accounts/accounts`} >Accounts</Link>} >
+                <Tab eventKey="Accounts" title={<Link to={`${import.meta.env.BASE_URL}accounts/accounts`} className='p-0' >Accounts</Link>} >
 
                 </Tab>
                 <Tab eventKey="Notices" title="Notices">
