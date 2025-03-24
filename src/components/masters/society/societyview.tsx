@@ -206,7 +206,7 @@ export default function SocietyView() {
                       <Col xl={4} className='p-0 pe-3'>
 
 
-                        <Card>
+                        <Card className='mt-3'>
                           <Card.Body>
                             <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Society Document Details</h5>
                             <Row>

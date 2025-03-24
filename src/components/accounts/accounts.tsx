@@ -221,6 +221,7 @@ export default function Accounts() {
   const [cash, setcash] = useState(false);
   const [cheque, setcheque] = useState(false);
   const [otpverify, setotpverify] = useState(false);
+  const [cashview, setcashview] = useState(false);
 
   const propertyoption = [
     { value: "1", label: "A101" },
@@ -380,6 +381,10 @@ export default function Accounts() {
   const viewDemoShow = (modal: any) => {
     switch (modal) {
 
+      case "cashview":
+        setcashview(true);
+        break;
+
       case "paynow":
         setpaynow(true);
         break;
@@ -424,6 +429,11 @@ export default function Accounts() {
 
   const viewDemoClose = (modal: any) => {
     switch (modal) {
+
+      case "cashview":
+        setcashview(false);
+        break;
+
 
       case "select":
         setSelect(false);
@@ -674,15 +684,49 @@ export default function Accounts() {
 
                   </Row>
                   <div className="table-responsive ">
-                    <DataTableExtensions {...tableData}>
-                      <DataTable
-                        columns={receiptcolumns}
-                        data={receiptdata}
-                        pagination
+                  <table className='table table-bordered'>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Property</th>
+                        <th>Memeber Name</th>
+                        <th>Receipt Type</th>
+                        <th>Total Amount</th>
+                        <th>On Account Balance</th>
+                        <th>Receipt No.</th>
+                        <th>Payment Mode</th>
+                        <th>Date</th>
+                        <th>Created DT</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className='text-info'>RC-06913</td>
+                        <td className='text-info'>A 101</td>
+                        <td>Mr. Vinod Kumar Pandia</td>
+                        <td>Maintenance</td>
+                        <td>₹14,706.00</td>
+                        <td>₹16,554.00</td>
 
+                        <td>1</td>
+                        <td className='text-info cursor' onClick={() => { viewDemoClose("cashview"); }}>Cash</td>
+                        <td>3/31/2024</td>
+                        <td>8/17/2024, 8:37 PM</td>
+                        <td>
+                          <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
 
-                      />
-                    </DataTableExtensions>
+          <Dropdown.Menu>
+            <Dropdown.Item>Edit </Dropdown.Item>
+            <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown></td>
+                      </tr>
+                    </tbody>
+                  </table>
                   </div>
                 </Tab>
 
@@ -1126,6 +1170,196 @@ export default function Accounts() {
 </FormGroup>
 <p className='text-info w-100 text-center mt-4'>Resend OTP</p>
 
+            </Modal.Body>
+
+          </Modal>
+
+          <Modal show={cashview} size='xl' centered>
+            <Modal.Header>
+              <Modal.Title>Cash</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("cashview"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='bg-light p-0'>
+
+<Card className='m-3 p-3'>
+  <Row>
+    <Col xl={6} className='border border-right pe-5'>
+    <h6>Enter the denomination:</h6>
+<table className='table cashtable'>
+  <thead>
+    <tr>
+      <th>Currency</th>
+      <th></th>
+      <th>Number Count</th>
+      <th></th>
+      <th className='text-end'>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2000</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={5} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>10,000</td>
+    </tr>
+    <tr>
+      <td>1000</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={8} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>8,000</td>
+    </tr>
+    <tr>
+      <td>500</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={4} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>2,000</td>
+    </tr>
+    <tr>
+      <td>200</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={6} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>1,200</td>
+    </tr>
+    <tr>
+      <td>100</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={5} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>500</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={2} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>100</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colSpan={4} className='text-white tx-semibold'>Grand Total</th>
+     <th className='text-end text-white'>22,700</th>
+    </tr>
+  </tfoot>
+</table>
+    </Col>
+    <Col xl={6} className='pt-5 ps-4'>
+    <Col xl={12} className='w-100 tx-26 text-center tx-bold mb-5'><i className="fa fa-rupee"></i> 22,700.00</Col>
+    <FormGroup>
+    <FormLabel className='text-black'>Total Amount (in words)</FormLabel>
+    <Form.Control className='form-control' placeholder='Enter amount in words' type="text"></Form.Control>
+    </FormGroup>
+    <hr/>
+    <FormGroup className='mt-3'>
+    <FormLabel className='text-black'>Mobile Number</FormLabel>
+    <Form.Control className='form-control' placeholder='Enter Number' type="text"></Form.Control>
+    </FormGroup>
+
+    <FormGroup className='mt-5'>
+<Button className='btn btn-primary w-100' type='button'  onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
+    </FormGroup>
+
+    </Col>
+  </Row>
+
+</Card>
+            </Modal.Body>
+
+          </Modal>
+
+          <Modal show={cheque} centered>
+            <Modal.Header>
+              <Modal.Title>Cheque</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("cheque"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='bg-light pt-2'>
+<Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> 22,700.00</Col>
+<Card className='m-2 p-3'>
+<FormGroup>
+  <FormLabel>Cheque Date</FormLabel>
+  <Form.Control className='form-control' type="date"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Cheque Number</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Bank Name</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Branch</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Amount (in figures)</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Amount (in words)</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Mobile Number</FormLabel>
+  <Form.Control className='form-control' placeholder='Enter mobile number for verification' type="text"/>
+</FormGroup>
+
+<FormGroup>
+<Button className='btn btn-primary w-100 mt-3' type="button"  onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
+</FormGroup>
+
+</Card>
             </Modal.Body>
 
           </Modal>
