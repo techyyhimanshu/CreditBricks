@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { Col, Row, Card, Form, Dropdown, Tabs, Tab, FormLabel, FormCheck, Button, Modal, FormControl } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Select from "react-select";
 import { getSocietyDetailsApi } from '../../../api/society-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
@@ -10,6 +10,7 @@ import { handleApiError } from '../../../helpers/handle-api-error';
 
 export default function SocietyView() {
   const [singleSocietyData, setSingleSocietydata] = useState<any>([])
+  const navigate = useNavigate();
   const params = useParams()
   const identifier = params.identifier as string
 
@@ -97,6 +98,8 @@ export default function SocietyView() {
       showToast("error", errorMessage)
     }
   }
+
+  
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -714,7 +717,7 @@ export default function SocietyView() {
                   </div>
 
                 </Tab>
-                <Tab eventKey="Accounts" title="Accounts">
+                <Tab eventKey="Accounts" title={<Link to={`${import.meta.env.BASE_URL}accounts/accounts`} >Accounts</Link>} >
 
                 </Tab>
                 <Tab eventKey="Notices" title="Notices">
