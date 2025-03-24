@@ -4,12 +4,14 @@ import { Fragment, useEffect, useState } from 'react';
 import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-import { addNewComplaintApi, assignComplaintToVendorApi, getAllComplainCategoriesApi, getAllComplaintsApi, getAllPropertiesForDropdownApi } from '../../api/complaint-api';
+import { addNewComplaintApi, assignComplaintToVendorApi, deleteComplaintApi, getAllComplainCategoriesApi, getAllComplaintsApi, getAllPropertiesForDropdownApi, updateComplaintApi } from '../../api/complaint-api';
 import { Formik, Form as FormikForm, Field } from 'formik';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { getVendorForDropDownApi } from '../../api/vendor-api';
 import { getAllSocietyApi } from '../../api/society-api';
+import DataTable from 'react-data-table-component';
+import DataTableExtensions from "react-data-table-component-extensions"
 
 export default function Complaints() {
 
@@ -23,7 +25,7 @@ export default function Complaints() {
       complaintId: "",
       categoryName: "",
       propertyName: "",
-      societyName:"",
+      societyName: "",
       contactPersonName: "",
       createdAt: "",
       status: "",
@@ -42,33 +44,117 @@ export default function Complaints() {
     status: "",
     priority: "",
   });
-  const [complaintToView, setComplaintToView] = useState({
-    id: "",
-    name: "",
-    status: "",
-    description: "",
-    priority: "",
-    createdAt: "",
-    issueFilePath: "",
-    category: {
-      name: ""
-    },
-    property: {
-      propertyName: ""
-    },
-    complaintAllocation: {
-      vendor: {
-        contactPersonName: "",
-        contactPersonNumber: ""
-      }
-    }
-  });
+
+  // const [complaintToView, setComplaintToView] = useState({
+  //   id: "",
+  //   categoryName: "",
+  //   status: "",
+  //   description: "",
+  //   priority: "",
+  //   createdAt: "",
+  //   issueFilePath: "",
+  //   subCategory: "",
+  //   contactPersonName: "",
+  //   contactPersonNumber: "",
+  //   propertyName:""
+  // });
+  const [complaintToView, setComplaintToView] = useState<any>(null);
+  const [editing, setEditing] = useState(false);
   const [complaintCategoriesData, setComplaintCategoriesData] = useState([]);
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
   const [complaintIdToAssign, setComplaintIdToAssign] = useState({
     id: "",
     contactPersonName: ""
   });
+
+  const columns = [
+    {
+      name: 'S.No',
+      selector: (row: any) => row.sno,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Complaint Id',
+      cell: (row: any) => (
+        <span className='text-info cursor' onClick={() => { viewDemoShow("complaintview"), setComplaintToView(row) }}>{row.id}</span>
+      ),
+      sortable: true,
+    },
+    {
+      name: 'Property',
+      cell: (row: any) => {
+        return (
+          <span>{row.propertyName}</span>
+        )
+      },
+      sortable: true,
+    },
+
+    {
+      name: 'Complaint Category',
+      selector: (row: any) => row.categoryName,
+      sortable: true,
+    },
+    {
+      name: 'Assign To',
+      selector: (row: any) => row.contactPersonName,
+      sortable: true,
+    },
+    {
+      name: 'Date & Time',
+      selector: (row: any) => row.createdAt,
+      sortable: true,
+    },
+    {
+      name: 'Status',
+      selector: (row: any) => row.status,
+      sortable: true,
+    },
+    {
+      name: 'Priority',
+      cell: (row: any) => {
+        if (row.priority === 'high') {
+          return <td className='text-center'><span className='badge badge-danger'>High</span></td>;
+        } else if (row.priority === 'medium') {
+          return <td className='text-center'><span className='badge badge-warning'>Medium</span></td>;
+        } else {
+          return <td className='text-center'><span className='badge badge-success'>Low</span></td>;
+        }
+      },
+      sortable: true,
+    },
+
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => { setComplaintToView(row), setEditing(true), viewDemoShow("addcomplaint") }}>Edit</Dropdown.Item>
+            <Dropdown.Item onClick={() => {
+              setComplaintIdToAssign(row)
+              viewDemoShow("assign")
+              fetchAllVendorForDropDown()
+            }
+            }>Assign To</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
+      ),
+
+    },
+  ];
+
+  const tableData = {
+    columns,
+    data: complaintData
+  };
 
 
   const viewDemoShow = (modal: any) => {
@@ -79,10 +165,12 @@ export default function Complaints() {
 
       case "complaintview":
         setcomplaintview(true);
+        setEditing(false)
         break;
 
       case "assign":
         setassign(true);
+        setEditing(false)
         break;
 
     }
@@ -92,14 +180,20 @@ export default function Complaints() {
     switch (modal) {
       case "addcomplaint":
         setcomplaints(false);
+        setComplaintToView(null)
+        setEditing(false)
         break;
 
       case "complaintview":
         setcomplaintview(false);
+        setComplaintToView(null)
+        setEditing(false)
         break;
 
       case "assign":
         setassign(false);
+        setComplaintToView(null)
+        setEditing(false)
         break;
 
     }
@@ -145,6 +239,7 @@ export default function Complaints() {
       label: vendor.contactPersonName
     }
   })
+
   useEffect(() => {
 
     fetchAllComplaints();
@@ -152,19 +247,29 @@ export default function Complaints() {
     fetchAllComplaintCategories()
     fetchSocietiesForDropDown()
   }, []);
+
   const fetchAllComplaints = async () => {
     try {
       const response = await getAllComplaintsApi()
       if (response.status === 200) {
-        const formattedData = response.data.data.map((complaint: any) => {
+        const formattedData = response.data.data.map((complaint: any,index:number) => {
           return {
-            id: complaint.id,
-            categoryName: complaint.category.name,
-            propertyName: complaint.property.propertyName,
-            contactPersonName: complaint.complaintAllocation?.vendor.contactPersonName,
-            createdAt: complaint.createdAt,
-            status: complaint.status,
-            priority: complaint.priority,
+            sno: index + 1,
+            id: complaint?.id || "",
+            categoryName: complaint?.category?.name || "",
+            categoryId: complaint?.category?.id || "",
+            propertyName: complaint?.property?.propertyName || "",
+            propertyIdentifier: complaint?.property?.propertyIdentifier || "",
+            societyIdentifier: complaint?.society?.societyIdentifier || "",
+            societyName: complaint?.society?.societyName || "",
+            contactPersonName: complaint?.complaintAllocation?.vendor?.contactPersonName || "",
+            contactPersonNumber: complaint?.complaintAllocation?.vendor?.contactPersonNumber || "",
+            createdAt: complaint?.createdAt || "",
+            status: complaint?.status || "",
+            priority: complaint?.priority || "",
+            description: complaint?.description || "",
+            issueFilePath: complaint?.issueFilePath || "",
+            subCategory: complaint?.subCategory?.name || "",
           }
         })
         setComplaintData(formattedData);
@@ -196,6 +301,7 @@ export default function Complaints() {
       console.error("Error fetching properties:", error);
     }
   }
+
   const fetchSocietiesForDropDown = async () => {
     try {
       const response = await getAllSocietyApi();
@@ -204,7 +310,6 @@ export default function Complaints() {
         label: item.societyName,
       }));
       setSocietyData(formattedData);
-      console.log(formattedData)
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
@@ -222,18 +327,27 @@ export default function Complaints() {
       showToast("error", errorMessage);
     }
   }
+
   const handleSubmit = async (values: any) => {
-    const formattedData = {
-      propertyIdentifier: values.property.value,
-      societyIdentifier: values.society.value,
-      categoryId: values.complaintCategory.value,
-      description: values.complaintDescription,
-      priority: values.priority.value,
-      complaintFile: values.complaintFile
+    const formattedData: any = {
+      propertyIdentifier: values.property.value || "",
+      societyIdentifier: values.society.value || "",
+      categoryId: values.complaintCategory.value || "",
+      description: values.complaintDescription || "",
+      priority: values.priority.value || "",
+    }
+    if (values.complaintFile) {
+      formattedData.complaintFile = values.complaintFile
     }
     try {
-      const response = await addNewComplaintApi(formattedData)
-      if (response.status === 200) {
+      let response;
+      if (editing) {
+        response = await updateComplaintApi(formattedData, complaintToView?.id)
+      } else {
+        response = await await addNewComplaintApi(formattedData)
+      }
+
+      if (response.status === 200 || response.status === 201) {
         showToast("success", response.data.message)
         fetchAllComplaints()
       }
@@ -243,27 +357,36 @@ export default function Complaints() {
     }
     viewDemoClose("addcomplaint")
   }
+
   const handleFilterChange = async (name: string, value: any) => {
     setFilters((prevState) => ({
       ...prevState,
       [name]: value
     }));
 
-    // Wait for state update before using new filters
     const updatedFilters = { filters: { ...filtersss, [name]: value }, };
 
     try {
       const response = await getAllComplaintsApi(updatedFilters); // Pass filters correctly
       if (response.status === 200) {
-        const formattedData = response.data.data.map((complaint: any) => {
+        const formattedData = response.data.data.map((complaint: any,index:number) => {
           return {
-            id: complaint.id,
-            categoryName: complaint.category.name,
-            propertyName: complaint.property.propertyName,
-            contactPersonName: complaint.complaintAllocation?.vendor.contactPersonName,
-            createdAt: complaint.createdAt,
-            status: complaint.status,
-            priority: complaint.priority,
+            sno: index + 1,
+            id: complaint?.id || "",
+            categoryName: complaint?.category?.name || "",
+            categoryId: complaint?.category?.id || "",
+            propertyName: complaint?.property?.propertyName || "",
+            propertyIdentifier: complaint?.property?.propertyIdentifier || "",
+            societyIdentifier: complaint?.property?.societyIdentifier || "",
+            societyName: complaint?.property?.societyName || "",
+            contactPersonName: complaint?.complaintAllocation?.vendor?.contactPersonName || "",
+            contactPersonNumber: complaint?.complaintAllocation?.vendor?.contactPersonNumber || "",
+            createdAt: complaint?.createdAt || "",
+            status: complaint?.status || "",
+            priority: complaint?.priority || "",
+            description: complaint?.description || "",
+            issueFilePath: complaint?.issueFilePath || "",
+            subCategory: complaint?.subCategory?.name || "",
           }
         })
         setComplaintData(formattedData);
@@ -273,6 +396,7 @@ export default function Complaints() {
       showToast("error", errorMessage);
     }
   };
+
   const handleVendorAssignment = async () => {
     const formattedData = {
       complaintId: complaintIdToAssign.id,
@@ -299,6 +423,21 @@ export default function Complaints() {
     }
   };
 
+  const handleDelete = (id: string) => {
+    ; (async () => {
+      try {
+
+        const response = await deleteComplaintApi(id)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          setComplaintData((prevData: any) => prevData.filter((society: any) => society.id !== id))
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
 
   return (
     <Fragment>
@@ -311,7 +450,7 @@ export default function Complaints() {
             viewDemoShow("addcomplaint")
             fetchAllComplaintCategories()
             fetchAllPropertiesForDropDown()
-            
+
           }}><i className="bi bi-plus"></i> Add Complaint</span>
           <Modal show={addcomplaint} centered>
             <Modal.Header>
@@ -320,17 +459,20 @@ export default function Complaints() {
                 x
               </Button>
             </Modal.Header>
-            <Formik initialValues={{
-              property: { value: "", label: "" },
-              society: { value: "", label: "" },
-              complaintCategory: { value: "", label: "" },
-              complaintDescription: "",
-              priority: { value: "", label: "" },
-              complaintFile: null
-            }}
+            <Formik
+              enableReinitialize
+              initialValues={{
+                id: complaintToView?.id || "",
+                property: complaintToView ? { label: complaintToView.propertyName, value: complaintToView.propertyIdentifier } : { label: "", value: "" },
+                society: complaintToView ? { label: complaintToView.societyName, value: complaintToView.societyIdentifier } : { label: "", value: "" },
+                complaintCategory: complaintToView ? { label: complaintToView.categoryName, value: complaintToView.categoryId } : { label: "", value: "" },
+                complaintDescription: complaintToView?.description || "",
+                priority: complaintToView ? { label: complaintToView.priority, value: complaintToView.priority } : { label: "", value: "" },
+                complaintFile: null
+              }}
               onSubmit={handleSubmit}
             >
-              {({ setFieldValue }) => (
+              {({ setFieldValue, values }) => (
                 <FormikForm>
                   <Modal.Body className='pt-1'>
                     <Row>
@@ -340,6 +482,7 @@ export default function Complaints() {
                           <input type="text"
                             className='form-control'
                             placeholder=''
+                            value={values.id}
                             disabled />
                         </Form.Group>
                       </Col>
@@ -349,6 +492,7 @@ export default function Complaints() {
                           <Form.Label>Society</Form.Label>
                           <Select
                             options={societyData}
+                            value={values.society}
                             name="society"
                             onChange={(selected) => setFieldValue("society", selected)}
                             placeholder="Select society"
@@ -361,6 +505,7 @@ export default function Complaints() {
                           <Form.Label>Property</Form.Label>
                           <Select
                             options={property}
+                            value={values.property}
                             name="property"
                             onChange={(selected) => setFieldValue("property", selected)}
                             placeholder="Select property"
@@ -374,6 +519,7 @@ export default function Complaints() {
                           <Form.Label>Complaint Category</Form.Label>
                           <Select
                             options={complainttype}
+                            value={values.complaintCategory}
                             name='complaintCategory'
                             onChange={(selected) => setFieldValue("complaintCategory", selected)}
                             placeholder="Select service"
@@ -387,6 +533,7 @@ export default function Complaints() {
                           <Form.Label>Priority </Form.Label>
                           <Select
                             options={priority}
+                            value={values.priority}
                             name='priority'
                             onChange={(selected) => setFieldValue("priority", selected)}
                             placeholder="Select priority"
@@ -398,7 +545,7 @@ export default function Complaints() {
                       <Col xl={12}>
                         <Form.Group className="form-group mb-1">
                           <Form.Label>Description</Form.Label>
-                          <Field type="text" name='complaintDescription' className='form-control'
+                          <Field type="text" name='complaintDescription' value={values.complaintDescription} className='form-control'
                             as="textarea" placeholder='Description'></Field>
                         </Form.Group>
                       </Col>
@@ -439,16 +586,18 @@ export default function Complaints() {
               </Button>
             </Modal.Header>
             <Modal.Body>
+
               <Row>
                 <Col xl={3}>
-                  {complaintToView.issueFilePath ? <img
+                  {complaintToView?.issueFilePath ? <img
                     alt="" className='w-100 rounded-2'
-                    src={import.meta.env.VITE_STATIC_PATH + complaintToView.issueFilePath}
+                    crossOrigin="anonymous"
+                    src={import.meta.env.VITE_STATIC_PATH + complaintToView?.issueFilePath}
                   /> : <p className='w-100 rounded-2' style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>No image</p>}
                 </Col>
                 <Col xl={8} className='p-0'>
-                  <p className='tx-16 mb-0 mt-2 tx-semibold'>{complaintToView.id}</p>
-                  <p className='mb-1 tx-16 '>{complaintToView.property.propertyName}</p>
+                  <p className='tx-16 mb-0 mt-2 tx-semibold'>{complaintToView?.id}</p>
+                  <p className='mb-1 tx-16 '>{complaintToView?.propertyName}</p>
 
                 </Col>
               </Row>
@@ -456,19 +605,19 @@ export default function Complaints() {
               <Row>
                 <Col xl={6}>
                   <p className='mb-0 text-muted'>Complaint Category</p>
-                  <p className='tx-15 tx-semibold'>{complaintToView.category.name}s</p>
+                  <p className='tx-15 tx-semibold'>{complaintToView?.categoryName}s</p>
                 </Col>
                 <Col xl={6} className='text-end'>
                   <p className='mb-0 text-muted'>Priority</p>
-                  {complaintToView.priority === "high" ? <p className='tx-15 text-danger tx-semibold'>High</p> :
-                    complaintToView.priority === "medium" ? <p className='tx-15 text-warning tx-semibold'>Medium</p> :
+                  {complaintToView?.priority === "high" ? <p className='tx-15 text-danger tx-semibold'>High</p> :
+                    complaintToView?.priority === "medium" ? <p className='tx-15 text-warning tx-semibold'>Medium</p> :
                       <p className='tx-15 text-success tx-semibold'>Low</p>}
 
 
                 </Col>
                 <Col xl={12} className='mt-2'>
-                  <p>{complaintToView.description}</p>
-                  <span className='text-muted'><i className='bi bi-calendar-fill'></i>&nbsp; {complaintToView.createdAt}</span>
+                  <p>{complaintToView?.description}</p>
+                  <span className='text-muted'><i className='bi bi-calendar-fill'></i>&nbsp; {complaintToView?.createdAt}</span>
                 </Col>
               </Row>
               <hr />
@@ -476,14 +625,14 @@ export default function Complaints() {
                 <Col xl={6}>
                   <p className="mb-0 text-muted">Assign To</p>
                   <p className="tx-15 mb-1 tx-semibold">
-                    {complaintToView.complaintAllocation?.vendor.contactPersonName}
+                    {complaintToView?.contactPersonName}
                   </p>
-                  <p>{complaintToView.complaintAllocation?.vendor?.contactPersonNumber}</p>
+                  <p>{complaintToView?.contactPersonNumber}</p>
                 </Col>
 
                 <Col xl={6} className='text-end'>
                   <p className='mb-0 text-muted'>Status</p>
-                  <p className='tx-15 tx-semibold'><i className='bi bi-check-circle text-success tx-18'></i>&nbsp; {complaintToView.status}</p>
+                  <p className='tx-15 tx-semibold'><i className='bi bi-check-circle text-success tx-18'></i>&nbsp; {complaintToView?.status}</p>
 
                 </Col>
 
@@ -625,7 +774,18 @@ export default function Complaints() {
               <h3 className='card-title'>   List of Compliants</h3>
             </CardHeader>
             <Card.Body className='pt-0'>
-              <table className='table'>
+              <div className="table-responsive ">
+                <DataTableExtensions {...tableData}>
+                  <DataTable
+                    columns={columns}
+                    data={complaintData}
+                    pagination
+
+
+                  />
+                </DataTableExtensions>
+              </div>
+              {/* <table className='table'>
                 <thead>
                   <tr>
                     <th>S.no.</th>
@@ -656,17 +816,7 @@ export default function Complaints() {
 
                         <td>{item.createdAt}</td>
                         <td>{item.status}</td>
-                        {/* <td> <Dropdown >
-                          <Dropdown.Toggle className='btn-sm text-primary tx-16 bg-none p-1 border-0 bg-light' id="dropdown-basic">
-                            <span className='tx-14'>  In Process</span>
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item>Pending</Dropdown.Item>
-                            <Dropdown.Item>Verified</Dropdown.Item>
-                            <Dropdown.Item>Completed</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                        </td> */}
+
                         {
                           item.priority === "high" ? <td className='text-center'><span className='badge badge-danger'>High</span></td> :
                             item.priority === "medium" ? <td className='text-center'><span className='badge badge-warning'>Medium</span></td> :
@@ -678,14 +828,14 @@ export default function Complaints() {
                           </Dropdown.Toggle>
 
                           <Dropdown.Menu>
-                            <Dropdown.Item onClick={() => viewDemoShow("addcomplaint")}>Edit</Dropdown.Item>
+                            <Dropdown.Item onClick={() => { setComplaintToView(item), setEditing(true), viewDemoShow("addcomplaint") }}>Edit</Dropdown.Item>
                             <Dropdown.Item onClick={() => {
                               setComplaintIdToAssign(item)
                               viewDemoShow("assign")
                               fetchAllVendorForDropDown()
                             }
                             }>Assign To</Dropdown.Item>
-                            <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                            <Dropdown.Item className='text-danger' onClick={() => handleDelete(item.id)}>Delete</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown></td>
                       </tr>
@@ -694,7 +844,7 @@ export default function Complaints() {
 
 
                 </tbody>
-              </table>
+              </table> */}
 
             </Card.Body>
           </Card>

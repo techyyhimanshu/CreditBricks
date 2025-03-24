@@ -43,6 +43,29 @@ export const addNewComplaintApi = async (data: any): Promise<any> => {
     }
 }
 
+export const updateComplaintApi = async (data:any,id:string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`complaint/ct/${id}`,formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export const deleteComplaintApi = async (id:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.delete(`complaint/${id}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 export const assignComplaintToVendorApi = async (data: any): Promise<any> => {
     try {
         const response = await axiosInstance.post(`/complaint/assign`, data)
