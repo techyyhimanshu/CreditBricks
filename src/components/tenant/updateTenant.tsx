@@ -5,7 +5,7 @@ import { Col, Row, Card, Accordion, Button, Form, Dropdown, FormControl } from "
 import "react-data-table-component-extensions/dist/index.css";
 import DataTableExtensions from "react-data-table-component-extensions";
 import Select from "react-select";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { imagesData } from "../../common/commonimages";
 import { getAllSocietyApi, getPropertiesOfSocietyApi } from '../../api/society-api';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
@@ -13,7 +13,7 @@ import { handleApiError } from '../../helpers/handle-api-error';
 import stateCities from "../../components/masters/stateCity.json"
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import DataTable from 'react-data-table-component';
-import { getTenantApi,updateTenantApi } from '../../api/tenant-api';
+import { getTenantApi, updateTenantApi } from '../../api/tenant-api';
 interface StateCities {
   [key: string]: string[]; // Index signature
 }
@@ -22,6 +22,7 @@ export default function UpdateTenant() {
   const [societyOptions, setSocietyOptions] = useState([]);
   const [propertyOptions, setPropertyOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState<any>([]);
+  const [currentTenant, setCurrentTenant] = useState<any>(null);
   const [vehicleFormData, setVehicleFormData] = useState({
     vehicleType: null,
     vehicleNumber: "",
@@ -29,6 +30,21 @@ export default function UpdateTenant() {
   });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [vehicleData, setVehicleData] = useState<Row[]>([]);
+  const params = useParams()
+  const identifier = params.identifier as string
+
+  useEffect(() => {
+    const fetchTenantDetails = async () => {
+      try {
+        const response = await getTenantApi(identifier)
+        setCurrentTenant(response.data.data)
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast('error', errorMessage)
+      }
+    }
+    fetchTenantDetails()
+  }, [])
 
   const vehicletype = [
     { value: "2Wheeler", label: "2 Wheeler" },
@@ -211,7 +227,7 @@ export default function UpdateTenant() {
         }
       });
       // Step 3: API Call
-      const response = await updateTenantApi(formData, formData.tenantIdentifier);
+      const response = await updateTenantApi(formData, identifier);
       if (response.status === 201 || response.status === 200) {
         showToast("success", response.data.message);
       }
@@ -250,37 +266,38 @@ export default function UpdateTenant() {
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}tenant/tenant`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Add Tenant</span>
+          <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}tenant/tenant`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Update Tenant</span>
         </div>
       </div>
       <Formik
+        enableReinitialize
         initialValues={{
-          society: { value: "", label: "" },
+          society: { value: currentTenant?.country, label: currentTenant?.country },
           property: { value: "", label: "" },
-          firstName: "",
-          middleName: "",
-          lastName: "",
-          mobileNumber: "",
-          alternateMobileNumber: "",
-          email: "",
+          firstName: currentTenant?.firstName || "",
+          middleName: currentTenant?.middleName || "",
+          lastName: currentTenant?.lastName || "",
+          mobileNumber: currentTenant?.mobileNumber || "",
+          alternateMobileNumber: currentTenant?.alternateMobileNumber || "",
+          email: currentTenant?.email || "",
           gender: { value: "", label: "" },
-          age: "",
-          dateOfBirth: "",
-          anniversary: "",
-          address: "",
+          age: currentTenant?.age || "",
+          dateOfBirth: currentTenant?.dateOfBirth || "",
+          anniversary: currentTenant?.anniversary || "",
+          address: currentTenant?.address || "",
           country: { value: "", label: "" },
           state: { value: "", label: "" },
           city: { value: "", label: "" },
-          pincode: "",
-          familyMembers: "",
+          pincode: currentTenant?.pincode || "",
+          familyMembers: currentTenant?.familyMembers || "",
           havePet: { value: "", label: "" },
-          aadharNumber: "",
-          rentRegistrationId: "",
-          rentAgreementStartDate: "",
-          rentAgreementEndDate: "",
-          monthlyRent: "",
-          depositAmount: "",
-          dueAmount: "",
+          aadharNumber: currentTenant?.aadharNumber || "",
+          rentRegistrationId: currentTenant?.rentRegistrationId || "",
+          rentAgreementStartDate: currentTenant?.rentAgreementStartDate || "",
+          rentAgreementEndDate: currentTenant?.rentAgreementEndDate || "",
+          monthlyRent: currentTenant?.monthlyRent || "",
+          depositAmount: currentTenant?.depositAmount || "",
+          dueAmount: currentTenant?.dueAmount || "",
           rentAgreementFile: "",
           policeVerificationFile: "",
 

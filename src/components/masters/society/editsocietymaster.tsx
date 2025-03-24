@@ -69,6 +69,7 @@ export default function EditSocietyMaster() {
     const cities = stateCitiesTyped[selected.value] || [];
     setCityOptions(cities.map((city) => ({ value: city, label: city })));
   };
+  
   const handleSubmit = (values: any) => {
     const societyDataToUpdate = {
       societyName: values.societyName,
@@ -130,13 +131,9 @@ export default function EditSocietyMaster() {
               societyName: currentSociety?.societyName || "",
               societyManager: currentSociety?.societyManager || "",
               address: currentSociety?.address || "",
-
               country: { value: currentSociety.country, label: currentSociety.country },
-
               state: { value: currentSociety.state, label: currentSociety.state },
-
               city: { value: currentSociety.city, label: currentSociety.city },
-
               registrationNumber: currentSociety?.registrationNumber,
               tanNumber: currentSociety?.tanNumber,
               panNumber: currentSociety?.panNumber,

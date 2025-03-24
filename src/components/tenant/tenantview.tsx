@@ -209,7 +209,7 @@ export default function TenantView() {
                   <p className='mb-0 text-muted'>Monthly Rent</p>
                   <p className='tx-15 tx-semibold text-primary'>₹ {tenantDetails.tenantProperties[0]?.monthlyRent}</p>
                   <p className='mb-0 pt-2 text-muted'></p>
-                  <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p>
+                  {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
                 </Col>
 
                 <Col xl={12}>
@@ -240,6 +240,9 @@ export default function TenantView() {
                   <p className='tx-15 tx-semibold mb-0 text-end'>₹ {tenantDetails.tenantProperties[0]?.depositAmount}</p>
                 </Col>
 
+              </Row>
+              <Row>
+                N/A
               </Row>
             </Card.Body>
             <CardFooter className='border-top'>
@@ -384,7 +387,8 @@ export default function TenantView() {
             <Card.Body className='pb-1'>
               <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
               <Row>
-                <Col xl={2} className='p-0'>
+                N/A
+                {/* <Col xl={2} className='p-0'>
                   <img
                     alt="" className='w-100'
                     src={imagesData('pdficon')}
@@ -399,11 +403,12 @@ export default function TenantView() {
                   >
                     Download
                   </a>
-                </Col>
+                </Col> */}
               </Row>
 
               <Row>
-                <Col xl={2} className='p-0'>
+                N/A
+                {/* <Col xl={2} className='p-0'>
                   <img
                     alt="" className='w-100'
                     src={imagesData('pdficon')}
@@ -418,7 +423,7 @@ export default function TenantView() {
                   >
                     Download
                   </a>
-                </Col>
+                </Col> */}
               </Row>
             </Card.Body>
           </Card>
@@ -427,7 +432,8 @@ export default function TenantView() {
             <Card.Body className='pb-1'>
               <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
               <Row>
-                <Col xl={2} className='p-0'>
+              N/A
+                {/* <Col xl={2} className='p-0'>
                   <img
                     alt="" className='w-100'
                     src={imagesData('pdficon')}
@@ -436,7 +442,7 @@ export default function TenantView() {
                 <Col xl={9} className='p-0'>
                   <p className='tx-14 mb-0 mt-2 tx-semibold'>Vehicle No. {tenantDetails.tenantVehicles[0]?.vehicleNumber}  <span className='text-muted'>({tenantDetails.tenantVehicles[0]?.vehicleType})</span></p>
                   <Link to={``} className='text-info'>Download</Link>
-                </Col>
+                </Col> */}
               </Row>
             </Card.Body>
           </Card>
