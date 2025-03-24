@@ -86,6 +86,10 @@ import badminton from '../assets/applicationicon/badminton.webp';
 import foodcourt from '../assets/applicationicon/foodcourt.webp';
 import others from '../assets/applicationicon/others.webp';
 
+import cash from '../assets/img/cash.png';
+import cheque from '../assets/img/cheque.png';
+import online from '../assets/img/online.png';
+
 export const imagesData = (idx: any) => {
   const images :any = {
     evaluationfrm,applicationfrm, feedbackfrm,
@@ -94,7 +98,8 @@ export const imagesData = (idx: any) => {
     female11 ,chrome, edge, email, firefox, opera,  safari,
     us, italy, spain, india, french, mexico, singapore, poland, austria, russia, germany, argentina, brazil, uae, china, uk,
     malaysia, canada, favicon,faviconwhite, logo, logowhite , mainlogo, bgimg, bgimg1, bgimg2, bgimg3, bgimg4, logibg, totalbalance, totalreceipt, totalinvoice,
-    pdficon, gatepass, conatctupdate,changename, parking, flatresale, interiorwork, celebration, theater, banquethall,clubhouse, swimmingpool, playarea, turfarea, rentagreement, sharecertificate, nomination, badminton, foodcourt, others
+    pdficon, gatepass, conatctupdate,changename, parking, flatresale, interiorwork, celebration, theater, banquethall,clubhouse, swimmingpool, playarea, turfarea, rentagreement, sharecertificate, nomination, badminton, foodcourt, others,
+    cash, cheque, online
 
   };
   return images[idx];

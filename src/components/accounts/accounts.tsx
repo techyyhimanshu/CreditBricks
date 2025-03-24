@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Modal, Button, Form, Tabs, Tab, Dropdown, ButtonGroup } from "react-bootstrap";
+import { Col, Row, Card, Modal, Button, Form, Tabs, Tab, Dropdown, ButtonGroup, FormLabel, FormGroup } from "react-bootstrap";
 import DataTable, { Alignment } from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
@@ -9,6 +9,7 @@ import { imagesData } from "../../common/commonimages";
 import { getAllAccountsApi } from '../../api/account-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { freeze } from '@reduxjs/toolkit';
+
 
 
 const data = [
@@ -216,6 +217,10 @@ const receiptdata = [
 
 export default function Accounts() {
   const [accountdata, setAccountdata] = useState<any>([]);
+  const [paynow, setpaynow] = useState(false);
+  const [cash, setcash] = useState(false);
+  const [cheque, setcheque] = useState(false);
+  const [otpverify, setotpverify] = useState(false);
 
   const propertyoption = [
     { value: "1", label: "A101" },
@@ -298,7 +303,7 @@ export default function Accounts() {
     {
       name: 'Status',
       cell: (row:any) => (
-        <span className={`badge ${row.status === 'Unpaid' ? 'badge-danger' : 'badge-success'}`}>
+        <span className={` ${row.status === 'Unpaid' ? 'text-danger' : 'text-success'}`}>
           {row.status}
         </span>
       ),
@@ -317,6 +322,7 @@ export default function Accounts() {
 
         <Dropdown.Menu>
           <Dropdown.Item>Edit</Dropdown.Item>
+          <Dropdown.Item onClick={() => { viewDemoShow("paynow"); }}>Pay Now</Dropdown.Item>
           <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>,
@@ -374,6 +380,27 @@ export default function Accounts() {
   const viewDemoShow = (modal: any) => {
     switch (modal) {
 
+      case "paynow":
+        setpaynow(true);
+        break;
+
+        case "cash":
+          setcash(true);
+          setpaynow(false);
+          break;
+
+          case "cheque":
+             setcheque(true);
+           setpaynow(false);
+            break;
+
+          case "otpverify":
+            setotpverify(true);
+            setcheque(false);
+            setpaynow(false);
+            setcash(false);
+           break;
+
       case "select":
         setSelect(true);
         break;
@@ -413,6 +440,22 @@ export default function Accounts() {
       case "receiptexportshow":
         setExportreceipt(false);
         break;
+
+        case "paynow":
+          setpaynow(false);
+          break;
+
+          case "cash":
+            setcash(false);
+            break;
+
+            case "cheque":
+              setcheque(false);
+              break;
+
+              case "otpverify":
+                setotpverify(false);
+              break;
 
     }
   };
@@ -819,6 +862,275 @@ export default function Accounts() {
 
             </Card.Body>
           </Card>
+
+
+          <Modal show={paynow} centered>
+            <Modal.Header>
+              <Modal.Title>Pay Now</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("paynow"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='bg-light pt-4'>
+<Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> 22,700.00</Col>
+<Card className='m-3 p-4'>
+<h5>Choose your payment method</h5>
+<ul className='list-unstyled paymentmode mb-2'>
+  <li onClick={() => { viewDemoShow("cash"); }}>
+  <img alt="" src={imagesData('cash')} />
+    <span>Cash</span>
+  </li>
+  <li onClick={() => { viewDemoShow("cheque"); }}>
+  <img alt="" src={imagesData('cheque')} />
+    <span>Cheque</span>
+  </li>
+  <li>
+  <img alt="" src={imagesData('online')} />
+    <span>Online</span>
+  </li>
+  </ul>
+</Card>
+            </Modal.Body>
+
+          </Modal>
+
+          <Modal show={cash} size='xl' centered>
+            <Modal.Header>
+              <Modal.Title>Cash</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("cash"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='bg-light p-0'>
+
+<Card className='m-3 p-3'>
+  <Row>
+    <Col xl={6} className='border border-right pe-5'>
+    <h6>Enter the denomination:</h6>
+<table className='table cashtable'>
+  <thead>
+    <tr>
+      <th>Currency</th>
+      <th></th>
+      <th>Number Count</th>
+      <th></th>
+      <th className='text-end'>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2000</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={5} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>10,000</td>
+    </tr>
+    <tr>
+      <td>1000</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={8} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>8,000</td>
+    </tr>
+    <tr>
+      <td>500</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={4} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>2,000</td>
+    </tr>
+    <tr>
+      <td>200</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={6} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>1,200</td>
+    </tr>
+    <tr>
+      <td>100</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={5} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>500</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' value={2} type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>100</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>X</td>
+      <td><Form.Control className='form-control' type="text"></Form.Control></td>
+      <td>=</td>
+      <td className='text-end tx-semibold'>0</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th colSpan={4} className='text-white tx-semibold'>Grand Total</th>
+     <th className='text-end text-white'>22,700</th>
+    </tr>
+  </tfoot>
+</table>
+    </Col>
+    <Col xl={6} className='pt-5 ps-4'>
+    <Col xl={12} className='w-100 tx-26 text-center tx-bold mb-5'><i className="fa fa-rupee"></i> 22,700.00</Col>
+    <FormGroup>
+    <FormLabel className='text-black'>Total Amount (in words)</FormLabel>
+    <Form.Control className='form-control' placeholder='Enter amount in words' type="text"></Form.Control>
+    </FormGroup>
+    <hr/>
+    <FormGroup className='mt-3'>
+    <FormLabel className='text-black'>Mobile Number</FormLabel>
+    <Form.Control className='form-control' placeholder='Enter Number' type="text"></Form.Control>
+    </FormGroup>
+
+    <FormGroup className='mt-5'>
+<Button className='btn btn-primary w-100' type='button'  onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
+    </FormGroup>
+
+    </Col>
+  </Row>
+
+</Card>
+            </Modal.Body>
+
+          </Modal>
+
+          <Modal show={cheque} centered>
+            <Modal.Header>
+              <Modal.Title>Cheque</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("cheque"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='bg-light pt-2'>
+<Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> 22,700.00</Col>
+<Card className='m-2 p-3'>
+<FormGroup>
+  <FormLabel>Cheque Date</FormLabel>
+  <Form.Control className='form-control' type="date"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Cheque Number</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Bank Name</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Branch</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Amount (in figures)</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Amount (in words)</FormLabel>
+  <Form.Control className='form-control' type="text"/>
+</FormGroup>
+
+<FormGroup>
+  <FormLabel>Mobile Number</FormLabel>
+  <Form.Control className='form-control' placeholder='Enter mobile number for verification' type="text"/>
+</FormGroup>
+
+<FormGroup>
+<Button className='btn btn-primary w-100 mt-3' type="button"  onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
+</FormGroup>
+
+</Card>
+            </Modal.Body>
+
+          </Modal>
+
+
+          <Modal show={otpverify} centered>
+            <Modal.Header>
+              <Modal.Title>OTP Verification</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("otpverify"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='p-5 text-center'>
+
+  <h4 className='text-black'>OTP Verification</h4>
+  <p>Enter the 4 digit verification code</p>
+<Row>
+<Col xl={2}></Col>
+<Col xl={2}>
+<Form.Control className='form-control' type="text"/>
+</Col>
+
+<Col xl={2}>
+<Form.Control className='form-control' type="text"/>
+</Col>
+
+<Col xl={2}>
+<Form.Control className='form-control' type="text"/>
+</Col>
+
+<Col xl={2}>
+<Form.Control className='form-control' type="text"/>
+</Col>
+<Col xl={2}></Col>
+</Row>
+
+
+<FormGroup>
+  <Col xl={8} className='m-auto'>
+<Button className='btn btn-primary w-100 mt-4' type="button">Verify</Button>
+</Col>
+</FormGroup>
+<p className='text-info w-100 text-center mt-4'>Resend OTP</p>
+
+            </Modal.Body>
+
+          </Modal>
+
+
         </Col>
       </Row>
 
