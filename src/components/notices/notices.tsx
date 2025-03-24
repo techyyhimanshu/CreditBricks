@@ -37,7 +37,7 @@ export default function Notices() {
     {
       name: 'Notice Type',
       cell: (row: any) => (
-        <span className='text-info cursor' onClick={() => {viewDemoShow("viewnotice"),setSingleNoticeData(row)}}>{row.noticeType}</span>
+        <span className='text-info cursor' onClick={() => { viewDemoShow("viewnotice"), setSingleNoticeData(row) }}>{row.noticeType}</span>
       ),
       sortable: true,
     },
@@ -81,7 +81,7 @@ export default function Notices() {
               viewDemoShow("addnotices")
               setEditing(true)
             }}>Edit </Dropdown.Item>
-            <Dropdown.Item className='text-danger' onClick={()=>handleDelete(row)}>Delete</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -180,19 +180,19 @@ export default function Notices() {
     console.log(row)
       ; (async () => {
         try {
-  
+
           const response = await deleteNoticeApi(row.noticeIdentifier)
           if (response.status === 200) {
             showToast("success", response.data.message)
             // Remove the society from the table
-            setNoticedata((prevData:any) => prevData.filter((society:any) => society.noticeIdentifier !== row.noticeIdentifier))
+            setNoticedata((prevData: any) => prevData.filter((society: any) => society.noticeIdentifier !== row.noticeIdentifier))
           }
         } catch (error: any) {
           const errorMessage = handleApiError(error)
           showToast("error", errorMessage)
         }
       })()
-    }
+  }
 
 
   const handleSubmit = async (values: any) => {
@@ -211,7 +211,7 @@ export default function Notices() {
     try {
       let response;
       if (editing) {
-        response = await updateNoticeApi(formattedData,singleNoticedata?.noticeIdentifier)
+        response = await updateNoticeApi(formattedData, singleNoticedata?.noticeIdentifier)
       } else {
         response = await createNoticeApi(formattedData)
       }
@@ -223,7 +223,7 @@ export default function Notices() {
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
-    } finally{
+    } finally {
       setSingleNoticeData(null)
     }
     viewDemoClose("addcomplaint")
@@ -241,7 +241,7 @@ export default function Notices() {
           <Modal show={addnotices} size="lg">
             <Modal.Header>
               <Modal.Title>Notices</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addnotices"),setSingleNoticeData(null) }}>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addnotices"), setSingleNoticeData(null) }}>
                 x
               </Button>
             </Modal.Header>
@@ -255,127 +255,165 @@ export default function Notices() {
                 startDate: singleNoticedata?.startDate || "",
                 validDate: singleNoticedata?.validDate || "",
                 file: null,
+                fileName: singleNoticedata?.announcementFilePath || null,
               }}
               onSubmit={handleSubmit}
             >
-              {({ values, handleChange, setFieldValue }) => (
-                <FormikForm>
-                  <Modal.Body className='pt-2'>
-                    <Row>
-                      {/* Society */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society</Form.Label>
-                          <Select
-                            options={societyData}
-                            name='society'
-                            placeholder="Select type"
-                            classNamePrefix="Select2"
-                            value={values.society} // Bind Formik value
-                            onChange={(option) => setFieldValue("society", option)} // Update Formik value
-                          />
-                        </Form.Group>
-                      </Col>
+              {({ values, handleChange, setFieldValue }) => {
+                const getFileExtension = (fileName: string) => {
+                  if (!fileName) {
+                    return '';
+                  }
+                  return fileName.split(".").pop()?.toLowerCase() || '';
+                };
+                const getFileName = (fileName: string) => {
+                  if (!fileName) {
+                    return '';
+                  }
+                  return fileName?.split("/").pop() || '';
+                };
+                return (
+                  <FormikForm>
+                    <Modal.Body className='pt-2'>
+                      <Row>
+                        {/* Society */}
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Society</Form.Label>
+                            <Select
+                              options={societyData}
+                              name='society'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.society} // Bind Formik value
+                              onChange={(option) => setFieldValue("society", option)} // Update Formik value
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      {/* Notice Type */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Notice Type</Form.Label>
-                          <Select
-                            options={noticetype}
-                            name='noticeType'
-                            placeholder="Select type"
-                            classNamePrefix="Select2"
-                            value={values.noticeType}
-                            onChange={(option) => setFieldValue("noticeType", option)}
-                          />
-                        </Form.Group>
-                      </Col>
+                        {/* Notice Type */}
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Notice Type</Form.Label>
+                            <Select
+                              options={noticetype}
+                              name='noticeType'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.noticeType}
+                              onChange={(option) => setFieldValue("noticeType", option)}
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      {/* Notice Subject */}
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Notice Subject</Form.Label>
-                          <Form.Control
-                            type="text"
-                            className="form-control"
-                            name="subject"
-                            value={values.subject}
-                            onChange={handleChange}
-                            placeholder="Subject"
-                          />
-                        </Form.Group>
-                      </Col>
+                        {/* Notice Subject */}
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Notice Subject</Form.Label>
+                            <Form.Control
+                              type="text"
+                              className="form-control"
+                              name="subject"
+                              value={values.subject}
+                              onChange={handleChange}
+                              placeholder="Subject"
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      {/* Message (SunEditor) */}
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>
-                            Message <span className="text-danger">*</span>
-                          </Form.Label>
-                          <SunEditor
-                          defaultValue={values.message}
-                            onChange={(content) => setFieldValue("message", content)} // Update Formik value
-                          />
-                        </Form.Group>
-                      </Col>
+                        {/* Message (SunEditor) */}
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>
+                              Message <span className="text-danger">*</span>
+                            </Form.Label>
+                            <SunEditor
+                              defaultValue={values.message}
+                              onChange={(content) => setFieldValue("message", content)} // Update Formik value
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      {/* Start Date */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Start Date</Form.Label>
-                          <Form.Control
-                            type="date"
-                            name="startDate"
-                            value={values.startDate}
-                            onChange={handleChange}
-                          />
-                        </Form.Group>
-                      </Col>
+                        {/* Start Date */}
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Start Date</Form.Label>
+                            <Form.Control
+                              type="date"
+                              name="startDate"
+                              value={values.startDate}
+                              onChange={handleChange}
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      {/* Valid Date */}
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Valid Date</Form.Label>
-                          <Form.Control
-                            type="date"
-                            name="validDate"
-                            value={values.validDate}
-                            onChange={handleChange}
-                          />
-                        </Form.Group>
-                      </Col>
+                        {/* Valid Date */}
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Valid Date</Form.Label>
+                            <Form.Control
+                              type="date"
+                              name="validDate"
+                              value={values.validDate}
+                              onChange={handleChange}
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      {/* File Upload */}
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>
-                            Upload <small className="float-end text-muted">Max size : 2MB</small>
-                          </Form.Label>
-                          <Form.Control
-                            type="file"
-                            name="file"
-                            onChange={(event: any) =>
-                              setFieldValue("file", event.currentTarget.files[0])
-                            }
-                          />
-                        </Form.Group>
-                      </Col>
+                        {/* File Upload */}
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>
+                              Upload <small className="float-end text-muted">Max size : 2MB</small>
+                            </Form.Label>
+                            <Form.Control
+                              type="file"
+                              name="file"
+                              onChange={(event: any) =>
+                                setFieldValue("file", event.currentTarget.files[0])
+                              }
+                            />
+                          </Form.Group>
+                          {values.fileName && (
+                            <p
+                              className="text-center pt-2"
+                              style={{ cursor: "pointer", color: "blue" }}
+                              onClick={() => {
+                                const fileExtension = getFileExtension(values.fileName);
 
 
-                    </Row>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="default" onClick={() => { viewDemoClose("addnotices"), setSingleNoticeData(null) }}>
-                      Close
-                    </Button>
-                    <Button variant="primary" type='submit'>
-                      {editing ? "Update" : "Save"}
-                    </Button>
+                                // If it's a PDF, image, or Excel file, open in new tab
+                                if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                  window.open(import.meta.env.VITE_STATIC_PATH + values.fileName, "_blank");
+                                } else {
+                                  // For other files, trigger download
+                                  const link = document.createElement("a");
+                                  link.href = import.meta.env.VITE_STATIC_PATH + values.fileName;
+                                  link.download = values.fileName;
+                                  link.click();
+                                }
+                              }}
+                            >
+                              {getFileName(values.fileName)}
+                            </p>
+                          )}
+                        </Col>
 
-                  </Modal.Footer>
-                </FormikForm>
-              )}
+
+                      </Row>
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="default" onClick={() => { viewDemoClose("addnotices"), setSingleNoticeData(null) }}>
+                        Close
+                      </Button>
+                      <Button variant="primary" type='submit'>
+                        {editing ? "Update" : "Save"}
+                      </Button>
+
+                    </Modal.Footer>
+                  </FormikForm>
+                )
+              }}
             </Formik>
 
           </Modal>
@@ -403,7 +441,7 @@ export default function Notices() {
               <Modal show={viewnotice} >
                 <Modal.Header>
                   <Modal.Title>Notice Details</Modal.Title>
-                  <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("viewnotice");setSingleNoticeData(null) }}>
+                  <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("viewnotice"); setSingleNoticeData(null) }}>
                     x
                   </Button>
                 </Modal.Header>
@@ -415,7 +453,7 @@ export default function Notices() {
                           <Row>
                             <Col xl={12}>
                               <p className='mb-0 text-muted'>Society</p>
-                              <p className='tx-16 tx-semibold'>{singleNoticedata?.societyName||"N/A"}</p>
+                              <p className='tx-16 tx-semibold'>{singleNoticedata?.societyName || "N/A"}</p>
                             </Col>
                           </Row>
                         </CardBody>
@@ -423,7 +461,7 @@ export default function Notices() {
                           <Row>
                             <Col xl={12}>
                               <p className='mb-0 text-muted'>Notice Type</p>
-                              <p className='tx-15 tx-semibold'>{singleNoticedata?.noticeType||"N/A"}</p>
+                              <p className='tx-15 tx-semibold'>{singleNoticedata?.noticeType || "N/A"}</p>
                             </Col>
                           </Row>
                         </CardBody>
@@ -433,7 +471,7 @@ export default function Notices() {
                               <p className='mb-0 text-muted'>Notice Subject
                                 <span className='cursor float-end'><span className='text-success'>12 <i className="fa fa-thumbs-up"></i></span> <span className="ms-2 text-muted">5 <i className="fa fa-thumbs-down"></i></span> </span>
                               </p>
-                              <p className='tx-15 tx-semibold'>{singleNoticedata?.noticeSubject||"N/A"}</p>
+                              <p className='tx-15 tx-semibold'>{singleNoticedata?.noticeSubject || "N/A"}</p>
                               <p className='mb-0 text-muted'>Message</p>
                               {/* <p className='tx-14'>{singleNoticedata?.message||"N/A"}</p> */}
                               <p className='tx-14' dangerouslySetInnerHTML={{ __html: singleNoticedata?.message || "N/A" }} />
@@ -445,11 +483,11 @@ export default function Notices() {
                           <Row>
                             <Col xl={6}>
                               <p className='mb-0 text-muted'>Satrt Date</p>
-                              <p className='tx-15 tx-semibold'>{singleNoticedata?.startDate||"N/A"}</p>
+                              <p className='tx-15 tx-semibold'>{singleNoticedata?.startDate || "N/A"}</p>
                             </Col>
                             <Col xl={6} className='text-end'>
                               <p className='mb-0 text-muted'>Valid Date</p>
-                              <p className='tx-15 tx-semibold'>{singleNoticedata?.validDate||"N/A"}</p>
+                              <p className='tx-15 tx-semibold'>{singleNoticedata?.validDate || "N/A"}</p>
                             </Col>
                           </Row>
 
@@ -460,12 +498,71 @@ export default function Notices() {
                         <CardBody className='p-2'>
                           <p className='tx-15 pb-1 pt-1 border-bottom tx-semibold'>Attachments</p>
                           <Row>
-                          <Col xl={12}>
+                            {/* <Col xl={12}>
                               {singleNoticedata?.noticeFilePath ? <img
                                 alt="" className='w-100 rounded-2'
                                 crossOrigin="anonymous"
                                 src={import.meta.env.VITE_STATIC_PATH + singleNoticedata?.noticeFilePath}
                               /> : <p className='w-100 rounded-2' style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>No image</p>}
+                            </Col> */}
+                            <Col xl={12}>
+                              {singleNoticedata?.noticeFilePath ? (
+                                // Determine the file extension
+                                (() => {
+                                  const filePath = singleNoticedata?.noticeFilePath;
+                                  const fileExtension = filePath.split('.').pop().toLowerCase();
+
+                                  // Check if the file is an image
+                                  const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'].includes(fileExtension);
+
+                                  if (isImage) {
+                                    // If it's an image, show the image tag
+                                    return (
+                                      <>
+                                        <img
+                                          alt="Attachment"
+                                          className="w-100 rounded-2"
+                                          crossOrigin="anonymous"
+                                          src={import.meta.env.VITE_STATIC_PATH + filePath}
+                                          onClick={() => window.open(import.meta.env.VITE_STATIC_PATH + filePath, '_blank')}
+                                        />
+                                        <p className="text-center pt-2">{filePath.split('/').pop()}</p>
+                                      </>
+                                    );
+                                  } else {
+                                    return (
+                                      <>
+                                        <p
+                                          className="text-center pt-2"
+                                          style={{ cursor: 'pointer', color: 'blue' }}
+                                          onClick={() => {
+                                            const fileUrl = import.meta.env.VITE_STATIC_PATH + filePath;
+                                            // Check file extension for handling download or open in new tab
+                                            const isPDF = fileExtension === 'pdf';
+                                            const isExcel = fileExtension === 'xls' || fileExtension === 'xlsx';
+
+                                            if (isPDF || isExcel) {
+                                              window.open(fileUrl, '_blank'); // Open in new tab
+                                            } else {
+                                              // Trigger file download if it's not PDF or Excel
+                                              const link = document.createElement('a');
+                                              link.href = fileUrl;
+                                              link.download = filePath.split('/').pop(); // Name the downloaded file
+                                              link.click(); // Trigger the download
+                                            }
+                                          }}
+                                        >
+                                          {filePath.split('/').pop()}
+                                        </p>
+                                      </>
+                                    );
+                                  }
+                                })()
+                              ) : (
+                                <p className="w-100 rounded-2" style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>
+                                  No Attachment
+                                </p>
+                              )}
                             </Col>
 
                           </Row>

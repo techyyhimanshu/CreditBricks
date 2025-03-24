@@ -93,7 +93,7 @@ export default function Complaints() {
 
     {
       name: 'Complaint Category',
-      selector: (row: any) => row.complaintCategory,
+      selector: (row: any) => row.categoryName,
       sortable: true,
     },
     {

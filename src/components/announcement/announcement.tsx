@@ -285,7 +285,8 @@ export default function Announcements() {
                 message: singleAnnouncementData?.message || "",
                 startDate: singleAnnouncementData?.startDate || "",
                 validDate: singleAnnouncementData?.validDate || "",
-                file: singleAnnouncementData?.announcementFilePath || null,
+                file:  null,
+                fileName: singleAnnouncementData?.announcementFilePath || null,
               }}
               onSubmit={handleSubmit}
             >
@@ -301,6 +302,12 @@ export default function Announcements() {
                     return '';  
                   }
                   return fileName.split(".").pop()?.toLowerCase() || '';
+                };
+                const getFileName = (fileName: string) => {
+                  if (!fileName) {
+                    return '';  
+                  }
+                  return fileName?.split("/").pop() || '';
                 };
                 return (
                   <FormikForm>
@@ -385,27 +392,27 @@ export default function Announcements() {
                               }
                             />
                           </Form.Group>
-                          {values.file && (
+                          {values.fileName &&  (
                             <p
                               className="text-center pt-2"
                               style={{ cursor: "pointer", color: "blue" }}
                               onClick={() => {
-                                const fileExtension = getFileExtension(values.file.name);
+                                const fileExtension = getFileExtension(values.fileName);
   
 
                                 // If it's a PDF, image, or Excel file, open in new tab
                                 if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
-                                  window.open(import.meta.env.VITE_STATIC_PATH + values.file.name, "_blank");
+                                  window.open(import.meta.env.VITE_STATIC_PATH + values.fileName, "_blank");
                                 } else {
                                   // For other files, trigger download
                                   const link = document.createElement("a");
-                                  link.href = import.meta.env.VITE_STATIC_PATH + values.file.name;
-                                  link.download = values.file.name; 
+                                  link.href = import.meta.env.VITE_STATIC_PATH + values.fileName;
+                                  link.download = values.fileName; 
                                   link.click(); 
                                 }
                               }}
                             >
-                              {values.file}
+                              {getFileName(values.fileName)}
                             </p>
                           )}
                         </Col>
