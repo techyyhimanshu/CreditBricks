@@ -207,9 +207,9 @@ const Sidebar = () => {
         onMouseOver={() => Onhover()}
         onMouseOut={() => Outhover()}
       >
-       <PerfectScrollbar  className="hor-scroll"
+       {/* <PerfectScrollbar  className="hor-scroll"
           // style={{ position: "absolute" }}
-          options={{ suppressScrollX: true, useBothWheelAxes: false }} >
+          options={{ suppressScrollX: true, useBothWheelAxes: false }} > */}
 
           <div className="main-sidebar-header active">
           <img src={imagesData('logo')} className="w-200px m-auto d-block"  />
@@ -405,7 +405,7 @@ const Sidebar = () => {
 
           </div>
 
-        </PerfectScrollbar>
+        {/* </PerfectScrollbar> */}
       </aside>
     </div>
     </>

@@ -119,4 +119,4 @@ export const refreshToken = async () => {
 // console.log("decrypt",decryptuserInfo)
 // localStorage.setItem('userInfo', encryptedUserInfo);
 
-let refreshTokenTimer: NodeJS.Timeout;
+var refreshTokenTimer: NodeJS.Timeout;

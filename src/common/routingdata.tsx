@@ -37,6 +37,7 @@ const Complaints = lazy(() => import('../components/complaints/complaints'));
 const Applications = lazy(() => import('../components/applications/applications'));
 const Notices = lazy(() => import('../components/notices/notices'));
 const Announcements = lazy(() => import('../components/announcement/announcement'));
+const Parking = lazy(() => import('../components/parking/parking'));
 
 export const Routingdata = [
   //Dashboard
@@ -76,7 +77,8 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}complaints/complaints`, element: <Complaints /> },
   { path: `${import.meta.env.BASE_URL}applications/applications`, element: <Applications /> },
   { path: `${import.meta.env.BASE_URL}notices/notices`, element: <Notices /> },
-  { path: `${import.meta.env.BASE_URL}announcement/announcement`, element: <Announcements /> }
+  { path: `${import.meta.env.BASE_URL}announcement/announcement`, element: <Announcements /> },
+  { path: `${import.meta.env.BASE_URL}parking/parking`, element: <Parking /> }
 ];
 
 export const Sidebarcomponents = [
