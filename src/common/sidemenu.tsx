@@ -196,7 +196,7 @@ export const MENUITEMS = [
         icon: (<i className="side-menu__icon bi bi-list-task"></i>
         ),
         path: ``,
-        type: "link",
+        type: "sub",
         selected: false,
         active: false,
       },

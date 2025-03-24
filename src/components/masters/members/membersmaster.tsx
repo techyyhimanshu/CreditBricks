@@ -13,6 +13,7 @@ import { deleteMemberApi } from '../../../api/member-api';
 
 export default function MembersMaster() {
   const [bulkupload, setbulkupload] = useState(false);
+  const [downloadFormat, setDownloadFormat] = useState(false);
 
   type Row = {
     sno: number;
@@ -74,6 +75,9 @@ export default function MembersMaster() {
       case "bulkupload":
         setbulkupload(true);
         break;
+      case "downloadFormat":
+        setDownloadFormat(true);
+        break;
 
 
     }
@@ -85,7 +89,9 @@ export default function MembersMaster() {
       case "bulkupload":
         setbulkupload(false);
         break;
-
+      case "downloadFormat":
+        setDownloadFormat(false);
+        break;
 
     }
   };
@@ -137,6 +143,8 @@ export default function MembersMaster() {
         <div className="right-content">
           <Link to={`${import.meta.env.BASE_URL}members/addmembers`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Member</Link>
           <button type="button" className="btn btn-default p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("bulkupload")}><i className="bi bi-upload"></i> Bulk Upload</button>
+          <button type="button" className="btn btn-default p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("downloadFormat")}><i className="bi bi-download"></i> Download Format</button>
+
           <Modal centered show={bulkupload}>
             <Modal.Header>
               <Modal.Title>Bulk Upload</Modal.Title>
@@ -167,6 +175,30 @@ export default function MembersMaster() {
               </Button>
 
             </Modal.Footer>
+          </Modal>
+
+          <Modal centered show={downloadFormat}>
+            <Modal.Header>
+              <Modal.Title>Download Bulk Upload Format</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => viewDemoClose("downloadFormat")}>
+                x
+              </Button>
+            </Modal.Header>
+            <Modal.Body>
+              <div>
+                <p><strong>Instructions:</strong></p>
+                <ul>
+                  <li><strong>Download the Example File:</strong> Click the link provided to download the example CSV file.</li>
+                  <li><strong>Prepare Your Data:</strong> Open the downloaded CSV file in a spreadsheet program (like Excel or Google Sheets) and enter your data, ensuring that each column corresponds to the appropriate header.</li>
+                  <li><strong>Save the File:</strong> Save the spreadsheet as a CSV (Comma Separated Values) file.</li>
+                  <li><strong>Upload the File:</strong> Navigate to the bulk upload section within the system and upload the prepared CSV file.</li>
+                </ul>
+
+                <Button variant="primary" >
+                  Download File
+                </Button>
+              </div>
+            </Modal.Body>
           </Modal>
         </div>
       </div>
