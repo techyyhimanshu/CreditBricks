@@ -31,6 +31,7 @@ const ParentEntity = lazy(() => import('../components/parententity/parententity'
 const Loans = lazy(() => import('../components/loans/loans'));
 const Tenant = lazy(() => import('../components/tenant/tenant'));
 const TenantView = lazy(() => import('../components/tenant/tenantview'));
+const EditTenant = lazy(() => import('../components/tenant/updateTenant'));
 const AddTenant = lazy(() => import('../components/tenant/addtenant'));
 const Complaints = lazy(() => import('../components/complaints/complaints'));
 const Applications = lazy(() => import('../components/applications/applications'));
@@ -70,6 +71,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}loans/loans`, element: <Loans /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenant`, element: <Tenant /> },
   { path: `${import.meta.env.BASE_URL}tenant/tenantview/:identifier`, element: <TenantView /> },
+  { path: `${import.meta.env.BASE_URL}tenant/updateTenant/:identifier`, element: <EditTenant /> },
   { path: `${import.meta.env.BASE_URL}tenant/addtenant`, element: <AddTenant /> },
   { path: `${import.meta.env.BASE_URL}complaints/complaints`, element: <Complaints /> },
   { path: `${import.meta.env.BASE_URL}applications/applications`, element: <Applications /> },
