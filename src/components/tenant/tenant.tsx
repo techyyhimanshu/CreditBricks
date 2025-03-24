@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { imagesData } from "../../common/commonimages";
 import { handleApiError } from '../../helpers/handle-api-error';
 import { showToast } from '../../common/services/toastServices';
-import { deleteTenantApi, getAllTenantApi } from '../../api/tenant-api';
+import { deleteTenantApi, getAllTenantApi, } from '../../api/tenant-api';
 
 
 
@@ -111,6 +111,9 @@ export default function Tenant() {
 
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => viewDemoShow("addloan")}>Edit </Dropdown.Item>
+            <Dropdown.Item>
+                <Link to={`${import.meta.env.BASE_URL}tenant/updateTenant/${row.tenantIdentifier}`}>Edit 2</Link>
+            </Dropdown.Item>
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.tenantIdentifier)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>

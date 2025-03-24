@@ -19,6 +19,24 @@ export const getAllTenantApi = async (): Promise<any> => {
     }
 }
 
+export const getTenantApi = async (identifier : string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/tenant/${identifier}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export const updateTenantApi = async (data:any , identifier : string): Promise<any> => {
+    try {
+        const response = await axiosInstance.patch(`/tenant/${identifier}`,data)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 export const deleteTenantApi = async (identifier: string): Promise<any> => {
     try {
         const response = await axiosInstance.delete(`/tenant/${identifier}`)
