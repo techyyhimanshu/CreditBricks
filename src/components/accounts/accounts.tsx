@@ -1,13 +1,14 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { Col, Row, Card, Modal, Button, Form, Tabs, Tab, Dropdown, ButtonGroup } from "react-bootstrap";
-import DataTable from 'react-data-table-component';
+import DataTable, { Alignment } from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
 import { getAllAccountsApi } from '../../api/account-api';
 import { handleApiError } from '../../helpers/handle-api-error';
+import { freeze } from '@reduxjs/toolkit';
 
 
 const data = [
@@ -233,17 +234,19 @@ export default function Accounts() {
       name: 'S.no',
       selector: (row: any) => row.sno,
       sortable: true,
-      width: '76px'
+      width: '50px'
     },
     {
       name: 'Name',
       selector: (row: any) => row.name,
       sortable: true,
+       width: '82px'
     },
     {
       name: 'Inv No',
       selector: (row: any) => row.invoiceNumber,
       sortable: true,
+       width: '220px'
     },
 
     {
@@ -301,6 +304,7 @@ export default function Accounts() {
 
     {
       name: 'Action',
+      position: 'fixed',
       sortable: true,
       cell: () => <Dropdown>
         <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
@@ -345,7 +349,7 @@ export default function Accounts() {
           propertyIdentifier: account.propertyIdentifier,
           totalOutstanding: Number(account.totalAmount)-Number(account.totalPaidAmount)
         }
-        
+
       ));
       setAccountdata(formattedData)
     } catch (error) {

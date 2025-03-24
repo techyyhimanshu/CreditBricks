@@ -68,7 +68,7 @@ export default function Parking() {
     {
       name: 'Parking Number',
       cell: (row: Row) => (
-        <span className='text-info cursor' onClick={() => viewDemoShow("viewparking")}>103</span>
+        <span className='text-info cursor' onClick={() => viewDemoShow("")}>103</span>
       ),
       sortable: true,
     },
