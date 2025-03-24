@@ -244,7 +244,7 @@ export const MENUITEMS = [
         icon: (<i className="side-menu__icon bi bi-people"></i>
         ),
         path: ``,
-        type: "link",
+        type: "sub",
         selected: false,
         active: false,
 
@@ -255,7 +255,7 @@ export const MENUITEMS = [
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
         path: ``,
-        type: "link",
+        type: "sub",
         selected: false,
         active: false,
 
@@ -266,7 +266,7 @@ export const MENUITEMS = [
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
         path: ``,
-        type: "link",
+        type: "sub",
         selected: false,
         active: false,
 
@@ -277,7 +277,7 @@ export const MENUITEMS = [
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
         path: ``,
-        type: "link",
+        type: "sub",
         selected: false,
         active: false,
 
@@ -297,7 +297,7 @@ export const MENUITEMS = [
           {
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
             title: "Email",
-            type: "link",
+            type: "sub",
             active: false,
             selected: false,
           },

@@ -294,7 +294,11 @@ export default function Accounts() {
     },
     {
       name: 'Status',
-      selector: (row: any) => row.status,
+      cell: (row:any) => (
+        <span className={`badge ${row.status === 'Unpaid' ? 'badge-danger' : 'badge-success'}`}>
+          {row.status}
+        </span>
+      ),
       sortable: true,
       width: "90px"
     },
