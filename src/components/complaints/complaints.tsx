@@ -468,11 +468,25 @@ export default function Complaints() {
                 complaintCategory: complaintToView ? { label: complaintToView.categoryName, value: complaintToView.categoryId } : { label: "", value: "" },
                 complaintDescription: complaintToView?.description || "",
                 priority: complaintToView ? { label: complaintToView.priority, value: complaintToView.priority } : { label: "", value: "" },
-                complaintFile: null
+                complaintFile: null,
+                fileName:complaintToView?.issueFilePath
               }}
               onSubmit={handleSubmit}
             >
-              {({ setFieldValue, values }) => (
+              {({ setFieldValue, values }) => {
+                const getFileExtension = (fileName: string) => {
+                  if (!fileName) {
+                    return '';
+                  }
+                  return fileName.split(".").pop()?.toLowerCase() || '';
+                };
+                const getFileName = (fileName: string) => {
+                  if (!fileName) {
+                    return '';
+                  }
+                  return fileName?.split("/").pop() || '';
+                };
+                return(
                 <FormikForm>
                   <Modal.Body className='pt-1'>
                     <Row>
@@ -557,6 +571,29 @@ export default function Complaints() {
                             onChange={(e: any) => setFieldValue("complaintFile", e.target.files[0])}
                             className='form-control' />
                         </Form.Group>
+                        {values.fileName && (
+                            <p
+                              className="text-center pt-2"
+                              style={{ cursor: "pointer", color: "blue" }}
+                              onClick={() => {
+                                const fileExtension = getFileExtension(values.fileName);
+
+
+                                // If it's a PDF, image, or Excel file, open in new tab
+                                if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                  window.open(import.meta.env.VITE_STATIC_PATH + values.fileName, "_blank");
+                                } else {
+                                  // For other files, trigger download
+                                  const link = document.createElement("a");
+                                  link.href = import.meta.env.VITE_STATIC_PATH + values.fileName;
+                                  link.download = values.fileName;
+                                  link.click();
+                                }
+                              }}
+                            >
+                              {getFileName(values.fileName)}
+                            </p>
+                          )}
                       </Col>
 
 
@@ -572,7 +609,7 @@ export default function Complaints() {
 
                   </Modal.Footer>
                 </FormikForm>
-              )}
+              )}}
             </Formik>
 
 
@@ -593,6 +630,8 @@ export default function Complaints() {
                     alt="" className='w-100 rounded-2'
                     crossOrigin="anonymous"
                     src={import.meta.env.VITE_STATIC_PATH + complaintToView?.issueFilePath}
+                    style={{ cursor: 'pointer'}}
+                    onClick={() => window.open(import.meta.env.VITE_STATIC_PATH + complaintToView?.issueFilePath, '_blank')}
                   /> : <p className='w-100 rounded-2' style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>No image</p>}
                 </Col>
                 <Col xl={8} className='p-0'>

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { Col, Row, Card, Modal, Button, Form, Tabs, Tab, Dropdown, ButtonGroup } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
@@ -6,93 +6,9 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
+import { getAllAccountsApi } from '../../api/account-api';
+import { handleApiError } from '../../helpers/handle-api-error';
 
-const columns = [
-  {
-    name: 'S.no',
-    selector: row => row.sno,
-    sortable: true,
-    width: '76px'
-  },
-  {
-    name: 'Name',
-    cell: () => <Link className="text-primary">IV-2703 </Link>,
-    sortable: true,
-  },
-  {
-    name: 'Inv No',
-    selector: row => row.invoicenumber,
-    sortable: true,
-  },
-
-  {
-    name: 'Property',
-    cell: (row: Row) => (
-      <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link>
-    ),
-    sortable: true,
-    width:"110px"
-  },
-
-  {
-    name: 'Inv Type',
-    selector: row => row.invctype,
-    sortable: true,
-    width:"130px"
-  },
-
-  {
-    name: 'Inv Dt',
-    selector: row => row.invcdt,
-    sortable: true,
-  },
-
-
-  {
-    name: 'Due Dt',
-    selector: row => row.duedt,
-    sortable: true,
-  },
-
-  {
-    name: 'Total Amt',
-    selector: row => row.totalamt,
-    sortable: true,
-  },
-
-  {
-    name: 'Total Paid Amt',
-    selector: row => row.totalpaidamt,
-    sortable: true,
-  },
-
-  {
-    name: 'Total Outstanding',
-    selector: row => row.totaloutstanding,
-    sortable: true,
-  },
-  {
-    name: 'Status',
-    selector: row => row.status,
-    sortable: true,
-    width:"90px"
-  },
-
-  {
-    name: 'Action',
-    sortable: true,
-    cell: () => <Dropdown>
-    <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-     Action
-    </Dropdown.Toggle>
-
-    <Dropdown.Menu>
-      <Dropdown.Item>Edit</Dropdown.Item>
-      <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-</Dropdown.Menu>
-  </Dropdown>,
-  },
-];
 
 const data = [
   {
@@ -104,9 +20,9 @@ const data = [
     invctype: 'Maintenance',
     invcdt: '8/16/2024',
     duedt: '4/15/2024',
-    totalamt:'₹2,850.00',
-    totalpaidamt:'₹2,850.00',
-    totaloutstanding:'₹0.00',
+    totalamt: '₹2,850.00',
+    totalpaidamt: '₹2,850.00',
+    totaloutstanding: '₹0.00',
     status: 'Paid'
   },
   {
@@ -118,10 +34,10 @@ const data = [
     invctype: 'Maintenance',
     invcdt: '8/16/2024',
     duedt: '4/15/2024',
-    totalamt:'₹2,850.00',
-    totalpaidamt:'₹2,850.00',
-    totaloutstanding:'₹0.00',
-      status: 'Paid'
+    totalamt: '₹2,850.00',
+    totalpaidamt: '₹2,850.00',
+    totaloutstanding: '₹0.00',
+    status: 'Paid'
   },
   {
     id: 3,
@@ -132,10 +48,10 @@ const data = [
     invctype: 'Maintenance',
     invcdt: '8/16/2024',
     duedt: '4/15/2024',
-    totalamt:'₹2,850.00',
-    totalpaidamt:'₹2,850.00',
-    totaloutstanding:'₹0.00',
-      status: 'Paid'
+    totalamt: '₹2,850.00',
+    totalpaidamt: '₹2,850.00',
+    totaloutstanding: '₹0.00',
+    status: 'Paid'
   },
   {
     id: 4,
@@ -146,10 +62,10 @@ const data = [
     invctype: 'Maintenance',
     invcdt: '8/16/2024',
     duedt: '4/15/2024',
-    totalamt:'₹2,850.00',
-    totalpaidamt:'₹2,850.00',
-    totaloutstanding:'₹0.00',
-      status: 'Unpaid'
+    totalamt: '₹2,850.00',
+    totalpaidamt: '₹2,850.00',
+    totaloutstanding: '₹0.00',
+    status: 'Unpaid'
   },
   {
     id: 5,
@@ -160,10 +76,10 @@ const data = [
     invctype: 'Maintenance',
     invcdt: '8/16/2024',
     duedt: '4/15/2024',
-    totalamt:'₹2,850.00',
-    totalpaidamt:'₹2,850.00',
-    totaloutstanding:'₹0.00',
-       status: 'Unpaid'
+    totalamt: '₹2,850.00',
+    totalpaidamt: '₹2,850.00',
+    totaloutstanding: '₹0.00',
+    status: 'Unpaid'
   },
   {
     id: 6,
@@ -174,9 +90,9 @@ const data = [
     invctype: 'Maintenance',
     invcdt: '8/16/2024',
     duedt: '4/15/2024',
-    totalamt:'₹2,850.00',
-    totalpaidamt:'₹2,850.00',
-    totaloutstanding:'₹0.00',
+    totalamt: '₹2,850.00',
+    totalpaidamt: '₹2,850.00',
+    totaloutstanding: '₹0.00',
   },
   {
     id: 7,
@@ -187,9 +103,9 @@ const data = [
     invctype: 'Maintenance',
     invcdt: '8/16/2024',
     duedt: '4/15/2024',
-    totalamt:'₹2,850.00',
-    totalpaidamt:'₹2,850.00',
-    totaloutstanding:'₹0.00',
+    totalamt: '₹2,850.00',
+    totalpaidamt: '₹2,850.00',
+    totaloutstanding: '₹0.00',
   },
   {
     id: 8,
@@ -200,26 +116,26 @@ const data = [
     invctype: 'Maintenance',
     invcdt: '8/16/2024',
     duedt: '4/15/2024',
-    totalamt:'₹2,850.00',
-    totalpaidamt:'₹2,850.00',
-    totaloutstanding:'₹0.00',
+    totalamt: '₹2,850.00',
+    totalpaidamt: '₹2,850.00',
+    totaloutstanding: '₹0.00',
   },
 ]
 
 const receiptcolumns = [
   {
     name: 'S.No.',
-    selector: row => row.sno,
+    selector: (row: any) => row.sno,
     sortable: true,
   },
   {
     name: 'Date',
-    selector: row => row.date,
+    selector: (row: any) => row.date,
     sortable: true,
   },
   {
     name: 'Receipt ID',
-    cell: () => <Link className="text-primary">#RECPT457476 </Link>,
+    cell: () => <Link className="text-primary" to="">#RECPT457476 </Link>,
     sortable: true,
   },
 
@@ -298,13 +214,7 @@ const receiptdata = [
 ]
 
 export default function Accounts() {
-
-
-  const societyoptions = [
-    { value: "1", label: "SKVilla Society" },
-    { value: "2", label: "GreenGlobal Society" },
-    { value: "3", label: "Dewan Enclave Society" }
-  ];
+  const [accountdata, setAccountdata] = useState<any>([]);
 
   const propertyoption = [
     { value: "1", label: "A101" },
@@ -318,12 +228,138 @@ export default function Accounts() {
   const [receiptadd, setReceiptadd] = useState(false);
   const [receiptexportshow, setExportreceipt] = useState(false);
 
+  const columns = [
+    {
+      name: 'S.no',
+      selector: (row: any) => row.sno,
+      sortable: true,
+      width: '76px'
+    },
+    {
+      name: 'Name',
+      selector: (row: any) => row.name,
+      sortable: true,
+    },
+    {
+      name: 'Inv No',
+      selector: (row: any) => row.invoiceNumber,
+      sortable: true,
+    },
+
+    {
+      name: 'Property',
+      cell: (row: any) => (
+        <Link to={`${import.meta.env.BASE_URL}property/propertyview/${row.propertyIdentifier}`} className='text-info'>A101</Link>
+      ),
+      sortable: true,
+      width: "110px"
+    },
+
+    {
+      name: 'Inv Type',
+      selector: (row: any) => row.type,
+      sortable: true,
+      width: "130px"
+    },
+
+    {
+      name: 'Inv Dt',
+      selector: (row: any) => row.invoiceCreatedDate,
+      sortable: true,
+    },
+
+
+    {
+      name: 'Due Dt',
+      selector: (row: any) => row.dueDate,
+      sortable: true,
+    },
+
+    {
+      name: 'Total Amt',
+      selector: (row: any) => row.totalAmount,
+      sortable: true,
+    },
+
+    {
+      name: 'Total Paid Amt',
+      selector: (row: any) => row.totalPaidAmount,
+      sortable: true,
+    },
+
+    {
+      name: 'Total Outstanding',
+      selector: (row: any) => row.totalOutstanding,
+      sortable: true,
+    },
+    {
+      name: 'Status',
+      selector: (row: any) => row.status,
+      sortable: true,
+      width: "90px"
+    },
+
+    {
+      name: 'Action',
+      sortable: true,
+      cell: () => <Dropdown>
+        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+          Action
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item>Edit</Dropdown.Item>
+          <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>,
+    },
+  ];
+
+
+  // const tableData = {
+  //   columns,
+  //   data,
+  //   receiptcolumns,
+  //   receiptdata
+  // };
   const tableData = {
     columns,
-    data,
-    receiptcolumns,
-    receiptdata
+    data:accountdata
   };
+
+  const fetchAllAccounts = async () => {
+    try {
+      const response = await getAllAccountsApi()
+      const data = response.data.data
+      const formattedData = data.map((account: any, index: number) => (
+        {
+          sno: index + 1,
+          name: account?.name,
+          invoiceNumber: account?.invoiceNumber,
+          status: account?.status,
+          type: account?.type,
+          dueDate: account?.dueDate,
+          invoiceCreatedDate: account?.invoiceCreatedDate,
+          totalAmount: account?.totalAmount,
+          totalPaidAmount: account?.totalPaidAmount,
+          propertyIdentifier: account.propertyIdentifier,
+          totalOutstanding: Number(account.totalAmount)-Number(account.totalPaidAmount)
+        }
+        
+      ));
+      setAccountdata(formattedData)
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    }
+  }
+
+
+
+  useEffect(() => {
+
+    fetchAllAccounts();
+  }, [])
 
 
 
@@ -404,96 +440,96 @@ export default function Accounts() {
               >
 
                 <Tab eventKey="Tab 01" title="Invoice">
-                <Row className='bg-light'>
-                      <Col xl={2}>
-                       <Form.Group className="form-group">
-                            <Form.Label>Date <span className="text-danger">*</span></Form.Label>
-                            <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-                          </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
+                  <Row className='bg-light'>
+                    <Col xl={2}>
                       <Form.Group className="form-group">
-                            <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+                        <Form.Label>Date <span className="text-danger">*</span></Form.Label>
+                        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                      </Form.Group>
+                    </Col>
 
-                            <div className="SlectBox">
-                              <Select
-                                options={propertyoption}
-                                placeholder="Select Property"
-                                // classNamePrefix="selectform"
-                                classNamePrefix='Select2' className="multi-select"
-                              />
-                            </div>
-
-
-                          </Form.Group>
-                      </Col>
-
-                      <Col xl={2}>
+                    <Col xl={4}>
                       <Form.Group className="form-group">
-                            <Form.Label>Invoice ID <span className="text-danger">*</span></Form.Label>
-                            <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
-                          </Form.Group>
-                      </Col>
+                        <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+
+                        <div className="SlectBox">
+                          <Select
+                            options={propertyoption}
+                            placeholder="Select Property"
+                            // classNamePrefix="selectform"
+                            classNamePrefix='Select2' className="multi-select"
+                          />
+                        </div>
 
 
-                      <Col xl={2}>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={2}>
                       <Form.Group className="form-group">
-                            <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
-                            <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
-                          </Form.Group>
-                      </Col>
+                        <Form.Label>Invoice ID <span className="text-danger">*</span></Form.Label>
+                        <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
+                      </Form.Group>
+                    </Col>
 
-                      <Col xl={2}>
+
+                    <Col xl={2}>
+                      <Form.Group className="form-group">
+                        <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
+                        <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={2}>
                       <Form.Label className='mb-4'></Form.Label>
                       <button type="button" className="btn btn-primary mt-1 me-1" onClick={() => viewDemoShow("select")}>Search</button>
                       <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
-                    <Modal centered show={exportshow}>
-                      <Modal.Header>
-                        <Modal.Title>Import</Modal.Title>
-                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
-                          x
-                        </Button>
-                      </Modal.Header>
-                      <Modal.Body>
+                      <Modal centered show={exportshow}>
+                        <Modal.Header>
+                          <Modal.Title>Import</Modal.Title>
+                          <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
+                            x
+                          </Button>
+                        </Modal.Header>
+                        <Modal.Body>
 
-                        <p>Browse or Drop the file</p>
-                        <Form.Group className="form-group">
-                          <div className='textnone'>
-                            <input type='file' className='fileupload' />
-                            <p>Drag & Drop your file here or click</p>
-                          </div>
+                          <p>Browse or Drop the file</p>
+                          <Form.Group className="form-group">
+                            <div className='textnone'>
+                              <input type='file' className='fileupload' />
+                              <p>Drag & Drop your file here or click</p>
+                            </div>
 
-                          <div className='upload-data'>
-                            <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
-                            <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
-                          </div>
-
-
-
-                        </Form.Group>
+                            <div className='upload-data'>
+                              <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
+                              <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
+                            </div>
 
 
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
-                          Close
-                        </Button>
-                        <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
-                          Save
-                        </Button>
 
-                      </Modal.Footer>
-                    </Modal>
-                      </Col>
+                          </Form.Group>
 
-                    </Row>
+
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
+                            Close
+                          </Button>
+                          <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
+                            Save
+                          </Button>
+
+                        </Modal.Footer>
+                      </Modal>
+                    </Col>
+
+                  </Row>
 
                   <div className="table-responsive ">
                     <DataTableExtensions {...tableData}>
                       <DataTable
                         columns={columns}
-                        data={data}
+                        data={accountdata}
                         pagination
 
 
@@ -502,90 +538,90 @@ export default function Accounts() {
                   </div>
                 </Tab>
                 <Tab eventKey="Receipt" title="Receipt">
-                <Row className='bg-light'>
-                      <Col xl={2}>
-                       <Form.Group className="form-group">
-                            <Form.Label>Date <span className="text-danger">*</span></Form.Label>
-                            <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-                          </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
+                  <Row className='bg-light'>
+                    <Col xl={2}>
                       <Form.Group className="form-group">
-                            <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+                        <Form.Label>Date <span className="text-danger">*</span></Form.Label>
+                        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                      </Form.Group>
+                    </Col>
 
-                            <div className="SlectBox">
-                              <Select
-                                options={propertyoption}
-                                placeholder="Select Property"
-                                // classNamePrefix="selectform"
-                                classNamePrefix='Select2' className="multi-select"
-                              />
-                            </div>
-
-
-                          </Form.Group>
-                      </Col>
-
-                      <Col xl={2}>
+                    <Col xl={4}>
                       <Form.Group className="form-group">
-                            <Form.Label>Receipt ID <span className="text-danger">*</span></Form.Label>
-                            <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
-                          </Form.Group>
-                      </Col>
+                        <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+
+                        <div className="SlectBox">
+                          <Select
+                            options={propertyoption}
+                            placeholder="Select Property"
+                            // classNamePrefix="selectform"
+                            classNamePrefix='Select2' className="multi-select"
+                          />
+                        </div>
 
 
-                      <Col xl={2}>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={2}>
                       <Form.Group className="form-group">
-                            <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
-                            <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
-                          </Form.Group>
-                      </Col>
+                        <Form.Label>Receipt ID <span className="text-danger">*</span></Form.Label>
+                        <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
+                      </Form.Group>
+                    </Col>
 
-                      <Col xl={2}>
+
+                    <Col xl={2}>
+                      <Form.Group className="form-group">
+                        <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
+                        <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={2}>
                       <Form.Label className='mb-4'></Form.Label>
                       <button type="button" className="btn btn-primary mt-1 me-1" onClick={() => viewDemoShow("select")}>Search</button>
                       <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
-                    <Modal centered show={exportshow}>
-                      <Modal.Header>
-                        <Modal.Title>Import</Modal.Title>
-                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
-                          x
-                        </Button>
-                      </Modal.Header>
-                      <Modal.Body>
+                      <Modal centered show={exportshow}>
+                        <Modal.Header>
+                          <Modal.Title>Import</Modal.Title>
+                          <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
+                            x
+                          </Button>
+                        </Modal.Header>
+                        <Modal.Body>
 
-                        <p>Browse or Drop the file</p>
-                        <Form.Group className="form-group">
-                          <div className='textnone'>
-                            <input type='file' className='fileupload' />
-                            <p>Drag & Drop your file here or click</p>
-                          </div>
+                          <p>Browse or Drop the file</p>
+                          <Form.Group className="form-group">
+                            <div className='textnone'>
+                              <input type='file' className='fileupload' />
+                              <p>Drag & Drop your file here or click</p>
+                            </div>
 
-                          <div className='upload-data'>
-                            <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
-                            <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
-                          </div>
-
-
-
-                        </Form.Group>
+                            <div className='upload-data'>
+                              <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
+                              <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
+                            </div>
 
 
-                      </Modal.Body>
-                      <Modal.Footer>
-                        <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
-                          Close
-                        </Button>
-                        <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
-                          Save
-                        </Button>
 
-                      </Modal.Footer>
-                    </Modal>
-                      </Col>
+                          </Form.Group>
 
-                    </Row>
+
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
+                            Close
+                          </Button>
+                          <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
+                            Save
+                          </Button>
+
+                        </Modal.Footer>
+                      </Modal>
+                    </Col>
+
+                  </Row>
                   <div className="table-responsive ">
                     <DataTableExtensions {...tableData}>
                       <DataTable
@@ -605,13 +641,13 @@ export default function Accounts() {
                     <Col xl={4}>
                       <Row>
                         <Col xl={3} className='mt-3 mb-3'>
-  <img src={imagesData('totalinvoice')} className="m-auto d-block"  />
+                          <img src={imagesData('totalinvoice')} className="m-auto d-block" />
 
                         </Col>
                         <Col xl={9}>
-                        <p className='mb-0 mt-3 tx-16'>Total Invoice</p>
-                        <strong className='tx-20'><i className='fa fa-rupee'></i> 3500.00</strong><br/>
-                        <small>Last 24 hours</small>
+                          <p className='mb-0 mt-3 tx-16'>Total Invoice</p>
+                          <strong className='tx-20'><i className='fa fa-rupee'></i> 3500.00</strong><br />
+                          <small>Last 24 hours</small>
                         </Col>
                       </Row>
                     </Col>
@@ -619,13 +655,13 @@ export default function Accounts() {
                     <Col xl={4}>
                       <Row>
                         <Col xl={3} className='mt-3 mb-3'>
-  <img src={imagesData('totalreceipt')} className="m-auto d-block"  />
+                          <img src={imagesData('totalreceipt')} className="m-auto d-block" />
 
                         </Col>
                         <Col xl={9}>
-                        <p className='mb-0 mt-3 tx-16'>Total Receipt</p>
-                        <strong className='tx-20'><i className='fa fa-rupee'></i> 2000.00</strong><br/>
-                        <small>Last 24 hours</small>
+                          <p className='mb-0 mt-3 tx-16'>Total Receipt</p>
+                          <strong className='tx-20'><i className='fa fa-rupee'></i> 2000.00</strong><br />
+                          <small>Last 24 hours</small>
                         </Col>
                       </Row>
                     </Col>
@@ -634,63 +670,63 @@ export default function Accounts() {
                     <Col xl={4}>
                       <Row>
                         <Col xl={3} className='mt-3 mb-3'>
-  <img src={imagesData('totalbalance')} className="m-auto d-block"  />
+                          <img src={imagesData('totalbalance')} className="m-auto d-block" />
 
                         </Col>
                         <Col xl={9}>
-                        <p className='mb-0 mt-3 tx-16'>Total Balance</p>
-                        <strong className='tx-20'><i className='fa fa-rupee'></i> 1500.00</strong><br/>
-                        <small>Last 24 hours</small>
+                          <p className='mb-0 mt-3 tx-16'>Total Balance</p>
+                          <strong className='tx-20'><i className='fa fa-rupee'></i> 1500.00</strong><br />
+                          <small>Last 24 hours</small>
                         </Col>
                       </Row>
                     </Col>
                   </Row>
                   <Row>
                     <Col xl={9}>
-                    <h5 className='tx-semibold mt-3'>Transactions</h5>
+                      <h5 className='tx-semibold mt-3'>Transactions</h5>
                     </Col>
                     <Col xl={3}>
-                    <ButtonGroup className="ms-2 mt-2 mb-2 w-100 transactionbtn">
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      variant=""
-                      aria-expanded="false"
-                      aria-haspopup="true"
-                      className={`btn btn-light w-100`}
-                      data-bs-toggle="dropdown"
-                      id="dropdownMenuButton"
-                      type="button"
-                    >
-                      Daily
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu
-                      className="dropdown-menu tx-13"
-                      style={{ margin: "0px" }}
-                    >
-                      <Dropdown.Item href="#">
-                       Daily
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#">
-                       Current Week
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#">
-                       Last Week
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#">
-                        Current Month
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#">
-                        Last Month
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#">
-                        Last Six Month
-                      </Dropdown.Item>
-                      <Dropdown.Item href="#">
-                        All Data
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </ButtonGroup>
+                      <ButtonGroup className="ms-2 mt-2 mb-2 w-100 transactionbtn">
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            variant=""
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            className={`btn btn-light w-100`}
+                            data-bs-toggle="dropdown"
+                            id="dropdownMenuButton"
+                            type="button"
+                          >
+                            Daily
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu
+                            className="dropdown-menu tx-13"
+                            style={{ margin: "0px" }}
+                          >
+                            <Dropdown.Item href="#">
+                              Daily
+                            </Dropdown.Item>
+                            <Dropdown.Item href="#">
+                              Current Week
+                            </Dropdown.Item>
+                            <Dropdown.Item href="#">
+                              Last Week
+                            </Dropdown.Item>
+                            <Dropdown.Item href="#">
+                              Current Month
+                            </Dropdown.Item>
+                            <Dropdown.Item href="#">
+                              Last Month
+                            </Dropdown.Item>
+                            <Dropdown.Item href="#">
+                              Last Six Month
+                            </Dropdown.Item>
+                            <Dropdown.Item href="#">
+                              All Data
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </ButtonGroup>
                     </Col>
                   </Row>
                   <table className='table mt-2'>

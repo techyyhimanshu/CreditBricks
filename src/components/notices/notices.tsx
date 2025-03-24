@@ -226,7 +226,7 @@ export default function Notices() {
     } finally {
       setSingleNoticeData(null)
     }
-    viewDemoClose("addcomplaint")
+    viewDemoClose("addnotices")
   }
 
   return (
@@ -255,7 +255,7 @@ export default function Notices() {
                 startDate: singleNoticedata?.startDate || "",
                 validDate: singleNoticedata?.validDate || "",
                 file: null,
-                fileName: singleNoticedata?.announcementFilePath || null,
+                fileName: singleNoticedata?.noticeFilePath || null,
               }}
               onSubmit={handleSubmit}
             >
@@ -524,6 +524,7 @@ export default function Notices() {
                                           className="w-100 rounded-2"
                                           crossOrigin="anonymous"
                                           src={import.meta.env.VITE_STATIC_PATH + filePath}
+                                          style={{ cursor: 'pointer'}}
                                           onClick={() => window.open(import.meta.env.VITE_STATIC_PATH + filePath, '_blank')}
                                         />
                                         <p className="text-center pt-2">{filePath.split('/').pop()}</p>

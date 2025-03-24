@@ -207,7 +207,7 @@ export default function Announcements() {
     } finally {
       setSingleAnnouncementData(null)
     }
-    viewDemoClose("addcomplaint")
+    viewDemoClose("addannouncement")
   }
 
   return (
@@ -528,6 +528,7 @@ export default function Announcements() {
                                           alt="Attachment"
                                           className="w-100 rounded-2"
                                           crossOrigin="anonymous"
+                                          style={{ cursor: 'pointer'}}
                                           src={import.meta.env.VITE_STATIC_PATH + filePath}
                                           onClick={() => window.open(import.meta.env.VITE_STATIC_PATH + filePath, '_blank')}
                                         />
