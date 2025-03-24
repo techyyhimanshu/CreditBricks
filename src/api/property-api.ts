@@ -48,17 +48,17 @@ export const getPropertyOwnerApi = async (propertyId: number): Promise<any> => {
 }
 export const updatePropertyApi = async (data: any, id: any): Promise<any> => {
     try {
-        const formData = new FormData();
-        for (const key in data) {
-            if (key === 'paymentQrFile' && data[key]) {
-                formData.append(key, data[key]);
-            } else if (typeof data[key] === 'object' && data[key] !== null) {
-                formData.append(key, JSON.stringify(data[key]));
-            } else {
-                formData.append(key, data[key]);
-            }
-        }
-        const response = await axiosInstance.patch(`/property/${id}`, formData)
+        // const formData = new FormData();
+        // for (const key in data) {
+        //     if (key === 'paymentQrFile' && data[key]) {
+        //         formData.append(key, data[key]);
+        //     } else if (typeof data[key] === 'object' && data[key] !== null) {
+        //         formData.append(key, JSON.stringify(data[key]));
+        //     } else {
+        //         formData.append(key, data[key]);
+        //     }
+        // }
+        const response = await axiosInstance.patch(`/property/${id}`, data)
         return response
     } catch (error) {
         throw error

@@ -5,10 +5,10 @@ import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-import { imagesData } from "../../common/commonimages";
+// import { imagesData } from "../../common/commonimages";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
-import { createNoticeApi, getAllNoticeApi } from '../../api/notice-api';
+import { createNoticeApi, deleteNoticeApi, getAllNoticeApi, updateNoticeApi } from '../../api/notice-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { getAllSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
@@ -81,7 +81,7 @@ export default function Notices() {
               viewDemoShow("addnotices")
               setEditing(true)
             }}>Edit </Dropdown.Item>
-            <Dropdown.Item className='text-danger' >Delete</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={()=>handleDelete(row)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -104,7 +104,8 @@ export default function Notices() {
           validDate: notice.validDate,
           societyIdentifier: notice?.society?.societyIdentifier,
           societyName: notice?.society?.societyName,
-          id: notice.id
+          noticeIdentifier: notice.noticeIdentifier,
+          noticeFilePath: notice.noticeFilePath
         }
       ));
       setNoticedata(formattedData);
@@ -171,31 +172,27 @@ export default function Notices() {
     data: noticedata
   };
 
-  // const tableData = {
-  //   columns,
-  //   data
-  // };
-
   const noticetype = [
     { value: "General Notice", label: "General Notice" },
   ]
 
-  // const handleDelete = (row: any) => {
-  //     ; (async () => {
-  //       try {
+  const handleDelete = (row: any) => {
+    console.log(row)
+      ; (async () => {
+        try {
   
-  //         const response = await deleteNoticeApi(row.id)
-  //         if (response.status === 200) {
-  //           showToast("success", response.data.message)
-  //           // Remove the society from the table
-  //           setNoticedata((prevData:any) => prevData.filter((society:any) => society.id !== row.id))
-  //         }
-  //       } catch (error: any) {
-  //         const errorMessage = handleApiError(error)
-  //         showToast("error", errorMessage)
-  //       }
-  //     })()
-  //   }
+          const response = await deleteNoticeApi(row.noticeIdentifier)
+          if (response.status === 200) {
+            showToast("success", response.data.message)
+            // Remove the society from the table
+            setNoticedata((prevData:any) => prevData.filter((society:any) => society.noticeIdentifier !== row.noticeIdentifier))
+          }
+        } catch (error: any) {
+          const errorMessage = handleApiError(error)
+          showToast("error", errorMessage)
+        }
+      })()
+    }
 
 
   const handleSubmit = async (values: any) => {
@@ -214,7 +211,7 @@ export default function Notices() {
     try {
       let response;
       if (editing) {
-        // response = await updateNoticeApi(formattedData)
+        response = await updateNoticeApi(formattedData,singleNoticedata?.noticeIdentifier)
       } else {
         response = await createNoticeApi(formattedData)
       }
@@ -463,13 +460,12 @@ export default function Notices() {
                         <CardBody className='p-2'>
                           <p className='tx-15 pb-1 pt-1 border-bottom tx-semibold'>Attachments</p>
                           <Row>
-                            <Col xl={12}>
-                              <img className='wd-100p'
-                                alt=""
-                                src={imagesData('female1')}
-                              />
-
-
+                          <Col xl={12}>
+                              {singleNoticedata?.noticeFilePath ? <img
+                                alt="" className='w-100 rounded-2'
+                                crossOrigin="anonymous"
+                                src={import.meta.env.VITE_STATIC_PATH + singleNoticedata?.noticeFilePath}
+                              /> : <p className='w-100 rounded-2' style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>No image</p>}
                             </Col>
 
                           </Row>

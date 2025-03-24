@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Dropdown } from "react-bootstrap";
+import { Col, Row, Card, Dropdown, Form, Modal, Button } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
@@ -12,7 +12,7 @@ import { showToast, CustomToastContainer } from '../../../common/services/toastS
 import { deleteMemberApi } from '../../../api/member-api';
 
 export default function MembersMaster() {
-
+  const [bulkupload, setbulkupload] = useState(false);
 
   type Row = {
     sno: number;
@@ -68,6 +68,27 @@ export default function MembersMaster() {
   };
 
 
+  const viewDemoShow = (modal: any) => {
+    switch (modal) {
+
+      case "bulkupload":
+        setbulkupload(true);
+        break;
+
+
+    }
+  };
+
+  const viewDemoClose = (modal: any) => {
+    switch (modal) {
+
+      case "bulkupload":
+        setbulkupload(false);
+        break;
+
+
+    }
+  };
 
   useEffect(() => {
     const fetchAllProperty = async () => {
@@ -115,7 +136,38 @@ export default function MembersMaster() {
 
         <div className="right-content">
           <Link to={`${import.meta.env.BASE_URL}members/addmembers`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Member</Link>
+          <button type="button" className="btn btn-default p-1 pe-2 ps-2 me-1" onClick={() => viewDemoShow("bulkupload")}><i className="bi bi-upload"></i> Bulk Upload</button>
+          <Modal centered show={bulkupload}>
+            <Modal.Header>
+              <Modal.Title>Bulk Upload</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => viewDemoClose("bulkupload")}>
+                x
+              </Button>
+            </Modal.Header>
+            <Modal.Body>
 
+              <p>Browse or Drop the file</p>
+              <Form.Group className="form-group">
+                <div className='textnone'>
+                  <input type='file' className='fileupload' />
+                  <p>Drag & Drop your file here or click</p>
+                </div>
+
+
+              </Form.Group>
+
+
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("bulkupload"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("bulkupload"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
         </div>
       </div>
 
