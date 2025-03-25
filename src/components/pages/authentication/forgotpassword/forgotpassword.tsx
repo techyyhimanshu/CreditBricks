@@ -65,10 +65,10 @@ const ForgotPassword = () => {
                   <div className="card-sigin">
 
                     <div className="main-card-signin d-md-flex">
-                      <div className="wd-100p">
+                      <div className="w-100">
 
                         <div className="main-card-signin d-md-flex bg-white">
-                          <div className="wd-100p">
+                          <div className="w-100">
                             <div className="main-signin-header">
                               <h4 className="mb-2">Forgot Password</h4>
                               <p>Enter your email address below and we'll send you a link to reset

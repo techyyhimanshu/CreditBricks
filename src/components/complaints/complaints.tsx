@@ -679,7 +679,7 @@ export default function Complaints() {
               <hr className='mt-2 mb-1'/>
               <Row>
                 <Col xl={12}>
-<FormLabel className='float-start'>Update Status</FormLabel>
+                <Form.Label className='float-start'>Update Status</Form.Label>
                   <Dropdown className='profile-user border-0'>
                        <Dropdown.Toggle variant="">
                             <strong>In Process</strong>

@@ -27,8 +27,8 @@ const SignIn = React.lazy(() =>
 const ForgotPassword = React.lazy(() =>
   import("./components/pages/authentication/forgotpassword/forgotpassword")
 );
-const Lockscreen = React.lazy(() =>
-  import("./components/pages/authentication/lockscreen/lockscreen")
+const ComplaintStatus = React.lazy(() =>
+  import("./components/pages/authentication/complaintstatus/complaintstatus")
 );
 const ResetPassword = React.lazy(() =>
   import("./components/pages/authentication/resetpassword/resetpassword")
@@ -76,7 +76,7 @@ return(
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/forgotpassword`} element={<ForgotPassword />} />
               <Route path={`${import.meta.env.BASE_URL}/resetpassword`} element={<ResetPassword />} />
               <Route path={`${import.meta.env.BASE_URL}verifyemail`} element={<VerifyEmail />} />
-              <Route path={`${import.meta.env.BASE_URL}pages/authentication/lockscreen`} element={<Lockscreen />} />
+              <Route path={`${import.meta.env.BASE_URL}pages/authentication/complaintstatus`} element={<ComplaintStatus />} />
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/404error`} element={<Error404 />} />
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/500error`} element={<Error500 />} />
 
