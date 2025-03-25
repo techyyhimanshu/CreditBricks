@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, FormLabel } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { addNewComplaintApi, assignComplaintToVendorApi, deleteComplaintApi, getAllComplainCategoriesApi, getAllComplaintsApi, getAllPropertiesForDropdownApi, updateComplaintApi } from '../../api/complaint-api';
@@ -635,9 +635,9 @@ export default function Complaints() {
                   /> : <p className='w-100 rounded-2' style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>No image</p>}
                 </Col>
                 <Col xl={8} className='p-0'>
-                  <p className='tx-16 mb-0 mt-2 tx-semibold'>{complaintToView?.id}</p>
-                  <p className='mb-1 tx-16 '>{complaintToView?.propertyName}</p>
-
+                  <p className='tx-16 mb-0 mt-2 tx-semibold'>Complaint ID : {complaintToView?.id}</p>
+                  <p className='mb-3 tx-16 '>{complaintToView?.propertyName}</p>
+                  <span className='text-muted'><i className='bi bi-calendar-fill'></i>&nbsp; {complaintToView?.createdAt}</span>
                 </Col>
               </Row>
               <hr />
@@ -654,9 +654,9 @@ export default function Complaints() {
 
 
                 </Col>
-                <Col xl={12} className='mt-2'>
-                  <p>{complaintToView?.description}</p>
-                  <span className='text-muted'><i className='bi bi-calendar-fill'></i>&nbsp; {complaintToView?.createdAt}</span>
+                <Col xl={12}>
+                  <p className='mb-0'>{complaintToView?.description}</p>
+
                 </Col>
               </Row>
               <hr />
@@ -669,15 +669,40 @@ export default function Complaints() {
                   <p>{complaintToView?.contactPersonNumber}</p>
                 </Col>
 
-                <Col xl={6} className='text-end'>
+                {/* <Col xl={6} className='text-end'>
                   <p className='mb-0 text-muted'>Status</p>
                   <p className='tx-15 tx-semibold'><i className='bi bi-check-circle text-success tx-18'></i>&nbsp; {complaintToView?.status}</p>
 
+                </Col> */}
+
+              </Row>
+              <hr className='mt-2 mb-1'/>
+              <Row>
+                <Col xl={12}>
+<FormLabel className='float-start'>Update Status</FormLabel>
+                  <Dropdown className='profile-user border-0'>
+                       <Dropdown.Toggle variant="">
+                            <strong>In Process</strong>
+                          </Dropdown.Toggle>
+                        <Dropdown.Menu>
+<Dropdown.Item className="dropdown-item" href="/">In-Process </Dropdown.Item>
+<Dropdown.Item className="dropdown-item" href="/">Pending </Dropdown.Item>
+<Dropdown.Item className="dropdown-item" href="/">Verified </Dropdown.Item>
+<Dropdown.Item className="dropdown-item" href="/">Closed </Dropdown.Item>
+
+                        </Dropdown.Menu>
+                      </Dropdown>
+                      <p className="mb-0 text-muted">Complaint Remarks</p>
+<textarea className='form-control' placeholder='Remarks'></textarea>
                 </Col>
+
 
               </Row>
             </Modal.Body>
-
+<Modal.Footer>
+  <Button type='button' className='btn btn-default' onClick={() => { viewDemoClose("complaintview"); }}>Close</Button>
+  <Button type='button' className='btn btn-primary' onClick={() => { viewDemoClose("complaintview"); }}>Save</Button>
+</Modal.Footer>
           </Modal>
 
           <Modal show={assign} centered>
