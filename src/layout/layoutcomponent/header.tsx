@@ -492,11 +492,11 @@ export default function Header() {
                         <Dropdown.Menu className="society_select">
 
                           <Dropdown.Item className="dropdown-item" href="/">
-                            <i className="far fa-user-circle me-2"></i>Mohan Areca Co-Op Housing Society Limited
+                            <i className="bi bi-building me-2"></i>Mohan Areca Co-Op Housing Society Limited
                           </Dropdown.Item>
 
                           <Dropdown.Item className="dropdown-item" href="/">
-                            <i className="far fa-user-circle me-2"></i> SKA MetroVilla Society Limited
+                            <i className="bi bi-building me-2"></i> SKA MetroVilla Society Limited
                           </Dropdown.Item>
                         </Dropdown.Menu>
                       </Dropdown>

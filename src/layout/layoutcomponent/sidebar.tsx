@@ -1,7 +1,7 @@
 
 import   { Fragment, useState, useEffect } from "react";
 import { MENUITEMS } from "../../common/sidemenu";
-import PerfectScrollbar from 'react-perfect-scrollbar';
+// import PerfectScrollbar from 'react-perfect-scrollbar';
 import { NavLink, useLocation } from "react-router-dom";
 import { imagesData } from "../../common/commonimages";
 const history:any = [];

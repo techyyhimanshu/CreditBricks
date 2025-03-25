@@ -18,7 +18,7 @@ import { getMemberForDropDownApi } from '../../../api/user-api';
 import { addPropertyApi, getTenantOptions } from '../../../api/property-api';
 // Define the types for the stateCities object
 // interface StateCities {
-//   [key: string]: string[]; 
+//   [key: string]: string[];
 // }
 // const uploader = Uploader({
 //   apiKey: 'free'
