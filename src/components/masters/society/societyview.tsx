@@ -1,30 +1,146 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { Col, Row, Card, Form, Dropdown, Tabs, Tab, FormLabel, FormCheck, Button, Modal, FormControl } from "react-bootstrap";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Select from "react-select";
-import { getSocietyDetailsApi } from '../../../api/society-api';
+import { getAnnouncementsOfSocietyApi, getNoticesOfSocietyApi, getSocietyDetailsApi } from '../../../api/society-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { deletePropertyApi } from '../../../api/property-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
+import DataTable from 'react-data-table-component';
+import DataTableExtensions from "react-data-table-component-extensions"
+import "react-data-table-component-extensions/dist/index.css";
 
 export default function SocietyView() {
   const [singleSocietyData, setSingleSocietydata] = useState<any>([])
-  const navigate = useNavigate();
+  const [noticeData, setNoticeData] = useState<any>([])
+  const [announcementData, setAnnouncementData] = useState<any>([])
   const params = useParams()
   const identifier = params.identifier as string
 
-  useEffect(() => {
-    const fetchPropertyData = async () => {
-      try {
-        const response = await getSocietyDetailsApi(identifier)
-        setSingleSocietydata(response?.data?.data || [])
-      } catch (error) {
+  const columns = [
+    {
+      name: 'S.No',
+      cell: (_: any, index: number) => index + 1,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Notice Subject',
+      selector: (row: any) => row.noticeSubject,
+      sortable: true,
+    },
+    {
+      name: 'Start Date',
+      selector: (row: any) => row.startDate,
+      sortable: true,
+    },
+    {
+      name: 'Valid Date',
+      selector: (row: any) => row.validDate,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
 
-      }
+          <Dropdown.Menu>
+            <Dropdown.Item >Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
+      ),
+
+    },
+  ];
+  const announcementColumns = [
+    {
+      name: 'S.No',
+      cell: (_: any, index: number) => index + 1,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Announcement Name',
+      selector: (row: any) => row.announcementName,
+      sortable: true,
+    },
+    {
+      name: 'Start Date',
+      selector: (row: any) => row.startDate,
+      sortable: true,
+    },
+    {
+      name: 'Valid Date',
+      selector: (row: any) => row.validDate,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item >Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
+      ),
+
+    },
+  ];
+
+  const tableData = {
+    columns,
+    data: noticeData
+  };
+  const announcementTableData = {
+    columns: announcementColumns,
+    data: announcementData
+  };
+
+  const fetchSocietyData = async () => {
+    try {
+      const response = await getSocietyDetailsApi(identifier)
+      setSingleSocietydata(response?.data?.data || [])
+    } catch (error) {
+
     }
+  }
+  const fetchNoticeData = async () => {
+    try {
+      const response = await getNoticesOfSocietyApi(identifier)
+      setNoticeData(response?.data?.data || [])
+    } catch (error) {
+
+    }
+  }
+  const fetchAnnouncementData = async () => {
+    try {
+      const response = await getAnnouncementsOfSocietyApi(identifier)
+      setAnnouncementData(response?.data?.data || [])
+    } catch (error) {
+
+    }
+  }
+
+  useEffect(() => {
+
     if (identifier) {
-      fetchPropertyData()
+      fetchSocietyData()
+      fetchNoticeData()
+      fetchAnnouncementData()
     }
   }, [])
   const chargename = [
@@ -395,10 +511,10 @@ export default function SocietyView() {
                                   <td>{property.narration || "N/A"}</td>
                                   <td>
                                     {
-                                      property.tenant?
-                                      <Link to={property.tenant ? `${import.meta.env.BASE_URL}tenant/${property.tenant.tenantIdentifier}` : "#"} className="text-info">
-                                    {`${property?.tenant?.firstName||""} ${property?.tenant?.middleName||""} ${property?.tenant?.lastName||""}`}
-                                    </Link>:"N/A"
+                                      property.tenant ?
+                                        <Link to={property.tenant ? `${import.meta.env.BASE_URL}tenant/${property.tenant.tenantIdentifier}` : "#"} className="text-info">
+                                          {`${property?.tenant?.firstName || ""} ${property?.tenant?.middleName || ""} ${property?.tenant?.lastName || ""}`}
+                                        </Link> : "N/A"
                                     }
 
                                   </td>
@@ -724,130 +840,153 @@ export default function SocietyView() {
 
                 </Tab>
                 <Tab eventKey="Notices" title="Notices">
-                <div className="tabs-menu-body main-content-body-right">
+                  <div className="tabs-menu-body main-content-body-right">
 
-<Card className='m-3 mb-5'>
-  <Card.Body>
-    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Notices</h5>
-    <div className='p-0 mt-4'>
-      <table className='table'>
-        <thead>
-          <tr>
-            <th>S.No.</th>
-            <th>Society Notice No.</th>
-            <th>Active</th>
-            <th>Start Date</th>
-            <th>Valid Date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>S-0000</td>
-            <td> <FormCheck type="checkbox" className='ms-4' disabled></FormCheck></td>
-            <td>5/25/2023</td>
-            <td>6/14/2023</td>
-            <td><Dropdown >
-              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                Action
-              </Dropdown.Toggle>
+                    <Card className='m-3 mb-5'>
+                      <Card.Body>
+                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Notices</h5>
+                        <div className='p-0 mt-4'>
+                          {/* <table className='table'>
+                            <thead>
+                              <tr>
+                                <th>S.No.</th>
+                                <th>Society Notice No.</th>
+                                <th>Active</th>
+                                <th>Start Date</th>
+                                <th>Valid Date</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>1</td>
+                                <td>S-0000</td>
+                                <td> <FormCheck type="checkbox" className='ms-4' disabled></FormCheck></td>
+                                <td>5/25/2023</td>
+                                <td>6/14/2023</td>
+                                <td><Dropdown >
+                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                    Action
+                                  </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
-                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>S-0000</td>
-            <td> <FormCheck type="checkbox" className='ms-4' checked disabled></FormCheck></td>
-            <td>5/25/2023</td>
-            <td>6/14/2023</td>
-            <td><Dropdown >
-              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                Action
-              </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown></td>
+                              </tr>
+                              <tr>
+                                <td>2</td>
+                                <td>S-0000</td>
+                                <td> <FormCheck type="checkbox" className='ms-4' checked disabled></FormCheck></td>
+                                <td>5/25/2023</td>
+                                <td>6/14/2023</td>
+                                <td><Dropdown >
+                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                    Action
+                                  </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
-                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </Card.Body>
-</Card>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown></td>
+                              </tr>
+                            </tbody>
+                          </table> */}
+                          <div className="table-responsive ">
+                            <DataTableExtensions {...tableData}>
+                              <DataTable
+                                columns={columns}
+                                data={noticeData}
+                                pagination
+
+
+                              />
+                            </DataTableExtensions>
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
 
 
 
-</div>
+                  </div>
                 </Tab>
                 <Tab eventKey="Annoucements" title="Annoucements">
-                <div className="tabs-menu-body main-content-body-right">
+                  <div className="tabs-menu-body main-content-body-right">
 
-<Card className='m-3 mb-5'>
-  <Card.Body>
-    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Annoucements</h5>
-    <div className='p-0 mt-4'>
-      <table className='table'>
-        <thead>
-          <tr>
-            <th>S.No.</th>
-            <th>Name</th>
-            <th>isActive</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Test Announcements</td>
-            <td> <FormCheck type="checkbox" className='ms-4' disabled></FormCheck></td>
-            <td>5/25/2023</td>
-            <td>6/14/2023</td>
-            <td><Dropdown >
-              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                Action
-              </Dropdown.Toggle>
+                    <Card className='m-3 mb-5'>
+                      <Card.Body>
+                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Annoucements</h5>
+                        <div className='p-0 mt-4'>
+                          {/* <table className='table'>
+                            <thead>
+                              <tr>
+                                <th>S.No.</th>
+                                <th>Name</th>
+                                <th>isActive</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>1</td>
+                                <td>Test Announcements</td>
+                                <td> <FormCheck type="checkbox" className='ms-4' disabled></FormCheck></td>
+                                <td>5/25/2023</td>
+                                <td>6/14/2023</td>
+                                <td><Dropdown >
+                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                    Action
+                                  </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
-                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Test</td>
-            <td> <FormCheck type="checkbox" className='ms-4' checked disabled></FormCheck></td>
-            <td>5/25/2023</td>
-            <td>6/14/2023</td>
-            <td><Dropdown >
-              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                Action
-              </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown></td>
+                              </tr>
+                              <tr>
+                                <td>2</td>
+                                <td>Test</td>
+                                <td> <FormCheck type="checkbox" className='ms-4' checked disabled></FormCheck></td>
+                                <td>5/25/2023</td>
+                                <td>6/14/2023</td>
+                                <td><Dropdown >
+                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                    Action
+                                  </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
-                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </Card.Body>
-</Card>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown></td>
+                              </tr>
+                            </tbody>
+                          </table> */}
+                          <div className="table-responsive ">
+                            <DataTableExtensions {...announcementTableData}>
+                              <DataTable
+                                columns={columns}
+                                data={announcementData}
+                                pagination
+
+
+                              />
+                            </DataTableExtensions>
+                          </div>
+                        </div>
+
+                      </Card.Body>
+                    </Card>
 
 
 
-</div>
+                  </div>
                 </Tab>
 
                 <Tab eventKey="Tower" title="Tower">

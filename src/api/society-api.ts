@@ -86,3 +86,19 @@ export const getPropertiesOfSocietyApi = async (identifier: string): Promise<any
         throw error
     }
 }
+export const getAnnouncementsOfSocietyApi = async (identifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/society/${identifier}/announcements`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getNoticesOfSocietyApi = async (identifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/society/${identifier}/notices`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}

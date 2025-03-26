@@ -39,3 +39,5 @@ export const deleteWingApi = async (identifier: string): Promise<any> => {
     }
 }
 
+
+

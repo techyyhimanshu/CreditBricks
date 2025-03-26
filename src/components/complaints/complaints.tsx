@@ -182,6 +182,7 @@ export default function Complaints() {
         setcomplaints(false);
         setComplaintToView(null)
         setEditing(false)
+        setPropertiesForDropDown([])
         break;
 
       case "complaintview":
@@ -310,6 +311,7 @@ export default function Complaints() {
   const fetchPropertiesOfSocietyForDropdown = async (identifier: string) => {
     try {
       const response = await getPropertiesOfSocietyApi(identifier)
+      
       if (response.status === 200) {
         setPropertiesForDropDown(response.data.data);
       }
@@ -546,7 +548,11 @@ export default function Complaints() {
                               options={societyData}
                               value={values.society}
                               name="society"
-                              onChange={(selected) => setFieldValue("society", selected)}
+                              onChange={(selected) => {
+                                fetchPropertiesOfSocietyForDropdown(selected?.value);
+                                setFieldValue("society", selected);
+                                setFieldValue("property", null);
+                              }} 
                               placeholder="Select society"
                               classNamePrefix="Select2"
                             />

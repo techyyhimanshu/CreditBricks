@@ -66,20 +66,20 @@ export default function AddTenant() {
   const columns = [
     {
       name: "S.no.",
-      selector: (_: Row, index: number) => index + 1, // Serial number fix
+      cell: (_: any, index: number) => index + 1,
       sortable: true,
     },
     {
       name: "Vehicle Type",
-      selector: (row: Row) => row.vehicleType,
+      selector: (row: any) => row.vehicleType,
     },
     {
       name: "Vehicle Number",
-      selector: (row: Row) => row.vehicleNumber,
+      selector: (row: any) => row.vehicleNumber,
     },
     {
       name: 'Vehicle RC',
-      cell: (row: Row) =>
+      cell: (row: any) =>
         row.vehicleRC ? (
           <a href={URL.createObjectURL(row.vehicleRC)} target="_blank" rel="noopener noreferrer">
             <img className='wd-50' src={imagesData('pdficon')} alt="" />
@@ -92,7 +92,7 @@ export default function AddTenant() {
     },
     {
       name: "Actions",
-      cell: (row: Row, index: number) => (
+      cell: (row: any, index: number) => (
         <div>
           <button className="btn btn-light btn-sm"
           //  onClick={() => handleEdit(index)}

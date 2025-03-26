@@ -10,12 +10,15 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import { createNoticeApi, deleteNoticeApi, getAllNoticeApi, updateNoticeApi } from '../../api/notice-api';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi, getPropertiesOfSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { Formik, Form as FormikForm } from 'formik';
 
 export default function Notices() {
   const [societyData, setSocietyData] = useState<any[]>([]);
+  const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
+  const [towerOptions, setTowerOptions] = useState<any[]>([]);
+  const [wingOptions, setWingOptions] = useState<any[]>([]);
   const [noticedata, setNoticedata] = useState<any>([]);
   const [singleNoticedata, setSingleNoticeData] = useState<any>(null);
   const [addnotices, setaddnotices] = useState(false);
@@ -194,6 +197,48 @@ export default function Notices() {
       })()
   }
 
+  const fetchPropertiesForDropDown = async (society: any) => {
+    try {
+      const response = await getPropertiesOfSocietyApi(society.value);
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.propertyIdentifier,
+        label: item.propertyName ? item.propertyName : item.flatNumber,
+      }));
+      setPropertiesForDropDown(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+
+  const fetchWingsForDropDown = async (society: any) => {
+    try {
+      const response = await getWingsOfSocietyApi(society.value);
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.wingIdentifier,
+        label: item.wingName,
+      }));
+
+      setWingOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+  const fetchTowersForDropDown = async (society: any) => {
+    try {
+      const response = await getTowersOfSocietyApi(society.value);
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.towerIdentifier,
+        label: item.towerName,
+      }));
+      setTowerOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+
 
   const handleSubmit = async (values: any) => {
     const formattedData: any = {
@@ -249,6 +294,9 @@ export default function Notices() {
               enableReinitialize
               initialValues={{
                 society: singleNoticedata ? { label: singleNoticedata.societyName, value: singleNoticedata.societyIdentifier } : { label: "", value: "" },
+                property: singleNoticedata ? { label: singleNoticedata.propertyName, value: singleNoticedata.propertyIdentifier } : { label: "", value: "" },
+                wing: singleNoticedata ? { label: singleNoticedata.wingName, value: singleNoticedata.wingIdentifier } : { label: "", value: "" },
+                tower: singleNoticedata ? { label: singleNoticedata.towerName, value: singleNoticedata.towerIdentifier } : { label: "", value: "" },
                 noticeType: singleNoticedata ? { label: singleNoticedata.noticeType, value: singleNoticedata.noticeType } : { label: "", value: "" },
                 subject: singleNoticedata?.noticeSubject || "",
                 message: singleNoticedata?.message || "",
@@ -276,7 +324,6 @@ export default function Notices() {
                   <FormikForm>
                     <Modal.Body className='pt-2'>
                       <Row>
-                        {/* Society */}
                         <Col xl={6}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>Society</Form.Label>
@@ -285,8 +332,55 @@ export default function Notices() {
                               name='society'
                               placeholder="Select type"
                               classNamePrefix="Select2"
-                              value={values.society} // Bind Formik value
-                              onChange={(option) => setFieldValue("society", option)} // Update Formik value
+                              value={values.society}
+                              onChange={(selected) => {
+                                fetchPropertiesForDropDown(selected);
+                                fetchTowersForDropDown(selected);
+                                fetchWingsForDropDown(selected);
+                                setFieldValue("tower", null);
+                                setFieldValue("wing", null);
+                                setFieldValue("property", null);
+                                setFieldValue("society", selected);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Property</Form.Label>
+                            <Select
+                              options={propertiesForDropDown}
+                              name='property'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.property}
+                              onChange={(option) => setFieldValue("property", option)}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Tower</Form.Label>
+                            <Select
+                              options={towerOptions}
+                              name='tower'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.tower}
+                              onChange={(option) => setFieldValue("tower", option)}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Wing</Form.Label>
+                            <Select
+                              options={wingOptions}
+                              name='wing'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.wing}
+                              onChange={(option) => setFieldValue("wing", option)}
                             />
                           </Form.Group>
                         </Col>
@@ -329,7 +423,7 @@ export default function Notices() {
                             </Form.Label>
                             <SunEditor
                               defaultValue={values.message}
-                              onChange={(content) => setFieldValue("message", content)} // Update Formik value
+                              onChange={(content) => setFieldValue("message", content)}
                             />
                           </Form.Group>
                         </Col>
@@ -524,7 +618,7 @@ export default function Notices() {
                                           className="w-100 rounded-2"
                                           crossOrigin="anonymous"
                                           src={import.meta.env.VITE_STATIC_PATH + filePath}
-                                          style={{ cursor: 'pointer'}}
+                                          style={{ cursor: 'pointer' }}
                                           onClick={() => window.open(import.meta.env.VITE_STATIC_PATH + filePath, '_blank')}
                                         />
                                         <p className="text-center pt-2">{filePath.split('/').pop()}</p>

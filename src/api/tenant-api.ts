@@ -46,6 +46,24 @@ export const deleteTenantApi = async (identifier: string): Promise<any> => {
     }
 }
 
+export const updateVehicleApi = async (data:any , identifier : string): Promise<any> => {
+    try {
+        const response = await axiosInstance.patch(`/tenant/tt/vehicle/${identifier}`,data)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export const deleteVehicleApi = async (identifier: string,id:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.delete(`/tenant/${identifier}/vehicle/${id}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 export const getTenantDetailsApi = async (identifier: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/tenant/${identifier}`)
