@@ -9,7 +9,7 @@ import { Formik, Form as FormikForm, Field } from 'formik';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { getVendorForDropDownApi } from '../../api/vendor-api';
-import { getAllSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi, getPropertiesOfSocietyApi } from '../../api/society-api';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 
@@ -243,10 +243,16 @@ export default function Complaints() {
   useEffect(() => {
 
     fetchAllComplaints();
-    fetchAllPropertiesForDropDown()
     fetchAllComplaintCategories()
     fetchSocietiesForDropDown()
   }, []);
+
+  useEffect(()=>{
+    if(filtersss.societyIdentifier){
+      fetchPropertiesOfSocietyForDropdown(filtersss.societyIdentifier)
+    }
+
+  },[filtersss?.societyIdentifier])
 
   const fetchAllComplaints = async () => {
     try {
@@ -291,9 +297,19 @@ export default function Complaints() {
     }
   }
 
-  const fetchAllPropertiesForDropDown = async () => {
+  // const fetchAllPropertiesForDropDown = async () => {
+  //   try {
+  //     const response = await getAllPropertiesForDropdownApi()
+  //     if (response.status === 200) {
+  //       setPropertiesForDropDown(response.data.data);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching properties:", error);
+  //   }
+  // }
+  const fetchPropertiesOfSocietyForDropdown = async (identifier:string) => {
     try {
-      const response = await getAllPropertiesForDropdownApi()
+      const response = await getPropertiesOfSocietyApi(identifier)
       if (response.status === 200) {
         setPropertiesForDropDown(response.data.data);
       }
@@ -358,6 +374,8 @@ export default function Complaints() {
     viewDemoClose("addcomplaint")
   }
 
+
+
   const handleFilterChange = async (name: string, value: any) => {
     setFilters((prevState) => ({
       ...prevState,
@@ -396,6 +414,7 @@ export default function Complaints() {
       showToast("error", errorMessage);
     }
   };
+
 
   const handleVendorAssignment = async () => {
     const formattedData = {
@@ -448,8 +467,6 @@ export default function Complaints() {
         <div className="right-content">
           <span className='float-end btn btn-primary btn-sm' onClick={() => {
             viewDemoShow("addcomplaint")
-            fetchAllComplaintCategories()
-            fetchAllPropertiesForDropDown()
 
           }}><i className="bi bi-plus"></i> Add Complaint</span>
           <Modal show={addcomplaint} centered>

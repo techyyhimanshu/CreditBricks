@@ -23,7 +23,7 @@ export default function UpdateTenant() {
   const [propertyOptions, setPropertyOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState<any>([]);
   const [currentTenant, setCurrentTenant] = useState<any>(null);
-  const [vehicleFormData, setVehicleFormData] = useState({
+  const [vehicleFormData, setVehicleFormData] = useState<any>({
     vehicleType: null,
     vehicleNumber: "",
     vehicleRC: null as File | null,
@@ -33,11 +33,13 @@ export default function UpdateTenant() {
   const params = useParams()
   const identifier = params.identifier as string
 
+
   useEffect(() => {
     const fetchTenantDetails = async () => {
       try {
         const response = await getTenantApi(identifier)
         setCurrentTenant(response.data.data)
+        setVehicleData(response?.data?.data?.tenantVehicles||[])
       } catch (error: any) {
         const errorMessage = handleApiError(error)
         showToast('error', errorMessage)
@@ -119,6 +121,7 @@ export default function UpdateTenant() {
       ),
     },
   ];
+  
   const tableData = {
     columns,
     data: vehicleData
@@ -239,7 +242,7 @@ export default function UpdateTenant() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
     if (e.target.files && e.target.files.length > 0) {
-      setVehicleFormData(prevState => ({
+      setVehicleFormData((prevState:any) => ({
         ...prevState,
         vehicleRC: e.target.files![0]
       }));
@@ -247,14 +250,14 @@ export default function UpdateTenant() {
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setVehicleFormData(prevState => ({
+    setVehicleFormData((prevState:any) => ({
       ...prevState,
       [name]: type === "checkbox" ? checked : value
     }));
   };
   const handleVehicleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setVehicleFormData(prevState => ({
+    setVehicleFormData((prevState:any) => ({
       ...prevState,
       [name]: value
     }));
@@ -272,32 +275,32 @@ export default function UpdateTenant() {
       <Formik
         enableReinitialize
         initialValues={{
-          society: { value: currentTenant?.country, label: currentTenant?.country },
-          property: { value: "", label: "" },
+          society: { value: currentTenant?.society?.societyIdentifier||"", label:  currentTenant?.society?.societyName||"" },
+          property: { value: currentTenant?.property?.propertyIdentifier||"", label:  currentTenant?.property?.propertyName||"" },
           firstName: currentTenant?.firstName || "",
           middleName: currentTenant?.middleName || "",
           lastName: currentTenant?.lastName || "",
           mobileNumber: currentTenant?.mobileNumber || "",
           alternateMobileNumber: currentTenant?.alternateMobileNumber || "",
           email: currentTenant?.email || "",
-          gender: { value: "", label: "" },
+          gender: { value: currentTenant?.gender||"", label: currentTenant?.gender||"" },
           age: currentTenant?.age || "",
           dateOfBirth: currentTenant?.dateOfBirth || "",
           anniversary: currentTenant?.anniversary || "",
           address: currentTenant?.address || "",
-          country: { value: "", label: "" },
-          state: { value: "", label: "" },
-          city: { value: "", label: "" },
+          country: { value: currentTenant?.country||"", label: currentTenant?.country||"" },
+          state: { value: currentTenant?.state||"", label: currentTenant?.state||"" },
+          city: { value: currentTenant?.city||"", label: currentTenant?.city||"" },
           pincode: currentTenant?.pincode || "",
           familyMembers: currentTenant?.familyMembers || "",
-          havePet: { value: "", label: "" },
+          havePet: { value: currentTenant?.havePet||"", label: currentTenant?.havePet === true ? "Yes" : currentTenant?.havePet === false ? "No" : "" },
           aadharNumber: currentTenant?.aadharNumber || "",
-          rentRegistrationId: currentTenant?.rentRegistrationId || "",
-          rentAgreementStartDate: currentTenant?.rentAgreementStartDate || "",
-          rentAgreementEndDate: currentTenant?.rentAgreementEndDate || "",
-          monthlyRent: currentTenant?.monthlyRent || "",
-          depositAmount: currentTenant?.depositAmount || "",
-          dueAmount: currentTenant?.dueAmount || "",
+          rentRegistrationId: currentTenant?.property?.rentRegistrationId || "",
+          rentAgreementStartDate: currentTenant?.property?.rentAgreementStartDate || "",
+          rentAgreementEndDate: currentTenant?.property?.rentAgreementEndDate || "",
+          monthlyRent: currentTenant?.property?.monthlyRent || "",
+          depositAmount: currentTenant?.property?.depositAmount || "",
+          dueAmount: currentTenant?.property?.dueAmount || "",
           rentAgreementFile: "",
           policeVerificationFile: "",
 
@@ -327,6 +330,7 @@ export default function UpdateTenant() {
                                 fetchPropertiesForDropDown(selected);
                                 setFieldValue("society", selected);
                               }}
+                              value={values.society}
                               placeholder="Select society"
                               classNamePrefix="Select2"
                             />
@@ -341,6 +345,7 @@ export default function UpdateTenant() {
                               onChange={(selected) => {
                                 setFieldValue("property", selected);
                               }}
+                              value={values.property}
                               placeholder="Select property"
                               classNamePrefix="Select2"
                             />
@@ -422,6 +427,7 @@ export default function UpdateTenant() {
                               onChange={(selected) => setFieldValue("gender", selected)}
                               placeholder="Select gender"
                               classNamePrefix="Select2"
+                              value={values.gender}
                             />
                           </Form.Group>
                         </Col>
@@ -484,6 +490,7 @@ export default function UpdateTenant() {
                               }}
                               placeholder="Select country"
                               classNamePrefix="Select2"
+                              value={values.country}
                             />
                           </Form.Group>
                         </Col>
@@ -498,6 +505,7 @@ export default function UpdateTenant() {
                               }}
                               placeholder="Select state"
                               classNamePrefix="Select2"
+                              value={values.state}
                             />
                           </Form.Group>
                         </Col>
@@ -513,6 +521,7 @@ export default function UpdateTenant() {
                               }}
                               placeholder="Select city"
                               classNamePrefix="Select2"
+                              value={values.city}
                             />
                           </Form.Group>
                         </Col>
@@ -550,6 +559,7 @@ export default function UpdateTenant() {
                               }}
                               placeholder="Select"
                               classNamePrefix="Select2"
+                              value={values.havePet}
                             />
                           </Form.Group>
                         </Col>
