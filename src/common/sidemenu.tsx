@@ -191,15 +191,7 @@ export const MENUITEMS = [
         active: false,
       },
 
-      {
-        title: "Vehicle",
-        icon: (<i className="side-menu__icon bi bi-list-task"></i>
-        ),
-        path: ``,
-        type: "sub",
-        selected: false,
-        active: false,
-      },
+
       {
         title: "Parking",
         icon: (<i className="side-menu__icon bi bi-list-task"></i>
@@ -238,13 +230,21 @@ export const MENUITEMS = [
         active: false,
 
       },
-
+      {
+        title: "Vehicle",
+        icon: (<i className="side-menu__icon bi bi-list-task"></i>
+        ),
+        path: ``,
+        type: "link",
+        selected: false,
+        active: false,
+      },
       {
         title: "Visitors",
         icon: (<i className="side-menu__icon bi bi-people"></i>
         ),
         path: ``,
-        type: "sub",
+        type: "link",
         selected: false,
         active: false,
 
@@ -255,7 +255,7 @@ export const MENUITEMS = [
         icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
         ),
         path: ``,
-        type: "sub",
+        type: "link",
         selected: false,
         active: false,
 

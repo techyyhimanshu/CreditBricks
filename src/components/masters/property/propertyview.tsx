@@ -327,36 +327,60 @@ export default function PropertyView() {
                     <Card className='m-3 mb-5'>
                       <Card.Body>
                         <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Parking Details</h5>
-                        <div className='table-responsive p-0 mt-4'>
-                          {/* <table className='table'>
+
+                          <table className='table'>
                             <thead>
                               <tr>
                                 <th>S.No.</th>
                                 <th>Parking Number</th>
+                                <th>Society Name</th>
                                 <th>Parking Type</th>
                                 <th>Parking Vehicle Type</th>
                                 <th>Status</th>
+                                <th>Action</th>
                               </tr>
                             </thead>
                             <tbody>
                               <tr>
                                 <td>1</td>
-                                <td>UB324324</td>
-                                <td>Open</td>
+                                <td>CRP 101</td>
+                                <td>Test CreditBricks Society</td>
+                                <td>Stilt</td>
                                 <td>4 Wheeler</td>
                                 <td>Allocated</td>
+                                <td><Dropdown >
+              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                Action
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown></td>
                               </tr>
                               <tr>
                                 <td>2</td>
-                                <td>UB324324</td>
-                                <td>Basement</td>
-                                <td>4 Wheeler</td>
+                                <td>CRP 103</td>
+                                <td>Test CreditBricks Society</td>
+                                <td>Open</td>
+                                <td>2 Wheeler</td>
                                 <td>Allocated</td>
+                                <td><Dropdown >
+              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                Action
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown></td>
                               </tr>
                             </tbody>
-                          </table> */}
-                          N/A
-                        </div>
+                          </table>
+                          {/* N/A */}
+
                       </Card.Body>
                     </Card>
 
@@ -369,9 +393,9 @@ export default function PropertyView() {
 
                     <Card className='m-3 mb-5'>
                       <Card.Body>
-                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Loan Details</h5>
-                        <div className='table-responsive p-0 mt-4'>
-                          {/* <table className='table'>
+                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Loan</h5>
+
+                          <table className='table'>
                             <thead>
                               <tr>
                                 <th>S.No.</th>
@@ -380,6 +404,8 @@ export default function PropertyView() {
                                 <th>Bank Name</th>
                                 <th>IFSC Code</th>
                                 <th>Interest Rate</th>
+                                <th>Remarks</th>
+                                <th>Action</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -390,6 +416,17 @@ export default function PropertyView() {
                                 <td>HDFC Bank</td>
                                 <td>HDFC0000678</td>
                                 <td>7%</td>
+                                <td></td>
+                                <td><Dropdown >
+              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                Action
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown></td>
                               </tr>
                               <tr>
                                 <td>2</td>
@@ -398,11 +435,22 @@ export default function PropertyView() {
                                 <td>HDFC Bank</td>
                                 <td>HDFC0000678</td>
                                 <td>7%</td>
+                                <td></td>
+                                <td><Dropdown >
+              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                Action
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown></td>
                               </tr>
                             </tbody>
-                          </table> */}
-                          N/A
-                        </div>
+                          </table>
+                          {/* N/A */}
+
                       </Card.Body>
                     </Card>
 
@@ -417,11 +465,64 @@ export default function PropertyView() {
 
 
                 <Tab eventKey="Applications" title="Applications">
+                <div className="tabs-menu-body main-content-body-right">
 
+<Card className='m-3 mb-5'>
+  <Card.Body>
+    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Applications</h5>
+
+
+      N/A
+
+  </Card.Body>
+</Card>
+
+
+
+</div>
                 </Tab>
 
                 <Tab eventKey="Complaints" title="Complaints">
+                <div className="tabs-menu-body main-content-body-right">
 
+<Card className='m-3 mb-5'>
+  <Card.Body>
+    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Complaints</h5>
+
+      <table className='table'>
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Complaints Number</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>CS-0005</td>
+            <td><Dropdown >
+<Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+Action
+</Dropdown.Toggle>
+
+<Dropdown.Menu>
+<Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+<Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+</Dropdown.Menu>
+</Dropdown></td>
+          </tr>
+
+        </tbody>
+      </table>
+      {/* N/A */}
+
+  </Card.Body>
+</Card>
+
+
+
+</div>
                 </Tab>
 
                 <Tab eventKey="Transfer Property" title={<Link to={`${import.meta.env.BASE_URL}property/editpropertymaster/${identifier}`} className='p-0' >Transfer Property</Link>}>

@@ -130,45 +130,45 @@ export default function SocietyView() {
                               </Col>
 
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>Society Contact Number</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.contactNumber || "N/A"}</p>
                               </Col>
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>Society Email</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.email || "N/A"}</p>
                               </Col>
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>Society Manager</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.societyManager || "N/A"}</p>
                               </Col>
 
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>Address</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.address || "N/A"}</p>
                               </Col>
 
 
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>Country</FormLabel>
                                 <p className='tx-15 col-sm-11 p-0'>{singleSocietyData?.country || "N/A"}</p>
                               </Col>
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>State</FormLabel>
                                 <p className='tx-1 p-0'>{singleSocietyData?.state || "N/A"}</p>
                               </Col>
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>City</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.city || "N/A"}</p>
                               </Col>
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>Pincode</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.pincode || "N/A"}</p>
                               </Col>
@@ -182,18 +182,18 @@ export default function SocietyView() {
                           <Card.Body>
                             <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Interest Details</h5>
                             <Row>
-                              <Col xl={12}>
+                              <Col xl={4}>
                                 <FormLabel>Interest Calculation Type</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.interestCalculationType || "N/A"}</p>
                               </Col>
 
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>Annual Rate of Interest</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.annualRateOfInterest || "N/A"}</p>
                               </Col>
 
-                              <Col xl={6}>
+                              <Col xl={4}>
                                 <FormLabel>Rate of Interest</FormLabel>
                                 <p className='tx-15'>{singleSocietyData?.rateOfInterest || "N/A"}</p>
                               </Col>
@@ -211,7 +211,7 @@ export default function SocietyView() {
                             <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Society Document Details</h5>
                             <Row>
                               <Col xl={12} className='mb-1 tx-12'>Society Registration Number</Col>
-                              <Col xl={12} className='tx-semibold mb-2 tx-14 text-muted'>{singleSocietyData?.registrationNumber || "N/A"}</Col>
+                              <Col xl={12} className='tx-semibold mb-2 tx-14 text-primary'>{singleSocietyData?.registrationNumber || "N/A"}</Col>
                               <Col xl={5} className='mb-1 tx-12'>TAN number</Col>
                               <Col xl={7} className='tx-semibold tx-12'>{singleSocietyData?.tanNumber || "N/A"}</Col>
                               <Col xl={5} className='mb-1 tx-12'>PAN No</Col>
@@ -442,7 +442,8 @@ export default function SocietyView() {
                               <tr>
                                 <th>S.No.</th>
                                 <th>Parking Number</th>
-                                <th>Parking Type</th>
+                                <th>Property</th>
+                                <th>Member</th>
                                 <th>Parking Vehicle Type</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -451,8 +452,9 @@ export default function SocietyView() {
                             <tbody>
                               <tr>
                                 <td>1</td>
-                                <td>UB324324</td>
-                                <td>Open</td>
+                                <td>CRP 101</td>
+                                <td>CR 101</td>
+                                <td>Tests society Member</td>
                                 <td>4 Wheeler</td>
                                 <td>Allocated</td>
                                 <td><Dropdown >
@@ -468,9 +470,10 @@ export default function SocietyView() {
                               </tr>
                               <tr>
                                 <td>2</td>
-                                <td>UB324324</td>
-                                <td>Basement</td>
-                                <td>4 Wheeler</td>
+                                <td>CRP 103</td>
+                                <td>CR 103</td>
+                                <td>Tests society Member</td>
+                                <td>2 Wheeler</td>
                                 <td>Allocated</td>
                                 <td><Dropdown >
                                   <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
@@ -721,10 +724,130 @@ export default function SocietyView() {
 
                 </Tab>
                 <Tab eventKey="Notices" title="Notices">
+                <div className="tabs-menu-body main-content-body-right">
 
+<Card className='m-3 mb-5'>
+  <Card.Body>
+    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Notices</h5>
+    <div className='p-0 mt-4'>
+      <table className='table'>
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Society Notice No.</th>
+            <th>Active</th>
+            <th>Start Date</th>
+            <th>Valid Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>S-0000</td>
+            <td> <FormCheck type="checkbox" className='ms-4' disabled></FormCheck></td>
+            <td>5/25/2023</td>
+            <td>6/14/2023</td>
+            <td><Dropdown >
+              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                Action
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>S-0000</td>
+            <td> <FormCheck type="checkbox" className='ms-4' checked disabled></FormCheck></td>
+            <td>5/25/2023</td>
+            <td>6/14/2023</td>
+            <td><Dropdown >
+              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                Action
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </Card.Body>
+</Card>
+
+
+
+</div>
                 </Tab>
-                <Tab eventKey="Complaints" title="Annoucements">
+                <Tab eventKey="Annoucements" title="Annoucements">
+                <div className="tabs-menu-body main-content-body-right">
 
+<Card className='m-3 mb-5'>
+  <Card.Body>
+    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Annoucements</h5>
+    <div className='p-0 mt-4'>
+      <table className='table'>
+        <thead>
+          <tr>
+            <th>S.No.</th>
+            <th>Name</th>
+            <th>isActive</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Test Announcements</td>
+            <td> <FormCheck type="checkbox" className='ms-4' disabled></FormCheck></td>
+            <td>5/25/2023</td>
+            <td>6/14/2023</td>
+            <td><Dropdown >
+              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                Action
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Test</td>
+            <td> <FormCheck type="checkbox" className='ms-4' checked disabled></FormCheck></td>
+            <td>5/25/2023</td>
+            <td>6/14/2023</td>
+            <td><Dropdown >
+              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                Action
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
+                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </Card.Body>
+</Card>
+
+
+
+</div>
                 </Tab>
 
                 <Tab eventKey="Tower" title="Tower">

@@ -1179,41 +1179,62 @@ export default function Accounts() {
             <Modal.Body className='bg-light pt-2'>
               <Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> {amountToPay}</Col>
               <Card className='m-2 p-3'>
+              <Row>
+              <Col xl={6}>
                 <FormGroup>
                   <FormLabel>Cheque Date</FormLabel>
                   <Form.Control className='form-control' type="date" />
                 </FormGroup>
-
+</Col>
+<Col xl={6}>
+<FormGroup>
+  <FormLabel>Cheque Issued Date</FormLabel>
+  <Form.Control className='form-control' value={'3/31/2024'} type="text"/>
+</FormGroup>
+</Col>
+<Col xl={6}>
+<FormGroup>
+  <FormLabel>Cheque Recived Date</FormLabel>
+  <Form.Control className='form-control' value={'3/31/2024'} type="text"/>
+</FormGroup>
+</Col>
+<Col xl={6}>
                 <FormGroup>
                   <FormLabel>Cheque Number</FormLabel>
                   <Form.Control className='form-control' type="text" />
                 </FormGroup>
-
+                </Col>
+                <Col xl={12}>
                 <FormGroup>
                   <FormLabel>Bank Name</FormLabel>
                   <Form.Control className='form-control' type="text" />
                 </FormGroup>
-
+                </Col>
+                <Col xl={12}>
                 <FormGroup>
                   <FormLabel>Branch</FormLabel>
                   <Form.Control className='form-control' type="text" />
                 </FormGroup>
-
+                </Col>
+                <Col xl={12}>
                 <FormGroup>
                   <FormLabel>Amount (in figures)</FormLabel>
                   <Form.Control className='form-control' type="text" />
                 </FormGroup>
-
+                </Col>
+                <Col xl={12}>
                 <FormGroup>
                   <FormLabel>Amount (in words)</FormLabel>
                   <Form.Control className='form-control' type="text" />
                 </FormGroup>
-
+                </Col>
+                <Col xl={12}>
                 <FormGroup>
                   <FormLabel>Mobile Number</FormLabel>
                   <Form.Control className='form-control' placeholder='Enter mobile number for verification' type="text" />
                 </FormGroup>
-
+</Col>
+</Row>
                 <FormGroup>
                   <Button className='btn btn-primary w-100 mt-3' type="button" onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
                 </FormGroup>
@@ -1411,42 +1432,62 @@ export default function Accounts() {
             <Modal.Body className='bg-light pt-2'>
 <Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> 22,700.00</Col>
 <Card className='m-2 p-3'>
+  <Row>
+    <Col xl={6}>
 <FormGroup>
   <FormLabel>Cheque Date</FormLabel>
   <Form.Control className='form-control' value={'3/31/2024'} disabled type="text"/>
 </FormGroup>
-
+</Col>
+<Col xl={6}>
+<FormGroup>
+  <FormLabel>Cheque Issued Date</FormLabel>
+  <Form.Control className='form-control' value={'3/31/2024'} disabled type="text"/>
+</FormGroup>
+</Col>
+<Col xl={6}>
+<FormGroup>
+  <FormLabel>Cheque Recived Date</FormLabel>
+  <Form.Control className='form-control' value={'3/31/2024'} disabled type="text"/>
+</FormGroup>
+</Col>
+<Col xl={6}>
 <FormGroup>
   <FormLabel>Cheque Number</FormLabel>
   <Form.Control className='form-control' value={45456547} disabled type="text"/>
 </FormGroup>
-
+</Col>
+<Col xl={12}>
 <FormGroup>
   <FormLabel>Bank Name</FormLabel>
   <Form.Control className='form-control' value={'HDFC Bank'} disabled type="text"/>
 </FormGroup>
-
+</Col>
+<Col xl={12}>
 <FormGroup>
   <FormLabel>Branch</FormLabel>
   <Form.Control className='form-control' value={'Noida'} disabled type="text"/>
 </FormGroup>
-
+</Col>
+<Col xl={12}>
 <FormGroup>
   <FormLabel>Amount (in figures)</FormLabel>
   <Form.Control className='form-control' value={22700} disabled type="text"/>
 </FormGroup>
-
+</Col>
+<Col xl={12}>
 <FormGroup>
   <FormLabel>Amount (in words)</FormLabel>
   <Form.Control className='form-control' disabled value={'Twenty two thousand seven hundred'} type="text"/>
 </FormGroup>
-
+</Col>
+<Col xl={12}>
 <FormGroup>
   <FormLabel>Mobile Number</FormLabel>
   <Form.Control className='form-control' value={9876543212} disabled type="text"/>
 </FormGroup>
-
-
+</Col>
+</Row>
 
 </Card>
             </Modal.Body>
