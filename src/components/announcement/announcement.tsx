@@ -299,13 +299,13 @@ export default function Announcements() {
 
                 const getFileExtension = (fileName: string) => {
                   if (!fileName) {
-                    return '';  
+                    return '';
                   }
                   return fileName.split(".").pop()?.toLowerCase() || '';
                 };
                 const getFileName = (fileName: string) => {
                   if (!fileName) {
-                    return '';  
+                    return '';
                   }
                   return fileName?.split("/").pop() || '';
                 };
@@ -319,7 +319,7 @@ export default function Announcements() {
                             <Select
                               options={societyData}
                               name='society'
-                              placeholder="Select type"
+                              placeholder="Select Society"
                               classNamePrefix="Select2"
                               value={values.society}
                               onChange={(option) => setFieldValue("society", option)} // Update Formik value
@@ -398,7 +398,7 @@ export default function Announcements() {
                               style={{ cursor: "pointer", color: "blue" }}
                               onClick={() => {
                                 const fileExtension = getFileExtension(values.fileName);
-  
+
 
                                 // If it's a PDF, image, or Excel file, open in new tab
                                 if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
@@ -407,8 +407,8 @@ export default function Announcements() {
                                   // For other files, trigger download
                                   const link = document.createElement("a");
                                   link.href = import.meta.env.VITE_STATIC_PATH + values.fileName;
-                                  link.download = values.fileName; 
-                                  link.click(); 
+                                  link.download = values.fileName;
+                                  link.click();
                                 }
                               }}
                             >
