@@ -121,7 +121,7 @@ export default function UpdateTenant() {
       ),
     },
   ];
-  
+
   const tableData = {
     columns,
     data: vehicleData
@@ -181,6 +181,7 @@ export default function UpdateTenant() {
     // // resetForm();
   };
   const handleSubmit = async (values: any) => {
+    console.log(values)
     try {
       const formData = new FormData();
 
@@ -302,12 +303,27 @@ export default function UpdateTenant() {
           depositAmount: currentTenant?.property?.depositAmount || "",
           dueAmount: currentTenant?.property?.dueAmount || "",
           rentAgreementFile: "",
+          rentAgreementFileName:currentTenant?.property?.rentAgreementFile,
+          policeVerificationFileName:currentTenant?.property?.policeVerificationFile,
           policeVerificationFile: "",
 
         }}
         onSubmit={handleSubmit}
       >
-        {({ setFieldValue, values }) => (
+        {({ setFieldValue, values }) => {
+          const getFileExtension = (fileName: string) => {
+            if (!fileName) {
+              return '';
+            }
+            return fileName.split(".").pop()?.toLowerCase() || '';
+          };
+          const getFileName = (fileName: string) => {
+            if (!fileName) {
+              return '';
+            }
+            return fileName?.split("/").pop() || '';
+          };
+        return(
           <FormikForm>
             <Accordion defaultActiveKey="Basic Details">
 
@@ -694,6 +710,29 @@ export default function UpdateTenant() {
                             />
 
                           </Form.Group>
+                          {values.rentAgreementFileName && (
+                            <p
+                              className="text-center pt-2"
+                              style={{ cursor: "pointer", color: "blue" }}
+                              onClick={() => {
+                                const fileExtension = getFileExtension(values.rentAgreementFileName);
+
+
+                                // If it's a PDF, image, or Excel file, open in new tab
+                                if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                  window.open(import.meta.env.VITE_STATIC_PATH + values.rentAgreementFileName, "_blank");
+                                } else {
+                                  // For other files, trigger download
+                                  const link = document.createElement("a");
+                                  link.href = import.meta.env.VITE_STATIC_PATH + values.rentAgreementFileName;
+                                  link.download = values.rentAgreementFileName;
+                                  link.click();
+                                }
+                              }}
+                            >
+                              {getFileName(values.rentAgreementFileName)}
+                            </p>
+                          )}
                         </Col>
 
                         <Col xl={4}>
@@ -707,6 +746,29 @@ export default function UpdateTenant() {
                             />
 
                           </Form.Group>
+                          {values.policeVerificationFileName && (
+                            <p
+                              className="text-center pt-2"
+                              style={{ cursor: "pointer", color: "blue" }}
+                              onClick={() => {
+                                const fileExtension = getFileExtension(values.policeVerificationFileName);
+
+
+                                // If it's a PDF, image, or Excel file, open in new tab
+                                if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                  window.open(import.meta.env.VITE_STATIC_PATH + values.policeVerificationFileName, "_blank");
+                                } else {
+                                  // For other files, trigger download
+                                  const link = document.createElement("a");
+                                  link.href = import.meta.env.VITE_STATIC_PATH + values.policeVerificationFileName;
+                                  link.download = values.policeVerificationFileName;
+                                  link.click();
+                                }
+                              }}
+                            >
+                              {getFileName(values.policeVerificationFileName)}
+                            </p>
+                          )}
                         </Col>
 
                       </Row>
@@ -839,7 +901,7 @@ export default function UpdateTenant() {
 
             </Accordion>
           </FormikForm>
-        )}
+        )}}
       </Formik>
       <CustomToastContainer />
     </Fragment >

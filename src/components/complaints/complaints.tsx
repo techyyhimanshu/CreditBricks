@@ -1,10 +1,10 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, FormLabel } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-import { addNewComplaintApi, assignComplaintToVendorApi, deleteComplaintApi, getAllComplainCategoriesApi, getAllComplaintsApi, getAllPropertiesForDropdownApi, updateComplaintApi } from '../../api/complaint-api';
+import { addNewComplaintApi, assignComplaintToVendorApi, deleteComplaintApi, getAllComplainCategoriesApi, getAllComplaintsApi, updateComplaintApi } from '../../api/complaint-api';
 import { Formik, Form as FormikForm, Field } from 'formik';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
@@ -247,18 +247,18 @@ export default function Complaints() {
     fetchSocietiesForDropDown()
   }, []);
 
-  useEffect(()=>{
-    if(filtersss.societyIdentifier){
+  useEffect(() => {
+    if (filtersss.societyIdentifier) {
       fetchPropertiesOfSocietyForDropdown(filtersss.societyIdentifier)
     }
 
-  },[filtersss?.societyIdentifier])
+  }, [filtersss?.societyIdentifier])
 
   const fetchAllComplaints = async () => {
     try {
       const response = await getAllComplaintsApi()
       if (response.status === 200) {
-        const formattedData = response.data.data.map((complaint: any,index:number) => {
+        const formattedData = response.data.data.map((complaint: any, index: number) => {
           return {
             sno: index + 1,
             id: complaint?.id || "",
@@ -307,7 +307,7 @@ export default function Complaints() {
   //     console.error("Error fetching properties:", error);
   //   }
   // }
-  const fetchPropertiesOfSocietyForDropdown = async (identifier:string) => {
+  const fetchPropertiesOfSocietyForDropdown = async (identifier: string) => {
     try {
       const response = await getPropertiesOfSocietyApi(identifier)
       if (response.status === 200) {
@@ -387,7 +387,7 @@ export default function Complaints() {
     try {
       const response = await getAllComplaintsApi(updatedFilters); // Pass filters correctly
       if (response.status === 200) {
-        const formattedData = response.data.data.map((complaint: any,index:number) => {
+        const formattedData = response.data.data.map((complaint: any, index: number) => {
           return {
             sno: index + 1,
             id: complaint?.id || "",
@@ -458,6 +458,27 @@ export default function Complaints() {
     })()
   }
 
+  const handleUpdateStatus = async (values:any,id: string) => {
+    console.log(values,id)
+    try {
+      // const response = await assignComplaintToVendorApi();
+      // if (response.status === 200) {
+      //   showToast("success", response.data.message);
+      // }
+
+      // setComplaintData(prevData =>
+      //   prevData.map(complaint =>
+      //     complaint.id === complaintToView.id
+      //       ? { ...complaint, contactPersonName: selectedVendor.label }
+      //       : complaint
+      //   )
+      // );
+    } catch (error) {
+
+    }
+    // viewDemoClose("complaintview")
+  }
+
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -486,7 +507,7 @@ export default function Complaints() {
                 complaintDescription: complaintToView?.description || "",
                 priority: complaintToView ? { label: complaintToView.priority, value: complaintToView.priority } : { label: "", value: "" },
                 complaintFile: null,
-                fileName:complaintToView?.issueFilePath
+                fileName: complaintToView?.issueFilePath
               }}
               onSubmit={handleSubmit}
             >
@@ -503,92 +524,92 @@ export default function Complaints() {
                   }
                   return fileName?.split("/").pop() || '';
                 };
-                return(
-                <FormikForm>
-                  <Modal.Body className='pt-1'>
-                    <Row>
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Complaint ID</Form.Label>
-                          <input type="text"
-                            className='form-control'
-                            placeholder=''
-                            value={values.id}
-                            disabled />
-                        </Form.Group>
-                      </Col>
+                return (
+                  <FormikForm>
+                    <Modal.Body className='pt-1'>
+                      <Row>
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Complaint ID</Form.Label>
+                            <input type="text"
+                              className='form-control'
+                              placeholder=''
+                              value={values.id}
+                              disabled />
+                          </Form.Group>
+                        </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society</Form.Label>
-                          <Select
-                            options={societyData}
-                            value={values.society}
-                            name="society"
-                            onChange={(selected) => setFieldValue("society", selected)}
-                            placeholder="Select society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property</Form.Label>
-                          <Select
-                            options={property}
-                            value={values.property}
-                            name="property"
-                            onChange={(selected) => setFieldValue("property", selected)}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Society</Form.Label>
+                            <Select
+                              options={societyData}
+                              value={values.society}
+                              name="society"
+                              onChange={(selected) => setFieldValue("society", selected)}
+                              placeholder="Select society"
+                              classNamePrefix="Select2"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Property</Form.Label>
+                            <Select
+                              options={property}
+                              value={values.property}
+                              name="property"
+                              onChange={(selected) => setFieldValue("property", selected)}
+                              placeholder="Select property"
+                              classNamePrefix="Select2"
+                            />
+                          </Form.Group>
+                        </Col>
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Complaint Category</Form.Label>
-                          <Select
-                            options={complainttype}
-                            value={values.complaintCategory}
-                            name='complaintCategory'
-                            onChange={(selected) => setFieldValue("complaintCategory", selected)}
-                            placeholder="Select service"
-                            classNamePrefix="Select2"
-                          />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                        </Form.Group>
-                      </Col>
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Priority </Form.Label>
-                          <Select
-                            options={priority}
-                            value={values.priority}
-                            name='priority'
-                            onChange={(selected) => setFieldValue("priority", selected)}
-                            placeholder="Select priority"
-                            classNamePrefix="Select2"
-                          />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                        </Form.Group>
-                      </Col>
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Description</Form.Label>
-                          <Field type="text" name='complaintDescription' value={values.complaintDescription} className='form-control'
-                            as="textarea" placeholder='Description'></Field>
-                        </Form.Group>
-                      </Col>
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Upload Photo</Form.Label>
-                          <input type="file"
-                            name="complaintFile"
-                            onChange={(e: any) => setFieldValue("complaintFile", e.target.files[0])}
-                            className='form-control' />
-                        </Form.Group>
-                        {values.fileName && (
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Complaint Category</Form.Label>
+                            <Select
+                              options={complainttype}
+                              value={values.complaintCategory}
+                              name='complaintCategory'
+                              onChange={(selected) => setFieldValue("complaintCategory", selected)}
+                              placeholder="Select service"
+                              classNamePrefix="Select2"
+                            />
+                            {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                          </Form.Group>
+                        </Col>
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Priority </Form.Label>
+                            <Select
+                              options={priority}
+                              value={values.priority}
+                              name='priority'
+                              onChange={(selected) => setFieldValue("priority", selected)}
+                              placeholder="Select priority"
+                              classNamePrefix="Select2"
+                            />
+                            {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                          </Form.Group>
+                        </Col>
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Description</Form.Label>
+                            <Field type="text" name='complaintDescription' value={values.complaintDescription} className='form-control'
+                              as="textarea" placeholder='Description'></Field>
+                          </Form.Group>
+                        </Col>
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Upload Photo</Form.Label>
+                            <input type="file"
+                              name="complaintFile"
+                              onChange={(e: any) => setFieldValue("complaintFile", e.target.files[0])}
+                              className='form-control' />
+                          </Form.Group>
+                          {values.fileName && (
                             <p
                               className="text-center pt-2"
                               style={{ cursor: "pointer", color: "blue" }}
@@ -611,22 +632,23 @@ export default function Complaints() {
                               {getFileName(values.fileName)}
                             </p>
                           )}
-                      </Col>
+                        </Col>
 
 
-                    </Row>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="default" onClick={() => { viewDemoClose("addcomplaint"); }}>
-                      Close
-                    </Button>
-                    <Button variant="primary" type='submit' >
-                      Save
-                    </Button>
+                      </Row>
+                    </Modal.Body>
+                    <Modal.Footer>
+                      <Button variant="default" onClick={() => { viewDemoClose("addcomplaint"); }}>
+                        Close
+                      </Button>
+                      <Button variant="primary" type='submit' >
+                        Save
+                      </Button>
 
-                  </Modal.Footer>
-                </FormikForm>
-              )}}
+                    </Modal.Footer>
+                  </FormikForm>
+                )
+              }}
             </Formik>
 
 
@@ -647,7 +669,7 @@ export default function Complaints() {
                     alt="" className='w-100 rounded-2'
                     crossOrigin="anonymous"
                     src={import.meta.env.VITE_STATIC_PATH + complaintToView?.issueFilePath}
-                    style={{ cursor: 'pointer'}}
+                    style={{ cursor: 'pointer' }}
                     onClick={() => window.open(import.meta.env.VITE_STATIC_PATH + complaintToView?.issueFilePath, '_blank')}
                   /> : <p className='w-100 rounded-2' style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>No image</p>}
                 </Col>
@@ -693,33 +715,85 @@ export default function Complaints() {
                 </Col> */}
 
               </Row>
-              <hr className='mt-2 mb-1'/>
+              <hr className='mt-2 mb-1' />
               <Row>
-                <Col xl={12}>
-                <Form.Label className='float-start'>Update Status</Form.Label>
+                {/* <Col xl={12}>
+                  <Form.Label className='float-start'>Update Status</Form.Label>
                   <Dropdown className='profile-user border-0'>
-                       <Dropdown.Toggle variant="">
-                            <strong>In Process</strong>
-                          </Dropdown.Toggle>
-                        <Dropdown.Menu>
-<Dropdown.Item className="dropdown-item" href="/">In-Process </Dropdown.Item>
-<Dropdown.Item className="dropdown-item" href="/">Pending </Dropdown.Item>
-<Dropdown.Item className="dropdown-item" href="/">Verified </Dropdown.Item>
-<Dropdown.Item className="dropdown-item" href="/">Closed </Dropdown.Item>
+                    <Dropdown.Toggle variant="">
+                      <strong>In Process</strong>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item className="dropdown-item" href="/">In-Process </Dropdown.Item>
+                      <Dropdown.Item className="dropdown-item" href="/">Pending </Dropdown.Item>
+                      <Dropdown.Item className="dropdown-item" href="/">Verified </Dropdown.Item>
+                      <Dropdown.Item className="dropdown-item" href="/">Closed </Dropdown.Item>
 
-                        </Dropdown.Menu>
-                      </Dropdown>
-                      <p className="mb-0 text-muted">Complaint Remarks</p>
-<textarea className='form-control' placeholder='Remarks'></textarea>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                  <p className="mb-0 text-muted">Complaint Remarks</p>
+                  <textarea className='form-control' placeholder='Remarks'></textarea>
+                </Col> */}
+                <Col xl={12}>
+                  <Formik
+                    enableReinitialize
+                    initialValues={{
+                      status: { label: complaintToView?.status || '', value: complaintToView?.status || '' },
+                      remarks: complaintToView?.remarks || '',
+                    }}
+                    onSubmit={(values) => handleUpdateStatus(values,complaintToView?.id)}
+                  >
+                    {({ setFieldValue, values, submitForm }) => (
+                      <Form>
+                        <Col xl={12}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label className='float-start'>Update Status</Form.Label>
+                            <Select
+                              options={status}
+                              value={values.status}
+                              name="status"
+                              onChange={(selected) => setFieldValue('status', selected)}
+                              placeholder="Select status"
+                              classNamePrefix="Select2"
+                              className='profile-user border-0'
+                            />
+                          </Form.Group>
+                        </Col>
+
+                        <Col xl={12}>
+                          <p className="mb-0 text-muted">Complaint Remarks</p>
+                          <textarea
+                            className="form-control"
+                            placeholder="Remarks"
+                            name="remarks"
+                            value={values.remarks}
+                            onChange={(e) => setFieldValue('remarks', e.target.value)}
+                          />
+                        </Col>
+
+                        <Modal.Footer>
+                          <Button type="button" className="btn btn-default" onClick={() => viewDemoClose('complaintview')}>
+                            Close
+                          </Button>
+                          <Button
+                            type="button"
+                            className="btn btn-primary"
+                            onClick={() => submitForm()}
+                          >
+                            Save
+                          </Button>
+                        </Modal.Footer>
+                      </Form>
+                    )}
+                  </Formik>
                 </Col>
-
 
               </Row>
             </Modal.Body>
-<Modal.Footer>
-  <Button type='button' className='btn btn-default' onClick={() => { viewDemoClose("complaintview"); }}>Close</Button>
-  <Button type='button' className='btn btn-primary' onClick={() => { viewDemoClose("complaintview"); }}>Save</Button>
-</Modal.Footer>
+            {/* <Modal.Footer>
+              <Button type='button' className='btn btn-default' onClick={() => { viewDemoClose("complaintview"); }}>Close</Button>
+              <Button type='button' className='btn btn-primary' onClick={() => { handleUpdateStatus(complaintToView.id) }}>Save</Button>
+            </Modal.Footer> */}
           </Modal>
 
           <Modal show={assign} centered>

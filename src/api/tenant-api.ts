@@ -30,7 +30,7 @@ export const getTenantApi = async (identifier : string): Promise<any> => {
 
 export const updateTenantApi = async (data:any , identifier : string): Promise<any> => {
     try {
-        const response = await axiosInstance.patch(`/tenant/${identifier}`,data)
+        const response = await axiosInstance.patch(`/tenant/tt/${identifier}`,data)
         return response
     } catch (error) {
         throw error
