@@ -10565,7 +10565,8 @@ textarea.custom-file-input.parsley-error:focus~.custom-file-label {
     vertical-align: bottom;
     background: #f1f3fa !important;
     padding: 15px 10px;
-    color:#000 !important
+    color:#000 !important;
+    font-weight: 500;
 }
 
 .table tbody+tbody {
