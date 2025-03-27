@@ -24,6 +24,9 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       port: 8080,
+      hmr: {
+        overlay: false
+      }
     },
     preview: {
       port: parseInt(env.VITE_PER_PORT)
