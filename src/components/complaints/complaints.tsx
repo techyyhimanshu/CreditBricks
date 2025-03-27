@@ -752,10 +752,13 @@ export default function Complaints() {
                   >
                     {({ setFieldValue, values, submitForm }) => (
                       <Form>
-                        <Col xl={12}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label className='float-start'>Update Status</Form.Label>
-                            <Select
+                      <Form.Group className="form-group mb-1">
+                        <Row>
+                          <Col xl={3}>
+                          <Form.Label className='float-start'>Update Status</Form.Label>
+                          </Col>
+                          <Col xl={12}>
+                          <Select
                               options={status}
                               value={values.status}
                               name="status"
@@ -764,11 +767,15 @@ export default function Complaints() {
                               classNamePrefix="Select2"
                               className='profile-user border-0'
                             />
-                          </Form.Group>
-                        </Col>
+                          </Col>
+                        </Row>
 
-                        <Col xl={12}>
-                          <p className="mb-0 text-muted">Complaint Remarks</p>
+
+                          </Form.Group>
+
+
+
+                         <Form.Label className='float-start'>Complaint Remarks</Form.Label>
                           <textarea
                             className="form-control"
                             placeholder="Remarks"
@@ -776,10 +783,10 @@ export default function Complaints() {
                             value={values.remarks}
                             onChange={(e) => setFieldValue('remarks', e.target.value)}
                           />
-                        </Col>
 
-                        <Modal.Footer>
-                          <Button type="button" className="btn btn-default" onClick={() => viewDemoClose('complaintview')}>
+
+<span className='float-end mt-3'>
+                          <Button type="button" className="btn btn-default ms-2" onClick={() => viewDemoClose('complaintview')}>
                             Close
                           </Button>
                           <Button
@@ -789,7 +796,7 @@ export default function Complaints() {
                           >
                             Save
                           </Button>
-                        </Modal.Footer>
+                          </span>
                       </Form>
                     )}
                   </Formik>
