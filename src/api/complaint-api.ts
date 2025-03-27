@@ -56,6 +56,14 @@ export const updateComplaintApi = async (data:any,id:string): Promise<any> => {
         throw error
     }
 }
+export const updateComplaintStatusApi = async (data:any,id:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.post(`complaint/${id}/status`,data)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 
 export const deleteComplaintApi = async (id:string): Promise<any> => {
     try {

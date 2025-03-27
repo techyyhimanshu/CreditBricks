@@ -171,6 +171,8 @@ export default function AddSocietyMaster() {
       const societyDetails = {
         societyName: values.societyName,
         societyManager: values.societyManager,
+        email: values.email,
+        contactNumber: values.contactNumber,
         address: values.address,
         country: values.country.value,
         state: values.state.value,

@@ -22,6 +22,16 @@ export const getAllPropertyApi = async (): Promise<any> => {
         throw error
     }
 }
+
+export const getWingPropertiesApi = async (identifier:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`wing/${identifier}/properties`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 export const getSinglePropertyDetailsApi = async (propertyId: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/property/${propertyId}`)
