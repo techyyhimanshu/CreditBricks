@@ -194,6 +194,7 @@ export default function UpdateTenant() {
       setVehicleData(updatedData);
       setEditingIndex(null);
     } else {
+      handleVehicleUpdate(vehicleFormData)
       // Add new row
       setVehicleData((prevState: any) => [
         ...prevState,
@@ -303,15 +304,18 @@ export default function UpdateTenant() {
       const formData = new FormData();
 
       const vehicleDetails = {
-        vehicleId: values.vehicleId,
         vehicleNumber: values.vehicleNumber,
-        vehicleType: values.vehicleType.value,
+        vehicleType: values.vehicleType.value||values.vehicleType,
       }
       Object.entries(vehicleDetails).forEach(([key, value]) => {
         formData.append(key, value);
       });
-      if (values.vehicleRc) {
-        formData.append("vehicleRCFile", values.vehicleRc)
+
+      if (values.vehicleRc||values.vehicleRC) {
+        formData.append("vehicleRCFile", values.vehicleRc||values.vehicleRC)
+      }
+      if (values.vehicleId) {
+        formData.append("vehicleId", values.vehicleId)
       }
 
       const response = await updateVehicleApi(formData, identifier)

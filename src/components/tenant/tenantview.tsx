@@ -1,10 +1,9 @@
 
 import { Fragment, useEffect, useState } from 'react';
-import { Col, Row, Card, Accordion, Button, Form, Modal, ProgressBar, FormLabel, CardFooter } from "react-bootstrap";
+import { Col, Row, Card,  Button, Form, Modal, ProgressBar, FormLabel, CardFooter } from "react-bootstrap";
 import { Link, useParams, } from "react-router-dom";
 import { imagesData } from "../../common/commonimages";
 import { getTenantDetailsApi } from '../../api/tenant-api';
-import path from 'path';
 
 export default function TenantView() {
 
@@ -27,28 +26,27 @@ export default function TenantView() {
       pincode: '',
       havePet: '',
       familyMembers: '',
-      tenantProperties: [
-        {
-          rentAgreementStartDate: '',
-          rentAgreementEndDate: '',
-          monthlyRent: '',
-          depositAmount: '',
-          dueAmount: '',
-          rentRegistrationId: '',
-          rentAgreementFile: '',
-          policeVerificationFile: '',
-          property: {
-            propertyName: '',
-            society: {
-              societyName: ''
-            }
-          }
-        }
-      ],
+      property:
+      {
+        rentAgreementStartDate: '',
+        rentAgreementEndDate: '',
+        monthlyRent: '',
+        depositAmount: '',
+        dueAmount: '',
+        rentRegistrationId: '',
+        rentAgreementFile: '',
+        policeVerificationFile: '',
+        propertyName: ''
+      },
+      society: {
+        societyIdentifier: "",
+        societyName: ""
+      },
       tenantVehicles: [
         {
           vehicleNumber: '',
           vehicleType: '',
+          vehicleRcFilePath: ""
         }
       ]
     });
@@ -79,10 +77,10 @@ export default function TenantView() {
     }
   };
   const params = useParams();
+  const identifier = params.identifier as string
 
   useEffect(() => {
 
-    const identifier = params.identifier as string
     const fetchTenantDetails = async () => {
       const response = await getTenantDetailsApi(identifier)
       if (response.status === 200) {
@@ -103,7 +101,7 @@ export default function TenantView() {
               src={imagesData('female1')}
               className="wd-100 rounded-5"
             />
-            <span className='ms-3'> Mr. {tenantDetails.firstName} <Link to={`${import.meta.env.BASE_URL}tenant/addtenant`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span></span>
+            <span className='ms-3'> Mr. {tenantDetails.firstName} <Link to={`${import.meta.env.BASE_URL}tenant/updatetenant/${identifier}`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span></span>
 
         </div>
       </div>
@@ -118,17 +116,17 @@ export default function TenantView() {
               <Row>
                 <Col xl={6}>
                   <FormLabel>Society Name</FormLabel>
-                  <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>{tenantDetails.tenantProperties[0]?.property.society.societyName}</Link>
+                  <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>{tenantDetails?.society?.societyName || "N/A"}</Link>
                 </Col>
 
                 <Col xl={6}>
                   <FormLabel>Property Name</FormLabel>
-                  <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>{tenantDetails.tenantProperties[0]?.property.propertyName}</Link>
+                  <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>{tenantDetails?.property?.propertyName || "N/A"}</Link>
                 </Col>
 
                 <Col xl={6}>
                   <FormLabel>Tenant Name</FormLabel>
-                  <p className='tx-15'>{`${tenantDetails.firstName} ${tenantDetails.middleName} ${tenantDetails.lastName}`}</p>
+                  <p className='tx-15'>{`${tenantDetails?.firstName} ${tenantDetails?.middleName} ${tenantDetails?.lastName}`}</p>
                 </Col>
 
                 <Col xl={6}>
@@ -201,13 +199,13 @@ export default function TenantView() {
               <Row>
                 <Col xl={6}>
                   <p className='mb-0 text-muted'>Agreement Start Date</p>
-                  <p className='tx-15 tx-semibold'>{tenantDetails.tenantProperties[0]?.rentAgreementStartDate}</p>
+                  <p className='tx-15 tx-semibold'>{tenantDetails?.property?.rentAgreementStartDate}</p>
                   <p className='mb-0 text-muted'>Agreement End Date</p>
-                  <p className='tx-15 tx-semibold mb-2'>{tenantDetails.tenantProperties[0]?.rentAgreementEndDate}</p>
+                  <p className='tx-15 tx-semibold mb-2'>{tenantDetails?.property?.rentAgreementEndDate}</p>
                 </Col>
                 <Col xl={6} className='text-end'>
                   <p className='mb-0 text-muted'>Monthly Rent</p>
-                  <p className='tx-15 tx-semibold text-primary'>₹ {tenantDetails.tenantProperties[0]?.monthlyRent}</p>
+                  <p className='tx-15 tx-semibold text-primary'>₹ {tenantDetails?.property?.monthlyRent}</p>
                   <p className='mb-0 pt-2 text-muted'></p>
                   {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
                 </Col>
@@ -233,11 +231,11 @@ export default function TenantView() {
 
                 <Col xl={6}>
                   <p className='mb-0 mt-2 text-muted'>Due Amount</p>
-                  <p className='tx-15 tx-semibold'>₹ {tenantDetails.tenantProperties[0]?.dueAmount}</p>
+                  <p className='tx-15 tx-semibold'>₹ {tenantDetails?.property?.dueAmount}</p>
                 </Col>
                 <Col xl={6}>
                   <p className='mb-0 mt-2 text-muted text-end'>Deposit Amount</p>
-                  <p className='tx-15 tx-semibold mb-0 text-end'>₹ {tenantDetails.tenantProperties[0]?.depositAmount}</p>
+                  <p className='tx-15 tx-semibold mb-0 text-end'>₹ {tenantDetails?.property?.depositAmount}</p>
                 </Col>
 
               </Row>
@@ -386,66 +384,90 @@ export default function TenantView() {
           <Card>
             <Card.Body className='pb-1'>
               <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
-              <Row>
-                N/A
-                {/* <Col xl={2} className='p-0'>
-                  <img
-                    alt="" className='w-100'
-                    src={imagesData('pdficon')}
-                  />
-                </Col>
-                <Col xl={9} className='p-0'>
-                  <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : {tenantDetails.tenantProperties[0]?.rentRegistrationId}</p>
-                  <a
-                    href={`https://api.creditbricks.in${tenantDetails.tenantProperties[0]?.rentAgreementFile}`}
-                    className="text-info"
-                    download
-                  >
-                    Download
-                  </a>
-                </Col> */}
-              </Row>
+              {
+                tenantDetails?.property?.rentAgreementFile ?
+                  <><Row>
+                    <Col xl={2} className='p-0'>
+                      <img
+                        alt="" className='w-100'
+                        src={imagesData('pdficon')}
+                      />
+                    </Col>
+                    <Col xl={9} className='p-0'>
+                      <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : {tenantDetails?.property?.rentRegistrationId}</p>
+                      <a
+                        href={`${import.meta.env.VITE_STATIC_PATH}${tenantDetails?.property?.rentAgreementFile}`}
+                        className="text-info"
+                        download={tenantDetails?.property?.rentAgreementFile}
+                      >
+                        Download
+                      </a>
+                    </Col>
+                  </Row></> : <>N/A</>
+              }
 
               <Row>
-                N/A
-                {/* <Col xl={2} className='p-0'>
-                  <img
-                    alt="" className='w-100'
-                    src={imagesData('pdficon')}
-                  />
-                </Col>
-                <Col xl={9} className='p-0'>
-                  <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
-                  <a
-                    href={`https://api.creditbricks.in${tenantDetails.tenantProperties[0]?.policeVerificationFile}`}
-                    className="text-info"
-                    download
-                  >
-                    Download
-                  </a>
-                </Col> */}
+                {
+                  tenantDetails?.property?.policeVerificationFile ? <>
+                    <Col xl={2} className='p-0'>
+                      <img
+                        alt="" className='w-100'
+                        src={imagesData('pdficon')}
+                      />
+                    </Col>
+                    <Col xl={9} className='p-0'>
+                      <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
+                      <a
+                        href={`${import.meta.env.VITE_STATIC_PATH}${tenantDetails?.property?.policeVerificationFile}`}
+                        className="text-info"
+                        download
+                      >
+                        Download
+                      </a>
+                    </Col></> : <>N/A</>
+                }
               </Row>
             </Card.Body>
           </Card>
 
+          
           <Card>
             <Card.Body className='pb-1'>
               <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
               <Row>
-              N/A
-                {/* <Col xl={2} className='p-0'>
-                  <img
-                    alt="" className='w-100'
-                    src={imagesData('pdficon')}
-                  />
-                </Col>
-                <Col xl={9} className='p-0'>
-                  <p className='tx-14 mb-0 mt-2 tx-semibold'>Vehicle No. {tenantDetails.tenantVehicles[0]?.vehicleNumber}  <span className='text-muted'>({tenantDetails.tenantVehicles[0]?.vehicleType})</span></p>
-                  <Link to={``} className='text-info'>Download</Link>
-                </Col> */}
+                {tenantDetails?.tenantVehicles?.length === 0 ? (
+                  <Col xl={12} className='p-0'>
+                    <span>N/A</span> {/* Show N/A if no vehicles are available */}
+                  </Col>
+                ) : (
+                  tenantDetails?.tenantVehicles?.map((vehicle:any,index:number) => (
+                    <Row key={index}>
+                      <Col xl={2} className='p-0'>
+                        <img
+                          alt="Vehicle Icon"
+                          className='w-100'
+                          src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
+                        />
+                      </Col>
+                      <Col xl={9} className='p-0'>
+                        <p className='tx-14 mb-0 mt-2 tx-semibold'>
+                          Vehicle No. {vehicle?.vehicleNumber} <span className='text-muted'>({vehicle?.vehicleType})</span>
+                        </p>
+                        <a
+                          href={`${import.meta.env.VITE_STATIC_PATH}${vehicle?.vehicleRcFilePath}`}
+                          className="text-info"
+                          download
+                        >
+                          Download
+                        </a>
+                      </Col>
+                    </Row>
+                  ))
+                )}
               </Row>
             </Card.Body>
           </Card>
+
 
         </Col>
       </Row>
