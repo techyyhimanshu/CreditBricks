@@ -9,10 +9,13 @@ import Select from "react-select";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi, getPropertiesOfSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { createAnnouncementApi, deleteAnnouncementApi, getAllAnnouncementApi, updateAnnouncementApi } from '../../api/announcement-api';
 import { Formik, Form as FormikForm } from 'formik';
+import { getSocietyTowersApi } from '../../api/tower-api';
+import { getTowerWingsApi } from '../../api/wing-api';
+import { getWingPropertiesApi } from '../../api/property-api';
 
 export default function Announcements() {
   const [addannouncement, setaddannouncement] = useState(false);
@@ -96,6 +99,12 @@ export default function Announcements() {
           validDate: announcement.validDate,
           societyIdentifier: announcement?.society?.societyIdentifier,
           societyName: announcement?.society?.societyName,
+          towerIdentifier: announcement?.tower?.towerIdentifier,
+          towerName: announcement?.tower?.towerName,
+          wingIdentifier: announcement?.wing?.wingIdentifier,
+          wingName: announcement?.wing?.wingName,
+          propertyIdentifier: announcement?.property?.propertyIdentifier,
+          propertyName: announcement?.property?.propertyName,
           announcementFilePath: announcement?.announcementFilePath
         }
       ));
@@ -145,7 +154,7 @@ export default function Announcements() {
 
   const fetchPropertiesForDropDown = async (society: any) => {
     try {
-      const response = await getPropertiesOfSocietyApi(society.value);
+      const response = await getWingPropertiesApi(society.value);
       const formattedData = response.data.data.map((item: any) => ({
         value: item.propertyIdentifier,
         label: item.propertyName ? item.propertyName : item.flatNumber,
@@ -159,7 +168,7 @@ export default function Announcements() {
 
   const fetchWingsForDropDown = async (society: any) => {
     try {
-      const response = await getWingsOfSocietyApi(society.value);
+      const response = await getTowerWingsApi(society.value);
       const formattedData = response.data.data.map((item: any) => ({
         value: item.wingIdentifier,
         label: item.wingName,
@@ -171,9 +180,10 @@ export default function Announcements() {
       showToast("error", errorMessage)
     }
   }
+
   const fetchTowersForDropDown = async (society: any) => {
     try {
-      const response = await getTowersOfSocietyApi(society.value);
+      const response = await getSocietyTowersApi(society.value);
       const formattedData = response.data.data.map((item: any) => ({
         value: item.towerIdentifier,
         label: item.towerName,
@@ -228,6 +238,16 @@ export default function Announcements() {
       message: values.message,
       startDate: values.startDate,
       validDate: values.validDate,
+    }
+
+    if (values?.tower?.value) {
+      formattedData.towerIdentifier = values.tower.value
+    }
+    if (values?.wing?.value) {
+      formattedData.wingIdentifier = values.wing.value
+    }
+    if (values?.property?.value) {
+      formattedData.propertyIdentifier = values.property.value
     }
 
     if (values.file) {
@@ -340,6 +360,23 @@ export default function Announcements() {
             >
               {({ values, handleChange, setFieldValue }) => {
                 useEffect(() => {
+                  if (values.society && values.society.value) {
+                    fetchTowersForDropDown(values.society);
+                  }
+                }, [values.society]);
+
+                useEffect(() => {
+                  if (values.tower && values.tower.value) {
+                    fetchWingsForDropDown(values.tower);
+                  }
+                }, [values.tower]);
+
+                useEffect(() => {
+                  if (values.wing && values.wing.value) {
+                    fetchPropertiesForDropDown(values.wing);
+                  }
+                }, [values.wing]);
+                useEffect(() => {
                   if (singleAnnouncementData?.message) {
                     setFieldValue("message", singleAnnouncementData?.message)
                   }
@@ -371,9 +408,7 @@ export default function Announcements() {
                               classNamePrefix="Select2"
                               value={values.society}
                               onChange={(selected) => {
-                                fetchPropertiesForDropDown(selected);
                                 fetchTowersForDropDown(selected);
-                                fetchWingsForDropDown(selected);
                                 setFieldValue("tower", null);
                                 setFieldValue("wing", null);
                                 setFieldValue("property", null);
@@ -391,7 +426,12 @@ export default function Announcements() {
                               placeholder="Select type"
                               classNamePrefix="Select2"
                               value={values.tower}
-                              onChange={(option) => setFieldValue("tower", option)}
+                              onChange={(selected) => {
+                                fetchWingsForDropDown(selected);
+                                setFieldValue("wing", null);
+                                setFieldValue("property", null);
+                                setFieldValue("tower", selected);
+                              }}
                             />
                           </Form.Group>
                         </Col>
@@ -404,7 +444,11 @@ export default function Announcements() {
                               placeholder="Select type"
                               classNamePrefix="Select2"
                               value={values.wing}
-                              onChange={(option) => setFieldValue("wing", option)}
+                              onChange={(selected) => {
+                                fetchPropertiesForDropDown(selected);
+                                setFieldValue("property", null);
+                                setFieldValue("wing", selected);
+                              }}
                             />
                           </Form.Group>
                         </Col>

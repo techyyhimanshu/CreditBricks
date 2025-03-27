@@ -6,7 +6,7 @@ import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 // import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 // import stateCities from "../stateCity.json"
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 // import { Uploader } from 'uploader';
 // import { UploadButton } from 'react-uploader';
 import { getAllSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../../api/society-api';
@@ -149,9 +149,11 @@ export default function EditPropertyMaster() {
     const [fifthOwnerOptions, setFifthOwnerOptions] = useState<any[]>([]);
     const [flatsoldmodalshow, setflatsoldmodal] = useState(false);
     const params = useParams()
+    const location = useLocation();
+    const ownerChange = location.state ?? false;
     const identifier = params.identifier as string
 
-    // const societyname: any = [{ value: "1", label: "Select Society" }]
+
 
     const propertystatus = [
         { value: "Sold", label: "Sold" },
@@ -355,17 +357,17 @@ export default function EditPropertyMaster() {
         setCo_OwnerOptions(updatedData);
 
     };
-    const handleCoOwnerChange = async (identifier: string) => {
-        const updatedData = co_OwnerOptions.filter((coOwner: any) => coOwner.value !== identifier);
+    const handleCoOwnerChange = async (identifier: string,memberId:string) => {
+        const updatedData = memberOptions.filter((coOwner: any) => coOwner.value !== identifier&&coOwner.value !== memberId);
         setThirdOwnerOptions(updatedData);
     };
-    const handleThirdOwnerChange = async (identifier: string) => {
-        const updatedData = thirdOwnerOptions.filter((thirdOwner: any) => thirdOwner.value !== identifier);
+    const handleThirdOwnerChange = async (identifier: string,memberid:string,coOwnerId:string) => {
+        const updatedData = memberOptions.filter((thirdOwner: any) => thirdOwner.value !== identifier&&thirdOwner.value !== memberid&&thirdOwner.value !== coOwnerId);
         setFourthOwnerOptions(updatedData);
     };
 
-    const handleFourthOwnerChange = async (identifier: string) => {
-        const updatedData = fourthOwnerOptions.filter((fourthOwner: any) => fourthOwner.value !== identifier);
+    const handleFourthOwnerChange = async (identifier: string,memberid:string,coOwnerId:string,thirdOwnerId:string) => {
+        const updatedData = memberOptions.filter((fourthOwner: any) => fourthOwner.value !== identifier&&fourthOwner.value !== memberid&&fourthOwner.value !== coOwnerId&&fourthOwner.value !== thirdOwnerId);
         setFifthOwnerOptions(updatedData);
     };
 
@@ -373,12 +375,11 @@ export default function EditPropertyMaster() {
         const member = currentProperty?.propertyMembers.find((member: any) => member.ownership === ownership);
         if (member) {
             return {
-                value: member.memberIdentifier || "", // Fallback to empty string if memberIdentifier is missing
+                value: member.memberIdentifier || "", 
                 label: `${member.member.firstName || ''} ${member.member.middleName || ''} ${member.member.lastName || ''}`.trim() || ""
             };
         }
 
-        // If no member found, return a default value
         return { value: "", label: "" };
     };
 
@@ -463,20 +464,22 @@ export default function EditPropertyMaster() {
                 >
                     {({ setFieldValue, values }) => {
                         useEffect(() => {
-                            if (values.member?.value) {
-                                handleMemberChange(values.member.value);
+                            if (values.member && values.member.value) {
+                              handleMemberChange(values.member.value);
                             }
-                            if (values.coOwner?.value) {
-                                handleCoOwnerChange(values.coOwner.value);
+                          }, [values.member]); 
+                      
+                          useEffect(() => {
+                            if (values.coOwner && values.coOwner.value) {
+                              handleCoOwnerChange(values.coOwner.value,values.member?.value);
                             }
-                            if (values.thirdOwner?.value) {
-                                handleThirdOwnerChange(values.thirdOwner.value);
+                          }, [values.coOwner]); 
+                      
+                          useEffect(() => {
+                            if (values.thirdOwner && values.thirdOwner.value) {
+                              handleThirdOwnerChange(values.thirdOwner.value,values.member?.value,values.coOwner.value);
                             }
-                            if (values.fourthOwner?.value) {
-                                handleFourthOwnerChange(values.fourthOwner.value);
-                            }
-
-                        }, [values]);
+                          }, [values.thirdOwner]);
                         return (
                             <FormikForm>
 
@@ -503,6 +506,7 @@ export default function EditPropertyMaster() {
                                                                             name="propertyName"
                                                                             placeholder="Property name"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -562,6 +566,7 @@ export default function EditPropertyMaster() {
                                                                             onChange={(selected) => setFieldValue("narration", selected)}
                                                                             placeholder="Select narration"
                                                                             classNamePrefix="Select2"
+                                                                            isDisabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -575,6 +580,7 @@ export default function EditPropertyMaster() {
                                                                             name="area"
                                                                             placeholder="Area"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -593,6 +599,7 @@ export default function EditPropertyMaster() {
                                                                                 fetchTowersForDropDown(selected);
                                                                                 fetchWingsForDropDown(selected);
                                                                             }}
+                                                                            isDisabled={ownerChange}
                                                                             placeholder="Select Society"
                                                                             classNamePrefix="Select2"
                                                                         />
@@ -609,6 +616,7 @@ export default function EditPropertyMaster() {
                                                                             onChange={(selected) => setFieldValue("tower", selected)}
                                                                             placeholder="Select tower"
                                                                             classNamePrefix="Select2"
+                                                                            isDisabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -626,6 +634,7 @@ export default function EditPropertyMaster() {
                                                                             onChange={(selected) => setFieldValue("wing", selected)}
                                                                             placeholder="Select wing"
                                                                             classNamePrefix="Select2"
+                                                                            isDisabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -640,6 +649,7 @@ export default function EditPropertyMaster() {
                                                                             name="flatNumber"
                                                                             placeholder="Flat no"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -653,6 +663,7 @@ export default function EditPropertyMaster() {
                                                                             name="floorNumber"
                                                                             placeholder="Floor no"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -668,6 +679,7 @@ export default function EditPropertyMaster() {
                                                                             onChange={(selected) => setFieldValue("dealType", selected)}
                                                                             placeholder="Select Type"
                                                                             classNamePrefix="Select2"
+                                                                            isDisabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -682,6 +694,7 @@ export default function EditPropertyMaster() {
                                                                                 onChange={(selected) => setFieldValue("tenant", selected)}
                                                                                 placeholder="Select tenant"
                                                                                 classNamePrefix="Select2"
+                                                                                isDisabled={ownerChange}
                                                                             />
                                                                             {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                                                                         </Form.Group>
@@ -712,6 +725,7 @@ export default function EditPropertyMaster() {
                                                                                         value="yes"
                                                                                         checked={values.primaryProperty === "yes"}
                                                                                         onChange={() => setFieldValue("primaryProperty", "yes")}
+                                                                                        disabled={ownerChange}
                                                                                     />
                                                                                     <label htmlFor="yes" className="ms-2">Yes</label>
                                                                                 </div>
@@ -724,6 +738,7 @@ export default function EditPropertyMaster() {
                                                                                         value="no"
                                                                                         checked={values.primaryProperty === "no"}
                                                                                         onChange={() => setFieldValue("primaryProperty", "no")}
+                                                                                        disabled={ownerChange}
                                                                                     />
                                                                                     <label htmlFor="no" className="ms-2">No</label>
                                                                                 </div>
@@ -792,7 +807,7 @@ export default function EditPropertyMaster() {
                                                                             // isDisabled={coOwnerDisabled}
                                                                             onChange={(selected) => {
                                                                                 setFieldValue("coOwner", selected)
-                                                                                handleCoOwnerChange(selected?.value || "")
+                                                                                handleCoOwnerChange(selected?.value || "",values.member?.value)
                                                                                 // setThirdOwnerDisabled(false)
                                                                             }}
                                                                             placeholder="Select Co Owner"
@@ -812,7 +827,7 @@ export default function EditPropertyMaster() {
                                                                             value={values.thirdOwner}
                                                                             // isDisabled={thirdOwnerDisabled}
                                                                             onChange={(selected) => {
-                                                                                handleThirdOwnerChange(selected?.value || "")
+                                                                                handleThirdOwnerChange(selected?.value || "",values.member?.value,values.coOwner.value)
                                                                                 setFieldValue("thirdOwner", selected)
                                                                                 // setFourthOwnerDisabled(false)
                                                                             }
@@ -834,7 +849,7 @@ export default function EditPropertyMaster() {
                                                                             value={values.fourthOwner}
                                                                             // isDisabled={fourthOwnerDisabled}
                                                                             onChange={(selected) => {
-                                                                                handleFourthOwnerChange(selected?.value || "")
+                                                                                handleFourthOwnerChange(selected?.value || "",values.member?.value,values.coOwner?.value,values.thirdOwner?.value)
                                                                                 setFieldValue("fourthOwner", selected)
                                                                                 // setFifthOwnerDisabled(false)
                                                                             }}
@@ -908,6 +923,7 @@ export default function EditPropertyMaster() {
                                                                             name="flatRegistrationNumber"
                                                                             placeholder="Flat Registration Number"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -921,6 +937,7 @@ export default function EditPropertyMaster() {
                                                                             name="dateOfAgreement"
                                                                             placeholder="Date of Agreement"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -935,6 +952,7 @@ export default function EditPropertyMaster() {
                                                                             name="dateOfRegistration"
                                                                             placeholder="Date of Registration"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1071,6 +1089,7 @@ export default function EditPropertyMaster() {
                                                                             name="intercomNumber"
                                                                             placeholder="Intercom Number"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1084,6 +1103,7 @@ export default function EditPropertyMaster() {
                                                                             name="electricityNumber"
                                                                             placeholder="Consumer Electricity Number"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1097,6 +1117,7 @@ export default function EditPropertyMaster() {
                                                                             name="gasConnectionNumber"
                                                                             placeholder="Gas Connection Number"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1125,6 +1146,7 @@ export default function EditPropertyMaster() {
                                                                             name="monthlyMaintenance"
                                                                             placeholder="Monthly Paid Maintenance to Builder"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1139,6 +1161,7 @@ export default function EditPropertyMaster() {
                                                                             name="monthlyMaintenanceUpto"
                                                                             placeholder="Monthly Paid Maintenance to Builder Upto"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1153,6 +1176,7 @@ export default function EditPropertyMaster() {
                                                                             name="monthlyPaidArrears"
                                                                             placeholder="Monthly Paid Arrears"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1167,6 +1191,7 @@ export default function EditPropertyMaster() {
                                                                             name="monthlyPaidArrearsUpto"
                                                                             placeholder="Monthly Paid Arrears Upto"
                                                                             className="form-control"
+                                                                            disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>

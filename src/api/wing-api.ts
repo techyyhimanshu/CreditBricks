@@ -17,6 +17,15 @@ export const getAllWingApi = async (): Promise<any> => {
         throw error
     }
 }
+
+export const getTowerWingsApi = async (identifier:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`tower/${identifier}/wings`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const updateWingApi = async (data: any, id: any): Promise<any> => {
     try {
         const dataToUpdate = {
