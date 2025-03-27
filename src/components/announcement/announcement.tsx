@@ -9,7 +9,7 @@ import Select from "react-select";
 import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi, getPropertiesOfSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { createAnnouncementApi, deleteAnnouncementApi, getAllAnnouncementApi, updateAnnouncementApi } from '../../api/announcement-api';
 import { Formik, Form as FormikForm } from 'formik';
@@ -19,6 +19,9 @@ export default function Announcements() {
   const [viewannouncement, setviewannouncement] = useState(false);
   const [editing, setEditing] = useState(false);
   const [societyData, setSocietyData] = useState<any[]>([]);
+  const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
+  const [towerOptions, setTowerOptions] = useState<any[]>([]);
+  const [wingOptions, setWingOptions] = useState<any[]>([]);
   const [announcementData, setAnnouncementData] = useState<any>([]);
   const [singleAnnouncementData, setSingleAnnouncementData] = useState<any>(null);
 
@@ -134,6 +137,48 @@ export default function Announcements() {
         label: item.societyName,
       }));
       setSocietyData(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+
+  const fetchPropertiesForDropDown = async (society: any) => {
+    try {
+      const response = await getPropertiesOfSocietyApi(society.value);
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.propertyIdentifier,
+        label: item.propertyName ? item.propertyName : item.flatNumber,
+      }));
+      setPropertiesForDropDown(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+
+  const fetchWingsForDropDown = async (society: any) => {
+    try {
+      const response = await getWingsOfSocietyApi(society.value);
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.wingIdentifier,
+        label: item.wingName,
+      }));
+
+      setWingOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+  const fetchTowersForDropDown = async (society: any) => {
+    try {
+      const response = await getTowersOfSocietyApi(society.value);
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.towerIdentifier,
+        label: item.towerName,
+      }));
+      setTowerOptions(formattedData);
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
@@ -281,11 +326,14 @@ export default function Announcements() {
               enableReinitialize
               initialValues={{
                 society: singleAnnouncementData ? { label: singleAnnouncementData.societyName, value: singleAnnouncementData.societyIdentifier } : { label: "", value: "" },
+                property: singleAnnouncementData ? { label: singleAnnouncementData.propertyName, value: singleAnnouncementData.propertyIdentifier } : { label: "", value: "" },
+                wing: singleAnnouncementData ? { label: singleAnnouncementData.wingName, value: singleAnnouncementData.wingIdentifier } : { label: "", value: "" },
+                tower: singleAnnouncementData ? { label: singleAnnouncementData.towerName, value: singleAnnouncementData.towerIdentifier } : { label: "", value: "" },
                 announcementName: singleAnnouncementData?.announcementName || "",
                 message: singleAnnouncementData?.message || "",
                 startDate: singleAnnouncementData?.startDate || "",
                 validDate: singleAnnouncementData?.validDate || "",
-                file:  null,
+                file: null,
                 fileName: singleAnnouncementData?.announcementFilePath || null,
               }}
               onSubmit={handleSubmit}
@@ -322,7 +370,54 @@ export default function Announcements() {
                               placeholder="Select Society"
                               classNamePrefix="Select2"
                               value={values.society}
-                              onChange={(option) => setFieldValue("society", option)} // Update Formik value
+                              onChange={(selected) => {
+                                fetchPropertiesForDropDown(selected);
+                                fetchTowersForDropDown(selected);
+                                fetchWingsForDropDown(selected);
+                                setFieldValue("tower", null);
+                                setFieldValue("wing", null);
+                                setFieldValue("property", null);
+                                setFieldValue("society", selected);
+                              }}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Tower</Form.Label>
+                            <Select
+                              options={towerOptions}
+                              name='tower'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.tower}
+                              onChange={(option) => setFieldValue("tower", option)}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Wing</Form.Label>
+                            <Select
+                              options={wingOptions}
+                              name='wing'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.wing}
+                              onChange={(option) => setFieldValue("wing", option)}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Property</Form.Label>
+                            <Select
+                              options={propertiesForDropDown}
+                              name='property'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.property}
+                              onChange={(option) => setFieldValue("property", option)}
                             />
                           </Form.Group>
                         </Col>
@@ -392,7 +487,7 @@ export default function Announcements() {
                               }
                             />
                           </Form.Group>
-                          {values.fileName &&  (
+                          {values.fileName && (
                             <p
                               className="text-center pt-2"
                               style={{ cursor: "pointer", color: "blue" }}
@@ -528,7 +623,7 @@ export default function Announcements() {
                                           alt="Attachment"
                                           className="w-100 rounded-2"
                                           crossOrigin="anonymous"
-                                          style={{ cursor: 'pointer'}}
+                                          style={{ cursor: 'pointer' }}
                                           src={import.meta.env.VITE_STATIC_PATH + filePath}
                                           onClick={() => window.open(import.meta.env.VITE_STATIC_PATH + filePath, '_blank')}
                                         />

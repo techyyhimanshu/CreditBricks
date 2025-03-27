@@ -345,19 +345,7 @@ export default function Notices() {
                             />
                           </Form.Group>
                         </Col>
-                        <Col xl={6}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Property</Form.Label>
-                            <Select
-                              options={propertiesForDropDown}
-                              name='property'
-                              placeholder="Select type"
-                              classNamePrefix="Select2"
-                              value={values.property}
-                              onChange={(option) => setFieldValue("property", option)}
-                            />
-                          </Form.Group>
-                        </Col>
+                        
                         <Col xl={6}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>Tower</Form.Label>
@@ -381,6 +369,19 @@ export default function Notices() {
                               classNamePrefix="Select2"
                               value={values.wing}
                               onChange={(option) => setFieldValue("wing", option)}
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xl={6}>
+                          <Form.Group className="form-group mb-1">
+                            <Form.Label>Property</Form.Label>
+                            <Select
+                              options={propertiesForDropDown}
+                              name='property'
+                              placeholder="Select type"
+                              classNamePrefix="Select2"
+                              value={values.property}
+                              onChange={(option) => setFieldValue("property", option)}
                             />
                           </Form.Group>
                         </Col>
