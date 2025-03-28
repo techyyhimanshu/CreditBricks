@@ -56,24 +56,11 @@ const society =[
   { value: "1", label: "Society" },
   { value: "2", label: "Association" },
 ]
-  const applicationtype = [
-    { value: "1", label: "Gate Pass" },
-    { value: "2", label: "Flat Resale" },
-    { value: "3", label: "Celebration" },
+  const parent = [
+    { value: "1", label: "Tower123" },
+
 
   ]
-const flat = [
-  { value: "1", label: "Select Flat " },
-]
-
-const wing  = [
-  { value: "1", label: "Select Wing " },
-]
-  const designation = [
-    { value: "1", label: "Secretary " },
-    { value: "2", label: "Committe Member " },
-  ]
-
 
 
 
@@ -124,56 +111,9 @@ const wing  = [
 </CardHeader>
 <Card.Body className='pt-0 pb-1'>
   <Row>
-    <Col xl={2}>
-      <Form.Group className="form-group">
-        <Form.Label>Flat </Form.Label>
-        <Select
-          options={flat}
-          placeholder="Select Flat"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={2}>
-      <Form.Group className="form-group">
-        <Form.Label>Wing </Form.Label>
-        <Select
-          options={wing}
-          placeholder="Select Wing"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Approver Name</Form.Label>
-        <Field
-          type="text"
-          name="approverName"
-          placeholder="Approver Name"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-    <Col xl={4}>
-    <Form.Group className="form-group">
-        <Form.Label>Application Type </Form.Label>
-        <Select
-          options={applicationtype}
-          placeholder="Select Type"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Society </Form.Label>
+  <Col xl={4}>
+      <Form.Group className="form-group mb-1">
+        <Form.Label>Society Name or Registraion Number </Form.Label>
         <Select
           options={society}
           placeholder="Select Society"
@@ -184,11 +124,23 @@ const wing  = [
     </Col>
 
     <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Designation </Form.Label>
+      <Form.Group className="form-group mb-1">
+        <Form.Label>Society Address</Form.Label>
         <Select
-          options={designation}
-          placeholder="Select Designation"
+          options={society}
+          placeholder="Select address"
+          classNamePrefix="Select2"
+        />
+        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+      </Form.Group>
+    </Col>
+
+    <Col xl={4}>
+      <Form.Group className="form-group mb-1">
+        <Form.Label>Parent Entity </Form.Label>
+        <Select
+          options={parent}
+          placeholder="Select parent"
           classNamePrefix="Select2"
         />
         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
@@ -196,26 +148,8 @@ const wing  = [
     </Col>
 
 
-
-
-
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Contact Details</Form.Label>
-        <Field
-          type="text"
-          name="contactdetails"
-          placeholder="Contact Details"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-
-
 <Col xl={12}>
-<Form.Group className="form-group float-end">
+<Form.Group className="form-group float-end pt-2">
 <Button className="btn btn-default ms-2" type="button">Clear </Button>
 <Button className="btn btn-primary" type="button">Save </Button>
 </Form.Group>
@@ -226,34 +160,26 @@ const wing  = [
 
 <Card className='mt-3'>
 <CardHeader>
-  <h3 className='card-title'>   List of Committee Members</h3>
+  <h3 className='card-title'>   List</h3>
 </CardHeader>
   <Card.Body className='pt-0'>
   <table className='table'>
     <thead>
       <tr>
         <th>S.no.</th>
-        <th>Flat </th>
-        <th>Wing</th>
-        <th>Approver Name</th>
-        <th>Society</th>
-        <th>Application Type</th>
-        <th>Designation</th>
-        <th>Contact Details</th>
-         <th>Action</th>
+        <th>Soceity Name </th>
+        <th>Society Address</th>
+        <th>Parent</th>
+     <th>Action</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td>1</td>
-        <td>19</td>
-        <td>A</td>
-        <td>Sandeep Singh</td>
         <td>Society</td>
-        <td>Flat Resale</td>
-        <td>Secretary</td>
         <td>-</td>
-        <td><Dropdown >
+        <td>Tower123</td>
+       <td><Dropdown >
           <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
             Action
           </Dropdown.Toggle>
@@ -264,26 +190,7 @@ const wing  = [
           </Dropdown.Menu>
         </Dropdown></td>
       </tr>
-      <tr>
-        <td>2</td>
-        <td>19</td>
-        <td>A</td>
-        <td>Sandeep Singh</td>
-        <td>Association</td>
-        <td>Gate Pass</td>
-        <td>Secretary</td>
-        <td>-</td>
-        <td><Dropdown >
-          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-            Action
-          </Dropdown.Toggle>
 
-          <Dropdown.Menu>
-            <Dropdown.Item>Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown></td>
-      </tr>
 
     </tbody>
   </table>
