@@ -36,21 +36,26 @@ export const getSocietyOwnerApi = async (societyIdentifier: string): Promise<any
 export const updateSocietyApi = async (data: any, identifier: any): Promise<any> => {
     try {
         const formData = new FormData();
+
         for (const key in data) {
-            if (key === 'paymentQrFile' && data[key]) {
-                formData.append(key, data[key]);
-            } else if (typeof data[key] === 'object' && data[key] !== null) {
-                formData.append(key, JSON.stringify(data[key]));
-            } else {
-                formData.append(key, data[key]);
+            if (data[key] !== undefined && data[key] !== null && data[key] !== '') {  // Check if value is present
+                if (key === 'paymentQrFile' && data[key]) {
+                    formData.append(key, data[key]);
+                } else if (typeof data[key] === 'object') {
+                    formData.append(key, JSON.stringify(data[key]));
+                } else {
+                    formData.append(key, data[key]);
+                }
             }
         }
-        const response = await axiosInstance.patch(`/society/sy/${identifier}`, formData)
-        return response
+
+        const response = await axiosInstance.patch(`/society/sy/${identifier}`, formData);
+        return response;
     } catch (error) {
-        throw error
+        throw error;
     }
-}
+};
+
 export const deleteSocietyApi = async (identifier: string): Promise<any> => {
     try {
         const response = await axiosInstance.delete(`/society/${identifier}`)
