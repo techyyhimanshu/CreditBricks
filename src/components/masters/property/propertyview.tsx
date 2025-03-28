@@ -42,8 +42,16 @@ export default function PropertyView() {
       sortable: true,
     },
     {
-      name: 'priority',
-      selector: (row: any) => row.priority,
+      name: 'Priority',
+      cell: (row: any) => {
+        if (row.priority === 'high') {
+          return <td className='text-center'><span className='badge badge-danger'>High</span></td>;
+        } else if (row.priority === 'medium') {
+          return <td className='text-center'><span className='badge badge-warning'>Medium</span></td>;
+        } else {
+          return <td className='text-center'><span className='badge badge-success'>Low</span></td>;
+        }
+      },
       sortable: true,
     },
     {
@@ -604,7 +612,7 @@ export default function PropertyView() {
                   </div>
                 </Tab>
 
-                <Tab eventKey="Transfer Property" title={<Link to={`${import.meta.env.BASE_URL}property/editpropertymaster/${identifier}`} className='p-0' >Transfer Property</Link>}>
+                <Tab eventKey="Transfer Property" title={<Link state={true} to={`${import.meta.env.BASE_URL}property/editpropertymaster/${identifier}`} className='p-0' >Transfer Property</Link>}>
 
                 </Tab>
 

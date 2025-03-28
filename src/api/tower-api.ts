@@ -9,6 +9,14 @@ export const getAllTowerApi = async (): Promise<any> => {
         throw error
     }
 }
+export const getSocietyTowersApi = async (identifier:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`society/${identifier}/towers`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const addTowerApi = async (data: any): Promise<any> => {
     try {
         const response = await axiosInstance.post(`/tower/new`, data)

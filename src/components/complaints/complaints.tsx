@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-import { addNewComplaintApi, assignComplaintToVendorApi, deleteComplaintApi, getAllComplainCategoriesApi, getAllComplaintsApi, updateComplaintApi } from '../../api/complaint-api';
+import { addNewComplaintApi, assignComplaintToVendorApi, deleteComplaintApi, getAllComplainCategoriesApi, getAllComplaintsApi, updateComplaintApi, updateComplaintStatusApi } from '../../api/complaint-api';
 import { Formik, Form as FormikForm, Field } from 'formik';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
@@ -203,9 +203,9 @@ export default function Complaints() {
   const status = [
     { value: "", label: "All" },
     { value: "In-Progress", label: "In-Progress" },
-    { value: "Pending", label: "Pending" },
-    { value: "Verified", label: "Verified" },
-    { value: "Completed", label: "Completed" },
+    { value: "pending", label: "Pending" },
+    { value: "verified", label: "Verified" },
+    { value: "completed", label: "Completed" },
   ]
 
   const property = [
@@ -311,7 +311,7 @@ export default function Complaints() {
   const fetchPropertiesOfSocietyForDropdown = async (identifier: string) => {
     try {
       const response = await getPropertiesOfSocietyApi(identifier)
-      
+
       if (response.status === 200) {
         setPropertiesForDropDown(response.data.data);
       }
@@ -460,13 +460,17 @@ export default function Complaints() {
     })()
   }
 
-  const handleUpdateStatus = async (values:any,id: string) => {
-    console.log(values,id)
+  const handleUpdateStatus = async (values: any, id: string) => {
+    const data = {
+      status: values.status.value,
+      remarks: values.remarks
+    }
     try {
-      // const response = await assignComplaintToVendorApi();
-      // if (response.status === 200) {
-      //   showToast("success", response.data.message);
-      // }
+      const response = await updateComplaintStatusApi(data, id);
+      if (response.status === 200) {
+        showToast("success", response.data.message);
+      }
+      viewDemoClose("complaintview")
 
       // setComplaintData(prevData =>
       //   prevData.map(complaint =>
@@ -552,13 +556,13 @@ export default function Complaints() {
                                 fetchPropertiesOfSocietyForDropdown(selected?.value);
                                 setFieldValue("society", selected);
                                 setFieldValue("property", null);
-                              }} 
+                              }}
                               placeholder="Select society"
                               classNamePrefix="Select2"
                             />
                           </Form.Group>
                         </Col>
-                        
+
                         <Col xl={12}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>Property</Form.Label>
@@ -748,44 +752,44 @@ export default function Complaints() {
                       status: { label: complaintToView?.status || '', value: complaintToView?.status || '' },
                       remarks: complaintToView?.remarks || '',
                     }}
-                    onSubmit={(values) => handleUpdateStatus(values,complaintToView?.id)}
+                    onSubmit={(values) => handleUpdateStatus(values, complaintToView?.id)}
                   >
                     {({ setFieldValue, values, submitForm }) => (
                       <Form>
-                      <Form.Group className="form-group mb-1">
-                        <Row>
-                          <Col xl={3}>
-                          <Form.Label className='float-start'>Update Status</Form.Label>
-                          </Col>
-                          <Col xl={12}>
-                          <Select
-                              options={status}
-                              value={values.status}
-                              name="status"
-                              onChange={(selected) => setFieldValue('status', selected)}
-                              placeholder="Select status"
-                              classNamePrefix="Select2"
-                              className='profile-user border-0'
-                            />
-                          </Col>
-                        </Row>
+                        <Form.Group className="form-group mb-1">
+                          <Row>
+                            <Col xl={3}>
+                              <Form.Label className='float-start'>Update Status</Form.Label>
+                            </Col>
+                            <Col xl={12}>
+                              <Select
+                                options={status}
+                                value={values.status}
+                                name="status"
+                                onChange={(selected) => setFieldValue('status', selected)}
+                                placeholder="Select status"
+                                classNamePrefix="Select2"
+                                className='profile-user border-0'
+                              />
+                            </Col>
+                          </Row>
 
 
-                          </Form.Group>
+                        </Form.Group>
 
 
 
-                         <Form.Label className='float-start'>Complaint Remarks</Form.Label>
-                          <textarea
-                            className="form-control"
-                            placeholder="Remarks"
-                            name="remarks"
-                            value={values.remarks}
-                            onChange={(e) => setFieldValue('remarks', e.target.value)}
-                          />
+                        <Form.Label className='float-start'>Complaint Remarks</Form.Label>
+                        <textarea
+                          className="form-control"
+                          placeholder="Remarks"
+                          name="remarks"
+                          value={values.remarks}
+                          onChange={(e) => setFieldValue('remarks', e.target.value)}
+                        />
 
 
-<span className='float-end mt-3'>
+                        <span className='float-end mt-3'>
                           <Button type="button" className="btn btn-default ms-2" onClick={() => viewDemoClose('complaintview')}>
                             Close
                           </Button>
@@ -796,7 +800,7 @@ export default function Complaints() {
                           >
                             Save
                           </Button>
-                          </span>
+                        </span>
                       </Form>
                     )}
                   </Formik>

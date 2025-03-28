@@ -10,9 +10,13 @@ import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import { createNoticeApi, deleteNoticeApi, getAllNoticeApi, updateNoticeApi } from '../../api/notice-api';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi, getPropertiesOfSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { Formik, Form as FormikForm } from 'formik';
+import { getSocietyTowersApi } from '../../api/tower-api';
+import { getTowerWingsApi } from '../../api/wing-api';
+import { getWingPropertiesApi } from '../../api/property-api';
+import NoticeModal from '../../common/modals/noticeModal';
 
 export default function Notices() {
   const [societyData, setSocietyData] = useState<any[]>([]);
@@ -107,6 +111,12 @@ export default function Notices() {
           validDate: notice.validDate,
           societyIdentifier: notice?.society?.societyIdentifier,
           societyName: notice?.society?.societyName,
+          towerIdentifier: notice?.tower?.towerIdentifier,
+          towerName: notice?.tower?.towerName,
+          wingIdentifier: notice?.wing?.wingIdentifier,
+          wingName: notice?.wing?.wingName,
+          propertyIdentifier: notice?.property?.propertyIdentifier,
+          propertyName: notice?.property?.propertyName,
           noticeIdentifier: notice.noticeIdentifier,
           noticeFilePath: notice.noticeFilePath
         }
@@ -180,7 +190,6 @@ export default function Notices() {
   ]
 
   const handleDelete = (row: any) => {
-    console.log(row)
       ; (async () => {
         try {
 
@@ -199,7 +208,7 @@ export default function Notices() {
 
   const fetchPropertiesForDropDown = async (society: any) => {
     try {
-      const response = await getPropertiesOfSocietyApi(society.value);
+      const response = await getWingPropertiesApi(society.value);
       const formattedData = response.data.data.map((item: any) => ({
         value: item.propertyIdentifier,
         label: item.propertyName ? item.propertyName : item.flatNumber,
@@ -213,7 +222,7 @@ export default function Notices() {
 
   const fetchWingsForDropDown = async (society: any) => {
     try {
-      const response = await getWingsOfSocietyApi(society.value);
+      const response = await getTowerWingsApi(society.value);
       const formattedData = response.data.data.map((item: any) => ({
         value: item.wingIdentifier,
         label: item.wingName,
@@ -225,9 +234,10 @@ export default function Notices() {
       showToast("error", errorMessage)
     }
   }
+
   const fetchTowersForDropDown = async (society: any) => {
     try {
-      const response = await getTowersOfSocietyApi(society.value);
+      const response = await getSocietyTowersApi(society.value);
       const formattedData = response.data.data.map((item: any) => ({
         value: item.towerIdentifier,
         label: item.towerName,
@@ -248,6 +258,15 @@ export default function Notices() {
       startDate: values.startDate,
       validDate: values.validDate,
       noticeType: values.noticeType.value
+    }
+    if(values?.tower?.value){
+      formattedData.towerIdentifier=values.tower.value
+    }
+    if(values?.wing?.value){
+      formattedData.wingIdentifier=values.wing.value
+    }
+    if(values?.property?.value){
+      formattedData.propertyIdentifier=values.property.value
     }
 
     if (values.file) {
@@ -308,6 +327,24 @@ export default function Notices() {
               onSubmit={handleSubmit}
             >
               {({ values, handleChange, setFieldValue }) => {
+                useEffect(() => {
+                  if (values.society && values.society.value) {
+                    fetchTowersForDropDown(values.society);
+                  }
+                }, [values.society]); 
+            
+                useEffect(() => {
+                  if (values.tower && values.tower.value) {
+                    fetchWingsForDropDown(values.tower);
+                  }
+                }, [values.tower]); 
+            
+                useEffect(() => {
+                  if (values.wing && values.wing.value) {
+                    fetchPropertiesForDropDown(values.wing);
+                  }
+                }, [values.wing]);
+
                 const getFileExtension = (fileName: string) => {
                   if (!fileName) {
                     return '';
@@ -334,9 +371,7 @@ export default function Notices() {
                               classNamePrefix="Select2"
                               value={values.society}
                               onChange={(selected) => {
-                                fetchPropertiesForDropDown(selected);
                                 fetchTowersForDropDown(selected);
-                                fetchWingsForDropDown(selected);
                                 setFieldValue("tower", null);
                                 setFieldValue("wing", null);
                                 setFieldValue("property", null);
@@ -355,7 +390,12 @@ export default function Notices() {
                               placeholder="Select type"
                               classNamePrefix="Select2"
                               value={values.tower}
-                              onChange={(option) => setFieldValue("tower", option)}
+                              onChange={(selected) => {
+                                fetchWingsForDropDown(selected);
+                                setFieldValue("wing", null);
+                                setFieldValue("property", null);
+                                setFieldValue("tower", selected);
+                              }}
                             />
                           </Form.Group>
                         </Col>
@@ -368,7 +408,11 @@ export default function Notices() {
                               placeholder="Select type"
                               classNamePrefix="Select2"
                               value={values.wing}
-                              onChange={(option) => setFieldValue("wing", option)}
+                              onChange={(selected) => {
+                                fetchPropertiesForDropDown(selected);
+                                setFieldValue("property", null);
+                                setFieldValue("wing", selected);
+                              }}
                             />
                           </Form.Group>
                         </Col>
@@ -386,7 +430,6 @@ export default function Notices() {
                           </Form.Group>
                         </Col>
 
-                        {/* Notice Type */}
                         <Col xl={6}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>Notice Type</Form.Label>
@@ -401,7 +444,6 @@ export default function Notices() {
                           </Form.Group>
                         </Col>
 
-                        {/* Notice Subject */}
                         <Col xl={12}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>Notice Subject</Form.Label>
@@ -416,7 +458,6 @@ export default function Notices() {
                           </Form.Group>
                         </Col>
 
-                        {/* Message (SunEditor) */}
                         <Col xl={12}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>
@@ -429,7 +470,6 @@ export default function Notices() {
                           </Form.Group>
                         </Col>
 
-                        {/* Start Date */}
                         <Col xl={6}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>Start Date</Form.Label>
@@ -442,7 +482,6 @@ export default function Notices() {
                           </Form.Group>
                         </Col>
 
-                        {/* Valid Date */}
                         <Col xl={6}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>Valid Date</Form.Label>
@@ -455,7 +494,6 @@ export default function Notices() {
                           </Form.Group>
                         </Col>
 
-                        {/* File Upload */}
                         <Col xl={12}>
                           <Form.Group className="form-group mb-1">
                             <Form.Label>
@@ -477,11 +515,9 @@ export default function Notices() {
                                 const fileExtension = getFileExtension(values.fileName);
 
 
-                                // If it's a PDF, image, or Excel file, open in new tab
                                 if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
                                   window.open(import.meta.env.VITE_STATIC_PATH + values.fileName, "_blank");
                                 } else {
-                                  // For other files, trigger download
                                   const link = document.createElement("a");
                                   link.href = import.meta.env.VITE_STATIC_PATH + values.fileName;
                                   link.download = values.fileName;
@@ -512,6 +548,7 @@ export default function Notices() {
             </Formik>
 
           </Modal>
+          {/* <NoticeModal /> */}
         </div>
       </div>
 
