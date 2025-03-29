@@ -41,13 +41,10 @@ export default function AddTenant() {
   ]
 
 
-  const state = [
-    { value: "Delhi", label: "Delhi" },
-  ]
-
-  const city = [
-    { value: "Delhi", label: "Delhi" },
-  ]
+  const state = Object.keys(stateCitiesTyped).map((state) => ({
+    value: state,
+    label: state,
+  }));
 
   const pet = [
     { value: true, label: "Yes" },
@@ -111,6 +108,7 @@ export default function AddTenant() {
     value: state,
     label: state,
   }));
+
   const handleStateChange = (selected: { value: string; label: string }) => {
     const cities = stateCitiesTyped[selected.value] || [];
     setCityOptions(cities.map((city) => ({ value: city, label: city })));
@@ -476,8 +474,12 @@ export default function AddTenant() {
                             <Form.Label>State</Form.Label>
                             <Select
                               options={state}
-                              onChange={(selected) => {
+                              onChange={(selected: any) => {
                                 setFieldValue("state", selected);
+                                handleStateChange({
+                                  value: selected.value,
+                                  label: selected.label
+                                });
                               }}
                               placeholder="Select state"
                               classNamePrefix="Select2"
@@ -490,7 +492,7 @@ export default function AddTenant() {
                           <Form.Group className="form-group mb-1">
                             <Form.Label>City</Form.Label>
                             <Select
-                              options={city}
+                              options={cityOptions}
                               onChange={(selected) => {
                                 setFieldValue("city", selected);
                               }}

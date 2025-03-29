@@ -47,7 +47,30 @@ export default function EditSocietyMaster() {
     const fetchSocietyDetails = async () => {
       try {
         const response = await getSocietyDetailsApi(identifier)
-        setCurrentSociety(response.data.data)
+        if (response.data.data.accountDetails.length !== 0) {
+          response.data.data.accountDetails.map((item: any) => {
+
+            setCurrentSociety(item.isPreferred == true ? {
+              ...response.data.data,
+              accountDetails: [{
+                bankName: item.bankName,
+                accountNumber: item.accountNumber,
+                branchName: item.branchName,
+                ifscCode: item.ifscCode,
+                chequeFavourable: item.chequeFavourable,
+                paymentQrFile: item.paymentQrFile,
+              }]
+            } : {
+              ...response.data.data,
+              accountDetails: [...response.data.data.accountDetails]
+            })
+          }
+          )
+        } else {
+          setCurrentSociety(response.data.data)
+        }
+        // setCurrentSociety(response.data.data)
+        // console.log("Society Details",currentSociety)
       } catch (error: any) {
         const errorMessage = handleApiError(error)
         showToast('error', errorMessage)
@@ -69,7 +92,7 @@ export default function EditSocietyMaster() {
     const cities = stateCitiesTyped[selected.value] || [];
     setCityOptions(cities.map((city) => ({ value: city, label: city })));
   };
-  
+
   const handleSubmit = (values: any) => {
     const societyDataToUpdate = {
       societyName: values.societyName,

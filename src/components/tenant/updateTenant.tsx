@@ -59,16 +59,6 @@ export default function UpdateTenant() {
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ]
-
-
-  const state = [
-    { value: "Delhi", label: "Delhi" },
-  ]
-
-  const city = [
-    { value: "Delhi", label: "Delhi" },
-  ]
-
   const pet = [
     { value: true, label: "Yes" },
     { value: false, label: "No" },
@@ -305,14 +295,14 @@ export default function UpdateTenant() {
 
       const vehicleDetails = {
         vehicleNumber: values.vehicleNumber,
-        vehicleType: values.vehicleType.value||values.vehicleType,
+        vehicleType: values.vehicleType.value || values.vehicleType,
       }
       Object.entries(vehicleDetails).forEach(([key, value]) => {
         formData.append(key, value);
       });
 
-      if (values.vehicleRc||values.vehicleRC) {
-        formData.append("vehicleRCFile", values.vehicleRc||values.vehicleRC)
+      if (values.vehicleRc || values.vehicleRC) {
+        formData.append("vehicleRCFile", values.vehicleRc || values.vehicleRC)
       }
       if (values.vehicleId) {
         formData.append("vehicleId", values.vehicleId)
@@ -578,9 +568,13 @@ export default function UpdateTenant() {
                             <Form.Group className="form-group mb-1">
                               <Form.Label>State</Form.Label>
                               <Select
-                                options={state}
-                                onChange={(selected) => {
+                                options={stateOptions}
+                                onChange={(selected: any) => {
                                   setFieldValue("state", selected);
+                                  handleStateChange({
+                                    value: selected.value,
+                                    label: selected.label
+                                  });
                                 }}
                                 placeholder="Select state"
                                 classNamePrefix="Select2"
@@ -594,7 +588,7 @@ export default function UpdateTenant() {
                             <Form.Group className="form-group mb-1">
                               <Form.Label>City</Form.Label>
                               <Select
-                                options={city}
+                                options={cityOptions}
                                 onChange={(selected) => {
                                   setFieldValue("city", selected);
                                 }}
