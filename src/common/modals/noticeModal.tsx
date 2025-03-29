@@ -97,18 +97,11 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
         }
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (values: any) => {
         try {
-
             if (onSave) {
-                const newPayment = {
-                };
-                if (onSave) {
-                    onSave(newPayment)
-
-                    onClose()
-                }
-
+                onSave(values)
+                onClose()
             }
         } catch (error) {
             console.log(error)

@@ -6,11 +6,12 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+// import * as Yup from 'yup';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { getAllSocietyApi, getSocietyOwnerApi, getTowersOfSocietyApi } from '../../api/society-api';
 import { addWingApi, deleteWingApi, getAllWingApi, updateWingApi } from '../../api/wing-api';
+import { Link } from 'react-router-dom';
 // Define the types for the stateCities object
 export default function WingMaster() {
     const [showModal, setShowModal] = useState(false);
@@ -69,7 +70,10 @@ export default function WingMaster() {
         },
         {
             name: 'Wing Name',
-            selector: (row: Row) => row.wingName,
+            // selector: (row: Row) => row.wingName,
+            cell: (row: Row) => (
+                    <Link state={row.wingIdentifier} to={`${import.meta.env.BASE_URL}property/propertymaster`} className='text-info'>{row.wingName}</Link>
+                  ),
             sortable: true,
         },
 
@@ -124,14 +128,14 @@ export default function WingMaster() {
     }))
     const [towerOptions, setTowerOptions] = useState([]);
 
-    const validationSchema = Yup.object({
-        society: Yup.object({
-            value: Yup.string().required('Society is required'),
-        }),
-        wingName: Yup.string().required('Wing no is required'),
+    // const validationSchema = Yup.object({
+    //     society: Yup.object({
+    //         value: Yup.string().required('Society is required'),
+    //     }),
+    //     wingName: Yup.string().required('Wing no is required'),
 
-        // zipcode: Yup.string().required('Zipcode is required'),
-    })
+    //     // zipcode: Yup.string().required('Zipcode is required'),
+    // })
     const fetchSocietiesForDropDown = async () => {
         try {
             const response = await getAllSocietyApi();

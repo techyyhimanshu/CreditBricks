@@ -5,7 +5,7 @@ import { Col, Row, Card, Dropdown, Modal, Button, Form } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { deletePropertyApi, getAllPropertyApi } from '../../../api/property-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
@@ -13,6 +13,8 @@ import { showToast, CustomToastContainer } from '../../../common/services/toastS
 export default function PropertyMaster() {
   const [bulkupload, setbulkupload] = useState(false);
   const [downloadFormat, setDownloadFormat] = useState(false);
+  const location = useLocation()
+  const wingIdentifier = location.state ;
 
   type Row = {
     sno: number;
@@ -157,7 +159,12 @@ export default function PropertyMaster() {
   useEffect(() => {
     const fetchAllProperty = async () => {
       try {
-        const response = await getAllPropertyApi()
+        let response;
+        if(wingIdentifier){
+          response = await getAllPropertyApi(wingIdentifier)
+        }else{
+          response = await getAllPropertyApi()
+        }
         const data = response.data.data
         const formattedData = data.map((property: any, index: number) => (
           {

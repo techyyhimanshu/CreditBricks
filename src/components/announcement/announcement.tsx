@@ -1,32 +1,34 @@
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Dropdown, Modal, Form, Button, CardBody } from "react-bootstrap";
+import { Col, Row, Card, Dropdown } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
-import Select from "react-select";
-// import { imagesData } from "../../common/commonimages";
-import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { createAnnouncementApi, deleteAnnouncementApi, getAllAnnouncementApi, updateAnnouncementApi } from '../../api/announcement-api';
-import { Formik, Form as FormikForm } from 'formik';
-import { getSocietyTowersApi } from '../../api/tower-api';
-import { getTowerWingsApi } from '../../api/wing-api';
-import { getWingPropertiesApi } from '../../api/property-api';
+import AnnouncementViewModal from '../../common/modals/announcementViewModal';
+import AnnouncementModal from '../../common/modals/announcementModal';
+// import { getAllSocietyApi } from '../../api/society-api';
+// import Select from "react-select";
+// import { imagesData } from "../../common/commonimages";
+// import SunEditor from 'suneditor-react';
+// import { Formik, Form as FormikForm } from 'formik';
+// import { getSocietyTowersApi } from '../../api/tower-api';
+// import { getTowerWingsApi } from '../../api/wing-api';
+// import { getWingPropertiesApi } from '../../api/property-api';
 
 export default function Announcements() {
   const [addannouncement, setaddannouncement] = useState(false);
   const [viewannouncement, setviewannouncement] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [societyData, setSocietyData] = useState<any[]>([]);
-  const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
-  const [towerOptions, setTowerOptions] = useState<any[]>([]);
-  const [wingOptions, setWingOptions] = useState<any[]>([]);
   const [announcementData, setAnnouncementData] = useState<any>([]);
   const [singleAnnouncementData, setSingleAnnouncementData] = useState<any>(null);
+  // const [societyData, setSocietyData] = useState<any[]>([]);
+  // const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
+  // const [towerOptions, setTowerOptions] = useState<any[]>([]);
+  // const [wingOptions, setWingOptions] = useState<any[]>([]);
 
 
   const columns = [
@@ -135,65 +137,65 @@ export default function Announcements() {
   useEffect(() => {
 
     fetchAllAnnouncement();
-    fetchSocietiesForDropDown()
+    // fetchSocietiesForDropDown()
   }, [])
 
-  const fetchSocietiesForDropDown = async () => {
-    try {
-      const response = await getAllSocietyApi();
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.societyIdentifier,
-        label: item.societyName,
-      }));
-      setSocietyData(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
+  // const fetchSocietiesForDropDown = async () => {
+  //   try {
+  //     const response = await getAllSocietyApi();
+  //     const formattedData = response.data.data.map((item: any) => ({
+  //       value: item.societyIdentifier,
+  //       label: item.societyName,
+  //     }));
+  //     setSocietyData(formattedData);
+  //   } catch (error) {
+  //     const errorMessage = handleApiError(error)
+  //     showToast("error", errorMessage)
+  //   }
+  // }
 
-  const fetchPropertiesForDropDown = async (society: any) => {
-    try {
-      const response = await getWingPropertiesApi(society.value);
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.propertyIdentifier,
-        label: item.propertyName ? item.propertyName : item.flatNumber,
-      }));
-      setPropertiesForDropDown(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
+  // const fetchPropertiesForDropDown = async (society: any) => {
+  //   try {
+  //     const response = await getWingPropertiesApi(society.value);
+  //     const formattedData = response.data.data.map((item: any) => ({
+  //       value: item.propertyIdentifier,
+  //       label: item.propertyName ? item.propertyName : item.flatNumber,
+  //     }));
+  //     setPropertiesForDropDown(formattedData);
+  //   } catch (error) {
+  //     const errorMessage = handleApiError(error)
+  //     showToast("error", errorMessage)
+  //   }
+  // }
 
-  const fetchWingsForDropDown = async (society: any) => {
-    try {
-      const response = await getTowerWingsApi(society.value);
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.wingIdentifier,
-        label: item.wingName,
-      }));
+  // const fetchWingsForDropDown = async (society: any) => {
+  //   try {
+  //     const response = await getTowerWingsApi(society.value);
+  //     const formattedData = response.data.data.map((item: any) => ({
+  //       value: item.wingIdentifier,
+  //       label: item.wingName,
+  //     }));
 
-      setWingOptions(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
+  //     setWingOptions(formattedData);
+  //   } catch (error) {
+  //     const errorMessage = handleApiError(error)
+  //     showToast("error", errorMessage)
+  //   }
+  // }
 
-  const fetchTowersForDropDown = async (society: any) => {
-    try {
-      const response = await getSocietyTowersApi(society.value);
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.towerIdentifier,
-        label: item.towerName,
-      }));
-      setTowerOptions(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
+  // const fetchTowersForDropDown = async (society: any) => {
+  //   try {
+  //     const response = await getSocietyTowersApi(society.value);
+  //     const formattedData = response.data.data.map((item: any) => ({
+  //       value: item.towerIdentifier,
+  //       label: item.towerName,
+  //     }));
+  //     setTowerOptions(formattedData);
+  //   } catch (error) {
+  //     const errorMessage = handleApiError(error)
+  //     showToast("error", errorMessage)
+  //   }
+  // }
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -275,6 +277,16 @@ export default function Announcements() {
     viewDemoClose("addannouncement")
   }
 
+  const handleClose=()=>{
+    viewDemoClose("addannouncement")
+    setSingleAnnouncementData(null)
+  }
+
+  const handleViewClose=()=>{
+    viewDemoClose("viewannouncement")
+    setSingleAnnouncementData(null)
+  }
+
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -284,64 +296,13 @@ export default function Announcements() {
 
         <div className="right-content">
           <span className='float-end btn btn-primary btn-sm' onClick={() => viewDemoShow("addannouncement")}><i className="bi bi-plus"></i> Add Announcement</span>
-          <Modal show={addannouncement} size="lg" >
+          {/* <Modal show={addannouncement} size="lg" >
             <Modal.Header>
               <Modal.Title>Announcement</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addannouncement"), setSingleAnnouncementData(null) }}>
                 x
               </Button>
             </Modal.Header>
-            {/* <Modal.Body className='pt-2'>
-              <Row>
-              <Col xl={6}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Society</Form.Label>
-                    <Select
-                      options={society}
-                      placeholder="Select type"
-                      classNamePrefix="Select2"
-                    />
-                  </Form.Group>
-                </Col>
-
-
-                <Col xl={6}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Announcement Name</Form.Label>
-                    <Form.Control type="text" className='form-control' placeholder='Name'></Form.Control>
-                  </Form.Group>
-                </Col>
-
-                <Col xl={12}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Message<span className="text-danger">*</span></Form.Label>
-                    <SunEditor />
-                  </Form.Group>
-                </Col>
-
-                <Col xl={6}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Start Date </Form.Label>
-                    <Form.Control type="date" className='form-control' placeholder=''></Form.Control>
-                  </Form.Group>
-                </Col>
-
-                <Col xl={6}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Valud Date</Form.Label>
-                    <Form.Control type="date" className='form-control' placeholder=''></Form.Control>
-                  </Form.Group>
-                </Col>
-                <Col xl={12}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Upload <small className='float-end text-muted'>Max size : 2MB</small> </Form.Label>
-                    <Form.Control type="file" className='form-control' placeholder=''></Form.Control>
-                  </Form.Group>
-                </Col>
-
-
-              </Row>
-            </Modal.Body> */}
             <Formik
               enableReinitialize
               initialValues={{
@@ -573,7 +534,10 @@ export default function Announcements() {
               }}
             </Formik>
 
-          </Modal>
+          </Modal> */}
+          {
+            singleAnnouncementData&&addannouncement?<AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} initialVals={singleAnnouncementData} onSave={handleSubmit}/>:<AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} onSave={handleSubmit}/>
+          }
         </div>
       </div>
 
@@ -593,7 +557,7 @@ export default function Announcements() {
                   />
                 </DataTableExtensions>
               </div>
-              <Modal show={viewannouncement} >
+              {/* <Modal show={viewannouncement} >
                 <Modal.Header>
                   <Modal.Title>Announcement Details</Modal.Title>
                   <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("viewannouncement"); setSingleAnnouncementData(null) }}>
@@ -642,25 +606,16 @@ export default function Announcements() {
                         <CardBody className='p-2'>
                           <p className='tx-15 pb-1 pt-1 border-bottom tx-semibold'>Attachments</p>
                           <Row>
-                            {/* <Col xl={12}>
-                              {singleAnnouncementData?.announcementFilePath ? <img
-                                alt="" className='w-100 rounded-2'
-                                crossOrigin="anonymous"
-                                src={import.meta.env.VITE_STATIC_PATH + singleAnnouncementData?.announcementFilePath}
-                              /> : <p className='w-100 rounded-2' style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>No image</p>}
-                            </Col> */}
+                            
                             <Col xl={12}>
                               {singleAnnouncementData?.announcementFilePath ? (
-                                // Determine the file extension
                                 (() => {
                                   const filePath = singleAnnouncementData?.announcementFilePath;
                                   const fileExtension = filePath.split('.').pop().toLowerCase();
 
-                                  // Check if the file is an image
                                   const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'].includes(fileExtension);
 
                                   if (isImage) {
-                                    // If it's an image, show the image tag
                                     return (
                                       <>
                                         <img
@@ -682,18 +637,16 @@ export default function Announcements() {
                                           style={{ cursor: 'pointer', color: 'blue' }}
                                           onClick={() => {
                                             const fileUrl = import.meta.env.VITE_STATIC_PATH + filePath;
-                                            // Check file extension for handling download or open in new tab
                                             const isPDF = fileExtension === 'pdf';
                                             const isExcel = fileExtension === 'xls' || fileExtension === 'xlsx';
 
                                             if (isPDF || isExcel) {
-                                              window.open(fileUrl, '_blank'); // Open in new tab
+                                              window.open(fileUrl, '_blank'); 
                                             } else {
-                                              // Trigger file download if it's not PDF or Excel
                                               const link = document.createElement('a');
                                               link.href = fileUrl;
-                                              link.download = filePath.split('/').pop(); // Name the downloaded file
-                                              link.click(); // Trigger the download
+                                              link.download = filePath.split('/').pop(); 
+                                              link.click(); 
                                             }
                                           }}
                                         >
@@ -718,7 +671,11 @@ export default function Announcements() {
                   </Row>
                 </Modal.Body>
 
-              </Modal>
+              </Modal> */}
+
+              {
+                viewannouncement && singleAnnouncementData && <AnnouncementViewModal show={viewannouncement} onClose={handleViewClose} initialVals={singleAnnouncementData} />
+              }
 
 
             </Card.Body>

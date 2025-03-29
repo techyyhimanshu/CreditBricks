@@ -202,7 +202,13 @@ export default function Complaints() {
 
   const status = [
     { value: "", label: "All" },
-    { value: "In-Progress", label: "In-Progress" },
+    { value: "in-progress", label: "In-Progress" },
+    { value: "pending", label: "Pending" },
+    { value: "verified", label: "Verified" },
+    { value: "completed", label: "Completed" },
+  ]
+  const statusChangeOptions = [
+    { value: "in-progress", label: "In-Progress" },
     { value: "pending", label: "Pending" },
     { value: "verified", label: "Verified" },
     { value: "completed", label: "Completed" },
@@ -273,6 +279,7 @@ export default function Complaints() {
             contactPersonNumber: complaint?.complaintAllocation?.vendor?.contactPersonNumber || "",
             createdAt: complaint?.createdAt || "",
             status: complaint?.status || "",
+            remarks: complaint?.remarks || "",
             priority: complaint?.priority || "",
             description: complaint?.description || "",
             issueFilePath: complaint?.issueFilePath || "",
@@ -469,6 +476,7 @@ export default function Complaints() {
       const response = await updateComplaintStatusApi(data, id);
       if (response.status === 200) {
         showToast("success", response.data.message);
+        fetchAllComplaints()
       }
       viewDemoClose("complaintview")
 
@@ -763,7 +771,7 @@ export default function Complaints() {
                             </Col>
                             <Col xl={12}>
                               <Select
-                                options={status}
+                                options={statusChangeOptions}
                                 value={values.status}
                                 name="status"
                                 onChange={(selected) => setFieldValue('status', selected)}

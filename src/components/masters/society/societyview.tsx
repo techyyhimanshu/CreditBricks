@@ -10,11 +10,23 @@ import { handleApiError } from '../../../helpers/handle-api-error';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
+import NoticeModal from '../../../common/modals/noticeModal';
+import { deleteNoticeApi, updateNoticeApi } from '../../../api/notice-api';
+import NoticeViewModal from '../../../common/modals/noticeViewModal';
+import AnnouncementModal from '../../../common/modals/announcementModal';
+import AnnouncementViewModal from '../../../common/modals/announcementViewModal';
+import { deleteAnnouncementApi, updateAnnouncementApi } from '../../../api/announcement-api';
 
 export default function SocietyView() {
   const [singleSocietyData, setSingleSocietydata] = useState<any>([])
   const [noticeData, setNoticeData] = useState<any>([])
+  const [singleNoticedata, setSingleNoticeData] = useState<any>(null);
+  const [addnotices, setaddnotices] = useState(false);
+  const [viewnotice, setviewnotice] = useState(false);
   const [announcementData, setAnnouncementData] = useState<any>([])
+  const [singleAnnouncementData, setSingleAnnouncementData] = useState<any>(null);
+  const [addannouncement, setaddannouncement] = useState(false);
+  const [viewannouncement, setviewannouncement] = useState(false);
   const params = useParams()
   const identifier = params.identifier as string
 
@@ -27,7 +39,9 @@ export default function SocietyView() {
     },
     {
       name: 'Notice Subject',
-      selector: (row: any) => row.noticeSubject,
+      cell: (row: any) => (
+        <span className='text-info cursor' onClick={() => { viewDemoShow("viewnotice"), setSingleNoticeData(row) }}>{row.noticeSubject}</span>
+      ),
       sortable: true,
     },
     {
@@ -50,8 +64,11 @@ export default function SocietyView() {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item >Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
+            <Dropdown.Item onClick={() => {
+              setSingleNoticeData(row);
+              viewDemoShow("addnotices")
+            }}>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleNoticeDelete(row)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -68,7 +85,11 @@ export default function SocietyView() {
     },
     {
       name: 'Announcement Name',
-      selector: (row: any) => row.announcementName,
+      cell: (row: any) => {
+        return (
+          <span className='text-info cursor' onClick={() => { viewDemoShow("viewannouncement"), setSingleAnnouncementData(row) }}>{row.announcementName}</span>
+        )
+      },
       sortable: true,
     },
     {
@@ -91,8 +112,11 @@ export default function SocietyView() {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item >Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
+            <Dropdown.Item onClick={() => {
+              setSingleAnnouncementData(row);
+              viewDemoShow("addannouncement")
+            }}>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleAnnouncementDelete(row)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -121,7 +145,29 @@ export default function SocietyView() {
   const fetchNoticeData = async () => {
     try {
       const response = await getNoticesOfSocietyApi(identifier)
-      setNoticeData(response?.data?.data || [])
+      // setNoticeData(response?.data?.data || [])
+      const data = response.data.data
+      const formattedData = data.map((notice: any, index: number) => (
+        {
+          sno: index + 1,
+          noticeType: notice.noticeType,
+          noticeSubject: notice.noticeSubject,
+          message: notice.message,
+          startDate: notice.startDate,
+          validDate: notice.validDate,
+          societyIdentifier: notice?.society?.societyIdentifier,
+          societyName: notice?.society?.societyName,
+          towerIdentifier: notice?.tower?.towerIdentifier,
+          towerName: notice?.tower?.towerName,
+          wingIdentifier: notice?.wing?.wingIdentifier,
+          wingName: notice?.wing?.wingName,
+          propertyIdentifier: notice?.property?.propertyIdentifier,
+          propertyName: notice?.property?.propertyName,
+          noticeIdentifier: notice.noticeIdentifier,
+          noticeFilePath: notice.noticeFilePath
+        }
+      ));
+      setNoticeData(formattedData);
     } catch (error) {
 
     }
@@ -129,7 +175,28 @@ export default function SocietyView() {
   const fetchAnnouncementData = async () => {
     try {
       const response = await getAnnouncementsOfSocietyApi(identifier)
-      setAnnouncementData(response?.data?.data || [])
+      // setAnnouncementData(response?.data?.data || [])
+      const data = response.data.data
+      const formattedData = data.map((announcement: any, index: number) => (
+        {
+          sno: index + 1,
+          announcementName: announcement.announcementName,
+          announcementIdentifier: announcement.announcementIdentifier,
+          message: announcement.message,
+          startDate: announcement.startDate,
+          validDate: announcement.validDate,
+          societyIdentifier: announcement?.society?.societyIdentifier,
+          societyName: announcement?.society?.societyName,
+          towerIdentifier: announcement?.tower?.towerIdentifier,
+          towerName: announcement?.tower?.towerName,
+          wingIdentifier: announcement?.wing?.wingIdentifier,
+          wingName: announcement?.wing?.wingName,
+          propertyIdentifier: announcement?.property?.propertyIdentifier,
+          propertyName: announcement?.property?.propertyName,
+          announcementFilePath: announcement?.announcementFilePath
+        }
+      ));
+      setAnnouncementData(formattedData);
     } catch (error) {
 
     }
@@ -190,6 +257,19 @@ export default function SocietyView() {
       case "addcharge":
         setaddcharge(true);
         break;
+      case "addnotices":
+        setaddnotices(true);
+        break;
+      case "viewnotice":
+        setviewnotice(true);
+        break;
+      case "addannouncement":
+        setaddannouncement(true);
+        break;
+      case "viewannouncement":
+        setviewannouncement(true);
+        break;
+
 
     }
   };
@@ -198,6 +278,20 @@ export default function SocietyView() {
     switch (modal) {
       case "addcharge":
         setaddcharge(false);
+        break;
+
+      case "addnotices":
+        setaddnotices(false);
+        break;
+      case "viewnotice":
+        setviewnotice(false);
+        break;
+      case "addannouncement":
+        setaddannouncement(false);
+        break;
+
+      case "viewannouncement":
+        setviewannouncement(false);
         break;
 
     }
@@ -214,6 +308,136 @@ export default function SocietyView() {
       showToast("error", errorMessage)
     }
   }
+
+  const handleNoticeSubmit = async (values: any) => {
+    const formattedData: any = {
+      noticeSubject: values.subject,
+      societyIdentifier: values.society.value,
+      message: values.message,
+      startDate: values.startDate,
+      validDate: values.validDate,
+      noticeType: values.noticeType.value
+    }
+    if (values?.tower?.value) {
+      formattedData.towerIdentifier = values.tower.value
+    }
+    if (values?.wing?.value) {
+      formattedData.wingIdentifier = values.wing.value
+    }
+    if (values?.property?.value) {
+      formattedData.propertyIdentifier = values.property.value
+    }
+
+    if (values.file) {
+      formattedData.noticeFile = values.file
+    }
+    try {
+      const response = await updateNoticeApi(formattedData, singleNoticedata?.noticeIdentifier)
+
+      if (response.status === 200) {
+        viewDemoClose("addnotices");
+        showToast("success", response.data.message)
+        fetchNoticeData()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      setSingleNoticeData(null)
+    }
+    viewDemoClose("addnotices")
+  }
+
+   const handleAnnouncementSubmit = async (values: any) => {
+      const formattedData: any = {
+        announcementName: values.announcementName,
+        societyIdentifier: values.society.value,
+        message: values.message,
+        startDate: values.startDate,
+        validDate: values.validDate,
+      }
+  
+      if (values?.tower?.value) {
+        formattedData.towerIdentifier = values.tower.value
+      }
+      if (values?.wing?.value) {
+        formattedData.wingIdentifier = values.wing.value
+      }
+      if (values?.property?.value) {
+        formattedData.propertyIdentifier = values.property.value
+      }
+  
+      if (values.file) {
+        formattedData.announcementFile = values.file
+      }
+      try {        
+        const  response = await updateAnnouncementApi(formattedData, singleAnnouncementData?.announcementIdentifier)
+      
+        if (response.status === 200 || response.status === 201) {
+          viewDemoClose("addannouncement")
+          showToast("success", response.data.message)
+          fetchAnnouncementData()
+        }
+      } catch (error) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      } finally {
+        setSingleAnnouncementData(null)
+      }
+      viewDemoClose("addannouncement")
+    }
+
+  const handleNoticeClose = () => {
+    viewDemoClose("addnotices")
+    setSingleNoticeData(null)
+  }
+
+  const handleNoticeViewClose = () => {
+    viewDemoClose("viewnotice")
+    setSingleNoticeData(null)
+  }
+
+  const handleAnnouncementClose=()=>{
+    viewDemoClose("addannouncement")
+    setSingleAnnouncementData(null)
+  }
+
+  const handleAnnouncementViewClose=()=>{
+    viewDemoClose("viewannouncement")
+    setSingleAnnouncementData(null)
+  }
+
+  const handleNoticeDelete = (row: any) => {
+    ; (async () => {
+      try {
+
+        const response = await deleteNoticeApi(row.noticeIdentifier)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          fetchNoticeData()
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
+
+  const handleAnnouncementDelete = (row: any) => {
+      ; (async () => {
+        try {
+  
+          const response = await deleteAnnouncementApi(row.announcementIdentifier)
+          if (response.status === 200) {
+            showToast("success", response.data.message)
+            fetchAnnouncementData()
+          }
+        } catch (error: any) {
+          const errorMessage = handleApiError(error)
+          showToast("error", errorMessage)
+        }
+      })()
+    }
 
 
   return (
@@ -408,7 +632,7 @@ export default function SocietyView() {
                                   <Row className="mt-2">
                                     {/* QR Code Image */}
                                     <Col xl={12} className='mt-2 tx-12'>
-                                      <img src={account.paymentQrPath || 'https://static.wixstatic.com/media/794e6d_d0eb1012228446ba8436ac24a1f5ad00~mv2.jpeg/v1/fill/w_440,h_380,al_c,q_80,usm_0.33_1.00_0.00,enc_avif,quality_auto/Union%20Bank%20QR%20Code.jpeg'} alt="QR Code" />
+                                      <img crossOrigin="anonymous" src={account?.paymentQrPath?import.meta.env.VITE_STATIC_PATH + account?.paymentQrPath:'https://static.wixstatic.com/media/794e6d_d0eb1012228446ba8436ac24a1f5ad00~mv2.jpeg/v1/fill/w_440,h_380,al_c,q_80,usm_0.33_1.00_0.00,enc_avif,quality_auto/Union%20Bank%20QR%20Code.jpeg'} alt="QR Code" />
                                     </Col>
                                   </Row>
 
@@ -1093,6 +1317,18 @@ export default function SocietyView() {
         </Col>
 
       </Row>
+      {
+        singleNoticedata && addnotices && <NoticeModal show={addnotices} onClose={handleNoticeClose} editing={true} initialVals={singleNoticedata} onSave={handleNoticeSubmit} />
+      }
+      {
+        viewnotice && singleNoticedata && <NoticeViewModal show={viewnotice} onClose={handleNoticeViewClose} initialVals={singleNoticedata} />
+      }
+      {
+        singleAnnouncementData && addannouncement && <AnnouncementModal show={addannouncement} onClose={handleAnnouncementClose} editing={true} initialVals={singleAnnouncementData} onSave={handleAnnouncementSubmit} />
+      }
+      {
+        viewannouncement && singleAnnouncementData && <AnnouncementViewModal show={viewannouncement} onClose={handleAnnouncementViewClose} initialVals={singleAnnouncementData} />
+      }
 
       <CustomToastContainer />
     </Fragment >

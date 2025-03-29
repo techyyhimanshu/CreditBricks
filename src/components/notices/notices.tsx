@@ -1,29 +1,30 @@
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Dropdown, Modal, Form, Button, CardBody } from "react-bootstrap";
+import { Col, Row, Card, Dropdown } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
-import Select from "react-select";
+// import Select from "react-select";
 // import { imagesData } from "../../common/commonimages";
-import SunEditor from 'suneditor-react';
+// import SunEditor from 'suneditor-react';
 import 'suneditor/dist/css/suneditor.min.css';
 import { createNoticeApi, deleteNoticeApi, getAllNoticeApi, updateNoticeApi } from '../../api/notice-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { getAllSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
-import { Formik, Form as FormikForm } from 'formik';
-import { getSocietyTowersApi } from '../../api/tower-api';
-import { getTowerWingsApi } from '../../api/wing-api';
-import { getWingPropertiesApi } from '../../api/property-api';
+// import { Formik, Form as FormikForm } from 'formik';
+// import { getSocietyTowersApi } from '../../api/tower-api';
+// import { getTowerWingsApi } from '../../api/wing-api';
+// import { getWingPropertiesApi } from '../../api/property-api';
 import NoticeModal from '../../common/modals/noticeModal';
+import NoticeViewModal from '../../common/modals/noticeViewModal';
 
 export default function Notices() {
-  const [societyData, setSocietyData] = useState<any[]>([]);
-  const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
-  const [towerOptions, setTowerOptions] = useState<any[]>([]);
-  const [wingOptions, setWingOptions] = useState<any[]>([]);
-  const [noticedata, setNoticedata] = useState<any>([]);
+  const [, setSocietyData] = useState<any[]>([]);
+  // const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
+  // const [towerOptions, setTowerOptions] = useState<any[]>([]);
+  // const [wingOptions, setWingOptions] = useState<any[]>([]);
+  const [noticedata, setNoticeData] = useState<any>([]);
   const [singleNoticedata, setSingleNoticeData] = useState<any>(null);
   const [addnotices, setaddnotices] = useState(false);
   const [viewnotice, setviewnotice] = useState(false);
@@ -121,14 +122,12 @@ export default function Notices() {
           noticeFilePath: notice.noticeFilePath
         }
       ));
-      setNoticedata(formattedData);
+      setNoticeData(formattedData);
     } catch (error) {
       console.log(error)
       handleApiError(error)
     }
   }
-
-
 
   useEffect(() => {
 
@@ -185,9 +184,9 @@ export default function Notices() {
     data: noticedata
   };
 
-  const noticetype = [
-    { value: "General Notice", label: "General Notice" },
-  ]
+  // const noticetype = [
+  //   { value: "General Notice", label: "General Notice" },
+  // ]
 
   const handleDelete = (row: any) => {
       ; (async () => {
@@ -197,7 +196,7 @@ export default function Notices() {
           if (response.status === 200) {
             showToast("success", response.data.message)
             // Remove the society from the table
-            setNoticedata((prevData: any) => prevData.filter((society: any) => society.noticeIdentifier !== row.noticeIdentifier))
+            setNoticeData((prevData: any) => prevData.filter((society: any) => society.noticeIdentifier !== row.noticeIdentifier))
           }
         } catch (error: any) {
           const errorMessage = handleApiError(error)
@@ -206,48 +205,48 @@ export default function Notices() {
       })()
   }
 
-  const fetchPropertiesForDropDown = async (society: any) => {
-    try {
-      const response = await getWingPropertiesApi(society.value);
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.propertyIdentifier,
-        label: item.propertyName ? item.propertyName : item.flatNumber,
-      }));
-      setPropertiesForDropDown(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
+  // const fetchPropertiesForDropDown = async (society: any) => {
+  //   try {
+  //     const response = await getWingPropertiesApi(society.value);
+  //     const formattedData = response.data.data.map((item: any) => ({
+  //       value: item.propertyIdentifier,
+  //       label: item.propertyName ? item.propertyName : item.flatNumber,
+  //     }));
+  //     setPropertiesForDropDown(formattedData);
+  //   } catch (error) {
+  //     const errorMessage = handleApiError(error)
+  //     showToast("error", errorMessage)
+  //   }
+  // }
 
-  const fetchWingsForDropDown = async (society: any) => {
-    try {
-      const response = await getTowerWingsApi(society.value);
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.wingIdentifier,
-        label: item.wingName,
-      }));
+  // const fetchWingsForDropDown = async (society: any) => {
+  //   try {
+  //     const response = await getTowerWingsApi(society.value);
+  //     const formattedData = response.data.data.map((item: any) => ({
+  //       value: item.wingIdentifier,
+  //       label: item.wingName,
+  //     }));
 
-      setWingOptions(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
+  //     setWingOptions(formattedData);
+  //   } catch (error) {
+  //     const errorMessage = handleApiError(error)
+  //     showToast("error", errorMessage)
+  //   }
+  // }
 
-  const fetchTowersForDropDown = async (society: any) => {
-    try {
-      const response = await getSocietyTowersApi(society.value);
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.towerIdentifier,
-        label: item.towerName,
-      }));
-      setTowerOptions(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
+  // const fetchTowersForDropDown = async (society: any) => {
+  //   try {
+  //     const response = await getSocietyTowersApi(society.value);
+  //     const formattedData = response.data.data.map((item: any) => ({
+  //       value: item.towerIdentifier,
+  //       label: item.towerName,
+  //     }));
+  //     setTowerOptions(formattedData);
+  //   } catch (error) {
+  //     const errorMessage = handleApiError(error)
+  //     showToast("error", errorMessage)
+  //   }
+  // }
 
 
   const handleSubmit = async (values: any) => {
@@ -293,6 +292,16 @@ export default function Notices() {
     viewDemoClose("addnotices")
   }
 
+  const handleClose=()=>{
+    viewDemoClose("addnotices")
+    setSingleNoticeData(null)
+  }
+
+  const handleViewClose=()=>{
+    viewDemoClose("viewnotice")
+    setSingleNoticeData(null)
+  }
+
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -302,7 +311,7 @@ export default function Notices() {
 
         <div className="right-content">
           <span className='float-end btn btn-primary btn-sm' onClick={() => viewDemoShow("addnotices")}><i className="bi bi-plus"></i> Add Notices</span>
-          <Modal show={addnotices} size="lg">
+          {/* <Modal show={addnotices} size="lg">
             <Modal.Header>
               <Modal.Title>Notices</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addnotices"), setSingleNoticeData(null) }}>
@@ -547,8 +556,10 @@ export default function Notices() {
               }}
             </Formik>
 
-          </Modal>
-          {/* <NoticeModal /> */}
+          </Modal> */}
+          {
+            singleNoticedata&&addnotices?<NoticeModal show={addnotices} onClose={handleClose} editing={editing} initialVals={singleNoticedata} onSave={handleSubmit}/>:<NoticeModal show={addnotices} onClose={handleClose} editing={editing} onSave={handleSubmit}/>
+          }
         </div>
       </div>
 
@@ -570,7 +581,7 @@ export default function Notices() {
                   </DataTableExtensions>
                 }
               </div>
-              <Modal show={viewnotice} >
+              {/* <Modal show={viewnotice} >
                 <Modal.Header>
                   <Modal.Title>Notice Details</Modal.Title>
                   <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("viewnotice"); setSingleNoticeData(null) }}>
@@ -605,7 +616,6 @@ export default function Notices() {
                               </p>
                               <p className='tx-15 tx-semibold'>{singleNoticedata?.noticeSubject || "N/A"}</p>
                               <p className='mb-0 text-muted'>Message</p>
-                              {/* <p className='tx-14'>{singleNoticedata?.message||"N/A"}</p> */}
                               <p className='tx-14' dangerouslySetInnerHTML={{ __html: singleNoticedata?.message || "N/A" }} />
                             </Col>
 
@@ -630,25 +640,15 @@ export default function Notices() {
                         <CardBody className='p-2'>
                           <p className='tx-15 pb-1 pt-1 border-bottom tx-semibold'>Attachments</p>
                           <Row>
-                            {/* <Col xl={12}>
-                              {singleNoticedata?.noticeFilePath ? <img
-                                alt="" className='w-100 rounded-2'
-                                crossOrigin="anonymous"
-                                src={import.meta.env.VITE_STATIC_PATH + singleNoticedata?.noticeFilePath}
-                              /> : <p className='w-100 rounded-2' style={{ height: "100px", backgroundColor: "lightgray", textAlign: "center", verticalAlign: "middle", lineHeight: "100px" }}>No image</p>}
-                            </Col> */}
                             <Col xl={12}>
                               {singleNoticedata?.noticeFilePath ? (
-                                // Determine the file extension
                                 (() => {
                                   const filePath = singleNoticedata?.noticeFilePath;
                                   const fileExtension = filePath.split('.').pop().toLowerCase();
 
-                                  // Check if the file is an image
                                   const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'].includes(fileExtension);
 
                                   if (isImage) {
-                                    // If it's an image, show the image tag
                                     return (
                                       <>
                                         <img
@@ -670,18 +670,16 @@ export default function Notices() {
                                           style={{ cursor: 'pointer', color: 'blue' }}
                                           onClick={() => {
                                             const fileUrl = import.meta.env.VITE_STATIC_PATH + filePath;
-                                            // Check file extension for handling download or open in new tab
                                             const isPDF = fileExtension === 'pdf';
                                             const isExcel = fileExtension === 'xls' || fileExtension === 'xlsx';
 
                                             if (isPDF || isExcel) {
-                                              window.open(fileUrl, '_blank'); // Open in new tab
+                                              window.open(fileUrl, '_blank'); 
                                             } else {
-                                              // Trigger file download if it's not PDF or Excel
                                               const link = document.createElement('a');
                                               link.href = fileUrl;
-                                              link.download = filePath.split('/').pop(); // Name the downloaded file
-                                              link.click(); // Trigger the download
+                                              link.download = filePath.split('/').pop(); 
+                                              link.click(); 
                                             }
                                           }}
                                         >
@@ -706,7 +704,10 @@ export default function Notices() {
                   </Row>
                 </Modal.Body>
 
-              </Modal>
+              </Modal> */}
+              {
+                viewnotice&&singleNoticedata&&<NoticeViewModal show={viewnotice} onClose={handleViewClose} initialVals={singleNoticedata}/>
+              }
 
 
             </Card.Body>

@@ -14,9 +14,10 @@ export const addPropertyApi = async (data: any): Promise<any> => {
         throw error
     }
 }
-export const getAllPropertyApi = async (): Promise<any> => {
+export const getAllPropertyApi = async (identifier?:string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`/property/all`)
+        const params = identifier ? { wing_identifier: identifier } : {};
+        const response = await axiosInstance.get(`/property/all`, { params })
         return response
     } catch (error) {
         throw error
