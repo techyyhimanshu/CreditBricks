@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { Col, Row, Card, Form, Dropdown, Tabs, Tab, FormLabel, FormCheck, Button, Modal, FormControl } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import Select from "react-select";
-import { getAnnouncementsOfSocietyApi, getNoticesOfSocietyApi, getSocietyDetailsApi } from '../../../api/society-api';
+import { getAnnouncementsOfSocietyApi, getNoticesOfSocietyApi, getSocietyDetailsApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../../api/society-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { deletePropertyApi } from '../../../api/property-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
@@ -24,6 +24,8 @@ export default function SocietyView() {
   const [addnotices, setaddnotices] = useState(false);
   const [viewnotice, setviewnotice] = useState(false);
   const [announcementData, setAnnouncementData] = useState<any>([])
+  const [towerData, setTowerData] = useState<any>([])
+  const [wingData, setWingData] = useState<any>([])
   const [singleAnnouncementData, setSingleAnnouncementData] = useState<any>(null);
   const [addannouncement, setaddannouncement] = useState(false);
   const [viewannouncement, setviewannouncement] = useState(false);
@@ -124,6 +126,83 @@ export default function SocietyView() {
 
     },
   ];
+  const towerColumns = [
+    {
+      name: 'S.No',
+      cell: (_: any, index: number) => index + 1,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Tower Name',
+      cell: (row: any) => {
+        return (
+          <span className='text-info cursor' onClick={() => { viewDemoShow("viewannouncement"), setSingleAnnouncementData(row) }}>{row.towerName}</span>
+        )
+      },
+      sortable: true,
+    },
+
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => {
+              setSingleAnnouncementData(row);
+              viewDemoShow("addannouncement")
+            }}>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleAnnouncementDelete(row)}>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
+      ),
+
+    },
+  ];
+  const wingColumns = [
+    {
+      name: 'S.No',
+      cell: (_: any, index: number) => index + 1,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Wing Name',
+      cell: (row: any) => {
+        return (
+          <span className='text-info cursor' onClick={() => { viewDemoShow("viewannouncement"), setSingleAnnouncementData(row) }}>{row.wingName}</span>
+        )
+      },
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => {
+              setSingleAnnouncementData(row);
+              viewDemoShow("addannouncement")
+            }}>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleAnnouncementDelete(row)}>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
+      ),
+
+    },
+  ];
 
   const tableData = {
     columns,
@@ -132,6 +211,14 @@ export default function SocietyView() {
   const announcementTableData = {
     columns: announcementColumns,
     data: announcementData
+  };
+  const towerTableData = {
+    columns: towerColumns,
+    data: towerData
+  };
+  const wingTableData = {
+    columns: wingColumns,
+    data: wingData
   };
 
   const fetchSocietyData = async () => {
@@ -172,6 +259,41 @@ export default function SocietyView() {
 
     }
   }
+  const fetchTowersData = async () => {
+    try {
+      const response = await getTowersOfSocietyApi(identifier)
+      // setNoticeData(response?.data?.data || [])
+      const data = response.data.data
+      const formattedData = data.map((notice: any, index: number) => (
+        {
+          sno: index + 1,
+          towerId: notice.towerId,
+          towerName: notice.towerName,
+        }
+      ));
+      setTowerData(formattedData);
+    } catch (error) {
+
+    }
+  }
+  const fetchWingsData = async () => {
+    try {
+      const response = await getWingsOfSocietyApi(identifier)
+      // setNoticeData(response?.data?.data || [])
+      const data = response.data.data
+      const formattedData = data.map((notice: any, index: number) => (
+        {
+          sno: index + 1,
+          wingId: notice.wingId,
+          wingIdentifier: notice.wingIdentifier,
+          wingName: notice.wingName,
+        }
+      ));
+      setWingData(formattedData);
+    } catch (error) {
+
+    }
+  }
   const fetchAnnouncementData = async () => {
     try {
       const response = await getAnnouncementsOfSocietyApi(identifier)
@@ -208,6 +330,8 @@ export default function SocietyView() {
       fetchSocietyData()
       fetchNoticeData()
       fetchAnnouncementData()
+      fetchTowersData()
+      fetchWingsData()
     }
   }, [])
   const chargename = [
@@ -348,44 +472,44 @@ export default function SocietyView() {
     viewDemoClose("addnotices")
   }
 
-   const handleAnnouncementSubmit = async (values: any) => {
-      const formattedData: any = {
-        announcementName: values.announcementName,
-        societyIdentifier: values.society.value,
-        message: values.message,
-        startDate: values.startDate,
-        validDate: values.validDate,
-      }
-  
-      if (values?.tower?.value) {
-        formattedData.towerIdentifier = values.tower.value
-      }
-      if (values?.wing?.value) {
-        formattedData.wingIdentifier = values.wing.value
-      }
-      if (values?.property?.value) {
-        formattedData.propertyIdentifier = values.property.value
-      }
-  
-      if (values.file) {
-        formattedData.announcementFile = values.file
-      }
-      try {        
-        const  response = await updateAnnouncementApi(formattedData, singleAnnouncementData?.announcementIdentifier)
-      
-        if (response.status === 200 || response.status === 201) {
-          viewDemoClose("addannouncement")
-          showToast("success", response.data.message)
-          fetchAnnouncementData()
-        }
-      } catch (error) {
-        const errorMessage = handleApiError(error)
-        showToast("error", errorMessage)
-      } finally {
-        setSingleAnnouncementData(null)
-      }
-      viewDemoClose("addannouncement")
+  const handleAnnouncementSubmit = async (values: any) => {
+    const formattedData: any = {
+      announcementName: values.announcementName,
+      societyIdentifier: values.society.value,
+      message: values.message,
+      startDate: values.startDate,
+      validDate: values.validDate,
     }
+
+    if (values?.tower?.value) {
+      formattedData.towerIdentifier = values.tower.value
+    }
+    if (values?.wing?.value) {
+      formattedData.wingIdentifier = values.wing.value
+    }
+    if (values?.property?.value) {
+      formattedData.propertyIdentifier = values.property.value
+    }
+
+    if (values.file) {
+      formattedData.announcementFile = values.file
+    }
+    try {
+      const response = await updateAnnouncementApi(formattedData, singleAnnouncementData?.announcementIdentifier)
+
+      if (response.status === 200 || response.status === 201) {
+        viewDemoClose("addannouncement")
+        showToast("success", response.data.message)
+        fetchAnnouncementData()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      setSingleAnnouncementData(null)
+    }
+    viewDemoClose("addannouncement")
+  }
 
   const handleNoticeClose = () => {
     viewDemoClose("addnotices")
@@ -397,12 +521,12 @@ export default function SocietyView() {
     setSingleNoticeData(null)
   }
 
-  const handleAnnouncementClose=()=>{
+  const handleAnnouncementClose = () => {
     viewDemoClose("addannouncement")
     setSingleAnnouncementData(null)
   }
 
-  const handleAnnouncementViewClose=()=>{
+  const handleAnnouncementViewClose = () => {
     viewDemoClose("viewannouncement")
     setSingleAnnouncementData(null)
   }
@@ -424,20 +548,20 @@ export default function SocietyView() {
   }
 
   const handleAnnouncementDelete = (row: any) => {
-      ; (async () => {
-        try {
-  
-          const response = await deleteAnnouncementApi(row.announcementIdentifier)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            fetchAnnouncementData()
-          }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error)
-          showToast("error", errorMessage)
+    ; (async () => {
+      try {
+
+        const response = await deleteAnnouncementApi(row.announcementIdentifier)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          fetchAnnouncementData()
         }
-      })()
-    }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
 
 
   return (
@@ -632,7 +756,7 @@ export default function SocietyView() {
                                   <Row className="mt-2">
                                     {/* QR Code Image */}
                                     <Col xl={12} className='mt-2 tx-12'>
-                                      <img crossOrigin="anonymous" src={account?.paymentQrPath?import.meta.env.VITE_STATIC_PATH + account?.paymentQrPath:'https://static.wixstatic.com/media/794e6d_d0eb1012228446ba8436ac24a1f5ad00~mv2.jpeg/v1/fill/w_440,h_380,al_c,q_80,usm_0.33_1.00_0.00,enc_avif,quality_auto/Union%20Bank%20QR%20Code.jpeg'} alt="QR Code" />
+                                      <img crossOrigin="anonymous" src={account?.paymentQrPath ? import.meta.env.VITE_STATIC_PATH + account?.paymentQrPath : 'https://static.wixstatic.com/media/794e6d_d0eb1012228446ba8436ac24a1f5ad00~mv2.jpeg/v1/fill/w_440,h_380,al_c,q_80,usm_0.33_1.00_0.00,enc_avif,quality_auto/Union%20Bank%20QR%20Code.jpeg'} alt="QR Code" />
                                     </Col>
                                   </Row>
 
@@ -1218,7 +1342,7 @@ export default function SocietyView() {
                     <Card.Body>
                       <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Tower Details</h5>
                       <div className='p-0 mt-4'>
-                        <table className='table'>
+                        {/* <table className='table'>
                           <thead>
                             <tr>
                               <th >S.No.</th>
@@ -1256,7 +1380,18 @@ export default function SocietyView() {
                               </Dropdown></td>
                             </tr>
                           </tbody>
-                        </table>
+                        </table> */}
+                        <div className="table-responsive ">
+                          <DataTableExtensions {...towerTableData}>
+                            <DataTable
+                              columns={towerColumns}
+                              data={towerData}
+                              pagination
+
+
+                            />
+                          </DataTableExtensions>
+                        </div>
                       </div>
                     </Card.Body>
                   </Card>
@@ -1266,7 +1401,7 @@ export default function SocietyView() {
                     <Card.Body>
                       <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Wing Details</h5>
                       <div className='p-0 mt-4'>
-                        <table className='table'>
+                        {/* <table className='table'>
                           <thead>
                             <tr>
                               <th >S.No.</th>
@@ -1304,7 +1439,18 @@ export default function SocietyView() {
                               </Dropdown></td>
                             </tr>
                           </tbody>
-                        </table>
+                        </table> */}
+                        <div className="table-responsive ">
+                          <DataTableExtensions {...wingTableData}>
+                            <DataTable
+                              columns={wingColumns}
+                              data={wingData}
+                              pagination
+
+
+                            />
+                          </DataTableExtensions>
+                        </div>
                       </div>
                     </Card.Body>
                   </Card>

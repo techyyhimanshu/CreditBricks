@@ -5,13 +5,16 @@ import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader } from "react
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { addNewComplaintApi, assignComplaintToVendorApi, deleteComplaintApi, getAllComplainCategoriesApi, getAllComplaintsApi, updateComplaintApi, updateComplaintStatusApi } from '../../api/complaint-api';
-import { Formik, Form as FormikForm, Field } from 'formik';
+// import { Formik, Form as FormikForm, Field } from 'formik';
+// import { Formik } from 'formik';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { getVendorForDropDownApi } from '../../api/vendor-api';
 import { getAllSocietyApi, getPropertiesOfSocietyApi } from '../../api/society-api';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
+import ComplaintModal from '../../common/modals/complaintModal';
+import ComplaintViewModal from '../../common/modals/complaintViewModal';
 
 export default function Complaints() {
 
@@ -207,15 +210,10 @@ export default function Complaints() {
     { value: "verified", label: "Verified" },
     { value: "completed", label: "Completed" },
   ]
-  const statusChangeOptions = [
-    { value: "in-progress", label: "In-Progress" },
-    { value: "pending", label: "Pending" },
-    { value: "verified", label: "Verified" },
-    { value: "completed", label: "Completed" },
-  ]
+  
 
   const property = [
-    { value: "", label: "All" }, // Adding 'All' option at the beginning
+    { value: "", label: "All" }, 
     ...propertiesForDropDown.map((property: any) => ({
       value: property.propertyIdentifier,
       label: property.propertyName
@@ -355,11 +353,11 @@ export default function Complaints() {
 
   const handleSubmit = async (values: any) => {
     const formattedData: any = {
-      propertyIdentifier: values.property.value || "",
-      societyIdentifier: values.society.value || "",
-      categoryId: values.complaintCategory.value || "",
+      propertyIdentifier: values?.property?.value || "",
+      societyIdentifier: values?.society?.value || "",
+      categoryId: values?.complaintCategory?.value || "",
       description: values.complaintDescription || "",
-      priority: values.priority.value || "",
+      priority: values?.priority?.value || "",
     }
     if (values.complaintFile) {
       formattedData.complaintFile = values.complaintFile
@@ -382,8 +380,6 @@ export default function Complaints() {
     }
     viewDemoClose("addcomplaint")
   }
-
-
 
   const handleFilterChange = async (name: string, value: any) => {
     setFilters((prevState) => ({
@@ -479,18 +475,20 @@ export default function Complaints() {
         fetchAllComplaints()
       }
       viewDemoClose("complaintview")
-
-      // setComplaintData(prevData =>
-      //   prevData.map(complaint =>
-      //     complaint.id === complaintToView.id
-      //       ? { ...complaint, contactPersonName: selectedVendor.label }
-      //       : complaint
-      //   )
-      // );
     } catch (error) {
 
     }
-    // viewDemoClose("complaintview")
+    viewDemoClose("complaintview")
+  }
+
+  const handleClose = () => {
+    viewDemoClose("addcomplaint")
+    setComplaintToView(null)
+  }
+
+  const handleViewClose = () => {
+    viewDemoClose("complaintview")
+    setComplaintToView(null)
   }
 
   return (
@@ -504,7 +502,7 @@ export default function Complaints() {
             viewDemoShow("addcomplaint")
 
           }}><i className="bi bi-plus"></i> Add Complaint</span>
-          <Modal show={addcomplaint} centered>
+          {/* <Modal show={addcomplaint} centered>
             <Modal.Header>
               <Modal.Title>Complaint</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addcomplaint"); }}>
@@ -596,7 +594,6 @@ export default function Complaints() {
                               placeholder="Select service"
                               classNamePrefix="Select2"
                             />
-                            {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                           </Form.Group>
                         </Col>
                         <Col xl={6}>
@@ -610,7 +607,6 @@ export default function Complaints() {
                               placeholder="Select priority"
                               classNamePrefix="Select2"
                             />
-                            {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                           </Form.Group>
                         </Col>
                         <Col xl={12}>
@@ -636,11 +632,9 @@ export default function Complaints() {
                                 const fileExtension = getFileExtension(values.fileName);
 
 
-                                // If it's a PDF, image, or Excel file, open in new tab
                                 if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
                                   window.open(import.meta.env.VITE_STATIC_PATH + values.fileName, "_blank");
                                 } else {
-                                  // For other files, trigger download
                                   const link = document.createElement("a");
                                   link.href = import.meta.env.VITE_STATIC_PATH + values.fileName;
                                   link.download = values.fileName;
@@ -671,9 +665,13 @@ export default function Complaints() {
             </Formik>
 
 
-          </Modal>
+          </Modal> */}
 
-          <Modal show={complaintview} centered>
+          {
+            complaintToView && addcomplaint ? <ComplaintModal show={addcomplaint} onClose={handleClose} editing={editing} initialVals={complaintToView} onSave={handleSubmit} /> : <ComplaintModal show={addcomplaint} onClose={handleClose} editing={editing} onSave={handleSubmit} />
+          }
+
+          {/* <Modal show={complaintview} centered>
             <Modal.Header>
               <Modal.Title>Complaint View</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("complaintview"); }}>
@@ -727,32 +725,12 @@ export default function Complaints() {
                   <p>{complaintToView?.contactPersonNumber}</p>
                 </Col>
 
-                {/* <Col xl={6} className='text-end'>
-                  <p className='mb-0 text-muted'>Status</p>
-                  <p className='tx-15 tx-semibold'><i className='bi bi-check-circle text-success tx-18'></i>&nbsp; {complaintToView?.status}</p>
-
-                </Col> */}
+            
 
               </Row>
               <hr className='mt-2 mb-1' />
               <Row>
-                {/* <Col xl={12}>
-                  <Form.Label className='float-start'>Update Status</Form.Label>
-                  <Dropdown className='profile-user border-0'>
-                    <Dropdown.Toggle variant="">
-                      <strong>In Process</strong>
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item className="dropdown-item" href="/">In-Process </Dropdown.Item>
-                      <Dropdown.Item className="dropdown-item" href="/">Pending </Dropdown.Item>
-                      <Dropdown.Item className="dropdown-item" href="/">Verified </Dropdown.Item>
-                      <Dropdown.Item className="dropdown-item" href="/">Closed </Dropdown.Item>
-
-                    </Dropdown.Menu>
-                  </Dropdown>
-                  <p className="mb-0 text-muted">Complaint Remarks</p>
-                  <textarea className='form-control' placeholder='Remarks'></textarea>
-                </Col> */}
+                
                 <Col xl={12}>
                   <Formik
                     enableReinitialize
@@ -816,11 +794,12 @@ export default function Complaints() {
 
               </Row>
             </Modal.Body>
-            {/* <Modal.Footer>
-              <Button type='button' className='btn btn-default' onClick={() => { viewDemoClose("complaintview"); }}>Close</Button>
-              <Button type='button' className='btn btn-primary' onClick={() => { handleUpdateStatus(complaintToView.id) }}>Save</Button>
-            </Modal.Footer> */}
-          </Modal>
+            
+          </Modal> */}
+
+          {
+            complaintview && complaintToView && <ComplaintViewModal show={complaintview} onClose={handleViewClose} initialVals={complaintToView} onSave={handleUpdateStatus} />
+          }
 
           <Modal show={assign} centered>
             <Modal.Header>
@@ -1038,3 +1017,6 @@ export default function Complaints() {
     </Fragment >
   );
 }
+
+
+{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */ }

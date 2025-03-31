@@ -1,106 +1,86 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Dropdown, Modal, Form, Button, CardBody } from "react-bootstrap";
+import { Col, Row, Card, Dropdown, Modal, Button, CardBody } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import { Link } from "react-router-dom";
-import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
+import { addNewLoanApi, deleteLoanApi, getAllLoansApi, updateLoanApi } from '../../api/loan-api';
+import { handleApiError } from '../../helpers/handle-api-error';
+import { CustomToastContainer, showToast } from '../../common/services/toastServices';
+import LoanModal from '../../common/modals/loanModal';
+import LoanViewModal from '../../common/modals/loanViewModal';
 
 
 export default function Loans() {
 
-  const loantype = [
-    { value: "1", label: "Home" },
-    { value: "2", label: "Vehicle" },
-  ]
-
-  const loanperiod = [
-    { value: "1", label: "5yrs" },
-    { value: "2", label: "10yrs" },
-    { value: "3", label: "15yrs" },
-    { value: "4", label: "20yrs" },
-    { value: "5", label: "25yrs" },
-    { value: "6", label: "30yrs" },
-  ]
-
-  const property = [
-    { value: "1", label: "A101" },
-    { value: "2", label: "A102" },
-  ]
-
-  const member = [
-    { value: "1", label: "Owner" },
-    { value: "2", label: "Tenant" },
-  ]
-
   const columns = [
     {
       name: 'S.No',
-      selector: row => row.sno,
+      selector: (row: any) => row.sno,
       sortable: true,
       width: '80px'
     },
     {
       name: 'Loan Number',
-      cell: (row: Row) => (
-        <span className='text-info cursor' onClick={() => viewDemoShow("viewloan")}>243243545</span>
+      cell: (row: any) => (
+        <span className='text-info cursor' onClick={() => { setSingleLoanData(row), viewDemoShow("viewloan") }}>{row.loanNumber}</span>
       ),
       sortable: true,
     },
 
     {
       name: 'Property',
-      selector: row => row.property,
+      selector: (row: any) => row.propertyName,
       sortable: true,
     },
     {
       name: 'Member',
-      selector: row => row.member,
+      selector: (row: any) => row.memberType,
       sortable: true,
     },
     {
       name: 'Name',
-      selector: row => row.name,
+      selector: (row: any) => row.fullName,
       sortable: true,
     },
     {
       name: 'Loan Type',
-      selector: row => row.loantype,
+      selector: (row: any) => row.type,
       sortable: true,
     },
 
 
     {
       name: 'Loan Period',
-      selector: row => row.loanperiod,
+      selector: (row: any) => row.period,
       sortable: true,
     },
     {
       name: 'Loan Amount',
-      selector: row => row.loanamt,
+      selector: (row: any) => row.amount,
       sortable: true,
     },
 
     {
       name: 'Monthly EMI',
-      selector: row => row.monthlyemi,
+      selector: (row: any) => row.monthlyEmi,
       sortable: true,
     },
 
     {
       name: 'Action',
       sortable: true,
-      cell: () => (
+      cell: (row:any) => (
         <Dropdown >
           <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
             Action
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => viewDemoShow("addloan")}>Edit </Dropdown.Item>
-            <Dropdown.Item className='text-danger' >Delete</Dropdown.Item>
+            <Dropdown.Item onClick={() => {setSingleLoanData(row),setEditing(true),viewDemoShow("addloan")}}>Edit </Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -108,63 +88,48 @@ export default function Loans() {
 
     },
   ];
-
-  const data = [
-    {
-      sno: 1,
-      property: 'A101',
-      member: 'Tenant',
-      name: 'Rahul Sharma',
-      loantype: 'Home',
-      loannumber: '',
-      loanperiod: '10yrs',
-      loanamt: '₹ 20,00,000',
-      monthlyemi: '₹ 20,000',
-      action: ''
-
-    },
-    {
-      sno: 2,
-      property: 'A102',
-      member: 'Owner',
-      name: 'Neha Singh',
-      loantype: 'Vehicle',
-      loannumber: '',
-      loanperiod: '5yrs',
-      loanamt: '₹ 50,000',
-      monthlyemi: '₹ 5,000',
-      action: ''
-    },
-    {
-      sno: 3,
-      property: 'A101',
-      member: 'Tenant',
-      name: 'Rajiv Sharma',
-      loantype: 'Home',
-      loannumber: '',
-      loanperiod: '10yrs',
-      loanamt: '₹ 20,00,000',
-      monthlyemi: '₹ 20,000',
-      action: ''
-
-    },
-    {
-      sno: 4,
-      property: 'A102',
-      member: 'Owner',
-      name: 'Mohit Kumar',
-      loantype: 'Vehicle',
-      loannumber: '',
-      loanperiod: '5yrs',
-      loanamt: '₹ 50,000',
-      monthlyemi: '₹ 5,000',
-      action: ''
-    }
-  ]
-
-
   const [addloan, setaddloan] = useState(false);
   const [viewloan, setviewloan] = useState(false);
+  const [singleLoanData, setSingleLoanData] = useState<any>(null);
+  const [loanData, setLoanData] = useState<any>([]);
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+
+    fetchAllLoans();
+  }, []);
+
+  const fetchAllLoans = async () => {
+    try {
+      const response = await getAllLoansApi()
+      if (response.status === 200) {
+        const formattedData = response.data.data.map((complaint: any, index: number) => {
+          return {
+            sno: index + 1,
+            loanIdentifier: complaint?.loanIdentifier || "",
+            type: complaint?.type || "",
+            memberType: complaint?.memberType || "",
+            fullName: complaint?.fullName || "",
+            loanNumber: complaint?.loanNumber || "",
+            period: complaint?.period || "",
+            amount: complaint?.amount || "",
+            monthlyEmi: complaint?.monthlyEmi || "",
+            startDate: complaint?.startDate || "",
+            endDate: complaint?.endDate || "",
+            propertyIdentifier: complaint?.propertyIdentifier || "",
+            propertyName: complaint?.propertyIdentifier || "",
+            bankName: complaint?.bankName || "",
+            bankAddress: complaint?.bankAddress || "",
+            loanFilePath: complaint?.loanFilePath || "",
+          }
+        })
+        setLoanData(formattedData);
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  }
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -174,6 +139,7 @@ export default function Loans() {
 
       case "viewloan":
         setviewloan(true);
+        setEditing(false)
         break;
 
     }
@@ -183,34 +149,97 @@ export default function Loans() {
     switch (modal) {
       case "addloan":
         setaddloan(false);
+        setEditing(false)
         break;
 
       case "viewloan":
         setviewloan(false);
+        setEditing(false)
         break;
 
     }
   };
 
-  // type Row = {
-  //   sno: number;
-  //   loantype: string;
-  //   loanperiod: number;
-  //   loanamount: string;
-  //   startdt: string;
-  //   enddt: string;
-  //   monthlyemi: number;
-
-  // };
-
-
-
-  // const [loandata, setloandata] = useState<any>([]);
-
   const tableData = {
     columns,
-    data
+    data: loanData
   };
+
+  const handleSubmit = async (values: any) => {
+    const formattedData: any = {
+      noticeSubject: values.subject,
+      type: values.type.value,
+      memberType: values.memberType.value,
+      period: values.period.value,
+      fullName: values.fullName,
+      loanNumber: values.loanNumber,
+      amount: values.amount,
+      monthlyEmi: values.monthlyEmi,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      bankName: values.bankName,
+      bankAddress: values.bankAddress,
+    }
+    // if (values?.tower?.value) {
+    //   formattedData.towerIdentifier = values.tower.value
+    // }
+    // if (values?.wing?.value) {
+    //   formattedData.wingIdentifier = values.wing.value
+    // }
+    if (values?.property?.value) {
+      formattedData.propertyIdentifier = values.property.value
+    }
+
+    if (values.file) {
+      formattedData.loanFile = values.file
+    }
+    try {
+      let response;
+      if (editing) {
+        response = await updateLoanApi(formattedData, singleLoanData?.loanIdentifier)
+      } else {
+        response = await addNewLoanApi(formattedData)
+      }
+      if (response.status === 200) {
+        viewDemoClose("addloan");
+        showToast("success", response.data.message)
+        fetchAllLoans()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      setSingleLoanData(null)
+    }
+    viewDemoClose("addloan")
+  }
+
+  const handleDelete = (row: any) => {
+        ; (async () => {
+          try {
+  
+            const response = await deleteLoanApi(row.loanIdentifier)
+            if (response.status === 200) {
+              showToast("success", response.data.message)
+              // Remove the society from the table
+              setLoanData((prevData: any) => prevData.filter((society: any) => society.loanIdentifier !== row.loanIdentifier))
+            }
+          } catch (error: any) {
+            const errorMessage = handleApiError(error)
+            showToast("error", errorMessage)
+          }
+        })()
+    }
+
+  const handleClose = () => {
+    viewDemoClose("addloan")
+    setSingleLoanData(null)
+  }
+
+  const handleViewClose = () => {
+    viewDemoClose("viewloan")
+    setSingleLoanData(null)
+  }
 
 
   return (
@@ -222,7 +251,7 @@ export default function Loans() {
 
         <div className="right-content">
           <span className='float-end btn btn-primary btn-sm' onClick={() => viewDemoShow("addloan")}><i className="bi bi-plus"></i> Add Loan</span>
-          <Modal show={addloan} size="lg" >
+          {/* <Modal show={addloan} size="lg" >
             <Modal.Header>
               <Modal.Title>Loan</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addloan"); }}>
@@ -231,7 +260,7 @@ export default function Loans() {
             </Modal.Header>
             <Modal.Body>
               <Row>
-              <Col xl={6}>
+                <Col xl={6}>
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Property<span className="text-danger">*</span></Form.Label>
                     <Select
@@ -351,7 +380,10 @@ export default function Loans() {
               </Button>
 
             </Modal.Footer>
-          </Modal>
+          </Modal> */}
+          {
+            singleLoanData && addloan ? <LoanModal show={addloan} onClose={handleClose} editing={editing} initialVals={singleLoanData} onSave={handleSubmit} /> : <LoanModal show={addloan} onClose={handleClose} editing={editing} onSave={handleSubmit} />
+          }
         </div>
       </div>
 
@@ -364,7 +396,7 @@ export default function Loans() {
                 <DataTableExtensions {...tableData}>
                   <DataTable
                     columns={columns}
-                    data={data}
+                    data={loanData}
                     pagination
 
 
@@ -384,24 +416,24 @@ export default function Loans() {
                       <Card className='box-shadow'>
                         <CardBody className='border-bottom p-2'>
                           <Row>
-                          <Col xl={6}>
-                          <p className='mb-0 text-muted'>Car</p>
-                          <p className='tx-16 tx-semibold'>243243545</p>
-                          </Col>
-                          <Col xl={6} className='text-end'>
-                          <p className='mb-0 text-muted'>Property</p>
-                          <p className='tx-15 tx-semibold'>A101</p>
-                          </Col>
+                            <Col xl={6}>
+                              <p className='mb-0 text-muted'>Loan Number</p>
+                              <p className='tx-16 tx-semibold'>243243545</p>
+                            </Col>
+                            <Col xl={6} className='text-end'>
+                              <p className='mb-0 text-muted'>Property</p>
+                              <p className='tx-15 tx-semibold'>A101</p>
+                            </Col>
                           </Row>
                         </CardBody>
                         <CardBody className='border-bottom p-2'>
                           <Row>
                             <Col xl={6}>
-                            <p className='mb-0 text-muted'>Name</p>
-                            <p className='tx-15 tx-semibold'>Rahul Sharma</p>
+                              <p className='mb-0 text-muted'>Name</p>
+                              <p className='tx-15 tx-semibold'>Rahul Sharma</p>
                             </Col>
                             <Col xl={6} className='text-end'>
-                            <p className='mb-0 text-muted'>Member</p>
+                              <p className='mb-0 text-muted'>Member</p>
                               <p className='tx-15 tx-semibold'>Owner</p>
 
                             </Col>
@@ -456,13 +488,16 @@ export default function Loans() {
                 </Modal.Body>
 
               </Modal>
+              {
+                viewloan&&singleLoanData&&<LoanViewModal show={viewloan} onClose={handleViewClose} initialVals={singleLoanData}/>
+              }
 
 
             </Card.Body>
           </Card>
         </Col>
       </Row>
-
+      <CustomToastContainer />
     </Fragment >
   );
 }

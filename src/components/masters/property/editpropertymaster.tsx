@@ -24,12 +24,21 @@ import { getSinglePropertyDetailsApi, getTenantOptions, updatePropertyApi } from
 interface Member {
     memberIdentifier: string;
     ownership: number;
-    isPrimary?:boolean;
+    isPrimary?: boolean;
     member: {
         firstName: string;
         middleName: string;
         lastName: string;
     };
+}
+interface TenantProperty {
+    tenantIdentifier: string;
+    tenant: {
+        firstName: string;
+        middleName: string;
+        lastName: string;
+    };
+
 }
 // interface Society {
 //     societyIdentifier: string,
@@ -91,6 +100,7 @@ interface Property {
     monthlyPaidArrears: string;
     monthlyPaidArrearsUpto: string;
     isPrimary: boolean;
+    tenantProperty: TenantProperty;
 }
 // const uploader = Uploader({
 //     apiKey: 'free'
@@ -136,6 +146,14 @@ export default function EditPropertyMaster() {
         monthlyMaintenanceUpto: "",
         monthlyPaidArrears: "",
         monthlyPaidArrearsUpto: "",
+        tenantProperty: {
+            tenantIdentifier: "",
+            tenant: {
+                firstName: "",
+                middleName: "",
+                lastName: ""
+            }
+        },
         isPrimary: false
     });
     const [societyData, setSocietyData] = useState<any[]>([]);
@@ -160,6 +178,7 @@ export default function EditPropertyMaster() {
         { value: "Unsold", label: "Unsold" },
         { value: "Blocked by Management", label: "Blocked by Management" },
         { value: "Refuge", label: "Refuge" },
+        { value: "Resale", label: "Resale" },
     ]
 
     const narration = [
@@ -201,6 +220,17 @@ export default function EditPropertyMaster() {
     }))
 
     useEffect(() => {
+        (async () => {
+            await fetchSocietiesForDropDown();
+            // await fetchTenantsForDropDown();
+            await fetchMembersForDropDown();
+
+            await fetchTenantOptions()
+        })()
+    }, [])
+    
+
+    useEffect(() => {
         const fetchPropertyDetails = async () => {
             try {
                 const response = await getSinglePropertyDetailsApi(identifier)
@@ -215,15 +245,7 @@ export default function EditPropertyMaster() {
         }
     }, [identifier])
 
-    useEffect(() => {
-        (async () => {
-            await fetchSocietiesForDropDown();
-            // await fetchTenantsForDropDown();
-            await fetchMembersForDropDown();
-
-            await fetchTenantOptions()
-        })()
-    }, [])
+    
 
     const fetchTenantOptions = async () => {
         try {
@@ -313,8 +335,10 @@ export default function EditPropertyMaster() {
 
         }
     };
+
+    
     const handleSubmit = async (values: any) => {
-        const formattedData = {
+        const formattedData: any = {
             propertyName: values.propertyName,
             status: values.status.value,
             narration: values.narration.value,
@@ -328,7 +352,11 @@ export default function EditPropertyMaster() {
             flatRegistrationNumber: values.flatRegistrationNumber,
             dateOfAgreement: values.dateOfAgreement,
             dateOfRegistration: values.dateOfRegistration,
-            memberIdentifier: values.member.value,
+            firstOwnerIdentifier: values.member.value,
+            coOwnerIdentifier: values.coOwner.value,
+            thirdOwnerIdentifier: values.thirdOwner.value,
+            fourthOwnerIdentifier: values.fourthOwner.value,
+            fifthOwnerIdentifier: values.fifthOwner.value,
             tenantIdentifier: values.tenant.value,
             rentAgreementStartDate: values.rentAgreementStartDate,
             rentAgreementEndDate: values.rentAgreementEndDate,
@@ -342,10 +370,15 @@ export default function EditPropertyMaster() {
             monthlyPaidMaintenance: values.monthlyMaintenance,
             monthlyPaidMaintenanceUpto: values.monthlyMaintenanceUpto,
             monthlyPaidArrears: values.monthlyPaidArrears,
-            monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto
+            monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto,
+
+        }
+        if (formattedData.dealType === "Self Occupied") {
+            formattedData.isPrimary = values.primaryProperty === "yes" ? true : false
+            formattedData.tenantIdentifier = null
         }
 
-        const response = await updatePropertyApi(formattedData,identifier)
+        const response = await updatePropertyApi(formattedData, identifier)
         if (response.status === 201 || response.status === 200) {
             showToast("success", "Property updated successfully")
         }
@@ -357,17 +390,17 @@ export default function EditPropertyMaster() {
         setCo_OwnerOptions(updatedData);
 
     };
-    const handleCoOwnerChange = async (identifier: string,memberId:string) => {
-        const updatedData = memberOptions.filter((coOwner: any) => coOwner.value !== identifier&&coOwner.value !== memberId);
+    const handleCoOwnerChange = async (identifier: string, memberId: string) => {
+        const updatedData = memberOptions.filter((coOwner: any) => coOwner.value !== identifier && coOwner.value !== memberId);
         setThirdOwnerOptions(updatedData);
     };
-    const handleThirdOwnerChange = async (identifier: string,memberid:string,coOwnerId:string) => {
-        const updatedData = memberOptions.filter((thirdOwner: any) => thirdOwner.value !== identifier&&thirdOwner.value !== memberid&&thirdOwner.value !== coOwnerId);
+    const handleThirdOwnerChange = async (identifier: string, memberid: string, coOwnerId: string) => {
+        const updatedData = memberOptions.filter((thirdOwner: any) => thirdOwner.value !== identifier && thirdOwner.value !== memberid && thirdOwner.value !== coOwnerId);
         setFourthOwnerOptions(updatedData);
     };
 
-    const handleFourthOwnerChange = async (identifier: string,memberid:string,coOwnerId:string,thirdOwnerId:string) => {
-        const updatedData = memberOptions.filter((fourthOwner: any) => fourthOwner.value !== identifier&&fourthOwner.value !== memberid&&fourthOwner.value !== coOwnerId&&fourthOwner.value !== thirdOwnerId);
+    const handleFourthOwnerChange = async (identifier: string, memberid: string, coOwnerId: string, thirdOwnerId: string) => {
+        const updatedData = memberOptions.filter((fourthOwner: any) => fourthOwner.value !== identifier && fourthOwner.value !== memberid && fourthOwner.value !== coOwnerId && fourthOwner.value !== thirdOwnerId);
         setFifthOwnerOptions(updatedData);
     };
 
@@ -375,13 +408,14 @@ export default function EditPropertyMaster() {
         const member = currentProperty?.propertyMembers.find((member: any) => member.ownership === ownership);
         if (member) {
             return {
-                value: member.memberIdentifier || "", 
+                value: member.memberIdentifier || "",
                 label: `${member.member.firstName || ''} ${member.member.middleName || ''} ${member.member.lastName || ''}`.trim() || ""
             };
         }
 
         return { value: "", label: "" };
     };
+
 
 
     return (
@@ -429,7 +463,7 @@ export default function EditPropertyMaster() {
                         fourthOwner: getMemberByOwnership(4),
                         fifthOwner: getMemberByOwnership(5),
 
-                        tenant: { value: currentProperty?.tenantIdentifier, label: currentProperty?.tenantName },
+                        tenant: { value: currentProperty?.tenantProperty?.tenantIdentifier, label: `${currentProperty?.tenantProperty?.tenant?.firstName || ''} ${currentProperty?.tenantProperty?.tenant?.middleName || ''} ${currentProperty?.tenantProperty?.tenant?.lastName || ''}`.trim() || "" },
 
                         rentAgreementStartDate: currentProperty?.rentAgreementStartDate,
 
@@ -465,21 +499,21 @@ export default function EditPropertyMaster() {
                     {({ setFieldValue, values }) => {
                         useEffect(() => {
                             if (values.member && values.member.value) {
-                              handleMemberChange(values.member.value);
+                                handleMemberChange(values.member.value);
                             }
-                          }, [values.member]); 
-                      
-                          useEffect(() => {
+                        }, [values.member,memberOptions]);
+
+                        useEffect(() => {
                             if (values.coOwner && values.coOwner.value) {
-                              handleCoOwnerChange(values.coOwner.value,values.member?.value);
+                                handleCoOwnerChange(values.coOwner.value, values.member?.value);
                             }
-                          }, [values.coOwner]); 
-                      
-                          useEffect(() => {
+                        }, [values.coOwner,memberOptions]);
+
+                        useEffect(() => {
                             if (values.thirdOwner && values.thirdOwner.value) {
-                              handleThirdOwnerChange(values.thirdOwner.value,values.member?.value,values.coOwner.value);
+                                handleThirdOwnerChange(values.thirdOwner.value, values.member?.value, values.coOwner.value);
                             }
-                          }, [values.thirdOwner]);
+                        }, [values.thirdOwner,memberOptions]);
                         return (
                             <FormikForm>
 
@@ -691,6 +725,7 @@ export default function EditPropertyMaster() {
                                                                             <Select
                                                                                 options={tenantOptions}
                                                                                 name='tenant'
+                                                                                value={values.tenant}
                                                                                 onChange={(selected) => setFieldValue("tenant", selected)}
                                                                                 placeholder="Select tenant"
                                                                                 classNamePrefix="Select2"
@@ -807,7 +842,7 @@ export default function EditPropertyMaster() {
                                                                             // isDisabled={coOwnerDisabled}
                                                                             onChange={(selected) => {
                                                                                 setFieldValue("coOwner", selected)
-                                                                                handleCoOwnerChange(selected?.value || "",values.member?.value)
+                                                                                handleCoOwnerChange(selected?.value || "", values.member?.value)
                                                                                 // setThirdOwnerDisabled(false)
                                                                             }}
                                                                             placeholder="Select Co Owner"
@@ -827,7 +862,7 @@ export default function EditPropertyMaster() {
                                                                             value={values.thirdOwner}
                                                                             // isDisabled={thirdOwnerDisabled}
                                                                             onChange={(selected) => {
-                                                                                handleThirdOwnerChange(selected?.value || "",values.member?.value,values.coOwner.value)
+                                                                                handleThirdOwnerChange(selected?.value || "", values.member?.value, values.coOwner.value)
                                                                                 setFieldValue("thirdOwner", selected)
                                                                                 // setFourthOwnerDisabled(false)
                                                                             }
@@ -849,7 +884,7 @@ export default function EditPropertyMaster() {
                                                                             value={values.fourthOwner}
                                                                             // isDisabled={fourthOwnerDisabled}
                                                                             onChange={(selected) => {
-                                                                                handleFourthOwnerChange(selected?.value || "",values.member?.value,values.coOwner?.value,values.thirdOwner?.value)
+                                                                                handleFourthOwnerChange(selected?.value || "", values.member?.value, values.coOwner?.value, values.thirdOwner?.value)
                                                                                 setFieldValue("fourthOwner", selected)
                                                                                 // setFifthOwnerDisabled(false)
                                                                             }}
