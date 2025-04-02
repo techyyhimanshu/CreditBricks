@@ -19,16 +19,21 @@ export const getAllSocietyApi = async (): Promise<any> => {
 export const getSocietyBulkUploadFileApi = async (): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/bulk-upload/society/get-format`, {
-            responseType: 'blob', 
+            responseType: 'blob',
         })
         return response
     } catch (error) {
         throw error
     }
 }
-export const addSocietyBulkUploadFileApi = async (data:any): Promise<any> => {
+export const addSocietyBulkUploadFileApi = async (data: any): Promise<any> => {
+    const formData = new FormData();
+    for (const key in data) {
+        formData.append(key, data[key]);
+
+    }
     try {
-        const response = await axiosInstance.post(`/bulk-upload/society`,data)
+        const response = await axiosInstance.post(`/bulk-upload/society`, formData)
         return response
     } catch (error) {
         throw error

@@ -344,16 +344,18 @@ export default function SocietyMaster() {
 
               </Form.Group> */}
               <Formik
+                enableReinitialize
                 initialValues={{ file: null }}
                 onSubmit={handleBulkUpload}
               >
                 {({ setFieldValue }) => (
                   <FormikForm>
                     <p>Browse or Drop the file</p>
-                    <Form.Group className="form-group">
+                    {/* <Form.Group className="form-group">
                       <div className='textnone'>
                         <input
                           type="file"
+                          name='file'
                           className="fileupload"
                           onChange={(event: any) => {
                             setFieldValue("file", event.currentTarget.files[0]);
@@ -361,6 +363,18 @@ export default function SocietyMaster() {
                         />
                         <p>Drag & Drop your file here or click</p>
                       </div>
+                    </Form.Group> */}
+                    <Form.Group className="form-group mb-1">
+                      <Form.Label>
+                        Upload <small className="float-end text-muted">Max size : 2MB</small>
+                      </Form.Label>
+                      <Form.Control
+                        type="file"
+                        name="file"
+                        onChange={(event: any) =>
+                          setFieldValue("file", event.currentTarget.files[0])
+                        }
+                      />
                     </Form.Group>
 
                     <Modal.Footer>
@@ -399,10 +413,10 @@ export default function SocietyMaster() {
               <div>
                 <p><strong>Instructions:</strong></p>
                 <ul>
-                  <li><strong>Download the Example File:</strong> Click the link provided to download the example CSV file.</li>
-                  <li><strong>Prepare Your Data:</strong> Open the downloaded CSV file in a spreadsheet program (like Excel or Google Sheets) and enter your data, ensuring that each column corresponds to the appropriate header.</li>
-                  <li><strong>Save the File:</strong> Save the spreadsheet as a CSV (Comma Separated Values) file.</li>
-                  <li><strong>Upload the File:</strong> Navigate to the bulk upload section within the system and upload the prepared CSV file.</li>
+                  <li><strong>Download the Example File:</strong> Click the link provided to download the example Excel file.</li>
+                  <li><strong>Prepare Your Data:</strong> Open the downloaded Excel file in a spreadsheet program (like Excel or Google Sheets) and enter your data, ensuring that each column corresponds to the appropriate header.</li>
+                  <li><strong>Save the File:</strong> Save the spreadsheet as a Excel (Comma Separated Values) file.</li>
+                  <li><strong>Upload the File:</strong> Navigate to the bulk upload section within the system and upload the prepared Excel file.</li>
                 </ul>
 
                 <Button variant="primary" onClick={handleDownloadFormat}>
