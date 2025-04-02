@@ -14,6 +14,7 @@ export const addUserApi = async (data: any): Promise<any> => {
         throw error
     }
 }
+
 export const getAllUserApi = async (): Promise<any> => {
     try {
         const response = await axios.get(`${baseUrl}/admin/user/all`)

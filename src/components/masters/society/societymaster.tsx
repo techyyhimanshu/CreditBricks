@@ -8,7 +8,7 @@ import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { addSocietyApi, deleteSocietyApi, getAllSocietyApi, updateSocietyApi } from '../../../api/society-api';
+import { addSocietyApi, addSocietyBulkUploadFileApi, deleteSocietyApi, getAllSocietyApi, getSocietyBulkUploadFileApi, updateSocietyApi } from '../../../api/society-api';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 import stateCities from "../stateCity.json"
 import { handleApiError } from '../../../helpers/handle-api-error';
@@ -129,38 +129,38 @@ export default function SocietyMaster() {
     // zipcode: Yup.string().required('Zipcode is required'),
   })
 
-  useEffect(() => {
-    const fetchSocietyData = async () => {
-      try {
-        const response = await getAllSocietyApi();
-        const formattedData = response.data.data.map((item: any, index: number) => ({
-          societyIdentifier: item.societyIdentifier,
-          sno: index + 1,
-          societyName: item.societyName,
-          societyManager: item.societyManager,
-          address: item.address,
-          country: item.country,
-          state: item.state,
-          city: item.city,
-          registrationNumber: item.registrationNumber,
-          tanNumber: item.tanNumber,
-          panNumber: item.panNumber,
-          signatory: item.signatory,
-          hsnCode: item.hsnCode,
-          gstin: item.gstin,
-          bankName: item.bankName,
-          accountNumber: item.accountNumber,
-          branchName: item.branchName,
-          ifscCode: item.ifscCode,
-          chequeFavourable: item.chequeFavourable
-        }));
-        setSocietyData(formattedData);
-      } catch (error) {
-        const errorMessage = handleApiError(error)
-        showToast("error", errorMessage)
-      }
-    };
+  const fetchSocietyData = async () => {
+    try {
+      const response = await getAllSocietyApi();
+      const formattedData = response.data.data.map((item: any, index: number) => ({
+        societyIdentifier: item.societyIdentifier,
+        sno: index + 1,
+        societyName: item.societyName,
+        societyManager: item.societyManager,
+        address: item.address,
+        country: item.country,
+        state: item.state,
+        city: item.city,
+        registrationNumber: item.registrationNumber,
+        tanNumber: item.tanNumber,
+        panNumber: item.panNumber,
+        signatory: item.signatory,
+        hsnCode: item.hsnCode,
+        gstin: item.gstin,
+        bankName: item.bankName,
+        accountNumber: item.accountNumber,
+        branchName: item.branchName,
+        ifscCode: item.ifscCode,
+        chequeFavourable: item.chequeFavourable
+      }));
+      setSocietyData(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  };
 
+  useEffect(() => {
     fetchSocietyData();
   }, []);
 
@@ -270,6 +270,42 @@ export default function SocietyMaster() {
     }
   };
 
+  const handleDownloadFormat = async () => {
+    try {
+      const res = await getSocietyBulkUploadFileApi()
+      const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'invoice-format.xlsx';
+
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleBulkUpload=async(values:any)=>{
+    try {
+      const formattedData:any={}
+      if(values.file){
+        formattedData.societyBulkFile=values.file
+      }
+      const response = await addSocietyBulkUploadFileApi(formattedData)
+      if (response.status === 200) {
+        viewDemoClose("bulkupload");
+        showToast("success", response.data.message)
+        fetchSocietyData()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally{
+      viewDemoClose("bulkupload");
+    }
+  }
+
 
   return (
     <Fragment>
@@ -292,7 +328,7 @@ export default function SocietyMaster() {
             </Modal.Header>
             <Modal.Body>
 
-              <p>Browse or Drop the file</p>
+              {/* <p>Browse or Drop the file</p>
               <Form.Group className="form-group">
                 <div className='textnone'>
                   <input type='file' className='fileupload' />
@@ -300,11 +336,42 @@ export default function SocietyMaster() {
                 </div>
 
 
-              </Form.Group>
+              </Form.Group> */}
+              <Formik
+                initialValues={{ file: null }}
+                onSubmit={handleBulkUpload}
+              >
+                {({ setFieldValue }) => (
+                  <FormikForm>
+                    <p>Browse or Drop the file</p>
+                    <Form.Group className="form-group">
+                      <div className='textnone'>
+                        <input
+                          type="file"
+                          className="fileupload"
+                          onChange={(event:any) => {
+                            setFieldValue("file", event.currentTarget.files[0]);
+                          }}
+                        />
+                        <p>Drag & Drop your file here or click</p>
+                      </div>
+                    </Form.Group>
+
+                    <Modal.Footer>
+                      <Button variant="default" onClick={() => { viewDemoClose("bulkupload"); }}>
+                        Close
+                      </Button>
+                      <Button type="submit" variant="primary">
+                        Save
+                      </Button>
+                    </Modal.Footer>
+                  </FormikForm>
+                )}
+              </Formik>
 
 
             </Modal.Body>
-            <Modal.Footer>
+            {/* <Modal.Footer>
               <Button variant="default" onClick={() => { viewDemoClose("bulkupload"); }}>
                 Close
               </Button>
@@ -312,7 +379,7 @@ export default function SocietyMaster() {
                 Save
               </Button>
 
-            </Modal.Footer>
+            </Modal.Footer> */}
           </Modal>
 
           <Modal centered show={downloadFormat}>
@@ -332,7 +399,7 @@ export default function SocietyMaster() {
                   <li><strong>Upload the File:</strong> Navigate to the bulk upload section within the system and upload the prepared CSV file.</li>
                 </ul>
 
-                <Button variant="primary" >
+                <Button variant="primary" onClick={handleDownloadFormat}>
                   Download File
                 </Button>
               </div>

@@ -65,6 +65,14 @@ export const getPropertComplaintsApi = async (propertyId: string): Promise<any> 
         throw error
     }
 }
+export const getPropertLoansApi = async (propertyId: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/property/${propertyId}/loans`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const updatePropertyApi = async (data: any, id: any): Promise<any> => {
     try {
        

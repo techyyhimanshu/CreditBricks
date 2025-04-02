@@ -16,12 +16,21 @@ import NoticeViewModal from '../../../common/modals/noticeViewModal';
 import AnnouncementModal from '../../../common/modals/announcementModal';
 import AnnouncementViewModal from '../../../common/modals/announcementViewModal';
 import { deleteAnnouncementApi, updateAnnouncementApi } from '../../../api/announcement-api';
+import WingModal from '../../../common/modals/wingModal';
+import { deleteWingApi, updateWingApi } from '../../../api/wing-api';
+import TowerModal from '../../../common/modals/towerModal';
+import { deleteTowerApi, updateTowerApi } from '../../../api/tower-api';
 
 export default function SocietyView() {
   const [singleSocietyData, setSingleSocietydata] = useState<any>([])
+  const [propertyData, setPropertyData] = useState<any>([])
   const [noticeData, setNoticeData] = useState<any>([])
   const [singleNoticedata, setSingleNoticeData] = useState<any>(null);
+  const [singleWingdata, setSingleWingData] = useState<any>(null);
+  const [singleTowerdata, setSingleTowerData] = useState<any>(null);
   const [addnotices, setaddnotices] = useState(false);
+  const [addwing, setaddwing] = useState(false);
+  const [addtower, setaddtower] = useState(false);
   const [viewnotice, setviewnotice] = useState(false);
   const [announcementData, setAnnouncementData] = useState<any>([])
   const [towerData, setTowerData] = useState<any>([])
@@ -78,6 +87,84 @@ export default function SocietyView() {
 
     },
   ];
+  const propertyColumns = [
+    {
+      name: 'S.No.',
+      selector: (row: any) => row.sno,
+      sortable: true,
+
+    },
+
+    {
+      name: 'Property Name',
+      cell: (row: any) => (
+        <Link to={`${import.meta.env.BASE_URL}property/propertyview/${row.propertyIdentifier}`}
+          state={{ propertyData: row }} className='text-info'>{row.propertyName}</Link>
+      ),
+      sortable: true,
+    },
+    {
+      name: 'Wing',
+      selector: (row: any) => row.wingName,
+      sortable: true,
+    },
+    {
+      name: 'Member Name',
+      cell: (row: any) => (
+        <Link to={`${import.meta.env.BASE_URL}members/membersProfile/${row.memberIdentifier}`} className='text-info'>{row.memberName}</Link>
+      ),
+      sortable: true,
+    },
+    {
+      name: 'Area(sq.ft)',
+      selector: (row: any) => row.area,
+      sortable: true,
+    },
+    {
+      name: 'Narration',
+      selector: (row: any) => row.narration,
+      sortable: true,
+    },
+    {
+      name: 'Tenant',
+      cell: (row: any) => {
+        const tenantName = row.tenantName;
+        const tenantIdentifier = row.tenantIdentifier;
+
+        return tenantName ? (
+          <Link to={`${import.meta.env.BASE_URL}tenant/tenantview/${tenantIdentifier}`} className='text-info'>
+            {tenantName}
+          </Link>
+        ) : (
+          <span>N/A</span>
+        );
+      },
+      sortable: true,
+    },
+    {
+      name: 'Status',
+      selector: (row: any) => row.status,
+      sortable: true,
+    },
+
+
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}property/editpropertymaster/${row.propertyIdentifier}`}>Edit</Link></Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.propertyIdentifier)}>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      ),
+    },
+  ]
   const announcementColumns = [
     {
       name: 'S.No',
@@ -137,7 +224,7 @@ export default function SocietyView() {
       name: 'Tower Name',
       cell: (row: any) => {
         return (
-          <span className='text-info cursor' onClick={() => { viewDemoShow("viewannouncement"), setSingleAnnouncementData(row) }}>{row.towerName}</span>
+          <span >{row.towerName}</span>
         )
       },
       sortable: true,
@@ -153,11 +240,8 @@ export default function SocietyView() {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => {
-              setSingleAnnouncementData(row);
-              viewDemoShow("addannouncement")
-            }}>Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger' onClick={() => handleAnnouncementDelete(row)}>Delete</Dropdown.Item>
+            <Dropdown.Item onClick={() => { setSingleTowerData(row), viewDemoShow("addtower") }}>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleTowerDelete(row.towerIdentifier)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -176,7 +260,7 @@ export default function SocietyView() {
       name: 'Wing Name',
       cell: (row: any) => {
         return (
-          <span className='text-info cursor' onClick={() => { viewDemoShow("viewannouncement"), setSingleAnnouncementData(row) }}>{row.wingName}</span>
+          <span >{row.wingName}</span>
         )
       },
       sortable: true,
@@ -191,11 +275,8 @@ export default function SocietyView() {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item onClick={() => {
-              setSingleAnnouncementData(row);
-              viewDemoShow("addannouncement")
-            }}>Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger' onClick={() => handleAnnouncementDelete(row)}>Delete</Dropdown.Item>
+            <Dropdown.Item onClick={() => { setSingleWingData(row), viewDemoShow("addwing") }}>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleWingDelete(row)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -207,6 +288,10 @@ export default function SocietyView() {
   const tableData = {
     columns,
     data: noticeData
+  };
+  const propertyTableData = {
+    columns: propertyColumns,
+    data: propertyData
   };
   const announcementTableData = {
     columns: announcementColumns,
@@ -221,6 +306,48 @@ export default function SocietyView() {
     data: wingData
   };
 
+  useEffect(() => {
+    if (singleSocietyData?.properties) {
+      const formattedData = singleSocietyData?.properties.map((property: any, index: number) => (
+        {
+          sno: index + 1,
+          propertyName: property.propertyName,
+          propertyIdentifier: property.propertyIdentifier,
+          memberName: `${property?.member?.firstName} ${property?.member?.middleName} ${property?.member?.lastName}`,
+          societyName: property.societyName,
+          societyIdentifier: property.societyIdentifier,
+          tenantName: `${property?.tenant?.firstName || ""} ${property?.tenant?.middleName || ""} ${property?.tenant?.lastName || ""}`,
+          tenantIdentifier: property.tenantIdentifier,
+          memberIdentifier: property?.member?.memberIdentifier || "",
+          flatRegistrationNumber: property.flatRegistrationNumber,
+          flatNumber: property.flatNumber,
+          wingName: property?.wing?.wingName || "",
+          status: property.status,
+          floorNumber: property.floorNumber,
+          narration: property.narration,
+          monthlyRent: property.monthlyRent,
+          area: property.area,
+          consumerElectricityNumber: property.consumerElectricityNumber,
+          gasConnectionNumber: property.gasConnectionNumber,
+          dateOfAgreement: property.dateOfAgreement,
+          dateOfRegistration: property.dateOfRegistration,
+          dealType: property.dealType,
+          intercomNumber: property.intercomNumber,
+          monthlyMaintenance: property.monthlyMaintenance,
+          monthlyMaintenanceUpto: property.monthlyMaintenanceUpto,
+          monthlyPaidArrears: property.monthlyPaidArrears,
+          monthlyPaidArrearsUpto: property.monthlyPaidArrearsUpto,
+          rentAggrementEndDate: property.rentAggrementEndDate,
+          rentAggrementStartDate: property.rentAggrementStartDate,
+          rentRegistrationId: property.rentRegistrationId
+        }
+      ));
+
+      setPropertyData(formattedData);
+    }
+
+  }, [singleSocietyData])
+
   const fetchSocietyData = async () => {
     try {
       const response = await getSocietyDetailsApi(identifier)
@@ -229,6 +356,7 @@ export default function SocietyView() {
 
     }
   }
+
   const fetchNoticeData = async () => {
     try {
       const response = await getNoticesOfSocietyApi(identifier)
@@ -269,6 +397,9 @@ export default function SocietyView() {
           sno: index + 1,
           towerId: notice.towerId,
           towerName: notice.towerName,
+          towerIdentifier: notice.towerIdentifier,
+          societyIdentifier: notice.societyIdentifier,
+          societyName: notice.societyName
         }
       ));
       setTowerData(formattedData);
@@ -284,9 +415,14 @@ export default function SocietyView() {
       const formattedData = data.map((notice: any, index: number) => (
         {
           sno: index + 1,
-          wingId: notice.wingId,
-          wingIdentifier: notice.wingIdentifier,
-          wingName: notice.wingName,
+          wingId: notice?.wingId || "",
+          wingIdentifier: notice?.wingIdentifier || "",
+          wingName: notice?.wingName || "",
+          towerIdentifier: notice?.towerIdentifier || "",
+          towerName: notice?.towerName || "",
+          societyIdentifier: notice?.societyIdentifier || "",
+          societyName: notice?.societyName || "",
+          ownerName: notice?.ownerName || ""
         }
       ));
       setWingData(formattedData);
@@ -390,6 +526,12 @@ export default function SocietyView() {
       case "addannouncement":
         setaddannouncement(true);
         break;
+      case "addwing":
+        setaddwing(true);
+        break;
+      case "addtower":
+        setaddtower(true);
+        break;
       case "viewannouncement":
         setviewannouncement(true);
         break;
@@ -406,6 +548,12 @@ export default function SocietyView() {
 
       case "addnotices":
         setaddnotices(false);
+        break;
+      case "addwing":
+        setaddwing(false);
+        break;
+      case "addtower":
+        setaddtower(false);
         break;
       case "viewnotice":
         setviewnotice(false);
@@ -511,6 +659,76 @@ export default function SocietyView() {
     viewDemoClose("addannouncement")
   }
 
+  const handleWingSubmit = (values: any) => {
+    const data = {
+      wingName: values.wingName,
+      towerIdentifier: values.tower?.value,
+      towerName: values.tower?.label,
+      societyIdentifier: values.society.value,
+      societyName: values.society.label,
+    }
+
+      ; (async () => {
+        try {
+          const response = await updateWingApi(data, singleWingdata.wingIdentifier)
+          if (response.status === 200) {
+            showToast("success", response.data.message)
+            // Update specific tower in the list
+            setWingData((prevData: any) =>
+              prevData.map((wing: any) =>
+                wing.wingIdentifier === singleWingdata.wingIdentifier
+                  ? { ...wing, ...data }
+                  : wing
+              )
+            );
+            setaddwing(false)
+          }
+        } catch (error: any) {
+          const errorMessage = handleApiError(error);
+          showToast("error", errorMessage);
+        } finally {
+          setaddwing(false)
+        }
+      })()
+
+
+
+
+  }
+
+  const handleTowerSubmit = (values: any) => {
+    const data = {
+      towerName: values.towerName,
+      ownerName: values.ownerName,
+      societyIdentifier: values.society.value,
+      societyName: values.society.label,
+    }
+
+      ; (async () => {
+        try {
+          const response = await updateTowerApi(data, singleTowerdata.towerIdentifier)
+          if (response.status === 200) {
+            showToast("success", response.data.message)
+            // Update specific tower in the list
+            setTowerData((prevData: any) =>
+              prevData.map((tower: any) =>
+                tower.towerIdentifier === singleTowerdata.towerIdentifier
+                  ? { ...tower, ...data }
+                  : tower
+              )
+            );
+            setaddtower(false)
+          }
+        } catch (error: any) {
+          const errorMessage = handleApiError(error);
+          showToast("error", errorMessage);
+        } finally {
+          setaddtower(false)
+        }
+      })()
+
+  }
+
   const handleNoticeClose = () => {
     viewDemoClose("addnotices")
     setSingleNoticeData(null)
@@ -531,6 +749,15 @@ export default function SocietyView() {
     setSingleAnnouncementData(null)
   }
 
+  const handleWingClose = () => {
+    viewDemoClose("addwing")
+    setSingleWingData(null)
+  }
+  const handleTowerClose = () => {
+    viewDemoClose("addtower")
+    setSingleTowerData(null)
+  }
+
   const handleNoticeDelete = (row: any) => {
     ; (async () => {
       try {
@@ -539,6 +766,38 @@ export default function SocietyView() {
         if (response.status === 200) {
           showToast("success", response.data.message)
           fetchNoticeData()
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
+
+  const handleWingDelete = (data: any) => {
+    ; (async () => {
+      try {
+        const response = await deleteWingApi(data.wingIdentifier)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          // Remove the tower from the table
+          setWingData((prevData: any) => prevData.filter((wing: any) => wing.wingIdentifier !== data.wingIdentifier))
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
+
+  const handleTowerDelete = (towerIdentifier: string) => {
+    ; (async () => {
+      try {
+        const response = await deleteTowerApi(towerIdentifier)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          // Remove the tower from the table
+          setTowerData((prevData: any) => prevData.filter((tower: any) => tower.towerIdentifier !== towerIdentifier))
         }
       } catch (error: any) {
         const errorMessage = handleApiError(error)
@@ -782,7 +1041,7 @@ export default function SocietyView() {
                       <Card.Body>
                         <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Properties Details</h5>
                         <div className='p-0 mt-4'>
-                          <table className='table'>
+                          {/* <table className='table'>
                             <thead>
                               <tr>
                                 <th>S.No.</th>
@@ -796,50 +1055,7 @@ export default function SocietyView() {
                                 <th>Action</th>
                               </tr>
                             </thead>
-                            {/* <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td><Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link></td>
-                                <td>A</td>
-                                <td><Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kumar Pandia</Link></td>
-                                <td>995</td>
-                                <td>2BHK</td>
-                                <td><Link to={``} className='text-info'>Sursbhi Verma</Link></td>
-                                <td>Occupied</td>
-                                <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
 
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}property/addpropertymaster`}>Edit</Link></Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-
-                              <tr>
-                                <td>1</td>
-                                <td><Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='text-info'>A101</Link></td>
-                                <td>A</td>
-                                <td><Link to={`${import.meta.env.BASE_URL}members/membersProfile`} className='text-info'>Mr. Vinod Kumar Pandia</Link></td>
-                                <td>995</td>
-                                <td>2BHK</td>
-                                <td><Link to={``} className='text-info'>Sursbhi Verma</Link></td>
-                                <td>Occupied</td>
-                                <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
-
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}property/addpropertymaster`}>Edit</Link></Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-
-                            </tbody> */}
                             <tbody>
                               {singleSocietyData.properties?.map((property: any, index: number) => (
                                 <tr key={property.propertyIdentifier}>
@@ -884,7 +1100,16 @@ export default function SocietyView() {
                                 </tr>
                               ))}
                             </tbody>
-                          </table>
+                          </table> */}
+                          <DataTableExtensions {...propertyTableData}>
+                            <DataTable
+                              columns={propertyColumns}
+                              data={propertyData}
+                              pagination
+
+
+                            />
+                          </DataTableExtensions>
                         </div>
                       </Card.Body>
                     </Card>
@@ -1268,54 +1493,7 @@ export default function SocietyView() {
                       <Card.Body>
                         <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Annoucements</h5>
                         <div className='p-0 mt-4'>
-                          {/* <table className='table'>
-                            <thead>
-                              <tr>
-                                <th>S.No.</th>
-                                <th>Name</th>
-                                <th>isActive</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td>Test Announcements</td>
-                                <td> <FormCheck type="checkbox" className='ms-4' disabled></FormCheck></td>
-                                <td>5/25/2023</td>
-                                <td>6/14/2023</td>
-                                <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
 
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-                              <tr>
-                                <td>2</td>
-                                <td>Test</td>
-                                <td> <FormCheck type="checkbox" className='ms-4' checked disabled></FormCheck></td>
-                                <td>5/25/2023</td>
-                                <td>6/14/2023</td>
-                                <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
-
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-                            </tbody>
-                          </table> */}
                           <div className="table-responsive ">
                             <DataTableExtensions {...announcementTableData}>
                               <DataTable
@@ -1474,6 +1652,13 @@ export default function SocietyView() {
       }
       {
         viewannouncement && singleAnnouncementData && <AnnouncementViewModal show={viewannouncement} onClose={handleAnnouncementViewClose} initialVals={singleAnnouncementData} />
+      }
+      {
+        singleWingdata && addwing && <WingModal show={addwing} onClose={handleWingClose} editing={true} initialVals={singleWingdata} onSave={handleWingSubmit} />
+      }
+
+      {
+        singleTowerdata && addtower && <TowerModal show={addtower} onClose={handleTowerClose} editing={true} initialVals={singleTowerdata} onSave={handleTowerSubmit} />
       }
 
       <CustomToastContainer />

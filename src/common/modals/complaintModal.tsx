@@ -107,7 +107,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
         <>
             <Modal show={show} size="lg" >
                 <Modal.Header>
-                    <Modal.Title>Announcement</Modal.Title>
+                    <Modal.Title>Complaint</Modal.Title>
                     <Button variant="" className="btn btn-close" onClick={(event) => { event.preventDefault(), onClose() }}>
                         x
                     </Button>

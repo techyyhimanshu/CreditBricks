@@ -1,30 +1,32 @@
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Modal, Button, Form, Dropdown } from "react-bootstrap";
+import { Col, Row, Card, Dropdown } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
-import Select from "react-select";
-import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+// import Select from "react-select";
+// import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
+// import * as Yup from 'yup';
 import { addTowerApi, deleteTowerApi, getAllTowerApi, updateTowerApi } from '../../api/tower-api';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi, getSocietyOwnerApi } from '../../api/society-api';
+import { getAllSocietyApi } from '../../api/society-api';
+import TowerModal from '../../common/modals/towerModal';
 // Define the types for the stateCities object
 export default function TowerMaster() {
     const [showModal, setShowModal] = useState(false);
     const [towerData, setTowerData] = useState<any[]>([]);
     const [societyData, setSocietyData] = useState<any[]>([]);
-    const [societyOwner, setSocietyOwner] = useState("");
+    const [societyOwner, ] = useState("");
 
-    const [currentTower, setCurrentTower] = useState({
-        towerIdentifier: null,
-        //    ownerName: '',
-        towerName: '',
-        societyIdentifier: null,
-        societyName: ''
-    });
+    // const [currentTower, setCurrentTower] = useState({
+    //     towerIdentifier: null,
+    //     //    ownerName: '',
+    //     towerName: '',
+    //     societyIdentifier: null,
+    //     societyName: ''
+    // });
+    const [currentTower, setCurrentTower] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
     useEffect(() => {
 
@@ -84,19 +86,19 @@ export default function TowerMaster() {
         {
             name: 'Action',
             sortable: true,
-            cell: (row: Row) =>(
+            cell: (row: Row) => (
                 <Dropdown >
-                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                    Action
-                  </Dropdown.Toggle>
+                    <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                        Action
+                    </Dropdown.Toggle>
 
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => openEditModal(row)}>Edit </Dropdown.Item>
-                    <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.towerIdentifier)}>Delete</Dropdown.Item>
-                  </Dropdown.Menu>
+                    <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => openEditModal(row)}>Edit </Dropdown.Item>
+                        <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.towerIdentifier)}>Delete</Dropdown.Item>
+                    </Dropdown.Menu>
                 </Dropdown>
 
-              ),
+            ),
 
             // cell: (row: Row) => (
             //     <div>
@@ -110,17 +112,17 @@ export default function TowerMaster() {
         columns,
         data: towerData
     };
-    const societyOptions = societyData?.map((society) => ({
-        value: society.societyIdentifier,
-        label: society.societyName
-    }))
-    const validationSchema = Yup.object({
-        towerName: Yup.string().required('Tower name is required'),
-        society: Yup.object({
-            value: Yup.string().required('Society is required'),
-        }).required('Society is required'),
-        // zipcode: Yup.string().required('Zipcode is required'),
-    })
+    // const societyOptions = societyData?.map((society) => ({
+    //     value: society.societyIdentifier,
+    //     label: society.societyName
+    // }))
+    // const validationSchema = Yup.object({
+    //     towerName: Yup.string().required('Tower name is required'),
+    //     society: Yup.object({
+    //         value: Yup.string().required('Society is required'),
+    //     }).required('Society is required'),
+    //     // zipcode: Yup.string().required('Zipcode is required'),
+    // })
     const fetchSocietiesForDropDown = async () => {
         try {
             const response = await getAllSocietyApi();
@@ -134,16 +136,16 @@ export default function TowerMaster() {
             showToast("error", errorMessage)
         }
     }
-    const fetchSocietyOwner = async (society: any) => {
-        try {
-            const response = await getSocietyOwnerApi(society.value);
-            const { societyManager } = response.data.data
-            setSocietyOwner(societyManager);
-        } catch (error) {
-            const errorMessage = handleApiError(error)
-            showToast("error", errorMessage)
-        }
-    }
+    // const fetchSocietyOwner = async (society: any) => {
+    //     try {
+    //         const response = await getSocietyOwnerApi(society.value);
+    //         const { societyManager } = response.data.data
+    //         setSocietyOwner(societyManager);
+    //     } catch (error) {
+    //         const errorMessage = handleApiError(error)
+    //         showToast("error", errorMessage)
+    //     }
+    // }
     const openAddModal = async () => {
         setIsEditing(false);
         currentTower.towerName = "";
@@ -232,6 +234,11 @@ export default function TowerMaster() {
             }
         })()
     }
+
+    const handleClose=()=>{
+        setShowModal(false)
+        setCurrentTower(null)
+      }
     return (
         <Fragment>
             <div className="breadcrumb-header justify-content-between">
@@ -242,81 +249,10 @@ export default function TowerMaster() {
                 <div className="right-content">
 
                     <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Tower/Block</button>
-                    <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-                        <Formik
-                            initialValues={{
-                                towerIdentifier: null,
-                                towerName: currentTower?.towerName || "",
-                                ownerName: currentTower?.ownerName,
-                                society: { value: currentTower?.societyIdentifier || "", label: currentTower?.societyName || "" }
-                            }
-                            }
-                            validationSchema={validationSchema}
-                            onSubmit={handleSubmit}
-                        >
-                            {({ setFieldValue, values, errors, touched }) => (
-                                <FormikForm>
-                                    <Modal.Header>
-                                        <Modal.Title>{isEditing ? "Edit Tower" : "Add Tower"}</Modal.Title>
-                                        <Button variant="" className="btn-close" onClick={() => setShowModal(false)}>
-                                            x
-                                        </Button>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <Form.Group className="form-group">
-                                            <Form.Label>Society<span className="text-danger">*</span></Form.Label>
-                                            <Select
-                                                options={societyOptions}
-                                                value={values.society}
-                                                onChange={(selected) => {
-                                                    setFieldValue("society", selected)
-                                                    fetchSocietyOwner(selected)
-                                                }}
-                                                placeholder="Select Society"
-                                                classNamePrefix="Select2"
-                                            />
-                                            {/* Custom Error Rendering for `society` */}
-                                            {touched.society?.value && errors.society?.value && (
-                                                <div className="text-danger">{errors.society.value}</div>
-                                            )}
-
-                                        </Form.Group>
-                                        {/* <Form.Group className="form-group">
-                                            <Form.Label>Owner</Form.Label>
-                                            <Field
-                                                type="text"
-                                                disabled={true}
-                                                value={societyOwner}
-                                                // name="ownerName"
-                                                className="form-control"
-                                            />
-                                            <ErrorMessage name="ownerName" component="div" className="text-danger" />
-                                        </Form.Group> */}
-                                        <Form.Group className="form-group">
-                                            <Form.Label>Tower/Block Name <span className="text-danger">*</span></Form.Label>
-                                            <Field
-                                                type="text"
-                                                name="towerName"
-                                                placeholder="Tower/Block name"
-                                                className="form-control"
-                                            />
-                                            <ErrorMessage name="towerName" component="div" className="text-danger" />
-                                        </Form.Group>
-
-
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                        <Button variant="default" onClick={() => setShowModal(false)}>
-                                            Close
-                                        </Button>
-                                        <button className="btn btn-primary" type="submit">
-                                            {isEditing ? "Save Changes" : "Add Tower"}
-                                        </button>
-                                    </Modal.Footer>
-                                </FormikForm>
-                            )}
-                        </Formik>
-                    </Modal>
+                    
+                    {
+                        currentTower && showModal ? <TowerModal show={showModal} onClose={handleClose} editing={isEditing} initialVals={currentTower} onSave={handleSubmit} /> : <TowerModal show={showModal} onClose={handleClose} editing={isEditing} onSave={handleSubmit} />
+                    }
 
                     <CustomToastContainer />
 
@@ -349,3 +285,80 @@ export default function TowerMaster() {
         </Fragment >
     );
 }
+
+
+
+// <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+//                         <Formik
+//                             initialValues={{
+//                                 towerIdentifier: null,
+//                                 towerName: currentTower?.towerName || "",
+//                                 ownerName: currentTower?.ownerName,
+//                                 society: { value: currentTower?.societyIdentifier || "", label: currentTower?.societyName || "" }
+//                             }
+//                             }
+//                             validationSchema={validationSchema}
+//                             onSubmit={handleSubmit}
+//                         >
+//                             {({ setFieldValue, values, errors, touched }) => (
+//                                 <FormikForm>
+//                                     <Modal.Header>
+//                                         <Modal.Title>{isEditing ? "Edit Tower" : "Add Tower"}</Modal.Title>
+//                                         <Button variant="" className="btn-close" onClick={() => setShowModal(false)}>
+//                                             x
+//                                         </Button>
+//                                     </Modal.Header>
+//                                     <Modal.Body>
+//                                         <Form.Group className="form-group">
+//                                             <Form.Label>Society<span className="text-danger">*</span></Form.Label>
+//                                             <Select
+//                                                 options={societyOptions}
+//                                                 value={values.society}
+//                                                 onChange={(selected) => {
+//                                                     setFieldValue("society", selected)
+//                                                     fetchSocietyOwner(selected)
+//                                                 }}
+//                                                 placeholder="Select Society"
+//                                                 classNamePrefix="Select2"
+//                                             />
+//                                             {touched.society?.value && errors.society?.value && (
+//                                                 <div className="text-danger">{errors.society.value as string}</div>
+//                                             )}
+
+//                                         </Form.Group>
+//                                         {/* <Form.Group className="form-group">
+//                                             <Form.Label>Owner</Form.Label>
+//                                             <Field
+//                                                 type="text"
+//                                                 disabled={true}
+//                                                 value={societyOwner}
+//                                                 // name="ownerName"
+//                                                 className="form-control"
+//                                             />
+//                                             <ErrorMessage name="ownerName" component="div" className="text-danger" />
+//                                         </Form.Group> */}
+//                                         <Form.Group className="form-group">
+//                                             <Form.Label>Tower/Block Name <span className="text-danger">*</span></Form.Label>
+//                                             <Field
+//                                                 type="text"
+//                                                 name="towerName"
+//                                                 placeholder="Tower/Block name"
+//                                                 className="form-control"
+//                                             />
+//                                             <ErrorMessage name="towerName" component="div" className="text-danger" />
+//                                         </Form.Group>
+
+
+//                                     </Modal.Body>
+//                                     <Modal.Footer>
+//                                         <Button variant="default" onClick={() => setShowModal(false)}>
+//                                             Close
+//                                         </Button>
+//                                         <button className="btn btn-primary" type="submit">
+//                                             {isEditing ? "Save Changes" : "Add Tower"}
+//                                         </button>
+//                                     </Modal.Footer>
+//                                 </FormikForm>
+//                             )}
+//                         </Formik>
+//                     </Modal>

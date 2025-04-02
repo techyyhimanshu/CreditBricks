@@ -2,15 +2,30 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Col, Row, Card, Tabs, Tab, FormLabel, Tooltip, Dropdown, OverlayTrigger } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
-import { getPropertComplaintsApi, getSinglePropertyDetailsApi } from '../../../api/property-api';
+import { getPropertComplaintsApi, getPropertLoansApi, getSinglePropertyDetailsApi } from '../../../api/property-api';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
+import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
+import LoanModal from '../../../common/modals/loanModal';
+import LoanViewModal from '../../../common/modals/loanViewModal';
+import ComplaintModal from '../../../common/modals/complaintModal';
+import ComplaintViewModal from '../../../common/modals/complaintViewModal';
+import { deleteComplaintApi, updateComplaintApi, updateComplaintStatusApi } from '../../../api/complaint-api';
+import { handleApiError } from '../../../helpers/handle-api-error';
+import { deleteLoanApi, updateLoanApi } from '../../../api/loan-api';
 
 
 export default function PropertyView() {
   const [singlePropertyData, setSinglePropertydata] = useState<any>([])
   const [complaintData, setComplaintData] = useState<any>([])
+  const [singleComplaintData, setSingleComplaintData] = useState<any>(null);
+  const [addcomplaint, setaddcomplaint] = useState(false);
+  const [viewcomplaint, setviewcomplaint] = useState(false);
+  const [loanData, setLoanData] = useState<any>([])
+  const [singleLoandata, setSingleLoanData] = useState<any>(null);
+  const [addloans, setaddloans] = useState(false);
+  const [viewloan, setviewloan] = useState(false);
   const params = useParams()
   const identifier = params.identifier as string
   // const location = useLocation();
@@ -19,7 +34,7 @@ export default function PropertyView() {
   //   return <p>No property data available.</p>;
   // }
 
-  const columns = [
+  const complaintColumns = [
     {
       name: 'S.No',
       cell: (_: any, index: number) => index + 1,
@@ -28,7 +43,9 @@ export default function PropertyView() {
     },
     {
       name: 'Complaint ID',
-      selector: (row: any) => row.id,
+      cell: (row: any) => (
+        <span className='text-info cursor' onClick={() => { viewDemoShow("viewcomplaint"), setSingleComplaintData(row) }}>{row.id}</span>
+      ),
       sortable: true,
     },
     {
@@ -57,15 +74,78 @@ export default function PropertyView() {
     {
       name: 'Action',
       sortable: true,
-      cell: () => (
+      cell: (row: any) => (
         <Dropdown >
           <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
             Action
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item >Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger' >Delete</Dropdown.Item>
+            <Dropdown.Item onClick={() => { setSingleComplaintData(row), viewDemoShow("addcomplaint") }}>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleComplaintDelete(row.id)}>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
+      ),
+
+    },
+  ];
+
+  const loanColumns = [
+    {
+      name: 'S.No',
+      selector: (row: any) => row.sno,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Loan Number',
+      cell: (row: any) => (
+        <span className='text-info cursor' onClick={() => { setSingleLoanData(row), viewDemoShow("viewloan") }}>{row.loanNumber}</span>
+      ),
+      sortable: true,
+    },
+
+    {
+      name: 'Member',
+      selector: (row: any) => row.memberType,
+      sortable: true,
+    },
+    {
+      name: 'Name',
+      selector: (row: any) => row.fullName,
+      sortable: true,
+    },
+    {
+      name: 'Loan Type',
+      selector: (row: any) => row.type,
+      sortable: true,
+    },
+
+
+    {
+      name: 'Loan Period',
+      selector: (row: any) => row.period,
+      sortable: true,
+    },
+    {
+      name: 'Loan Amount',
+      selector: (row: any) => row.amount,
+      sortable: true,
+    },
+
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => { setSingleLoanData(row), viewDemoShow("addloans") }}>Edit </Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleLoanDelete(row)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
 
@@ -75,8 +155,12 @@ export default function PropertyView() {
   ];
 
   const tableData = {
-    columns,
+    columns: complaintColumns,
     data: complaintData
+  };
+  const loanTableData = {
+    columns: loanColumns,
+    data: loanData
   };
 
   useEffect(() => {
@@ -91,17 +175,255 @@ export default function PropertyView() {
     if (identifier) {
       fetchPropertyData()
       fetchComplaintData()
+      fetchLoanData()
     }
-  }, [])
+  }, [identifier])
 
   const fetchComplaintData = async () => {
     try {
       const response = await getPropertComplaintsApi(identifier)
-      setComplaintData(response?.data?.data || [])
+      const formattedData = response.data.data.map((complaint: any, index: number) => {
+        return {
+          sno: index + 1,
+          id: complaint?.id || "",
+          categoryName: complaint?.category?.name || "",
+          categoryId: complaint?.category?.id || "",
+          propertyName: complaint?.property?.propertyName || "",
+          propertyIdentifier: complaint?.property?.propertyIdentifier || "",
+          societyIdentifier: complaint?.society?.societyIdentifier || "",
+          societyName: complaint?.society?.societyName || "",
+          contactPersonName: complaint?.complaintAllocation?.vendor?.contactPersonName || "",
+          contactPersonNumber: complaint?.complaintAllocation?.vendor?.contactPersonNumber || "",
+          createdAt: complaint?.createdAt || "",
+          status: complaint?.status || "",
+          remarks: complaint?.remarks || "",
+          priority: complaint?.priority || "",
+          description: complaint?.description || "",
+          issueFilePath: complaint?.issueFilePath || "",
+          subCategory: complaint?.subCategory?.name || "",
+        }
+      })
+      setComplaintData(formattedData || []);
+
     } catch (error) {
 
     }
   }
+  const fetchLoanData = async () => {
+    try {
+      const response = await getPropertLoansApi(identifier)
+      const formattedData = response.data.data.map((complaint: any, index: number) => {
+        return {
+          sno: index + 1,
+          loanIdentifier: complaint?.loanIdentifier || "",
+          type: complaint?.type || "",
+          memberType: complaint?.memberType || "",
+          fullName: complaint?.fullName || "",
+          loanNumber: complaint?.loanNumber || "",
+          period: complaint?.period || "",
+          amount: complaint?.amount || "",
+          monthlyEmi: complaint?.monthlyEmi || "",
+          startDate: complaint?.startDate || "",
+          endDate: complaint?.endDate || "",
+          propertyIdentifier: complaint?.propertyIdentifier || "",
+          propertyName: complaint?.propertyName || "",
+          bankName: complaint?.bankName || "",
+          bankAddress: complaint?.bankAddress || "",
+          loanFilePath: complaint?.loanFilePath || "",
+        }
+      })
+      setLoanData(formattedData);
+    } catch (error) {
+
+    }
+  }
+
+  const viewDemoShow = (modal: any) => {
+    switch (modal) {
+      case "addcomplaint":
+        setaddcomplaint(true);
+        break;
+
+      case "addloans":
+        setaddloans(true);
+        break;
+      case "viewcomplaint":
+        setviewcomplaint(true);
+        break;
+      case "viewloan":
+        setviewloan(true);
+        break;
+
+
+    }
+  };
+
+  const viewDemoClose = (modal: any) => {
+    switch (modal) {
+      case "addcomplaint":
+        setaddcomplaint(false);
+        break;
+
+      case "addloans":
+        setaddloans(false);
+        break;
+      case "viewcomplaint":
+        setviewcomplaint(false);
+        break;
+      case "viewloan":
+        setviewloan(false);
+        break;
+
+    }
+  };
+
+  const handleLoanSubmit = async (values: any) => {
+    const formattedData: any = {
+      noticeSubject: values.subject,
+      type: values.type.value,
+      memberType: values.memberType.value,
+      period: values.period.value,
+      fullName: values.fullName,
+      loanNumber: values.loanNumber,
+      amount: values.amount,
+      monthlyEmi: values.monthlyEmi,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      bankName: values.bankName,
+      bankAddress: values.bankAddress,
+    }
+    // if (values?.tower?.value) {
+    //   formattedData.towerIdentifier = values.tower.value
+    // }
+    // if (values?.wing?.value) {
+    //   formattedData.wingIdentifier = values.wing.value
+    // }
+    if (values?.property?.value) {
+      formattedData.propertyIdentifier = values.property.value
+    }
+
+    if (values.file) {
+      formattedData.loanFile = values.file
+    }
+    try {
+      let response;
+
+      response = await updateLoanApi(formattedData, singleLoandata?.loanIdentifier)
+
+      if (response.status === 200) {
+        viewDemoClose("addloan");
+        showToast("success", response.data.message)
+        fetchLoanData()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      setSingleLoanData(null)
+    }
+    viewDemoClose("addloan")
+  }
+
+  const handleComplaintSubmit = async (values: any) => {
+    const formattedData: any = {
+      propertyIdentifier: values?.property?.value || "",
+      societyIdentifier: values?.society?.value || "",
+      categoryId: values?.complaintCategory?.value || "",
+      description: values.complaintDescription || "",
+      priority: values?.priority?.value || "",
+    }
+    if (values.complaintFile) {
+      formattedData.complaintFile = values.complaintFile
+    }
+    try {
+      let response;
+
+      response = await updateComplaintApi(formattedData, singleComplaintData?.id)
+
+
+      if (response.status === 200 || response.status === 201) {
+        showToast("success", response.data.message)
+        fetchComplaintData()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+    viewDemoClose("addcomplaint")
+  }
+
+  const handleLoanClose = () => {
+    viewDemoClose("addloans")
+    setSingleLoanData(null)
+  }
+
+  const handleLoanViewClose = () => {
+    viewDemoClose("viewloan")
+    setSingleLoanData(null)
+  }
+
+  const handleComplaintClose = () => {
+    viewDemoClose("addcomplaint")
+    setSingleComplaintData(null)
+  }
+
+  const handleComplaintViewClose = () => {
+    viewDemoClose("viewcomplaint")
+    setSingleComplaintData(null)
+  }
+
+  const handleLoanDelete = (row: any) => {
+    ; (async () => {
+      try {
+
+        const response = await deleteLoanApi(row.loanIdentifier)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          // setLoanData((prevData: any) => prevData.filter((society: any) => society.loanIdentifier !== row.loanIdentifier))
+          fetchLoanData()
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
+
+  const handleComplaintDelete = (id: string) => {
+    ; (async () => {
+      try {
+
+        const response = await deleteComplaintApi(id)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          // setComplaintData((prevData: any) => prevData.filter((society: any) => society.id !== id))
+          fetchComplaintData()
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
+
+  const handleComplaintStatusUpdate = async (values: any, id: string) => {
+    const data = {
+      status: values.status.value,
+      remarks: values.remarks
+    }
+    try {
+      const response = await updateComplaintStatusApi(data, id);
+      if (response.status === 200) {
+        showToast("success", response.data.message);
+        fetchComplaintData()
+      }
+      viewDemoClose("viewcomplaint")
+    } catch (error) {
+
+    }
+    viewDemoClose("viewcomplaint")
+  }
+
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -471,7 +793,7 @@ export default function PropertyView() {
                       <Card.Body>
                         <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Loan</h5>
 
-                        <table className='table'>
+                        {/* <table className='table'>
                           <thead>
                             <tr>
                               <th>S.No.</th>
@@ -524,7 +846,18 @@ export default function PropertyView() {
                               </Dropdown></td>
                             </tr>
                           </tbody>
-                        </table>
+                        </table> */}
+                        <div className="table-responsive ">
+                          <DataTableExtensions {...loanTableData}>
+                            <DataTable
+                              columns={loanColumns}
+                              data={loanData}
+                              pagination
+
+
+                            />
+                          </DataTableExtensions>
+                        </div>
                         {/* N/A */}
 
                       </Card.Body>
@@ -594,7 +927,7 @@ export default function PropertyView() {
                         <div className="table-responsive ">
                           <DataTableExtensions {...tableData}>
                             <DataTable
-                              columns={columns}
+                              columns={complaintColumns}
                               data={complaintData}
                               pagination
 
@@ -623,7 +956,19 @@ export default function PropertyView() {
 
 
       </Row>
-
+      {
+        singleLoandata && addloans && <LoanModal show={addloans} onClose={handleLoanClose} editing={true} initialVals={singleLoandata} onSave={handleLoanSubmit} />
+      }
+      {
+        viewloan && singleLoandata && <LoanViewModal show={viewloan} onClose={handleLoanViewClose} initialVals={singleLoandata} />
+      }
+      {
+        singleComplaintData && addcomplaint && <ComplaintModal show={addcomplaint} onClose={handleComplaintClose} editing={true} initialVals={singleComplaintData} onSave={handleComplaintSubmit} />
+      }
+      {
+        viewcomplaint && singleComplaintData && <ComplaintViewModal show={viewcomplaint} onClose={handleComplaintViewClose} initialVals={singleComplaintData} onSave={handleComplaintStatusUpdate} />
+      }
+      <CustomToastContainer />
 
     </Fragment >
   );

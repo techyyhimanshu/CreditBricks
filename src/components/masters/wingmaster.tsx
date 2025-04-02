@@ -1,33 +1,36 @@
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Modal, Button, Form, Dropdown } from "react-bootstrap";
+import { Col, Row, Card, Dropdown } from "react-bootstrap";
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
-import Select from "react-select";
-import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
+// import Select from "react-select";
+// import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 // import * as Yup from 'yup';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi, getSocietyOwnerApi, getTowersOfSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi } from '../../api/society-api';
 import { addWingApi, deleteWingApi, getAllWingApi, updateWingApi } from '../../api/wing-api';
 import { Link } from 'react-router-dom';
+import WingModal from '../../common/modals/wingModal';
 // Define the types for the stateCities object
 export default function WingMaster() {
     const [showModal, setShowModal] = useState(false);
-    const [societyData, setSocietyData] = useState<any[]>([]);
+    const [, setSocietyData] = useState<any[]>([]);
     const [wingData, setWingData] = useState<any[]>([]);
-    const [societyOwner, setSocietyOwner] = useState("");
-    const [currentWing, setCurrentWing] = useState({
-        wingIdentifier: null,
-        wingName: '',
-        towerIdentifier: null,
-        towerName: null,
-        societyIdentifier: null,
-        societyName: "",
-      //  ownerName: ""
-    });
+    const [societyOwner, ] = useState("");
+    // const [currentWing, setCurrentWing] = useState({
+    //     wingIdentifier: null,
+    //     wingName: '',
+    //     towerIdentifier: null,
+    //     towerName: null,
+    //     societyIdentifier: null,
+    //     societyName: "",
+    //     //  ownerName: ""
+    // });
+    const [currentWing, setCurrentWing] = useState<any>(null);
     const [isEditing, setIsEditing] = useState(false);
+
     useEffect(() => {
         const fetchWingData = async () => {
             try {
@@ -72,8 +75,8 @@ export default function WingMaster() {
             name: 'Wing Name',
             // selector: (row: Row) => row.wingName,
             cell: (row: Row) => (
-                    <Link state={row.wingIdentifier} to={`${import.meta.env.BASE_URL}property/propertymaster`} className='text-info'>{row.wingName}</Link>
-                  ),
+                <Link state={row.wingIdentifier} to={`${import.meta.env.BASE_URL}property/propertymaster`} className='text-info'>{row.wingName}</Link>
+            ),
             sortable: true,
         },
 
@@ -99,17 +102,17 @@ export default function WingMaster() {
 
             cell: (row: Row) => (
                 <Dropdown >
-                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                    Action
-                  </Dropdown.Toggle>
+                    <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                        Action
+                    </Dropdown.Toggle>
 
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => openEditModal(row)}>Edit </Dropdown.Item>
-                    <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)}>Delete</Dropdown.Item>
-                  </Dropdown.Menu>
+                    <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => openEditModal(row)}>Edit </Dropdown.Item>
+                        <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)}>Delete</Dropdown.Item>
+                    </Dropdown.Menu>
                 </Dropdown>
 
-              ),
+            ),
             // cell: (row: Row) => (
             //     <div>
             //         <button type="button" className="btn btn-light btn-sm" onClick={() => openEditModal(row)} >Edit</button>
@@ -122,11 +125,11 @@ export default function WingMaster() {
         columns,
         data: wingData
     };
-    const societyOptions = societyData?.map((society) => ({
-        value: society.societyIdentifier,
-        label: society.societyName
-    }))
-    const [towerOptions, setTowerOptions] = useState([]);
+    // const societyOptions = societyData?.map((society) => ({
+    //     value: society.societyIdentifier,
+    //     label: society.societyName
+    // }))
+    // const [, setTowerOptions] = useState([]);
 
     // const validationSchema = Yup.object({
     //     society: Yup.object({
@@ -149,37 +152,37 @@ export default function WingMaster() {
             showToast("error", errorMessage)
         }
     }
-    const fetchTowersForDropDown = async (society: any) => {
-        try {
-            const response = await getTowersOfSocietyApi(society.value);
-            const formattedData = response.data.data.map((item: any) => ({
-                value: item.towerIdentifier,
-                label: item.towerName,
-            }));
-            setTowerOptions(formattedData);
-        } catch (error) {
-            const errorMessage = handleApiError(error)
-            showToast("error", errorMessage)
-        }
-    }
-    const fetchSocietyOwner = async (society: any) => {
-        try {
-            const response = await getSocietyOwnerApi(society.value);
-            const { societyManager } = response.data.data
-            setSocietyOwner(societyManager);
-        } catch (error) {
-            const errorMessage = handleApiError(error)
-            showToast("error", errorMessage)
-        }
-    }
+    // const fetchTowersForDropDown = async (society: any) => {
+    //     try {
+    //         const response = await getTowersOfSocietyApi(society.value);
+    //         const formattedData = response.data.data.map((item: any) => ({
+    //             value: item.towerIdentifier,
+    //             label: item.towerName,
+    //         }));
+    //         setTowerOptions(formattedData);
+    //     } catch (error) {
+    //         const errorMessage = handleApiError(error)
+    //         showToast("error", errorMessage)
+    //     }
+    // }
+    // const fetchSocietyOwner = async (society: any) => {
+    //     try {
+    //         const response = await getSocietyOwnerApi(society.value);
+    //         const { societyManager } = response.data.data
+    //         setSocietyOwner(societyManager);
+    //     } catch (error) {
+    //         const errorMessage = handleApiError(error)
+    //         showToast("error", errorMessage)
+    //     }
+    // }
     const openAddModal = async () => {
         setIsEditing(false);
-        currentWing.wingIdentifier = null
-        currentWing.wingName = ''
-        currentWing.towerIdentifier = null
-        currentWing.towerName = null
-        currentWing.societyIdentifier = null
-        currentWing.societyName = ""
+        // currentWing.wingIdentifier = null
+        // currentWing.wingName = ''
+        // currentWing.towerIdentifier = null
+        // currentWing.towerName = null
+        // currentWing.societyIdentifier = null
+        // currentWing.societyName = ""
         // currentWing. = ";
         setShowModal(true);
         await fetchSocietiesForDropDown()
@@ -253,20 +256,25 @@ export default function WingMaster() {
 
     }
     const handleDelete = (data: any) => {
-            ; (async () => {
-                try {
-                    const response = await deleteWingApi(data.wingIdentifier)
-                    if (response.status === 200) {
-                        showToast("success", response.data.message)
-                        // Remove the tower from the table
-                        setWingData(prevData => prevData.filter(wing => wing.wingIdentifier !== data.wingIdentifier))
-                    }
-                } catch (error: any) {
-                    const errorMessage = handleApiError(error)
-                    showToast("error", errorMessage)
+        ; (async () => {
+            try {
+                const response = await deleteWingApi(data.wingIdentifier)
+                if (response.status === 200) {
+                    showToast("success", response.data.message)
+                    // Remove the tower from the table
+                    setWingData(prevData => prevData.filter(wing => wing.wingIdentifier !== data.wingIdentifier))
                 }
-            })()
+            } catch (error: any) {
+                const errorMessage = handleApiError(error)
+                showToast("error", errorMessage)
+            }
+        })()
     }
+
+    const handleClose=()=>{
+        setShowModal(false)
+        setCurrentWing(null)
+      }
     return (
         <Fragment>
             <div className="breadcrumb-header justify-content-between">
@@ -277,101 +285,10 @@ export default function WingMaster() {
                 <div className="right-content">
 
                     <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Wing</button>
-                    <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-                        <Formik
-                            initialValues={{
-                                wingIdentifier: null,
-                                wingName: currentWing?.wingName || "",
-                                tower: { value: currentWing?.towerIdentifier || "", label: currentWing?.towerName || "" },
-                                society: { value: currentWing?.societyIdentifier || "", label: currentWing?.societyName || "" },
-                                ownerName: societyOwner
-                            }
-                            }
-                            // validationSchema={validationSchema}
-                            onSubmit={handleSubmit}
-                        >
-                            {({ setFieldValue, values, errors, touched }) => (
-
-                                <FormikForm>
-                                    <Modal.Header>
-                                        <Modal.Title>{isEditing ? "Edit Tower" : "Add Wing"}</Modal.Title>
-                                        <Button variant="" className="btn-close" onClick={() => setShowModal(false)}>
-                                            x
-                                        </Button>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <Form.Group className="form-group">
-                                            <Form.Label>Society<span className="text-danger">*</span></Form.Label>
-                                            <Select
-                                                options={societyOptions}
-                                                value={values.society}
-                                                onChange={(selected) => {
-                                                    setFieldValue("society", selected)
-                                                    setFieldValue("tower", null); // Reset tower selection
-                                                    fetchTowersForDropDown(selected); // Fetch towers for the selected society
-                                                    fetchSocietyOwner(selected)
-                                                }}
-                                                placeholder="Select Society"
-                                                classNamePrefix="Select2"
-                                            />
-                                            {/* Custom Error Rendering for `society` */}
-                                            {touched.society?.value && errors.society?.value && (
-                                                <div className="text-danger">{errors.society.value}</div>
-                                            )}
-
-                                        </Form.Group>
-                                        {/* <Form.Group className="form-group">
-                                            <Form.Label>Owner</Form.Label>
-
-                                            <Field
-                                                type="text"
-                                                disabled={true}
-                                                name="ownerName"
-                                                value={societyOwner}
-                                                className="form-control"
-                                            />
-
-                                        </Form.Group> */}
-                                        <Form.Group className="form-group">
-                                            <Form.Label>
-                                                Tower
-                                            </Form.Label>
-                                            <Select
-                                                options={towerOptions}
-                                                value={values.tower}
-                                                onChange={(selected) => setFieldValue("tower", selected)}
-                                                placeholder="Select Tower"
-                                                classNamePrefix="Select2"
-                                            />
-                                            {/* {touched.tower?.value && errors.tower?.value && (
-                                                <div className="text-danger">{errors.tower.value}</div>
-                                            )} */}
-                                        </Form.Group>
-                                        <Form.Group className="form-group">
-                                            <Form.Label>Wing Name <span className="text-danger">*</span></Form.Label>
-                                            <Field
-                                                type="text"
-                                                name="wingName"
-                                                placeholder="Wing Name"
-                                                className="form-control"
-                                            />
-                                            <ErrorMessage name="wingName" component="div" className="text-danger" />
-                                        </Form.Group>
-
-
-                                    </Modal.Body>
-                                    <Modal.Footer>
-                                        <Button variant="default" onClick={() => setShowModal(false)}>
-                                            Close
-                                        </Button>
-                                        <Button className="btn btn-primary" type="submit" >
-                                            {isEditing ? "Save Changes" : "Add Wing"}
-                                        </Button>
-                                    </Modal.Footer>
-                                </FormikForm>
-                            )}
-                        </Formik>
-                    </Modal>
+                    
+                    {
+                        currentWing && showModal ? <WingModal show={showModal} onClose={handleClose} editing={isEditing} initialVals={currentWing} onSave={handleSubmit} /> : <WingModal show={showModal} onClose={handleClose} editing={isEditing} onSave={handleSubmit} />
+                    }
 
                     <CustomToastContainer />
 
@@ -404,3 +321,99 @@ export default function WingMaster() {
         </Fragment >
     );
 }
+
+
+// <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+//     <Formik
+//         initialValues={{
+//             wingIdentifier: null,
+//             wingName: currentWing?.wingName || "",
+//             tower: { value: currentWing?.towerIdentifier || "", label: currentWing?.towerName || "" },
+//             society: { value: currentWing?.societyIdentifier || "", label: currentWing?.societyName || "" },
+//             ownerName: societyOwner
+//         }
+//         }
+//         // validationSchema={validationSchema}
+//         onSubmit={handleSubmit}
+//     >
+//         {({ setFieldValue, values, errors, touched }) => (
+
+//             <FormikForm>
+//                 <Modal.Header>
+//                     <Modal.Title>{isEditing ? "Edit Tower" : "Add Wing"}</Modal.Title>
+//                     <Button variant="" className="btn-close" onClick={() => setShowModal(false)}>
+//                         x
+//                     </Button>
+//                 </Modal.Header>
+//                 <Modal.Body>
+//                     <Form.Group className="form-group">
+//                         <Form.Label>Society<span className="text-danger">*</span></Form.Label>
+//                         <Select
+//                             options={societyOptions}
+//                             value={values.society}
+//                             onChange={(selected) => {
+//                                 setFieldValue("society", selected)
+//                                 setFieldValue("tower", null); 
+//                                 fetchTowersForDropDown(selected); 
+//                                 fetchSocietyOwner(selected)
+//                             }}
+//                             placeholder="Select Society"
+//                             classNamePrefix="Select2"
+//                         />
+//                         {touched.society?.value && errors.society?.value && (
+//                             <div className="text-danger">{errors.society.value}</div>
+//                         )}
+
+//                     </Form.Group>
+//                     {/* <Form.Group className="form-group">
+//                                             <Form.Label>Owner</Form.Label>
+
+//                                             <Field
+//                                                 type="text"
+//                                                 disabled={true}
+//                                                 name="ownerName"
+//                                                 value={societyOwner}
+//                                                 className="form-control"
+//                                             />
+
+//                                         </Form.Group> */}
+//                     <Form.Group className="form-group">
+//                         <Form.Label>
+//                             Tower
+//                         </Form.Label>
+//                         <Select
+//                             options={towerOptions}
+//                             value={values.tower}
+//                             onChange={(selected) => setFieldValue("tower", selected)}
+//                             placeholder="Select Tower"
+//                             classNamePrefix="Select2"
+//                         />
+//                         {/* {touched.tower?.value && errors.tower?.value && (
+//                                                 <div className="text-danger">{errors.tower.value}</div>
+//                                             )} */}
+//                     </Form.Group>
+//                     <Form.Group className="form-group">
+//                         <Form.Label>Wing Name <span className="text-danger">*</span></Form.Label>
+//                         <Field
+//                             type="text"
+//                             name="wingName"
+//                             placeholder="Wing Name"
+//                             className="form-control"
+//                         />
+//                         <ErrorMessage name="wingName" component="div" className="text-danger" />
+//                     </Form.Group>
+
+
+//                 </Modal.Body>
+//                 <Modal.Footer>
+//                     <Button variant="default" onClick={() => setShowModal(false)}>
+//                         Close
+//                     </Button>
+//                     <Button className="btn btn-primary" type="submit" >
+//                         {isEditing ? "Save Changes" : "Add Wing"}
+//                     </Button>
+//                 </Modal.Footer>
+//             </FormikForm>
+//         )}
+//     </Formik>
+// </Modal>
