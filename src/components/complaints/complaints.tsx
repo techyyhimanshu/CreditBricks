@@ -15,6 +15,7 @@ import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import ComplaintModal from '../../common/modals/complaintModal';
 import ComplaintViewModal from '../../common/modals/complaintViewModal';
+import TestLoader from '../../layout/layoutcomponent/testloader';
 
 export default function Complaints() {
 
@@ -63,6 +64,7 @@ export default function Complaints() {
   // });
   const [complaintToView, setComplaintToView] = useState<any>(null);
   const [editing, setEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [complaintCategoriesData, setComplaintCategoriesData] = useState([]);
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
   const [complaintIdToAssign, setComplaintIdToAssign] = useState({
@@ -210,10 +212,10 @@ export default function Complaints() {
     { value: "verified", label: "Verified" },
     { value: "completed", label: "Completed" },
   ]
-  
+
 
   const property = [
-    { value: "", label: "All" }, 
+    { value: "", label: "All" },
     ...propertiesForDropDown.map((property: any) => ({
       value: property.propertyIdentifier,
       label: property.propertyName
@@ -289,6 +291,8 @@ export default function Complaints() {
     } catch (error) {
       const errorMessage = handleApiError(error);
       showToast("error", errorMessage);
+    } finally {
+      setIsLoading(false)
     }
   }
   const fetchAllComplaintCategories = async () => {
@@ -940,6 +944,8 @@ export default function Complaints() {
                     columns={columns}
                     data={complaintData}
                     pagination
+                    progressPending={isLoading}
+                    progressComponent={<TestLoader />}
 
 
                   />

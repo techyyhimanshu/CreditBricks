@@ -10,6 +10,7 @@ import "react-data-table-component-extensions/dist/index.css";
 import { deleteVendorApi, getAllVendorApi } from '../../../api/vendor-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
+import TestLoader from '../../../layout/layoutcomponent/testloader';
 
 
 
@@ -18,6 +19,7 @@ export default function VendorMaster() {
   const [vendorData, setVendordata] = useState<any>([]);
   const [bulkupload, setbulkupload] = useState(false);
   const [downloadFormat, setDownloadFormat] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const columns = [
     {
@@ -119,6 +121,8 @@ export default function VendorMaster() {
       } catch (error) {
         console.log(error)
         handleApiError(error)
+      } finally{
+        setIsLoading(false)
       }
     }
     fetchAllProperty();
@@ -251,6 +255,8 @@ export default function VendorMaster() {
                     columns={columns}
                     data={vendorData}
                     pagination
+                    progressPending={isLoading}
+                    progressComponent={<TestLoader />}
 
 
                   />

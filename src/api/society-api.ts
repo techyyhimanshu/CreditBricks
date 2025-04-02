@@ -18,7 +18,9 @@ export const getAllSocietyApi = async (): Promise<any> => {
 }
 export const getSocietyBulkUploadFileApi = async (): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`/bulk-upload/society/get-format`)
+        const response = await axiosInstance.get(`/bulk-upload/society/get-format`, {
+            responseType: 'blob', 
+        })
         return response
     } catch (error) {
         throw error

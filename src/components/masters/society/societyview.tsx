@@ -20,6 +20,7 @@ import WingModal from '../../../common/modals/wingModal';
 import { deleteWingApi, updateWingApi } from '../../../api/wing-api';
 import TowerModal from '../../../common/modals/towerModal';
 import { deleteTowerApi, updateTowerApi } from '../../../api/tower-api';
+import TestLoader from '../../../layout/layoutcomponent/testloader';
 
 export default function SocietyView() {
   const [singleSocietyData, setSingleSocietydata] = useState<any>([])
@@ -38,6 +39,7 @@ export default function SocietyView() {
   const [singleAnnouncementData, setSingleAnnouncementData] = useState<any>(null);
   const [addannouncement, setaddannouncement] = useState(false);
   const [viewannouncement, setviewannouncement] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const params = useParams()
   const identifier = params.identifier as string
 
@@ -354,6 +356,8 @@ export default function SocietyView() {
       setSingleSocietydata(response?.data?.data || [])
     } catch (error) {
 
+    } finally{
+      setIsLoading(false)
     }
   }
 
@@ -824,7 +828,10 @@ export default function SocietyView() {
 
 
   return (
-    <Fragment>
+    <>
+    {
+      isLoading?<TestLoader/>:
+      <Fragment>
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
           <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}society/societymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Society - {singleSocietyData?.societyName || "N/A"}</span>
@@ -1663,5 +1670,7 @@ export default function SocietyView() {
 
       <CustomToastContainer />
     </Fragment >
+    }
+    </>
   );
 }

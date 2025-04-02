@@ -7,15 +7,17 @@ import { getMemberDetailApi } from '../../../api/member-api';
 import { deletePropertyApi } from '../../../api/property-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { handleApiError } from '../../../helpers/handle-api-error';
+import TestLoader from '../../../layout/layoutcomponent/testloader';
 
 export default function PropertyView() {
   const [singleMemberData, setSingleMemberdata] = useState<any>([])
   const [primaryProperty, setPrimaryProperty] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const params = useParams()
   const identifier = params.identifier as string
 
   useEffect(() => {
-    const fetchPropertyData = async () => {
+    const fetchMemberData = async () => {
       try {
         const response = await getMemberDetailApi(identifier)
         const data = response?.data?.data;
@@ -24,10 +26,12 @@ export default function PropertyView() {
         setPrimaryProperty(primary || null);
       } catch (error) {
 
+      } finally{
+        setIsLoading(false)
       }
     }
     if (identifier) {
-      fetchPropertyData()
+      fetchMemberData()
     }
   }, [])
 
@@ -45,7 +49,9 @@ export default function PropertyView() {
   }
 
   return (
-    <Fragment>
+    <>
+    {
+      isLoading?<TestLoader/>:<Fragment>
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
           <span className="main-content-title tx-bold mg-b-0 mg-b-lg-1 tx-26">
@@ -418,5 +424,7 @@ export default function PropertyView() {
 
       <CustomToastContainer />
     </Fragment >
+    }
+    </>
   );
 }

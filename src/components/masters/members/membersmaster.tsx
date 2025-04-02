@@ -10,10 +10,12 @@ import { handleApiError } from '../../../helpers/handle-api-error';
 import { getAllMemberOrTenantsApi } from '../../../api/user-api';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 import { deleteMemberApi } from '../../../api/member-api';
+import TestLoader from '../../../layout/layoutcomponent/testloader';
 
 export default function MembersMaster() {
   const [bulkupload, setbulkupload] = useState(false);
   const [downloadFormat, setDownloadFormat] = useState(false);
+   const [isLoading, setIsLoading] = useState(true);
 
   type Row = {
     sno: number;
@@ -114,6 +116,8 @@ export default function MembersMaster() {
       } catch (error) {
         console.log(error)
         handleApiError(error)
+      } finally{
+        setIsLoading(false)
       }
     }
     fetchAllProperty();
@@ -215,6 +219,8 @@ export default function MembersMaster() {
                     data={memberData}
                     pagination
                     keyField="id"
+                    progressPending={isLoading}
+                    progressComponent={<TestLoader />}
                   />
                 </DataTableExtensions>
               </div>

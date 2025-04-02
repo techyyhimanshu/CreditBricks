@@ -18,6 +18,7 @@ import { CustomToastContainer, showToast } from '../../common/services/toastServ
 // import { getWingPropertiesApi } from '../../api/property-api';
 import NoticeModal from '../../common/modals/noticeModal';
 import NoticeViewModal from '../../common/modals/noticeViewModal';
+import TestLoader from '../../layout/layoutcomponent/testloader';
 
 export default function Notices() {
   const [, setSocietyData] = useState<any[]>([]);
@@ -28,6 +29,7 @@ export default function Notices() {
   const [singleNoticedata, setSingleNoticeData] = useState<any>(null);
   const [addnotices, setaddnotices] = useState(false);
   const [viewnotice, setviewnotice] = useState(false);
+   const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(false);
 
   const columns = [
@@ -126,6 +128,8 @@ export default function Notices() {
     } catch (error) {
       console.log(error)
       handleApiError(error)
+    } finally{
+      setIsLoading(false)
     }
   }
 
@@ -575,6 +579,8 @@ export default function Notices() {
                       columns={columns}
                       data={noticedata}
                       pagination
+                      progressPending={isLoading}
+                      progressComponent={<TestLoader />}
 
 
                     />

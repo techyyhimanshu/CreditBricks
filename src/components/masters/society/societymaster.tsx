@@ -13,6 +13,7 @@ import { showToast, CustomToastContainer } from '../../../common/services/toastS
 import stateCities from "../stateCity.json"
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { Link } from "react-router-dom";
+import TestLoader from '../../../layout/layoutcomponent/testloader';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
@@ -23,6 +24,7 @@ export default function SocietyMaster() {
   const [bulkupload, setbulkupload] = useState(false);
   const [downloadFormat, setDownloadFormat] = useState(false);
   const [societyData, setSocietyData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentSociety,] = useState({
     societyIdentifier: '',
     societyName: '',
@@ -157,6 +159,8 @@ export default function SocietyMaster() {
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -273,24 +277,26 @@ export default function SocietyMaster() {
   const handleDownloadFormat = async () => {
     try {
       const res = await getSocietyBulkUploadFileApi()
-      const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'invoice-format.xlsx';
+      if (res.status === 200) {
+        const blob = new Blob([res.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'society-format.xlsx';
 
-      link.click();
-      URL.revokeObjectURL(link.href);
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
     } catch (error) {
       console.log(error)
     }
   }
 
-  const handleBulkUpload=async(values:any)=>{
+  const handleBulkUpload = async (values: any) => {
     try {
-      const formattedData:any={}
-      if(values.file){
-        formattedData.societyBulkFile=values.file
+      const formattedData: any = {}
+      if (values.file) {
+        formattedData.societyBulkFile = values.file
       }
       const response = await addSocietyBulkUploadFileApi(formattedData)
       if (response.status === 200) {
@@ -301,7 +307,7 @@ export default function SocietyMaster() {
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
-    } finally{
+    } finally {
       viewDemoClose("bulkupload");
     }
   }
@@ -349,7 +355,7 @@ export default function SocietyMaster() {
                         <input
                           type="file"
                           className="fileupload"
-                          onChange={(event:any) => {
+                          onChange={(event: any) => {
                             setFieldValue("file", event.currentTarget.files[0]);
                           }}
                         />
@@ -524,6 +530,8 @@ export default function SocietyMaster() {
                     data={societyData}
                     pagination
                     keyField="societyIdentifier"
+                    progressPending={isLoading}
+                    progressComponent={<TestLoader />}
                   />
                 </DataTableExtensions>
               </div>
