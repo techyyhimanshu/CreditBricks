@@ -9,10 +9,12 @@ import { Link, useLocation } from "react-router-dom";
 import { deletePropertyApi, getAllPropertyApi } from '../../../api/property-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
+import TestLoader from '../../../layout/layoutcomponent/testloader';
 
 export default function PropertyMaster() {
   const [bulkupload, setbulkupload] = useState(false);
   const [downloadFormat, setDownloadFormat] = useState(false);
+   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation()
   const wingIdentifier = location.state ;
 
@@ -202,6 +204,8 @@ export default function PropertyMaster() {
       } catch (error) {
         console.log(error)
         handleApiError(error)
+      } finally{
+        setIsLoading(false)
       }
     }
     fetchAllProperty();
@@ -288,6 +292,8 @@ export default function PropertyMaster() {
                     data={propertydata}
                     pagination
                     keyField="id"
+                    progressPending={isLoading}
+                    progressComponent={<TestLoader />}
                   />
                 </DataTableExtensions>
               </div>

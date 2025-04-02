@@ -10,6 +10,7 @@ import { CustomToastContainer, showToast } from '../../common/services/toastServ
 import { createAnnouncementApi, deleteAnnouncementApi, getAllAnnouncementApi, updateAnnouncementApi } from '../../api/announcement-api';
 import AnnouncementViewModal from '../../common/modals/announcementViewModal';
 import AnnouncementModal from '../../common/modals/announcementModal';
+import TestLoader from '../../layout/layoutcomponent/testloader';
 // import { getAllSocietyApi } from '../../api/society-api';
 // import Select from "react-select";
 // import { imagesData } from "../../common/commonimages";
@@ -23,6 +24,7 @@ export default function Announcements() {
   const [addannouncement, setaddannouncement] = useState(false);
   const [viewannouncement, setviewannouncement] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [announcementData, setAnnouncementData] = useState<any>([]);
   const [singleAnnouncementData, setSingleAnnouncementData] = useState<any>(null);
   // const [societyData, setSocietyData] = useState<any[]>([]);
@@ -114,6 +116,8 @@ export default function Announcements() {
     } catch (error) {
       console.log(error)
       handleApiError(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -277,12 +281,12 @@ export default function Announcements() {
     viewDemoClose("addannouncement")
   }
 
-  const handleClose=()=>{
+  const handleClose = () => {
     viewDemoClose("addannouncement")
     setSingleAnnouncementData(null)
   }
 
-  const handleViewClose=()=>{
+  const handleViewClose = () => {
     viewDemoClose("viewannouncement")
     setSingleAnnouncementData(null)
   }
@@ -536,7 +540,7 @@ export default function Announcements() {
 
           </Modal> */}
           {
-            singleAnnouncementData&&addannouncement?<AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} initialVals={singleAnnouncementData} onSave={handleSubmit}/>:<AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} onSave={handleSubmit}/>
+            singleAnnouncementData && addannouncement ? <AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} initialVals={singleAnnouncementData} onSave={handleSubmit} /> : <AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} onSave={handleSubmit} />
           }
         </div>
       </div>
@@ -552,6 +556,8 @@ export default function Announcements() {
                     columns={columns}
                     data={announcementData}
                     pagination
+                    progressPending={isLoading}
+                    progressComponent={<TestLoader />}
 
 
                   />

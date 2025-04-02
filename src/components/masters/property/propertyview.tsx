@@ -14,6 +14,7 @@ import ComplaintViewModal from '../../../common/modals/complaintViewModal';
 import { deleteComplaintApi, updateComplaintApi, updateComplaintStatusApi } from '../../../api/complaint-api';
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { deleteLoanApi, updateLoanApi } from '../../../api/loan-api';
+import TestLoader from '../../../layout/layoutcomponent/testloader';
 
 
 export default function PropertyView() {
@@ -22,6 +23,7 @@ export default function PropertyView() {
   const [singleComplaintData, setSingleComplaintData] = useState<any>(null);
   const [addcomplaint, setaddcomplaint] = useState(false);
   const [viewcomplaint, setviewcomplaint] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [loanData, setLoanData] = useState<any>([])
   const [singleLoandata, setSingleLoanData] = useState<any>(null);
   const [addloans, setaddloans] = useState(false);
@@ -170,6 +172,8 @@ export default function PropertyView() {
         setSinglePropertydata(response?.data?.data || [])
       } catch (error) {
 
+      } finally{
+        setIsLoading(false)
       }
     }
     if (identifier) {
@@ -425,7 +429,9 @@ export default function PropertyView() {
   }
 
   return (
-    <Fragment>
+    <>
+    {
+      isLoading?<TestLoader/>:<Fragment>
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
           <span className="main-content-title mg-b-0 mg-b-lg-1">
@@ -971,5 +977,7 @@ export default function PropertyView() {
       <CustomToastContainer />
 
     </Fragment >
+    }
+    </>
   );
 }

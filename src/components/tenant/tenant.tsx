@@ -9,6 +9,7 @@ import { imagesData } from "../../common/commonimages";
 import { handleApiError } from '../../helpers/handle-api-error';
 import { showToast } from '../../common/services/toastServices';
 import { deleteTenantApi, getAllTenantApi, } from '../../api/tenant-api';
+import TestLoader from '../../layout/layoutcomponent/testloader';
 
 
 
@@ -17,6 +18,7 @@ export default function Tenant() {
   const [bulkupload, setbulkupload] = useState(false);
   const [, setaddtenant] = useState(false);
   const [viewloan, setviewloan] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [downloadFormat, setDownloadFormat] = useState(false);
 
   useEffect(() => {
@@ -37,6 +39,8 @@ export default function Tenant() {
       } catch (error) {
         const errorMessage = handleApiError(error)
         showToast("error", errorMessage)
+      } finally{
+        setIsLoading(false)
       }
     }
     fetchAllTenants()
@@ -271,7 +275,8 @@ export default function Tenant() {
                     columns={columns}
                     data={tenantData}
                     pagination
-
+                    progressPending={isLoading}
+                    progressComponent={<TestLoader />}
 
                   />
                 </DataTableExtensions>

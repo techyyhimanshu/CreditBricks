@@ -1,14 +1,16 @@
 
 import { Fragment, useEffect, useState } from 'react';
-import { Col, Row, Card,  Button, Form, Modal, ProgressBar, FormLabel, CardFooter } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Modal, ProgressBar, FormLabel, CardFooter } from "react-bootstrap";
 import { Link, useParams, } from "react-router-dom";
 import { imagesData } from "../../common/commonimages";
 import { getTenantDetailsApi } from '../../api/tenant-api';
+import TestLoader from '../../layout/layoutcomponent/testloader';
 
 export default function TenantView() {
 
   const [addnewagreement, setaddnewagreement] = useState(false);
   const [discontinue, setdiscontinue] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [tenantDetails, setTenantDetails] = useState(
     {
       firstName: '',
@@ -82,16 +84,24 @@ export default function TenantView() {
   useEffect(() => {
 
     const fetchTenantDetails = async () => {
-      const response = await getTenantDetailsApi(identifier)
-      if (response.status === 200) {
-        setTenantDetails(response.data.data)
+      try {
+        const response = await getTenantDetailsApi(identifier)
+        if (response.status === 200) {
+          setTenantDetails(response.data.data)
+        }
+      } catch (error) {
+
+      }finally{
+        setIsLoading(false)
       }
     }
 
     fetchTenantDetails()
   }, [])
   return (
-    <Fragment>
+    <>
+    {
+      isLoading?<TestLoader/>:<Fragment>
 
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
@@ -430,7 +440,7 @@ export default function TenantView() {
             </Card.Body>
           </Card>
 
-          
+
           <Card>
             <Card.Body className='pb-1'>
               <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
@@ -440,7 +450,7 @@ export default function TenantView() {
                     <span>N/A</span> {/* Show N/A if no vehicles are available */}
                   </Col>
                 ) : (
-                  tenantDetails?.tenantVehicles?.map((vehicle:any,index:number) => (
+                  tenantDetails?.tenantVehicles?.map((vehicle: any, index: number) => (
                     <Row key={index}>
                       <Col xl={2} className='p-0'>
                         <img
@@ -474,5 +484,7 @@ export default function TenantView() {
 
 
     </Fragment >
+    }
+    </>
   );
 }

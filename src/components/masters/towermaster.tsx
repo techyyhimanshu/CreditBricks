@@ -12,11 +12,13 @@ import { showToast, CustomToastContainer } from '../../common/services/toastServ
 import { handleApiError } from '../../helpers/handle-api-error';
 import { getAllSocietyApi } from '../../api/society-api';
 import TowerModal from '../../common/modals/towerModal';
+import TestLoader from '../../layout/layoutcomponent/testloader';
 // Define the types for the stateCities object
 export default function TowerMaster() {
     const [showModal, setShowModal] = useState(false);
     const [towerData, setTowerData] = useState<any[]>([]);
     const [societyData, setSocietyData] = useState<any[]>([]);
+     const [isLoading, setIsLoading] = useState(true);
     const [societyOwner, ] = useState("");
 
     // const [currentTower, setCurrentTower] = useState({
@@ -45,6 +47,8 @@ export default function TowerMaster() {
             } catch (error) {
                 const errorMessage = handleApiError(error)
                 showToast("error", errorMessage)
+            } finally{
+                setIsLoading(false)
             }
         };
         // console.log(towerData.length)
@@ -271,6 +275,8 @@ export default function TowerMaster() {
                                         data={towerData}
                                         pagination
                                         keyField="towerIdentifier"
+                                        progressPending={isLoading}
+                                        progressComponent={<TestLoader />}
                                     />
                                 </DataTableExtensions>
                             </div>

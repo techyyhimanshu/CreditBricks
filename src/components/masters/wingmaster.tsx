@@ -13,11 +13,13 @@ import { getAllSocietyApi } from '../../api/society-api';
 import { addWingApi, deleteWingApi, getAllWingApi, updateWingApi } from '../../api/wing-api';
 import { Link } from 'react-router-dom';
 import WingModal from '../../common/modals/wingModal';
+import TestLoader from '../../layout/layoutcomponent/testloader';
 // Define the types for the stateCities object
 export default function WingMaster() {
     const [showModal, setShowModal] = useState(false);
     const [, setSocietyData] = useState<any[]>([]);
     const [wingData, setWingData] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [societyOwner, ] = useState("");
     // const [currentWing, setCurrentWing] = useState({
     //     wingIdentifier: null,
@@ -49,6 +51,8 @@ export default function WingMaster() {
             } catch (error) {
                 const errorMessage = handleApiError(error)
                 showToast("error", errorMessage)
+            } finally{
+                setIsLoading(false)
             }
         };
 
@@ -307,6 +311,8 @@ export default function WingMaster() {
                                         data={wingData}
                                         pagination
                                         keyField="wingIdentifier"
+                                        progressPending={isLoading}
+                                        progressComponent={<TestLoader />}
                                     />
                                 </DataTableExtensions>
                             </div>
