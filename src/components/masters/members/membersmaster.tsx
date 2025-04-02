@@ -55,7 +55,7 @@ export default function MembersMaster() {
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item>Edit</Dropdown.Item>
+            <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}member/editmembermaster/${row.memberIdentifier}`}>Edit</Link></Dropdown.Item>
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.memberIdentifier)}>Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>

@@ -1,7 +1,7 @@
 
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Accordion, Button, Form, Dropdown } from "react-bootstrap";
+import { Col, Row, Card, Accordion, Button, Form } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 // import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
@@ -12,7 +12,7 @@ import { handleApiError } from '../../../helpers/handle-api-error';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 // Define the types for the stateCities object
 export default function AddMembersMaster() {
-  const [currentMember, setCurrentMember] = useState({
+  const [currentMember, ] = useState({
     memberId: null,
     firstName: "",
     middleName: "",
@@ -109,7 +109,7 @@ export default function AddMembersMaster() {
             }}
             onSubmit={handleSubmit}
           >
-            {({ setFieldValue, values, errors, touched }) => (
+            {({ setFieldValue }) => (
               <FormikForm>
                 <Accordion defaultActiveKey="Personal Details">
 

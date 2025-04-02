@@ -21,6 +21,7 @@ const UserPermission = lazy(() => import('../components/masters/userpermission')
 const TermsCondition = lazy(() => import('../components/masters/termscondition'));
 const UserProfile = lazy(() => import('../components/userprofile/userprofile'));
 const MembersMaster = lazy(() => import('../components/masters/members/membersmaster'));
+const EditMembersMaster = lazy(() => import('../components/masters/members/editmember'));
 const AddMembersMaster = lazy(() => import('../components/masters/members/addmembers'));
 const MembersProfile = lazy(() => import('../components/masters/members/membersProfile'));
 const VendorMaster = lazy(() => import('../components/masters/vendor/vendormaster'));
@@ -63,6 +64,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}masters/termscondition`, element: <TermsCondition /> },
   { path: `${import.meta.env.BASE_URL}userprofile/userprofile`, element: <UserProfile /> },
   { path: `${import.meta.env.BASE_URL}members/membersmaster`, element: <MembersMaster /> },
+  { path: `${import.meta.env.BASE_URL}member/editmembermaster/:identifier`, element: <EditMembersMaster /> },
   { path: `${import.meta.env.BASE_URL}members/addmembers`, element: <AddMembersMaster /> },
   { path: `${import.meta.env.BASE_URL}members/membersProfile/:identifier`, element: <MembersProfile /> },
   { path: `${import.meta.env.BASE_URL}vendor/vendormaster`, element: <VendorMaster /> },

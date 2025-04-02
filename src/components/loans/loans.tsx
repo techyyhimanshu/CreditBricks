@@ -117,7 +117,7 @@ export default function Loans() {
             startDate: complaint?.startDate || "",
             endDate: complaint?.endDate || "",
             propertyIdentifier: complaint?.propertyIdentifier || "",
-            propertyName: complaint?.propertyIdentifier || "",
+            propertyName: complaint?.propertyName || "",
             bankName: complaint?.bankName || "",
             bankAddress: complaint?.bankAddress || "",
             loanFilePath: complaint?.loanFilePath || "",

@@ -34,7 +34,7 @@ const ComplaintViewModal: React.FC<ProductModalProps> = ({ show, initialVals, on
         <>
             <Modal show={show} >
                 <Modal.Header>
-                    <Modal.Title>Notice Details</Modal.Title>
+                    <Modal.Title>Complaint Details</Modal.Title>
                     <Button variant="" className="btn btn-close" onClick={(event) => { event.preventDefault(), onClose() }}>
                         x
                     </Button>

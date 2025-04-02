@@ -42,7 +42,7 @@ export default function EditVendorMaster() {
     const identifier = params.identifier as string
 
     useEffect(() => {
-        const fetchSocietyDetails = async () => {
+        const fetchVendorDetails = async () => {
             try {
                 const response = await getVendorDetail(identifier)
                 setCurrentVendor(response.data.data)
@@ -51,7 +51,7 @@ export default function EditVendorMaster() {
                 showToast('error', errorMessage)
             }
         }
-        fetchSocietyDetails()
+        fetchVendorDetails()
     }, [])
 
     const handleSubmit = async (values: any) => {

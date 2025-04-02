@@ -16,6 +16,22 @@ export const getAllSocietyApi = async (): Promise<any> => {
         throw error
     }
 }
+export const getSocietyBulkUploadFileApi = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/bulk-upload/society/get-format`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const addSocietyBulkUploadFileApi = async (data:any): Promise<any> => {
+    try {
+        const response = await axiosInstance.post(`/bulk-upload/society`,data)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 
 export const getSocietyDetailsApi = async (identifier: string): Promise<any> => {
     try {
