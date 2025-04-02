@@ -161,6 +161,14 @@ export default function AddTenant() {
   };
   const handleSubmit = async (values: any) => {
     try {
+      const updatedVehicleData = vehicleData.map((vehicle, index) => {
+        if (vehicle.vehicleRC) {
+          const oldFile = vehicle.vehicleRC as File;
+          const newFile = new File([oldFile], `${vehicle.vehicleNumber}.${oldFile.type}`, { type: oldFile.type });
+          return { ...vehicle, vehicleRC: newFile };
+        }
+        return vehicle;
+      });
       const formData = new FormData();
 
       const tenantDetails = {
@@ -203,7 +211,7 @@ export default function AddTenant() {
       formData.append("vehicleData", JSON.stringify(vehiclesWithoutFiles));
 
       // Append files separately
-      vehicleData.forEach((vehicle) => {
+      updatedVehicleData.forEach((vehicle) => {
         if (vehicle.vehicleRC instanceof File) {
           formData.append("vehicleRCFiles", vehicle.vehicleRC);
         }
