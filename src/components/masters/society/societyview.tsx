@@ -316,7 +316,7 @@ export default function SocietyView() {
           sno: index + 1,
           propertyName: property.propertyName,
           propertyIdentifier: property.propertyIdentifier,
-          memberName: `${property?.member?.firstName} ${property?.member?.middleName} ${property?.member?.lastName}`,
+          memberName: `${property?.member?.firstName||""} ${property?.member?.middleName||""} ${property?.member?.lastName||""}`,
           societyName: property.societyName,
           societyIdentifier: property.societyIdentifier,
           tenantName: `${property?.tenant?.firstName || ""} ${property?.tenant?.middleName || ""} ${property?.tenant?.lastName || ""}`,
@@ -1061,66 +1061,7 @@ export default function SocietyView() {
                             <Card.Body>
                               <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Properties Details</h5>
                               <div className='p-0 mt-4'>
-                                {/* <table className='table'>
-                            <thead>
-                              <tr>
-                                <th>S.No.</th>
-                                <th>Property</th>
-                                <th>Wing</th>
-                                <th>Member Name</th>
-                                <th>Area(sq.ft)</th>
-                                <th>Narration</th>
-                                <th>Tenant</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-
-                            <tbody>
-                              {singleSocietyData.properties?.map((property: any, index: number) => (
-                                <tr key={property.propertyIdentifier}>
-                                  <td>{index + 1}</td>
-                                  <td>
-                                    <Link to={`${import.meta.env.BASE_URL}property/propertyview/${property.propertyIdentifier}`} className="text-info">
-                                      {property.propertyName || "N/A"}
-                                    </Link>
-                                  </td>
-                                  <td>{property.wing?.wingName || "N/A"}</td>
-                                  <td>
-                                    <Link to={`${import.meta.env.BASE_URL}members/membersProfile/${property?.member?.memberIdentifier}`} className="text-info">
-                                      {`${property?.member?.firstName} ${property?.member?.middleName} ${property?.member?.lastName}`}
-                                    </Link>
-                                  </td>
-                                  <td>{property.area || "N/A"}</td>
-                                  <td>{property.narration || "N/A"}</td>
-                                  <td>
-                                    {
-                                      property.tenant ?
-                                        <Link to={property.tenant ? `${import.meta.env.BASE_URL}tenant/${property.tenant.tenantIdentifier}` : "#"} className="text-info">
-                                          {`${property?.tenant?.firstName || ""} ${property?.tenant?.middleName || ""} ${property?.tenant?.lastName || ""}`}
-                                        </Link> : "N/A"
-                                    }
-
-                                  </td>
-                                  <td>{property.status || "N/A"}</td>
-                                  <td>
-                                    <Dropdown>
-                                      <Dropdown.Toggle variant="light" className="btn-sm" id="dropdown-basic">
-                                        Action
-                                      </Dropdown.Toggle>
-
-                                      <Dropdown.Menu>
-                                        <Dropdown.Item>
-                                          <Link to={`${import.meta.env.BASE_URL}property/editpropertymaster/${property.propertyIdentifier}`}>Edit</Link>
-                                        </Dropdown.Item>
-                                        <Dropdown.Item className="text-danger" onClick={() => handleDelete(property.propertyIdentifier)}>Delete</Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table> */}
+                               
                                 <DataTableExtensions {...propertyTableData}>
                                   <DataTable
                                     columns={propertyColumns}
