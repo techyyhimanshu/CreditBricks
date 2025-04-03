@@ -68,6 +68,9 @@ export default function AddPropertyMaster() {
     monthlyPaidMaintenanceUpto: "",
     monthlyPaidArrears: "",
     monthlyPaidArrearsUpto: "",
+    openingPrincipalAmount: "",
+    openingInterestAmount: "",
+    dateOfOpeningBalance: ""
   });
   const [societyData, setSocietyData] = useState<any[]>([]);
   const [towerOptions, setTowerOptions] = useState<any[]>([]);
@@ -224,7 +227,7 @@ export default function AddPropertyMaster() {
     }
   };
   const handleSubmit = async (values: any) => {
-    const formattedData:any = {
+    const formattedData: any = {
       propertyName: values.propertyName,
       status: values.status.value,
       narration: values.narration.value,
@@ -245,6 +248,10 @@ export default function AddPropertyMaster() {
       fourthOwnerIdentifier: values.fourthOwner.value,
       fifthOwnerIdentifier: values.fifthOwner.value,
 
+      openingPrincipalAmount: values.openingPrincipalAmount,
+      openingInterestAmount: values.openingInterestAmount,
+      dateOfOpeningBalance: values.dateOfOpeningBalance,
+
       tenantIdentifier: values.tenant.value,
       rentAgreementStartDate: values.rentAgreementStartDate,
       rentAgreementEndDate: values.rentAgreementEndDate,
@@ -262,7 +269,7 @@ export default function AddPropertyMaster() {
     }
     if (formattedData.dealType === "Self Occupied") {
       formattedData.isPrimary = values.primaryProperty === "yes" ? true : false
-      formattedData.tenantIdentifier=null
+      formattedData.tenantIdentifier = null
     }
     const response = await addPropertyApi(formattedData)
     if (response.status === 201 || response.status === 200) {
@@ -348,6 +355,9 @@ export default function AddPropertyMaster() {
           policeVerificationDocFile: currentProperty?.policeVerificationDocFile,
 
           intercomNumber: currentProperty?.intercomNumber,
+          openingPrincipalAmount: currentProperty?.openingPrincipalAmount || "",
+          openingInterestAmount: currentProperty?.openingInterestAmount || "",
+          dateOfOpeningBalance: currentProperty?.dateOfOpeningBalance || "",
 
           consumerElectricityNumber: currentProperty?.consumerElectricityNumber,
 
@@ -807,6 +817,61 @@ export default function AddPropertyMaster() {
 
 
 
+
+                          </Row>
+
+                        </Card.Body>
+                      </Card>
+                    </Accordion.Body>
+                  </Accordion.Item>
+
+                  <Accordion.Item eventKey="Interest Details" className="bg-white  mb-3">
+                    <Accordion.Header className="borders">
+                      Interest Details
+                    </Accordion.Header>
+                    <Accordion.Body className="borders p-0">
+                      <Card className='m-0'>
+
+                        <Card.Body className='pt-3'>
+
+                          <Row>
+
+
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Opening Principal Amount </Form.Label>
+                                <Field
+                                  type="text"
+                                  name="openingPrincipalAmount"
+                                  placeholder="Principal Amount"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Opening Interest Amount </Form.Label>
+                                <Field
+                                  type="text"
+                                  name="openingInterestAmount"
+                                  placeholder="Interest Amount"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Date of opening Balance<span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type="date"
+                                  name="dateOfOpeningBalance"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
 
                           </Row>
 

@@ -101,6 +101,9 @@ interface Property {
     monthlyPaidArrearsUpto: string;
     isPrimary: boolean;
     tenantProperty: TenantProperty;
+    openingPrincipalAmount: string,
+    openingInterestAmount: string,
+    dateOfOpeningBalance: string
 }
 // const uploader = Uploader({
 //     apiKey: 'free'
@@ -146,6 +149,9 @@ export default function EditPropertyMaster() {
         monthlyMaintenanceUpto: "",
         monthlyPaidArrears: "",
         monthlyPaidArrearsUpto: "",
+        openingPrincipalAmount: "",
+        openingInterestAmount: "",
+        dateOfOpeningBalance: "",
         tenantProperty: {
             tenantIdentifier: "",
             tenant: {
@@ -180,6 +186,10 @@ export default function EditPropertyMaster() {
         { value: "Refuge", label: "Refuge" },
         { value: "Resale", label: "Resale" },
     ]
+
+    const filteredStatus = ownerChange
+        ? propertystatus.filter(status => status.value === "Resale")
+        : propertystatus.filter(status => status.value !== "Resale");
 
     const narration = [
         { value: "1 BHK", label: "1 BHK" },
@@ -228,7 +238,7 @@ export default function EditPropertyMaster() {
             await fetchTenantOptions()
         })()
     }, [])
-    
+
 
     useEffect(() => {
         const fetchPropertyDetails = async () => {
@@ -245,7 +255,7 @@ export default function EditPropertyMaster() {
         }
     }, [identifier])
 
-    
+
 
     const fetchTenantOptions = async () => {
         try {
@@ -336,17 +346,17 @@ export default function EditPropertyMaster() {
         }
     };
 
-    
+
     const handleSubmit = async (values: any) => {
         const formattedData: any = {
             propertyName: values.propertyName,
             status: values.status.value,
             narration: values.narration.value,
             area: values.area,
-            societyIdentifier: values.society.value,
-            towerIdentifier: values.tower.value,
-            wingIdentifier: values.wing.value,
-            flatNumber: values.flatNumber,
+            societyIdentifier: values.society?.value,
+            towerIdentifier: values.tower?.value,
+            wingIdentifier: values.wing?.value,
+            flatNumber: values?.flatNumber,
             floorNumber: values.floorNumber,
             dealType: values.dealType.value,
             flatRegistrationNumber: values.flatRegistrationNumber,
@@ -371,6 +381,9 @@ export default function EditPropertyMaster() {
             monthlyPaidMaintenanceUpto: values.monthlyMaintenanceUpto,
             monthlyPaidArrears: values.monthlyPaidArrears,
             monthlyPaidArrearsUpto: values.monthlyPaidArrearsUpto,
+            openingPrincipalAmount: values?.openingPrincipalAmount,
+            openingInterestAmount: values?.openingInterestAmount,
+            dateOfOpeningBalance: values?.dateOfOpeningBalance,
 
         }
         if (formattedData.dealType === "Self Occupied") {
@@ -447,6 +460,10 @@ export default function EditPropertyMaster() {
 
                         floorNumber: currentProperty?.floorNumber,
 
+                        openingPrincipalAmount: currentProperty?.openingPrincipalAmount || "",
+                        openingInterestAmount: currentProperty?.openingInterestAmount || "",
+                        dateOfOpeningBalance: currentProperty?.dateOfOpeningBalance || "",
+
                         // dealType: currentProperty?.dealType,
                         dealType: { value: currentProperty?.dealType || "", label: currentProperty?.dealType || "" },
 
@@ -501,19 +518,19 @@ export default function EditPropertyMaster() {
                             if (values.member && values.member.value) {
                                 handleMemberChange(values.member.value);
                             }
-                        }, [values.member,memberOptions]);
+                        }, [values.member, memberOptions]);
 
                         useEffect(() => {
                             if (values.coOwner && values.coOwner.value) {
                                 handleCoOwnerChange(values.coOwner.value, values.member?.value);
                             }
-                        }, [values.coOwner,memberOptions]);
+                        }, [values.coOwner, memberOptions]);
 
                         useEffect(() => {
                             if (values.thirdOwner && values.thirdOwner.value) {
                                 handleThirdOwnerChange(values.thirdOwner.value, values.member?.value, values.coOwner.value);
                             }
-                        }, [values.thirdOwner,memberOptions]);
+                        }, [values.thirdOwner, memberOptions]);
                         return (
                             <FormikForm>
 
@@ -578,7 +595,7 @@ export default function EditPropertyMaster() {
                                                                     <Form.Group className="form-group">
                                                                         <Form.Label>Status <span className="text-danger">*</span></Form.Label>
                                                                         <Select
-                                                                            options={propertystatus}
+                                                                            options={filteredStatus}
                                                                             name='status'
                                                                             value={values.status}
                                                                             onChange={(selected) => setFieldValue("status", selected)}
@@ -995,6 +1012,64 @@ export default function EditPropertyMaster() {
 
 
 
+
+                                                            </Row>
+
+                                                        </Card.Body>
+                                                    </Card>
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+
+                                            <Accordion.Item eventKey="Interest Details" className="bg-white  mb-3">
+                                                <Accordion.Header className="borders">
+                                                    Interest Details
+                                                </Accordion.Header>
+                                                <Accordion.Body className="borders p-0">
+                                                    <Card className='m-0'>
+
+                                                        <Card.Body className='pt-3'>
+
+                                                            <Row>
+
+
+                                                                <Col xl={4}>
+                                                                    <Form.Group className="form-group">
+                                                                        <Form.Label>Opening Principal Amount </Form.Label>
+                                                                        <Field
+                                                                            type="text"
+                                                                            name="openingPrincipalAmount"
+                                                                            placeholder="Principal Amount"
+                                                                            className="form-control"
+                                                                            disabled={ownerChange}
+                                                                        />
+                                                                        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                    </Form.Group>
+                                                                </Col>
+                                                                <Col xl={4}>
+                                                                    <Form.Group className="form-group">
+                                                                        <Form.Label>Opening Interest Amount </Form.Label>
+                                                                        <Field
+                                                                            type="text"
+                                                                            name="openingInterestAmount"
+                                                                            placeholder="Interest Amount"
+                                                                            className="form-control"
+                                                                            disabled={ownerChange}
+                                                                        />
+                                                                        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                    </Form.Group>
+                                                                </Col>
+                                                                <Col xl={4}>
+                                                                    <Form.Group className="form-group">
+                                                                        <Form.Label>Date of opening Balance<span className="text-danger">*</span></Form.Label>
+                                                                        <Field
+                                                                            type="date"
+                                                                            name="dateOfOpeningBalance"
+                                                                            className="form-control"
+                                                                            disabled={ownerChange}
+                                                                        />
+                                                                        {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    </Form.Group>
+                                                                </Col>
 
                                                             </Row>
 
