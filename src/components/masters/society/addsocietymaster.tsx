@@ -46,6 +46,7 @@ export default function AddSocietyMaster() {
     state: null,
     city: null,
     pincode: '',
+    billingFrequency:null,
     interestCalculationType: null,
     annualRateOfInterest: '',
     interestCalculationStartDate: '',
@@ -83,7 +84,7 @@ export default function AddSocietyMaster() {
   const columns = [
     {
       name: "S.no.",
-      selector: (_: Row, index: number) => index + 1, // Serial number fix
+      cell: (_: any, index: number) => index + 1,
       sortable: true,
     },
     {
@@ -166,10 +167,11 @@ export default function AddSocietyMaster() {
   ]
 
   const billingfrequency = [
-    { value: "1", label: "Monthly " },
-    { value: "2", label: "Quarterly" },
-    { value: "3", label: "Half Yearly" },
-    { value: "4", label: "Yearly" },
+    { value: "Monthly", label: "Monthly " },
+    { value: "Bi-monthly", label: "Bi-monthly " },
+    { value: "Quarterly", label: "Quarterly" },
+    { value: "Half-Yearly", label: "Half Yearly" },
+    { value: "Yearly", label: "Yearly" },
   ]
 
   const property = [
@@ -186,6 +188,7 @@ export default function AddSocietyMaster() {
     const cities = stateCitiesTyped[selected.value] || [];
     setCityOptions(cities.map((city) => ({ value: city, label: city })));
   };
+  
   const handleSubmit = async (values: any) => {
     try {
       // Step 1: Rename paymentQrFile names
@@ -213,6 +216,7 @@ export default function AddSocietyMaster() {
         city: values.city.value,
         pincode: values.pincode,
         interestCalculationType: values.interestCalculationType.value,
+        billingFrequency: values.billingFrequency.value,
         annualRateOfInterest: values.annualRateOfInterest,
         interestCalculationStartDate: values.interestCalculationStartDate,
         registrationNumber: values.registrationNumber,
@@ -320,6 +324,7 @@ export default function AddSocietyMaster() {
 
             city: { value: currentSociety.city, label: currentSociety.city },
             pincode: currentSociety?.pincode,
+            billingFrequency: { value: currentSociety.billingFrequency, label: currentSociety.billingFrequency },
 
             interestCalculationType: currentSociety?.interestCalculationType,
 
@@ -368,7 +373,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Society name"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -380,7 +384,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Society number"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -392,7 +395,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Society email"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -405,7 +407,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Society Manager"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -483,15 +484,9 @@ export default function AddSocietyMaster() {
                                 placeholder="Pincode"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
-                          {/* <Col xl={4}>
-                            <Form.Group className="form-group pt-2">
-
-                             <Link to={`${import.meta.env.BASE_URL}society/addparentsociety`} className='btn btn-primary mt-4'>Add Parent</Link>
-                            </Form.Group>
-                          </Col> */}
+                          
 
 
                         </Row>
@@ -523,7 +518,6 @@ export default function AddSocietyMaster() {
                                 onChange={(selected) => setFieldValue("interestCalculationType", selected)}
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -566,7 +560,8 @@ export default function AddSocietyMaster() {
                               <Form.Label>Billing Frequency <span className="text-danger">*</span></Form.Label>
                               <Select
                                 options={billingfrequency}
-                                name="billingfrequency"
+                                name="billingFrequency"
+                                onChange={(selected) => setFieldValue("billingFrequency", selected)}
                                 placeholder="Select Billining"
                                 classNamePrefix="Select2"
                               />
@@ -765,7 +760,7 @@ export default function AddSocietyMaster() {
                   </Accordion.Body>
                 </Accordion.Item>
 
-                <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
+                {/* <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
                   <Accordion.Header className="borders">
                     List of Committee Members
                   </Accordion.Header>
@@ -782,7 +777,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Society"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -794,7 +788,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Select property"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -806,7 +799,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Tower"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -819,7 +811,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Wing"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -831,7 +822,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Flat"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -846,7 +836,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Approver Name"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -859,7 +848,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Contact"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -871,7 +859,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Designation"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -885,7 +872,6 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Type"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
                           </Col>
 
@@ -943,7 +929,7 @@ export default function AddSocietyMaster() {
                       </Card.Body>
                     </Card>
                   </Accordion.Body>
-                </Accordion.Item>
+                </Accordion.Item> */}
 
 
               </Accordion>
@@ -963,3 +949,13 @@ export default function AddSocietyMaster() {
     </Fragment >
   );
 }
+
+
+                              {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+
+                              {/* <Col xl={4}>
+                            <Form.Group className="form-group pt-2">
+
+                             <Link to={`${import.meta.env.BASE_URL}society/addparentsociety`} className='btn btn-primary mt-4'>Add Parent</Link>
+                            </Form.Group>
+                          </Col> */}

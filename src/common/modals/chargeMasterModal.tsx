@@ -199,20 +199,20 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                     useEffect(() => {
                         if (societyData) {
                             setFieldValue("billingFrequency", societyData.billingFrequency || "");
-                            setFieldValue("interestDueDate", societyData.interestDueDate || "");
+                            setFieldValue("interestDueDate", societyData.interestCalculationStartDate?.split('T')[0] || "");
                         }
                     }, [societyData, setFieldValue]);
                     const getMultiplier = (billingFrequency: string) => {
                         switch (billingFrequency) {
-                            case "monthly":
+                            case "Monthly":
                                 return 1;
-                            case "bi-monthly":
+                            case "Bi-monthly":
                                 return 2;
-                            case "quarterly":
+                            case "Quarterly":
                                 return 3;
-                            case "half-yearly":
+                            case "Half-Yearly":
                                 return 6;
-                            case "yearly":
+                            case "Yearly":
                                 return 12;
                             default:
                                 return 1;
@@ -346,6 +346,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                 value={values.billingFrequency}
                                                 onChange={handleChange}
                                                 placeholder="Billing Frequency"
+                                                disabled
                                             />
                                         </Form.Group>
                                     </Col>
@@ -358,6 +359,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                     name="interestDueDate"
                                                     value={values.interestDueDate}
                                                     onChange={handleChange}
+                                                    disabled
                                                 />
                                                 {errors.startDate && touched.startDate && (
                                                     <div className="text-danger">{errors.startDate as string}</div>

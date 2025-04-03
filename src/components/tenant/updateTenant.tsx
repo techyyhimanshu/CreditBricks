@@ -97,19 +97,56 @@ export default function UpdateTenant() {
       name: "Vehicle Number",
       selector: (row: any) => row.vehicleNumber,
     },
+    // {
+    //   name: 'Vehicle RC',
+    //   cell: (row: any) =>
+    //     row?.vehicleRcFilePath ? (
+    //       <a href={URL.createObjectURL(row.vehicleRcFilePath)} target="_blank" rel="noopener noreferrer">
+    //         <img className='wd-50' src={imagesData('pdficon')} alt="" />
+    //       </a>
+    //     ) : (
+    //       'No File'
+    //     ),
+    //   ignoreRowClick: true,
+    //   allowOverflow: true,
+    // },
     {
       name: 'Vehicle RC',
-      cell: (row: any) =>
-        row.vehicleRC ? (
-          <a href={URL.createObjectURL(row.vehicleRC)} target="_blank" rel="noopener noreferrer">
-            <img className='wd-50' src={imagesData('pdficon')} alt="" />
-          </a>
-        ) : (
-          'No File'
-        ),
+      cell: (row: any) => {
+        const filePath = row?.vehicleRcFilePath;
+        const fileExtension = filePath?.split('.').pop()?.toLowerCase();
+        const fileUrl = import.meta.env.VITE_STATIC_PATH + filePath;
+    
+        // Check if the file path exists
+        if (!filePath) {
+          return 'No File';
+        }
+    
+        // Check for image extensions (jpg, jpeg, png, gif, etc.)
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+          return (
+            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+              <img className="wd-50" crossOrigin="anonymous" src={fileUrl} alt="Vehicle RC" />
+            </a>
+          );
+        }
+    
+        // Check for PDF extension
+        if (fileExtension === 'pdf') {
+          return (
+            <a href={fileUrl} target="_blank" rel="noopener noreferrer">
+              <img className="wd-50" src={imagesData('pdficon')} alt="PDF Icon" />
+            </a>
+          );
+        }
+    
+        // If it's neither an image nor a PDF, return "No File"
+        return 'No File';
+      },
       ignoreRowClick: true,
       allowOverflow: true,
     },
+    
     {
       name: "Actions",
       cell: (row: any, index: number) => (
@@ -860,6 +897,7 @@ export default function UpdateTenant() {
                                 onChange={handleVehicleTypeChange}
                                 className="form-control"
                               >
+                                <option value="">Select Vehicle Type</option>
                                 <option value="2Wheeler">2 Wheeler</option>
                                 <option value="4Wheeler">4 Wheeler</option>
                               </select>
