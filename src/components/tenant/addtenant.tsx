@@ -164,7 +164,7 @@ export default function AddTenant() {
       const updatedVehicleData = vehicleData.map((vehicle, index) => {
         if (vehicle.vehicleRC) {
           const oldFile = vehicle.vehicleRC as File;
-          const newFile = new File([oldFile], `${vehicle.vehicleNumber}.${oldFile.type}`, { type: oldFile.type });
+          const newFile = new File([oldFile], `${vehicle.vehicleNumber}.${oldFile.name.split('.').pop()}`, { type: oldFile.type });
           return { ...vehicle, vehicleRC: newFile };
         }
         return vehicle;
@@ -216,6 +216,7 @@ export default function AddTenant() {
           formData.append("vehicleRCFiles", vehicle.vehicleRC);
         }
       });
+      console.log(formData)
       // Step 3: API Call
       const response = await addTenantApi(formData)
       if (response.status === 201 || response.status === 200) {
