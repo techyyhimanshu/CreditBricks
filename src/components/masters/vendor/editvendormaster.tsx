@@ -61,6 +61,7 @@ export default function EditVendorMaster() {
                 vendorAddress: values.vendorAddress,
                 gstin: values.gstin,
                 pan: values.pan,
+                aadharNumber: values.aadharNumber,
                 product: values.product.value,
                 serviceType: values.serviceType.value,
                 frequency: values.frequency.value,
@@ -101,6 +102,7 @@ export default function EditVendorMaster() {
                     vendorAddress: currentVendor?.vendorAddress ||'',
                     gstin: currentVendor?.gstin ||'',
                     pan: currentVendor?.pan ||'',
+                    aadharNumber: currentVendor?.aadharNumber ||'',
                     product: { value: currentVendor?.product||"", label: currentVendor?.product||"" },
                     serviceType: { value: currentVendor?.serviceType||"", label: currentVendor?.serviceType||"" },
                     frequency: { value: currentVendor?.frequency||"", label: currentVendor?.frequency||"" },
@@ -179,6 +181,18 @@ export default function EditVendorMaster() {
                                                                     type="text"
                                                                     name="pan"
                                                                     placeholder="PAN Number"
+                                                                    className="form-control"
+                                                                />
+                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                            </Form.Group>
+                                                        </Col>
+                                                        <Col xl={4}>
+                                                            <Form.Group className="form-group">
+                                                                <Form.Label>Aadhaar No.</Form.Label>
+                                                                <Field
+                                                                    type="text"
+                                                                    name="aadharNumber"
+                                                                    placeholder="Aadhaar No."
                                                                     className="form-control"
                                                                 />
                                                                 {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}

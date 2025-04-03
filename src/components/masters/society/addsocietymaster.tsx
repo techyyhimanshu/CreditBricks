@@ -143,39 +143,39 @@ export default function AddSocietyMaster() {
     { value: "Due Date", label: "Due Date" },
   ]
 
-  const society =[
+  const society = [
     { value: "1", label: "Society" },
     { value: "2", label: "Association" },
   ]
-    const applicationtype = [
-      { value: "1", label: "Gate Pass" },
-      { value: "2", label: "Flat Resale" },
-      { value: "3", label: "Celebration" },
+  const applicationtype = [
+    { value: "1", label: "Gate Pass" },
+    { value: "2", label: "Flat Resale" },
+    { value: "3", label: "Celebration" },
 
-    ]
+  ]
   const flat = [
     { value: "1", label: "Select Flat " },
   ]
 
-  const wing  = [
+  const wing = [
     { value: "1", label: "Select Wing " },
   ]
-    const designation = [
-      { value: "1", label: "Secretary " },
-      { value: "2", label: "Committe Member " },
-    ]
+  const designation = [
+    { value: "1", label: "Secretary " },
+    { value: "2", label: "Committe Member " },
+  ]
 
-    const billingfrequency = [
-      { value: "1", label: "Monthly " },
-      { value: "2", label: "Quarterly" },
-      { value: "3", label: "Half Yearly" },
-      { value: "4", label: "Yearly" },
-    ]
+  const billingfrequency = [
+    { value: "1", label: "Monthly " },
+    { value: "2", label: "Quarterly" },
+    { value: "3", label: "Half Yearly" },
+    { value: "4", label: "Yearly" },
+  ]
 
-    const property = [
-      { value: "1", label: "A101 " },
-      { value: "2", label: "A102 " },
-    ]
+  const property = [
+    { value: "1", label: "A101 " },
+    { value: "2", label: "A102 " },
+  ]
 
   const stateOptions = Object.keys(stateCitiesTyped).map((state) => ({
     value: state,
@@ -568,7 +568,7 @@ export default function AddSocietyMaster() {
                                 options={billingfrequency}
                                 name="billingfrequency"
                                 placeholder="Select Billining"
-                                 classNamePrefix="Select2"
+                                classNamePrefix="Select2"
                               />
                               {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                             </Form.Group>
@@ -765,7 +765,7 @@ export default function AddSocietyMaster() {
                   </Accordion.Body>
                 </Accordion.Item>
 
-                 <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
+                <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
                   <Accordion.Header className="borders">
                     List of Committee Members
                   </Accordion.Header>
@@ -773,172 +773,172 @@ export default function AddSocietyMaster() {
                     <Card className='m-0'>
 
                       <Card.Body className='pt-3'>
-                      <Row>
-  <Col xl={4}>
-      <Form.Group className="form-group mb-1">
-        <Form.Label>Society </Form.Label>
-        <Select
-          options={society}
-          placeholder="Select Society"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
+                        <Row>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Society </Form.Label>
+                              <Select
+                                options={society}
+                                placeholder="Select Society"
+                                classNamePrefix="Select2"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group mb-1">
-        <Form.Label>Property </Form.Label>
-        <Select
-          options={property}
-          placeholder="Select property"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Property </Form.Label>
+                              <Select
+                                options={property}
+                                placeholder="Select property"
+                                classNamePrefix="Select2"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group mb-1">
-        <Form.Label>Tower </Form.Label>
-        <Select
-          options={wing}
-          placeholder="Select Tower"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-
-    <Col xl={4}>
-      <Form.Group className="form-group mb-1">
-        <Form.Label>Wing </Form.Label>
-        <Select
-          options={wing}
-          placeholder="Select Wing"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group mb-1">
-        <Form.Label>Flat </Form.Label>
-        <Select
-          options={flat}
-          placeholder="Select Flat"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Tower </Form.Label>
+                              <Select
+                                options={wing}
+                                placeholder="Select Tower"
+                                classNamePrefix="Select2"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
 
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Wing </Form.Label>
+                              <Select
+                                options={wing}
+                                placeholder="Select Wing"
+                                classNamePrefix="Select2"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group mb-1">
-        <Form.Label>Approver Name</Form.Label>
-        <Field
-          type="text"
-          name="approverName"
-          placeholder="Approver Name"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group mb-1">
-        <Form.Label>Approver Contact</Form.Label>
-        <Field
-          type="text"
-          name="contactdetails"
-          placeholder="Contact"
-          className="form-control"
-        />
-        {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
-
-    <Col xl={4}>
-      <Form.Group className="form-group mb-1">
-        <Form.Label>Designation </Form.Label>
-        <Select
-          options={designation}
-          placeholder="Select Designation"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Flat </Form.Label>
+                              <Select
+                                options={flat}
+                                placeholder="Select Flat"
+                                classNamePrefix="Select2"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
 
 
-    <Col xl={4}>
-    <Form.Group className="form-group mb-1">
-        <Form.Label>Application Type </Form.Label>
-        <Select
-          options={applicationtype}
-          placeholder="Select Type"
-          classNamePrefix="Select2"
-        />
-        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-      </Form.Group>
-    </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Approver Name</Form.Label>
+                              <Field
+                                type="text"
+                                name="approverName"
+                                placeholder="Approver Name"
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Approver Contact</Form.Label>
+                              <Field
+                                type="text"
+                                name="contactdetails"
+                                placeholder="Contact"
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Designation </Form.Label>
+                              <Select
+                                options={designation}
+                                placeholder="Select Designation"
+                                classNamePrefix="Select2"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
 
 
-<Col xl={12}>
-<Form.Group className="form-group float-end pt-2">
-<Button className="btn btn-default ms-2" type="button">Clear </Button>
-<Button className="btn btn-primary" type="button">Save </Button>
-</Form.Group>
-</Col>
-  </Row>
-  <hr/>
-  <table className='table mt-3'>
-    <thead>
-      <tr>
-        <th>S.no.</th>
-        <th>Society</th>
-        <th>Tower</th>
-        <th>Wing</th>
-        <th>Flat </th>
-       <th>Approver Name</th>
-       <th>Approver Contact</th>
-       <th>Designation</th>
-        <th>Application Type</th>
-       <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>Association</td>
-        <td>Tower A</td>
-        <td>A</td>
-        <td>123</td>
-        <td>Sandeep Singh</td>
-        <td>-</td>
-        <td>Secretary</td>
-       <td>Flat Resale</td>
-        <td><Dropdown >
-          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-            Action
-          </Dropdown.Toggle>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Application Type </Form.Label>
+                              <Select
+                                options={applicationtype}
+                                placeholder="Select Type"
+                                classNamePrefix="Select2"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
-          <Dropdown.Menu>
-            <Dropdown.Item>Edit</Dropdown.Item>
-            <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown></td>
-      </tr>
 
-    </tbody>
-  </table>
+
+                          <Col xl={12}>
+                            <Form.Group className="form-group float-end pt-2">
+                              <Button className="btn btn-default ms-2" type="button">Clear </Button>
+                              <Button className="btn btn-primary" type="button">Save </Button>
+                            </Form.Group>
+                          </Col>
+                        </Row>
+                        <hr />
+                        <table className='table mt-3'>
+                          <thead>
+                            <tr>
+                              <th>S.no.</th>
+                              <th>Society</th>
+                              <th>Tower</th>
+                              <th>Wing</th>
+                              <th>Flat </th>
+                              <th>Approver Name</th>
+                              <th>Approver Contact</th>
+                              <th>Designation</th>
+                              <th>Application Type</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>1</td>
+                              <td>Association</td>
+                              <td>Tower A</td>
+                              <td>A</td>
+                              <td>123</td>
+                              <td>Sandeep Singh</td>
+                              <td>-</td>
+                              <td>Secretary</td>
+                              <td>Flat Resale</td>
+                              <td><Dropdown >
+                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                  Action
+                                </Dropdown.Toggle>
+
+                                <Dropdown.Menu>
+                                  <Dropdown.Item>Edit</Dropdown.Item>
+                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown></td>
+                            </tr>
+
+                          </tbody>
+                        </table>
 
                       </Card.Body>
                     </Card>

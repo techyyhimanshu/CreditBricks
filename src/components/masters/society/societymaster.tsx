@@ -14,6 +14,7 @@ import stateCities from "../stateCity.json"
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { Link } from "react-router-dom";
 import TestLoader from '../../../layout/layoutcomponent/testloader';
+import { imagesData } from '../../../common/commonimages';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
@@ -419,9 +420,14 @@ export default function SocietyMaster() {
                   <li><strong>Upload the File:</strong> Navigate to the bulk upload section within the system and upload the prepared Excel file.</li>
                 </ul>
 
-                <Button variant="primary" onClick={handleDownloadFormat}>
-                  Download File
-                </Button>
+                <div className="text-center mb-3">
+                  <img src={imagesData('excelicon')} alt="Excel Icon" width="50" height="50" />
+                </div>
+                <div className="d-flex justify-content-center">
+                  <Button variant="primary" onClick={handleDownloadFormat}>
+                    Download File
+                  </Button>
+                </div>
               </div>
             </Modal.Body>
           </Modal>

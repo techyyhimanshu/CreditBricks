@@ -64,6 +64,7 @@ import totalreceipt from '../assets/img/totalreceipt.png';
 import totalinvoice from '../assets/img/totalinvoive.png';
 
 import pdficon from '../assets/img/pdf.png';
+import excelicon from '../assets/img/excel.png';
 
 // applications icon
 import gatepass from '../assets/applicationicon/gatepass.webp';
@@ -99,7 +100,7 @@ export const imagesData = (idx: any) => {
     us, italy, spain, india, french, mexico, singapore, poland, austria, russia, germany, argentina, brazil, uae, china, uk,
     malaysia, canada, favicon,faviconwhite, logo, logowhite , mainlogo, bgimg, bgimg1, bgimg2, bgimg3, bgimg4, logibg, totalbalance, totalreceipt, totalinvoice,
     pdficon, gatepass, conatctupdate,changename, parking, flatresale, interiorwork, celebration, theater, banquethall,clubhouse, swimmingpool, playarea, turfarea, rentagreement, sharecertificate, nomination, badminton, foodcourt, others,
-    cash, cheque, online
+    cash, cheque, online, excelicon
 
   };
   return images[idx];

@@ -45,6 +45,7 @@ export default function AddVendorMaster() {
         vendorAddress: values.vendorAddress,
         gstin: values.gstin,
         pan: values.pan,
+        aadharNumber: values.aadharNumber,
         product: values.product.value,
         serviceType: values.serviceType.value,
         frequency: values.frequency.value,
@@ -83,6 +84,7 @@ export default function AddVendorMaster() {
           vendorName: '',
           vendorAddress: '',
           gstin: '',
+          aadharNumber: "",
           pan: '',
           product: { value: "", label: "" },
           serviceType: { value: "", label: "" },
@@ -147,6 +149,18 @@ export default function AddVendorMaster() {
                                   type="text"
                                   name="gstin"
                                   placeholder="GST Number"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Aadhaar No.</Form.Label>
+                                <Field
+                                  type="text"
+                                  name="aadharNumber"
+                                  placeholder="Aadhaar No."
                                   className="form-control"
                                 />
                                 {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
