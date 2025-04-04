@@ -94,5 +94,5 @@ export const Sidebarcomponents = [
   { path: `${import.meta.env.BASE_URL}pages/authentication/404error`, title: "404 Error" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/500error`, title: "500 Error" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/501error`, title: "501 Error" },
-
+  { path: `${import.meta.env.BASE_URL}pages/authentication/privacypolicy`, title: "Privacy Policy" },
 ];
