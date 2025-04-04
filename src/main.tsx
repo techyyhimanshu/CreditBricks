@@ -43,6 +43,10 @@ const VerifyEmail = React.lazy(() =>
   import("./components/pages/authentication/verifyemail/verifyemail")
 )
 
+const PrivacyPolicy = React.lazy(() =>
+  import("./components/pages/authentication/privacypolicy/privacypolicy")
+)
+
 //Form
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -79,7 +83,7 @@ return(
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/complaintstatus`} element={<ComplaintStatus />} />
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/404error`} element={<Error404 />} />
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/500error`} element={<Error500 />} />
-
+              <Route path={`${import.meta.env.BASE_URL}pages/authentication/privacypolicy`} element={<PrivacyPolicy />} />
               <Route path="*" element={<Error404 />} />
             </Route>
             <Route></Route>
