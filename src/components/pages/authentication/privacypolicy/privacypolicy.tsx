@@ -24,7 +24,7 @@ const PrivacyPolicy = () => {
 <div className="w-100 text-justify">
 <h3 className="text-center mb-3"> Privacy Policy</h3>
 
-<strong>Credibricks</strong> is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application CreditBricks. Please read this policy carefully. If you do not agree with the terms of this policy, please do not use the App.
+<strong>Credit Bricks</strong> is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application Credit Bricks. Please read this policy carefully. If you do not agree with the terms of this policy, please do not use the App.
 <br/>
 <strong className="mt-2 w-100 d-block tx-18 mb-2">1. Information We Collect</strong>
 <strong>1.1 Personal Information</strong><br/>
@@ -121,7 +121,7 @@ If you have any questions or concerns about this Privacy Policy, please contact 
 
                    <p className="text-center mt-5 mb-4"> Powered by Credit Bricks</p>
 
-                   <p className="text-center mt-4">@2025 Credit Bricks </p>
+                   {/* <p className="text-center mt-4">@2025 Credit Bricks </p> */}
                  </div>
                </div>
              </div>
