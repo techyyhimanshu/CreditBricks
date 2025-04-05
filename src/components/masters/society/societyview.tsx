@@ -996,7 +996,7 @@ export default function SocietyView() {
                                           {/* Bank Name */}
                                           <Col xl={5} className='mb-1 tx-12'>Society Bank Name</Col>
                                           <Col xl={7} className='tx-semibold tx-12'>
-                                            {account.bankName || "N/A"}
+                                            {account?.bankName || "N/A"}
                                           </Col>
                                         </Row>
 
@@ -1004,7 +1004,7 @@ export default function SocietyView() {
                                           {/* Account Number */}
                                           <Col xl={5} className='mb-1 tx-12'>Account Number</Col>
                                           <Col xl={7} className='tx-semibold tx-12'>
-                                            {account.accountNumber || "N/A"}
+                                            {account?.accountNumber || "N/A"}
                                           </Col>
                                         </Row>
 
@@ -1012,7 +1012,7 @@ export default function SocietyView() {
                                           {/* Branch Name */}
                                           <Col xl={5} className='mb-1 tx-12'>Branch Name</Col>
                                           <Col xl={7} className='tx-semibold tx-12'>
-                                            {account.branchName || "N/A"}
+                                            {account?.branchName || "N/A"}
                                           </Col>
                                         </Row>
 
@@ -1020,7 +1020,7 @@ export default function SocietyView() {
                                           {/* IFSC Code */}
                                           <Col xl={5} className='mb-1 tx-12 '>IFSC Code</Col>
                                           <Col xl={7} className='tx-semibold tx-12'>
-                                            {account.ifscCode || "N/A"}
+                                            {account?.ifscCode || "N/A"}
                                           </Col>
                                         </Row>
 
@@ -1028,7 +1028,7 @@ export default function SocietyView() {
                                           {/* Cheque Favourable */}
                                           <Col xl={5} className='mb-1 tx-12'>Cheque Favourable</Col>
                                           <Col xl={7} className='tx-semibold tx-12'>
-                                            {account.chequeFavourable || "N/A"}
+                                            {account?.chequeFavourable || "N/A"}
                                           </Col>
                                         </Row>
 
