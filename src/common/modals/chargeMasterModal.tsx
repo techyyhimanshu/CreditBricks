@@ -118,11 +118,13 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
 
     const chargemastertype = [
         { value: "Society", label: "Society" },
+        { value: "Tower", label: "Tower" },
+        { value: "Wing", label: "Wing" },
         { value: "Property", label: "Property" },
     ]
 
 
-    
+
 
     const chargetype = [
         { value: "Maintenance", label: "Maintenance" },
@@ -229,6 +231,38 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             <p className='form-control bg-light'></p>
                                         </Form.Group>
                                     </Col>
+                                    {/* <Col xl={6}>
+                                        <Form.Group className="form-group mb-1">
+                                            <Form.Label>Charge Name<span className="text-danger">*</span></Form.Label>
+                                            <Select
+                                                name="chargeName"
+                                                options={chargename}
+                                                placeholder="Select name"
+                                                classNamePrefix="Select2"
+                                                value={values.chargeName}
+                                                onChange={(selected) => setFieldValue("chargeName", selected)}
+                                            />
+                                            {errors.chargeName && touched.chargeName && (
+                                                <div className="text-danger">{errors.chargeName as string}</div>
+                                            )}
+                                        </Form.Group>
+                                    </Col> */}
+                                    <Col xl={6}>
+                                        <Form.Group className="form-group mb-1">
+                                            <Form.Label>Charge Name<span className="text-danger">*</span></Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                className="form-control"
+                                                name="chargeName"
+                                                value={values.chargeName}
+                                                onChange={handleChange}
+                                                placeholder="charge Name"
+                                            />
+                                            {errors.chargeName && touched.chargeName && (
+                                                <div className="text-danger">{errors.chargeName as string}</div>
+                                            )}
+                                        </Form.Group>
+                                    </Col>
                                     <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Charge Master Type</Form.Label>
@@ -260,7 +294,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                     </Col>
                                     <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
-                                            <Form.Label>Society Name<span className="text-danger">*</span></Form.Label>
+                                            <Form.Label>Society<span className="text-danger">*</span></Form.Label>
                                             <Select
                                                 name="societyName"
                                                 options={societyOptions}
@@ -276,7 +310,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                     if (values.chargeMasterType.value === "Property") {
                                                         fetchPropertiesOfSocietyOptions(selected?.value)
                                                     }
-                                                    if(values.chargeType.value === "Additional Bill"){
+                                                    if (values.chargeType.value === "Additional Bill") {
                                                         fetchTowersForDropDown(selected)
                                                     }
                                                 }}
@@ -286,43 +320,41 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             )}
                                         </Form.Group>
                                     </Col>
-                                    {
-                                        values.chargeType.value === "Additional Bill" && (
-                                            <>
-                                                <Col xl={6}>
-                                                    <Form.Group className="form-group mb-1">
-                                                        <Form.Label>Tower</Form.Label>
-                                                        <Select
-                                                            name="tower"
-                                                            options={towerOptions}
-                                                            placeholder="Select Tower"
-                                                            classNamePrefix="Select2"
-                                                            value={values.tower}
-                                                            onChange={(selected) => {
-                                                                setFieldValue("tower", selected)
-                                                                setFieldValue("wing", null)
-                                                                fetchWingsForDropDown(selected)
-                                                            }}
-                                                        />
-                                                    </Form.Group>
-                                                </Col>
-                                                <Col xl={6}>
-                                                    <Form.Group className="form-group mb-1">
-                                                        <Form.Label>Wing</Form.Label>
-                                                        <Select
-                                                            name="wing"
-                                                            options={wingOptions}
-                                                            placeholder="Select Wing"
-                                                            classNamePrefix="Select2"
-                                                            value={values.wing}
-                                                            onChange={(selected) => setFieldValue("wing", selected)}
-                                                        />
-                                                    </Form.Group>
-                                                </Col>
-                                            </>
-                                        )
+
+                                    {["Wing", "Property", "Tower"].includes(values.chargeMasterType.value) && <Col xl={6}>
+                                        <Form.Group className="form-group mb-1">
+                                            <Form.Label>Tower</Form.Label>
+                                            <Select
+                                                name="tower"
+                                                options={towerOptions}
+                                                placeholder="Select Tower"
+                                                classNamePrefix="Select2"
+                                                value={values.tower}
+                                                onChange={(selected) => {
+                                                    setFieldValue("tower", selected)
+                                                    setFieldValue("wing", null)
+                                                    fetchWingsForDropDown(selected)
+                                                }}
+                                            />
+                                        </Form.Group>
+                                    </Col>}
+                                    {["Wing", "Property"].includes(values.chargeMasterType.value) && <Col xl={6}>
+                                        <Form.Group className="form-group mb-1">
+                                            <Form.Label>Wing</Form.Label>
+                                            <Select
+                                                name="wing"
+                                                options={wingOptions}
+                                                placeholder="Select Wing"
+                                                classNamePrefix="Select2"
+                                                value={values.wing}
+                                                onChange={(selected) => setFieldValue("wing", selected)}
+                                            />
+                                        </Form.Group>
+                                    </Col>
                                     }
-                                    {(values.chargeMasterType.value === "Property" && values.chargeType.value !== "Additional Bill") && <Col xl={6}>
+
+
+                                    {values.chargeMasterType.value === "Property" && <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Property</Form.Label>
                                             <Select
@@ -336,7 +368,8 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                         </Form.Group>
                                     </Col>
                                     }
-                                    <Col xl={6}>
+                                    {
+                                        values.chargeType.value!=="Additional Bill"&&<Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Billing Frequency</Form.Label>
                                             <Form.Control
@@ -350,6 +383,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             />
                                         </Form.Group>
                                     </Col>
+                                    }
                                     {
                                         values.chargeType.value === "Maintenance" && <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
@@ -368,22 +402,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                         </Col>
                                     }
 
-                                    <Col xl={6}>
-                                        <Form.Group className="form-group mb-1">
-                                            <Form.Label>Charge Name<span className="text-danger">*</span></Form.Label>
-                                            <Select
-                                                name="chargeName"
-                                                options={chargename}
-                                                placeholder="Select name"
-                                                classNamePrefix="Select2"
-                                                value={values.chargeName}
-                                                onChange={(selected) => setFieldValue("chargeName", selected)}
-                                            />
-                                            {errors.chargeName && touched.chargeName && (
-                                                <div className="text-danger">{errors.chargeName as string}</div>
-                                            )}
-                                        </Form.Group>
-                                    </Col>
+
                                     <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Billing Type<span className="text-danger">*</span></Form.Label>
