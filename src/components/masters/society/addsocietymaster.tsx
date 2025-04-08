@@ -760,7 +760,7 @@ export default function AddSocietyMaster() {
                   </Accordion.Body>
                 </Accordion.Item>
 
-                {/* <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
+                <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
                   <Accordion.Header className="borders">
                     List of Committee Members
                   </Accordion.Header>
@@ -929,7 +929,7 @@ export default function AddSocietyMaster() {
                       </Card.Body>
                     </Card>
                   </Accordion.Body>
-                </Accordion.Item> */}
+                </Accordion.Item>
 
 
               </Accordion>

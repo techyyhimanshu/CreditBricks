@@ -736,7 +736,7 @@ export default function SocietyView() {
 
   const handleChargeMasterSubmit = async(values:any)=>{
     try {
-      console.log(values)
+      console.log("kartik",values)
     } catch (error) {
       
     }

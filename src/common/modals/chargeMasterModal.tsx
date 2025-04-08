@@ -55,10 +55,55 @@ const validationSchema = Yup.object({
             return value && value.label && value.value && value.label !== "" && value.value !== "";
         }),
     societyName: Yup.object().required("Society is required"),
-    startDate: Yup.date().required("Start Date is required"),
-    endDate: Yup.date().required("End Date is required"),
+    // startDate: Yup.date().required("Start Date is required"),
+    // endDate: Yup.date().required("End Date is required"),
     billingType: Yup.object().required("Billing Type is required"),
-    gstPercentage: Yup.string().matches(/^\d+(\.\d{1,2})?$/, "Invalid GST format (e.g. 0.00%)")
+    gstPercentage: Yup.string().matches(/^\d+(\.\d{1,2})?$/, "Invalid GST format (e.g. 0.00%)"),
+    interestApplicable: Yup.object().nullable(),
+
+    interestStartDate: Yup.date()
+        .nullable()
+        .test("is-after-interest-due-date", "Interest Start Date must be after Due Date", function (value) {
+            const { interestDueDate } = this.parent;
+            if (value && interestDueDate) {
+                return new Date(value) > new Date(interestDueDate);
+            }
+            return true;
+        })
+        .test("is-before-start-date", "Interest Start Date must be before the Start Date of next month", function (value) {
+            const { startDate } = this.parent;
+            if (value && startDate) {
+              const startDateObj = new Date(startDate);
+              const nextMonth = new Date(startDateObj.setMonth(startDateObj.getMonth() + 1));
+              nextMonth.setDate(1);
+              return new Date(value) < nextMonth;
+            }
+            return true;
+          }),
+
+    interestDueDate: Yup.date()
+        .nullable(),
+        // .test("is-before-start-date", "Interest Due Date must be before the Start Date", function (value) {
+        //     const { startDate } = this.parent;
+        //     if (value && startDate) {
+        //         return new Date(value) < new Date(startDate);
+        //     }
+        //     return true; 
+        // }),
+
+    startDate: Yup.date()
+        .required("Start Date is required")
+        .test('is-before-end-date', 'Start date must be before the End date', function (value) {
+            const { endDate } = this.parent;
+            return value && new Date(value) < new Date(endDate);
+        }),
+
+    endDate: Yup.date()
+        .required("End Date is required")
+        .test('is-after-start-date', 'End date must be after the Start date', function (value) {
+            const { startDate } = this.parent;
+            return value && new Date(value) > new Date(startDate);
+        })
 });
 
 const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, onSave, editing }) => {
@@ -152,6 +197,16 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
         { value: "Property", label: "Property" },
     ]
 
+    const maintenanceOptions = [
+        { value: "Society", label: "Society" },
+        { value: "Property", label: "Property" }
+    ];
+
+    const additionalBillOptions = [
+        { value: "Tower", label: "Tower" },
+        { value: "Wing", label: "Wing" }
+    ];
+
 
 
 
@@ -172,11 +227,32 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
         { value: "No", label: "No" },
     ]
 
+    const resetFields = (setFieldValue: any, fieldName: any) => {
+        const fieldsToReset: any = {
+            "chargeType": ["chargeMasterType", "societyName", "tower", "wing", "property", "billingFrequency", "interestApplicable", "rateOfInterest", "interestStartDate", "interestDueDate", "billingType", "psfRate", "narration", "amount", "totalAmount"],
+            "chargeMasterType": ["societyName", "tower", "wing", "property"],
+            "societyName": ["tower", "wing", "property"],
+            "tower": ["wing", "property"],
+            "wing": ["property"],
+            "interestApplicable": ["rateOfInterest", "interestStartDate", "interestDueDate"],
+            "billingType": ["psfRate", "narration", "amount", "totalAmount"],
+        };
+
+        const resetFields = fieldsToReset[fieldName] || [];
+        resetFields.forEach((field: any) => {
+            if (["chargeMasterType", "societyName", "tower", "wing", "property", "interestApplicable", "narration"].includes(field)) {
+                setFieldValue(field, null);
+            } else {
+                setFieldValue(field, "");
+            }
+        });
+    };
+
     const handleSubmit = async (values: any) => {
         try {
             if (onSave) {
                 onSave(values)
-                onClose()
+                // onClose()
             }
         } catch (error) {
             console.log(error)
@@ -205,6 +281,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                     billingType: { label: initialVals?.billingType || "", value: initialVals?.billingType || "" },
                     interestStartDate: initialVals?.interestStartDate || "",
                     interestDueDate: initialVals?.interestDueDate || "",
+                    rateOfInterest: initialVals?.rateOfInterest || "",
                     psfRate: initialVals?.psfRate || "",
                     area: initialVals?.area || "",
                     narration: { value: initialVals?.narration || "", label: initialVals?.narration || "" },
@@ -236,7 +313,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                     }, [values.billingType, values.psfRate, values.area, values.billingFrequency, values.amount, setFieldValue]);
 
                     useEffect(() => {
-                        if (societyData) {
+                        if (societyData && values.chargeType.value === 'Maintenance') {
                             setFieldValue("billingFrequency", societyData.billingFrequency || "");
                             setFieldValue("interestStartDate", societyData.interestCalculationStartDate?.split('T')[0] || "");
                         }
@@ -302,10 +379,36 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                     </Col>
                                     <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
+                                            <Form.Label>Charge Type<span className="text-danger">*</span></Form.Label>
+                                            <Select
+                                                name="chargeType"
+                                                options={chargetype}
+                                                placeholder="Select Type"
+                                                classNamePrefix="Select2"
+                                                value={values.chargeType}
+                                                onChange={(selected) => {
+                                                    setFieldValue("chargeType", selected)
+                                                    resetFields(setFieldValue, "chargeType");
+                                                }}
+                                            />
+                                            {errors.chargeType && touched.chargeType && (
+                                                <div className="text-danger">{errors.chargeType as string}</div>
+                                            )}
+                                        </Form.Group>
+                                    </Col>
+                                    <Col xl={6}>
+                                        <Form.Group className="form-group mb-1">
                                             <Form.Label>Charge Master Type</Form.Label>
                                             <Select
                                                 name="chargeMasterType"
-                                                options={chargemastertype}
+                                                // options={chargemastertype}
+                                                options={
+                                                    values.chargeType?.value === "Maintenance"
+                                                        ? maintenanceOptions
+                                                        : values.chargeType?.value === "Additional Bill"
+                                                            ? additionalBillOptions
+                                                            : []
+                                                }
                                                 placeholder="Select Charge Master Type"
                                                 classNamePrefix="Select2"
                                                 value={values.chargeMasterType}
@@ -315,26 +418,12 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                     setFieldValue("wing", null)
                                                     setFieldValue("property", null)
                                                     setFieldValue("societyName", null)
+                                                    resetFields(setFieldValue, "chargeMasterType");
                                                 }}
                                             />
                                         </Form.Group>
                                     </Col>
-                                    <Col xl={6}>
-                                        <Form.Group className="form-group mb-1">
-                                            <Form.Label>Charge Type<span className="text-danger">*</span></Form.Label>
-                                            <Select
-                                                name="chargeType"
-                                                options={chargetype}
-                                                placeholder="Select Type"
-                                                classNamePrefix="Select2"
-                                                value={values.chargeType}
-                                                onChange={(selected) => setFieldValue("chargeType", selected)}
-                                            />
-                                            {errors.chargeType && touched.chargeType && (
-                                                <div className="text-danger">{errors.chargeType as string}</div>
-                                            )}
-                                        </Form.Group>
-                                    </Col>
+
                                     <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Society<span className="text-danger">*</span></Form.Label>
@@ -349,9 +438,10 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                     setFieldValue("tower", null)
                                                     setFieldValue("wing", null)
                                                     setFieldValue("property", null)
+                                                    resetFields(setFieldValue, "societyName");
                                                     fetchSocietyDetails(selected?.value);
 
-                                                    if (["Wing", "Property", "Tower"].includes(values.chargeMasterType.value)) {
+                                                    if (["Wing", "Property", "Tower"].includes(values.chargeMasterType?.value)) {
                                                         fetchTowersForDropDown(selected)
                                                     }
                                                 }}
@@ -362,7 +452,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                         </Form.Group>
                                     </Col>
 
-                                    {["Wing", "Property", "Tower"].includes(values.chargeMasterType.value) && <Col xl={6}>
+                                    {["Wing", "Property", "Tower"].includes(values.chargeMasterType?.value) && <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Tower</Form.Label>
                                             <Select
@@ -375,14 +465,15 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                     setFieldValue("tower", selected)
                                                     setFieldValue("wing", null)
                                                     setFieldValue("prperty", null)
-                                                    if (["Wing", "Property"].includes(values.chargeMasterType.value)) {
+                                                    resetFields(setFieldValue, "tower");
+                                                    if (["Wing", "Property"].includes(values.chargeMasterType?.value)) {
                                                         fetchWingsForDropDown(selected)
                                                     }
                                                 }}
                                             />
                                         </Form.Group>
                                     </Col>}
-                                    {["Wing", "Property"].includes(values.chargeMasterType.value) && <Col xl={6}>
+                                    {["Wing", "Property"].includes(values.chargeMasterType?.value) && <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Wing</Form.Label>
                                             <Select
@@ -394,7 +485,8 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                 onChange={(selected) => {
                                                     setFieldValue("wing", selected)
                                                     setFieldValue("property", null)
-                                                    if (["Property"].includes(values.chargeMasterType.value)) {
+                                                    resetFields(setFieldValue, "wing");
+                                                    if (["Property"].includes(values.chargeMasterType?.value)) {
                                                         fetchPropertiesForDropDown(selected)
                                                     }
                                                 }
@@ -406,7 +498,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                     }
 
 
-                                    {values.chargeMasterType.value === "Property" && <Col xl={6}>
+                                    {values.chargeMasterType?.value === "Property" && <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Property</Form.Label>
                                             <Select
@@ -421,7 +513,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                     </Col>
                                     }
                                     {
-                                        values.chargeType.value !== "Additional Bill" && <Col xl={6}>
+                                        values.chargeType?.value === "Maintenance" && <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>Billing Frequency</Form.Label>
                                                 <Form.Control
@@ -436,24 +528,9 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             </Form.Group>
                                         </Col>
                                     }
+
                                     {
-                                        values.chargeType.value === "Maintenance" && <Col xl={6}>
-                                            <Form.Group className="form-group mb-1">
-                                                <Form.Label>Interest Due Date<span className="text-danger">*</span></Form.Label>
-                                                <FormControl
-                                                    type="date"
-                                                    name="interestDueDate"
-                                                    value={values.interestDueDate}
-                                                    onChange={handleChange}
-                                                />
-                                                {errors.interestDueDate && touched.interestDueDate && (
-                                                    <div className="text-danger">{errors.interestDueDate as string}</div>
-                                                )}
-                                            </Form.Group>
-                                        </Col>
-                                    }
-                                    {
-                                        values.chargeType.value === "Additional Bill" && <Col xl={6}>
+                                        values.chargeType?.value === "Additional Bill" && <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>Interest Applicable<span className="text-danger">*</span></Form.Label>
                                                 <Select
@@ -462,7 +539,10 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                     placeholder="Select name"
                                                     classNamePrefix="Select2"
                                                     value={values.interestApplicable}
-                                                    onChange={(selected) => setFieldValue("interestApplicable", selected)}
+                                                    onChange={(selected) => {
+                                                        setFieldValue("interestApplicable", selected)
+                                                        resetFields(setFieldValue, "interestApplicable");
+                                                    }}
                                                 />
                                                 {errors.interestApplicable && touched.interestApplicable && (
                                                     <div className="text-danger">{errors.interestApplicable as string}</div>
@@ -470,8 +550,26 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             </Form.Group>
                                         </Col>
                                     }
-                                    {(values.chargeType.value === 'Maintenance' ||
-                                        (values.chargeType.value === 'Additional Bill' && values.interestApplicable.value === 'Yes')) && <Col xl={6}>
+                                    {
+                                        values.interestApplicable?.value === "Yes" && <Col xl={6}>
+                                            <Form.Group className="form-group mb-1">
+                                                <Form.Label>Rate of Interest %<span className="text-danger">*</span></Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="rateOfInterest"
+                                                    value={values.rateOfInterest}
+                                                    onChange={handleChange}
+                                                    placeholder="Interest rate %"
+                                                />
+                                                {errors.rateOfInterest && touched.rateOfInterest && (
+                                                    <div className="text-danger">{errors.rateOfInterest as string}</div>
+                                                )}
+                                            </Form.Group>
+                                        </Col>
+                                    }
+                                    {(values.chargeType?.value === 'Maintenance' ||
+                                        (values.chargeType?.value === 'Additional Bill' && values.interestApplicable?.value === 'Yes')) && <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>Interest Start Date<span className="text-danger">*</span></Form.Label>
                                                 <FormControl
@@ -482,6 +580,23 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                 />
                                                 {errors.interestStartDate && touched.interestStartDate && (
                                                     <div className="text-danger">{errors.interestStartDate as string}</div>
+                                                )}
+                                            </Form.Group>
+                                        </Col>
+                                    }
+                                    {
+                                        (values.chargeType?.value === 'Maintenance' ||
+                                            (values.chargeType?.value === 'Additional Bill' && values.interestApplicable?.value === 'Yes')) && <Col xl={6}>
+                                            <Form.Group className="form-group mb-1">
+                                                <Form.Label>Interest Due Date<span className="text-danger">*</span></Form.Label>
+                                                <FormControl
+                                                    type="date"
+                                                    name="interestDueDate"
+                                                    value={values.interestDueDate}
+                                                    onChange={handleChange}
+                                                />
+                                                {errors.interestDueDate && touched.interestDueDate && (
+                                                    <div className="text-danger">{errors.interestDueDate as string}</div>
                                                 )}
                                             </Form.Group>
                                         </Col>
@@ -503,7 +618,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             )}
                                         </Form.Group>
                                     </Col>
-                                    {values.billingType.value === "PSF" && (
+                                    {values.billingType?.value === "PSF" && (
                                         <>
                                             <Col xl={6}>
                                                 <Form.Group className="form-group mb-1">
@@ -518,7 +633,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                 </Form.Group>
                                             </Col>
 
-                                            <Col xl={6}>
+                                            {/* <Col xl={6}>
                                                 <Form.Group className="form-group mb-1">
                                                     <Form.Label>Area (sq. ft.)</Form.Label>
                                                     <Form.Control
@@ -529,10 +644,10 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                         placeholder="Area"
                                                     />
                                                 </Form.Group>
-                                            </Col>
+                                            </Col> */}
                                         </>
                                     )}
-                                    {values.billingType.value === "Narration" && <Col xl={6}>
+                                    {values.billingType?.value === "Narration" && <Col xl={6}>
                                         <Form.Group className="form-group">
                                             <Form.Label>Narration <span className="text-danger">*</span></Form.Label>
                                             <Select
@@ -547,34 +662,38 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                         </Form.Group>
                                     </Col>
                                     }
-                                    <Col xl={6}>
-                                        <Form.Group className="form-group mb-1">
-                                            <Form.Label>Amount</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                className="form-control"
-                                                name="amount"
-                                                value={values.amount}
-                                                onChange={handleChange}
-                                                placeholder="Amount"
-                                                disabled={values.billingType.value === "PSF"}
-                                            />
-                                        </Form.Group>
-                                    </Col>
-                                    <Col xl={6}>
-                                        <Form.Group className="form-group mb-1">
-                                            <Form.Label>Total Amount</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                className="form-control"
-                                                name="totalAmount"
-                                                value={values.totalAmount}
-                                                onChange={handleChange}
-                                                placeholder="Total Amount"
-                                                disabled
-                                            />
-                                        </Form.Group>
-                                    </Col>
+                                    {
+                                        (values.billingType?.value === "Narration" || values.billingType?.value === "Lumpsum") && <Col xl={6}>
+                                            <Form.Group className="form-group mb-1">
+                                                <Form.Label>Amount</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="amount"
+                                                    value={values.amount}
+                                                    onChange={handleChange}
+                                                    placeholder="Amount"
+                                                    disabled={values.billingType?.value === "PSF"}
+                                                />
+                                            </Form.Group>
+                                        </Col>
+                                    }
+                                    {
+                                        (values.billingType?.value === "Narration" || values.billingType?.value === "Lumpsum") && <Col xl={6}>
+                                            <Form.Group className="form-group mb-1">
+                                                <Form.Label>Total Amount</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    className="form-control"
+                                                    name="totalAmount"
+                                                    value={values.totalAmount}
+                                                    onChange={handleChange}
+                                                    placeholder="Total Amount"
+                                                    disabled
+                                                />
+                                            </Form.Group>
+                                        </Col>
+                                    }
                                     <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Start Date<span className="text-danger">*</span></Form.Label>

@@ -248,6 +248,7 @@ export default function Applications() {
   const gatetype = [
     { value: "1", label: "Inward" },
     { value: "2", label: "Outward" },
+    { value: "2", label: "Internal" },
   ]
 
   const gatetypecategory = [
