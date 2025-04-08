@@ -514,22 +514,22 @@ export default function PropertyView() {
                                 <Row>
                                   <Col xl={12}>
                                     <FormLabel>Society</FormLabel>
-                                    <p className='tx-15 col-sm-11 p-0'>{singlePropertyData?.society?.societyName || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold col-sm-11 p-0'>{singlePropertyData?.society?.societyName || "N/A"}</p>
                                   </Col>
 
                                   <Col xl={12}>
                                     <FormLabel>Ledger Name</FormLabel>
-                                    <p className='tx-15 col-sm-11 p-0'>{singlePropertyData?.ledgerName || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold col-sm-11 p-0'>{singlePropertyData?.ledgerName || "N/A"}</p>
                                   </Col>
 
                                   <Col xl={6}>
                                     <FormLabel>Property Name</FormLabel>
-                                    <p className='tx-15'>{singlePropertyData?.propertyName || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold'>{singlePropertyData?.propertyName || "N/A"}</p>
                                   </Col>
 
                                   <Col xl={6}>
                                     <FormLabel>Owner</FormLabel>
-                                    <p className='tx-15'>
+                                    <p className='tx-14 tx-semibold'>
                                       {
                                         singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 1)
                                           ? `${singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 1)?.member?.firstName} ${singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 1)?.member?.lastName}`
@@ -541,39 +541,39 @@ export default function PropertyView() {
 
                                   <Col xl={6}>
                                     <FormLabel>Status</FormLabel>
-                                    <p className='tx-15'>{singlePropertyData?.status || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold'>{singlePropertyData?.status || "N/A"}</p>
                                   </Col>
 
 
 
                                   <Col xl={6}>
                                     <FormLabel>Tower</FormLabel>
-                                    <p className='tx-15'>{singlePropertyData?.tower?.towerName || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold'>{singlePropertyData?.tower?.towerName || "N/A"}</p>
                                   </Col>
 
                                   <Col xl={6}>
                                     <FormLabel>Area(sq.ft.)</FormLabel>
-                                    <p className='tx-15'>{singlePropertyData?.area || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold'>{singlePropertyData?.area || "N/A"}</p>
                                   </Col>
 
                                   <Col xl={6}>
                                     <FormLabel>Wing</FormLabel>
-                                    <p className='tx-15'>{singlePropertyData?.wing?.wingName || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold'>{singlePropertyData?.wing?.wingName || "N/A"}</p>
                                   </Col>
 
                                   <Col xl={6}>
                                     <FormLabel>Flat No.</FormLabel>
-                                    <p className='tx-15'>{singlePropertyData?.flatNumber || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold'>{singlePropertyData?.flatNumber || "N/A"}</p>
                                   </Col>
 
                                   <Col xl={6}>
                                     <FormLabel>Deal Type</FormLabel>
-                                    <p className='tx-15'>{singlePropertyData?.dealType || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold'>{singlePropertyData?.dealType || "N/A"}</p>
                                   </Col>
 
                                   <Col xl={6}>
                                     <FormLabel>Floor No.</FormLabel>
-                                    <p className='tx-15'>{singlePropertyData?.floorNumber || "N/A"}</p>
+                                    <p className='tx-14 tx-semibold'>{singlePropertyData?.floorNumber || "N/A"}</p>
                                   </Col>
 
                                 </Row>
@@ -589,11 +589,11 @@ export default function PropertyView() {
                                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Registration Details</h5>
                                     <Row>
                                       <Col xl={6} className='mb-1 tx-12'>Flat Registration Number</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.flatRegistrationNumber || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.flatRegistrationNumber || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>Date of Agreement</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.dateOfAgreement || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.dateOfAgreement || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>Date of Registration</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.dateOfRegistration || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.dateOfRegistration || "N/A"}</Col>
 
                                     </Row>
                                   </Card.Body>
@@ -606,17 +606,17 @@ export default function PropertyView() {
                                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Address Details</h5>
                                     <Row>
                                       <Col xl={6} className='mb-1 tx-12'>Address line 1</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.society?.address || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.society?.address || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>Address line 2</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.society?.addressLine2 || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.society?.addressLine2 || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>Address line 3</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.society?.addressLine3 || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.society?.addressLine3 || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>City</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.society?.city || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.society?.city || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>State</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.society?.state || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.society?.state || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>Pincode</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.society?.pincode || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.society?.pincode || "N/A"}</Col>
                                     </Row>
                                   </Card.Body>
                                 </Card>
@@ -626,17 +626,17 @@ export default function PropertyView() {
 
 
                               </Col>
-                              <Col xl={6}>
+                              <Col xl={6} className='padding-right40'>
                                 <Card className='mt-3'>
                                   <Card.Body>
                                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Other Details</h5>
                                     <Row>
                                       <Col xl={7} className='mb-1 tx-12'>Intercom Number</Col>
-                                      <Col xl={5} className='tx-semibold'>{singlePropertyData?.intercomNumber || "N/A"}</Col>
+                                      <Col xl={5} className='tx-14 tx-semibold'>{singlePropertyData?.intercomNumber || "N/A"}</Col>
                                       <Col xl={7} className='mb-1 tx-12'>Gas Connection Number</Col>
-                                      <Col xl={5} className='tx-semibold'>{singlePropertyData?.gasConnectionNumber || "N/A"}</Col>
+                                      <Col xl={5} className='tx-14 tx-semibold'>{singlePropertyData?.gasConnectionNumber || "N/A"}</Col>
                                       <Col xl={7} className='mb-1 tx-12'>Consumer Electricity Number</Col>
-                                      <Col xl={5} className='tx-semibold'>{singlePropertyData?.electricityNumber || "N/A"}</Col>
+                                      <Col xl={5} className='tx-14 tx-semibold'>{singlePropertyData?.electricityNumber || "N/A"}</Col>
 
                                     </Row>
                                   </Card.Body>
@@ -661,8 +661,8 @@ export default function PropertyView() {
     </Row> */}
                                     <Row>
                                       {/* Member Name */}
-                                      <Col xl={6} className='mb-1 tx-12'>Member Name</Col>
-                                      <Col xl={6} className='tx-semibold'>
+                                      <Col xl={5} className='mb-1 tx-12'>Member Name</Col>
+                                      <Col xl={7} className='tx-14 tx-semibold'>
                                         {
                                           singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 1)
                                             ? <Link to={`${import.meta.env.BASE_URL}members/membersProfile/${singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 1)?.memberIdentifier}`} className='text-info'>
@@ -674,8 +674,8 @@ export default function PropertyView() {
                                       </Col>
 
                                       {/* Co-Owner */}
-                                      <Col xl={6} className='mb-1 tx-12'>Co Owner</Col>
-                                      <Col xl={6} className='tx-semibold'>
+                                      <Col xl={5} className='mb-1 tx-12'>Co Owner</Col>
+                                      <Col xl={7} className='tx-14 tx-semibold'>
                                         {
                                           singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 2)
                                             ? singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 2)?.member?.firstName + ' ' + singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 2)?.member?.lastName
@@ -684,8 +684,8 @@ export default function PropertyView() {
                                       </Col>
 
                                       {/* Third Owner */}
-                                      <Col xl={6} className='mb-1 tx-12'>Third Owner</Col>
-                                      <Col xl={6} className='tx-semibold'>
+                                      <Col xl={5} className='mb-1 tx-12'>Third Owner</Col>
+                                      <Col xl={7} className='tx-14 tx-semibold'>
                                         {
                                           singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 3)
                                             ? singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 3)?.member?.firstName + ' ' + singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 3)?.member?.lastName
@@ -694,8 +694,8 @@ export default function PropertyView() {
                                       </Col>
 
                                       {/* Fourth Owner */}
-                                      <Col xl={6} className='mb-1 tx-12'>Fourth Owner</Col>
-                                      <Col xl={6} className='tx-semibold'>
+                                      <Col xl={5} className='mb-1 tx-12'>Fourth Owner</Col>
+                                      <Col xl={7} className='tx-14 tx-semibold'>
                                         {
                                           singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 4)
                                             ? singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 4)?.member?.firstName + ' ' + singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 4)?.member?.lastName
@@ -704,8 +704,8 @@ export default function PropertyView() {
                                       </Col>
 
                                       {/* Fifth Owner */}
-                                      <Col xl={6} className='mb-1 tx-12'>Fifth Owner</Col>
-                                      <Col xl={6} className='tx-semibold'>
+                                      <Col xl={5} className='mb-1 tx-12'>Fifth Owner</Col>
+                                      <Col xl={7} className='tx-14 tx-semibold'>
                                         {
                                           singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 5)
                                             ? singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 5)?.member?.firstName + ' ' + singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 5)?.member?.lastName
@@ -714,8 +714,8 @@ export default function PropertyView() {
                                       </Col>
 
                                       {/* Previous Owner */}
-                                      <Col xl={6} className='mb-1 tx-12'>Previous Owner</Col>
-                                      <Col xl={6} className='tx-semibold'>
+                                      <Col xl={5} className='mb-1 tx-12'>Previous Owner</Col>
+                                      <Col xl={7} className='tx-14 tx-semibold'>
                                         {
                                           singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 6)
                                             ? singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 6)?.member?.firstName + ' ' + singlePropertyData?.propertyMembers?.find((member: any) => member.ownership === 6)?.member?.lastName
@@ -735,19 +735,19 @@ export default function PropertyView() {
 
 
                               </Col>
-                              <Col xl={12}>
+                              <Col xl={12} className='padding-right40'>
                                 <Card>
                                   <Card.Body>
                                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Already Paid Details</h5>
                                     <Row>
                                       <Col xl={6} className='mb-1 tx-12'>Monthly Paid Maintenance to Builder</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.monthlyMaintenance || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.monthlyMaintenance || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>Monthly Paid Maintenance to Builder Upto</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.monthlyMaintenanceUpto || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.monthlyMaintenanceUpto || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>Monthly Paid Arrears</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.monthlyPaidArrears || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.monthlyPaidArrears || "N/A"}</Col>
                                       <Col xl={6} className='mb-1 tx-12'>Monthly Paid Arrears Upto</Col>
-                                      <Col xl={6} className='tx-semibold'>{singlePropertyData?.monthlyPaidArrearsUpto || "N/A"}</Col>
+                                      <Col xl={6} className='tx-14 tx-semibold'>{singlePropertyData?.monthlyPaidArrearsUpto || "N/A"}</Col>
                                     </Row>
                                   </Card.Body>
                                 </Card>
