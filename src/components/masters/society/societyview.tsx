@@ -1030,8 +1030,8 @@ export default function SocietyView() {
                                 <Card.Body>
                                   <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Society Document Details</h5>
                                   <Row>
-                                    <Col xl={12} className='mb-1 tx-12'>Society Registration Number</Col>
-                                    <Col xl={12} className='tx-semibold mb-2 tx-14 text-primary'>{singleSocietyData?.registrationNumber || "N/A"}</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Registration Number</Col>
+                                    <Col xl={7} className='tx-semibold mb-2 tx-14 text-primary'>{singleSocietyData?.registrationNumber || "N/A"}</Col>
                                     <Col xl={5} className='mb-1 tx-12'>TAN number</Col>
                                     <Col xl={7} className='tx-semibold tx-12'>{singleSocietyData?.tanNumber || "N/A"}</Col>
                                     <Col xl={5} className='mb-1 tx-12'>PAN No</Col>
@@ -1111,7 +1111,9 @@ export default function SocietyView() {
 
                                         <Row className="mt-2">
                                           {/* QR Code Image */}
-                                          <Col xl={12} className='mt-2 tx-12'>
+                                          <Col xl={5} className='mb-1 tx-12'>Society Payment QR Code</Col>
+                                          <Col xl={6} className='mt-2 tx-12'>
+
                                             <img crossOrigin="anonymous" src={account?.paymentQrPath ? import.meta.env.VITE_STATIC_PATH + account?.paymentQrPath : 'https://static.wixstatic.com/media/794e6d_d0eb1012228446ba8436ac24a1f5ad00~mv2.jpeg/v1/fill/w_440,h_380,al_c,q_80,usm_0.33_1.00_0.00,enc_avif,quality_auto/Union%20Bank%20QR%20Code.jpeg'} alt="QR Code" />
                                           </Col>
                                         </Row>
@@ -1123,6 +1125,22 @@ export default function SocietyView() {
                                   ) : (
                                     <p>No account details available.</p>
                                   )}
+                                </Card.Body>
+                              </Card>
+
+                              <Card>
+                                <Card.Body>
+                                  <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Terms and Conditions</h5>
+                                  <Row>
+                              <Col xl={12} className='mb-1 tx-12 text-justify'><ol className='ps-2'><li className='mb-1'>Interest will be charged at 1.75% p.m. after the due date.</li>
+                              <li className='mb-1'>The cheque should be drawn in favor of CreditBricks Society. </li>
+                              <li className='mb-1'>No claim in respect of this bill will be entertained unless notified in writing within 10 days from the date of this bill.</li>
+                              <li className='mb-1'>If the dues are not cleared within 90 days, then the member shall be termed as a defaulter, and appropriate action will be taken by the society against the defaulters as per the Bylaws</li>
+                              <li className='mb-1'>In case of no response on the payment for a prolonged period the membership from the society can be terminated and expulsion procedure can be initiated.</li> <li>The penalty charges do not create any right in your favor.</li>
+                              <li className='mb-1'>Society reserves the right to enhance the penalty in case of continuing default and misuse.</li></ol></Col>
+
+                            </Row>
+
                                 </Card.Body>
                               </Card>
 
