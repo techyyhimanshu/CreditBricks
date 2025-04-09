@@ -763,7 +763,6 @@ export default function SocietyView() {
           }
         }
       });
-      console.log("kartik", requestBody)
       const response = await addChargeMasterApi(requestBody)
       if (response.status === 200) {
         viewDemoClose("addcharge");
@@ -903,7 +902,7 @@ export default function SocietyView() {
             <div className="breadcrumb-header justify-content-between">
               <div className="left-content">
                 <span className="main-content-title mg-b-0 mg-b-lg-1 text-capitalize"> <Link to={`${import.meta.env.BASE_URL}society/societymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> {singleSocietyData?.societyName || "N/A"}
-                  <Link to={``} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal ' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span>
+                  <Link to={`${import.meta.env.BASE_URL}society/editsocietymaster/${identifier}`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal ' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span>
               </div>
             </div>
 
