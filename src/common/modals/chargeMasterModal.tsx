@@ -184,19 +184,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
         }
     }
 
-    const chargename = [
-        { value: "Lift Charges", label: "Lift Charges" },
-        { value: "Electricity Charges", label: "Electricity Charges" },
-        { value: "Water Charges", label: "Water Charges" },
-    ]
-
-    const chargemastertype = [
-        { value: "Society", label: "Society" },
-        { value: "Tower", label: "Tower" },
-        { value: "Wing", label: "Wing" },
-        { value: "Property", label: "Property" },
-    ]
-
+   
     const maintenanceOptions = [
         { value: "Society", label: "Society" },
         { value: "Property", label: "Property" }
@@ -206,9 +194,6 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
         { value: "Tower", label: "Tower" },
         { value: "Wing", label: "Wing" }
     ];
-
-
-
 
     const chargetype = [
         { value: "Maintenance", label: "Maintenance" },
@@ -283,7 +268,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                     interestDueDate: initialVals?.interestDueDate || "",
                     rateOfInterest: initialVals?.rateOfInterest || "",
                     psfRate: initialVals?.psfRate || "",
-                    area: initialVals?.area || "",
+                    // area: initialVals?.area || "",
                     narration: { value: initialVals?.narration || "", label: initialVals?.narration || "" },
                     amount: initialVals?.amount || "",
                     interestApplicable: { label: initialVals?.interestApplicable || "", value: initialVals?.interestApplicable || "" },
@@ -298,19 +283,19 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
             >
                 {({ values, handleChange, setFieldValue, errors, touched }) => {
                     useEffect(() => {
-                        if (values.billingType.value === "PSF") {
-                            // Calculate the amount and total amount
-                            const amount = values.psfRate * values.area;
-                            setFieldValue("amount", amount);
-                            setFieldValue("totalAmount", amount * getMultiplier(values.billingFrequency));
-                        } else if (values.billingType.value === "Lumpsum" || values.billingType.value === "Narration") {
+                        // if (values.billingType.value === "PSF") {
+                        //     const amount = values.psfRate * values.area;
+                        //     setFieldValue("amount", amount);
+                        //     setFieldValue("totalAmount", amount * getMultiplier(values.billingFrequency));
+                        // } 
+                        if (values.billingType.value === "Lumpsum" || values.billingType.value === "Narration") {
                             const totalAmount = values.amount * getMultiplier(values.billingFrequency);
                             setFieldValue("totalAmount", totalAmount);
                         } else {
                             setFieldValue("amount", "");
                             setFieldValue("totalAmount", "");
                         }
-                    }, [values.billingType, values.psfRate, values.area, values.billingFrequency, values.amount, setFieldValue]);
+                    }, [values.billingType, values.psfRate, values.billingFrequency, values.amount, setFieldValue]);
 
                     useEffect(() => {
                         if (societyData && values.chargeType.value === 'Maintenance') {

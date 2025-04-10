@@ -60,7 +60,7 @@ export default function PropertyView() {
               src={imagesData('female1')}
               className="wd-100 rounded-5"
             />
-            <span className='ms-3'>{`${singleMemberData?.firstName} ${singleMemberData?.middleName} ${singleMemberData?.lastName}`} <Link to={`${import.meta.env.BASE_URL}members/addmembers`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span></span>
+            <span className='ms-3'>{`${singleMemberData?.firstName} ${singleMemberData?.middleName} ${singleMemberData?.lastName}`} <Link to={`${import.meta.env.BASE_URL}member/editmembermaster/${identifier}`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span></span>
         </div>
       </div>
 

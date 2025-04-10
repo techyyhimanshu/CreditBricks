@@ -22,6 +22,7 @@ import TowerModal from '../../../common/modals/towerModal';
 import { deleteTowerApi, updateTowerApi } from '../../../api/tower-api';
 import TestLoader from '../../../layout/layoutcomponent/testloader';
 import ChargeMasterModal from '../../../common/modals/chargeMasterModal';
+import { addChargeMasterApi } from '../../../api/chargemaster-api';
 
 export default function SocietyView() {
   const [singleSocietyData, setSingleSocietydata] = useState<any>([])
@@ -316,7 +317,7 @@ export default function SocietyView() {
           sno: index + 1,
           propertyName: property.propertyName,
           propertyIdentifier: property.propertyIdentifier,
-          memberName: `${property?.member?.firstName||""} ${property?.member?.middleName||""} ${property?.member?.lastName||""}`,
+          memberName: `${property?.member?.firstName || ""} ${property?.member?.middleName || ""} ${property?.member?.lastName || ""}`,
           societyName: property.societyName,
           societyIdentifier: property.societyIdentifier,
           tenantName: `${property?.tenant?.firstName || ""} ${property?.tenant?.middleName || ""} ${property?.tenant?.lastName || ""}`,
@@ -734,11 +735,43 @@ export default function SocietyView() {
 
   }
 
-  const handleChargeMasterSubmit = async(values:any)=>{
+  const handleChargeMasterSubmit = async (values: any) => {
     try {
-      console.log("kartik",values)
-    } catch (error) {
 
+      const keyMapping: any = {
+        societyName: 'societyIdentifier',
+        tower: 'towerIdentifier',
+        wing: 'wingIdentifier',
+        property: 'propertyIdentifier',
+      };
+
+
+      const requestBody: any = {};
+
+      Object.keys(values).forEach((key) => {
+        const field = values[key];
+
+        if (field && typeof field === 'object' && field.label && field.value) {
+          if (field.value !== '' && field.value !== null) {
+            // requestBody[key] = field.value;
+            const newKey = keyMapping[key] || key;
+            requestBody[newKey] = field.value;
+          }
+        } else {
+          if (field !== '' && field !== null) {
+            requestBody[key] = field;
+          }
+        }
+      });
+      const response = await addChargeMasterApi(requestBody)
+      if (response.status === 200) {
+        viewDemoClose("addcharge");
+        showToast("success", response.data.message)
+        // fetchAllNotice()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
     }
   }
 
@@ -791,7 +824,7 @@ export default function SocietyView() {
     })()
   }
 
-    type Row = {
+  type Row = {
     societyIdentifier: string;
     sno: number;
     societyName: string;
@@ -869,7 +902,7 @@ export default function SocietyView() {
             <div className="breadcrumb-header justify-content-between">
               <div className="left-content">
                 <span className="main-content-title mg-b-0 mg-b-lg-1 text-capitalize"> <Link to={`${import.meta.env.BASE_URL}society/societymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> {singleSocietyData?.societyName || "N/A"}
-                <Link to={``} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal ' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span>
+                  <Link to={`${import.meta.env.BASE_URL}society/editsocietymaster/${identifier}`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal ' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span>
               </div>
             </div>
 
@@ -973,55 +1006,55 @@ export default function SocietyView() {
                                   <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">List of Committee Members</h5>
 
                                   <table className='table mt-3'>
-                          <thead>
-                            <tr>
-                              <th>S.no.</th>
-                              <th>Society</th>
-                              <th>Tower</th>
-                              <th>Wing</th>
-                              <th>Flat </th>
-                              <th>Approver</th>
-                              <th>Designation</th>
-                              <th>Application Type</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td className='align-top'>1</td>
-                              <td className='align-top'>Association</td>
-                              <td className='align-top'>Tower A</td>
-                              <td className='align-top'>A</td>
-                              <td className='align-top'>123</td>
-                              <td>Sandeep Singh<br/><span className='text-muted'>9876543212</span></td>
-                              <td className='align-top'>Secretary</td>
-                              <td className='align-top'>Flat Resale</td>
-                       </tr>
-                       <tr>
-                              <td className='align-top'>2</td>
-                              <td className='align-top'>Association</td>
-                              <td className='align-top'>Tower A</td>
-                              <td className='align-top'>A</td>
-                              <td className='align-top'>123</td>
-                              <td>Sandeep Singh<br/><span className='text-muted'>9876543212</span></td>
-                              <td className='align-top'>Secretary</td>
-                              <td className='align-top'>Flat Resale</td>
-                       </tr>
-                       <tr>
-                              <td className='align-top'>3</td>
-                              <td className='align-top'>Association</td>
-                              <td className='align-top'>Tower A</td>
-                              <td className='align-top'>A</td>
-                              <td className='align-top'>123</td>
-                              <td>Sandeep Singh<br/><span className='text-muted'>9876543212</span></td>
-                              <td className='align-top'>Secretary</td>
-                              <td className='align-top'>Flat Resale</td>
-                       </tr>
+                                    <thead>
+                                      <tr>
+                                        <th>S.no.</th>
+                                        <th>Society</th>
+                                        <th>Tower</th>
+                                        <th>Wing</th>
+                                        <th>Flat </th>
+                                        <th>Approver</th>
+                                        <th>Designation</th>
+                                        <th>Application Type</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td className='align-top'>1</td>
+                                        <td className='align-top'>Association</td>
+                                        <td className='align-top'>Tower A</td>
+                                        <td className='align-top'>A</td>
+                                        <td className='align-top'>123</td>
+                                        <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
+                                        <td className='align-top'>Secretary</td>
+                                        <td className='align-top'>Flat Resale</td>
+                                      </tr>
+                                      <tr>
+                                        <td className='align-top'>2</td>
+                                        <td className='align-top'>Association</td>
+                                        <td className='align-top'>Tower A</td>
+                                        <td className='align-top'>A</td>
+                                        <td className='align-top'>123</td>
+                                        <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
+                                        <td className='align-top'>Secretary</td>
+                                        <td className='align-top'>Flat Resale</td>
+                                      </tr>
+                                      <tr>
+                                        <td className='align-top'>3</td>
+                                        <td className='align-top'>Association</td>
+                                        <td className='align-top'>Tower A</td>
+                                        <td className='align-top'>A</td>
+                                        <td className='align-top'>123</td>
+                                        <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
+                                        <td className='align-top'>Secretary</td>
+                                        <td className='align-top'>Flat Resale</td>
+                                      </tr>
 
-                          </tbody>
-                        </table>
+                                    </tbody>
+                                  </table>
 
-                                  </Card.Body>
-                                  </Card>
+                                </Card.Body>
+                              </Card>
                             </Col>
                             <Col xl={4} className='p-0 pe-3'>
 
@@ -1390,7 +1423,7 @@ export default function SocietyView() {
                                 </Modal.Footer>
                               </Modal> */}
                               {
-                                <ChargeMasterModal show={addcharge} onClose={handleChargeMasterClose} editing={false} onSave={handleChargeMasterSubmit}/>
+                                <ChargeMasterModal show={addcharge} onClose={handleChargeMasterClose} editing={false} onSave={handleChargeMasterSubmit} />
                               }
 
                               <div className='p-0 mt-4'>
