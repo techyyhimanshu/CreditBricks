@@ -18,6 +18,25 @@ export const getAllChargeMasterApi = async (): Promise<any> => {
     }
 }
 
+export const getChargesOfSocietyApi = async (identifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/charge/all?society_identifier=${identifier}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+
+export const getChargeDetailsApi = async (identifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/charge/${identifier}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 export const updateChargeMasterApi = async (data:any,id:string): Promise<any> => {
     try {
         const response = await axiosInstance.patch(`charge/cg/${id}`,data)
