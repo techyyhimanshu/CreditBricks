@@ -1,8 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
-import { Col, Row, Card, Form, Dropdown, Tabs, Tab, FormLabel, FormCheck, Button, Modal, FormControl } from "react-bootstrap";
+import { Col, Row, Card,  Dropdown, Tabs, Tab, FormLabel} from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
-import Select from "react-select";
 import { getAnnouncementsOfSocietyApi, getNoticesOfSocietyApi, getSocietyDetailsApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../../api/society-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { deletePropertyApi } from '../../../api/property-api';

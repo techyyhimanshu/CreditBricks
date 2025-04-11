@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Modal, Button, Row, Col, Form, FormControl, FormCheck } from 'react-bootstrap';
-import { Formik, Field, Form as FormikForm } from 'formik';
+import { Modal, Button, Row, Col, Form, FormControl } from 'react-bootstrap';
+import { Formik, Form as FormikForm } from 'formik';
 import Select from 'react-select';
 import * as Yup from 'yup';
-import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } from '../../api/society-api';
+import { getAllSocietyApi,  getSocietyDetailsApi } from '../../api/society-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { showToast } from '../services/toastServices';
 import { getTowerWingsApi } from '../../api/wing-api';
