@@ -22,7 +22,7 @@ import TowerModal from '../../../common/modals/towerModal';
 import { deleteTowerApi, updateTowerApi } from '../../../api/tower-api';
 import TestLoader from '../../../layout/layoutcomponent/testloader';
 import ChargeMasterModal from '../../../common/modals/chargeMasterModal';
-import { addChargeMasterApi, deleteChargeMasterApi, getChargeDetailsApi, getChargesOfSocietyApi } from '../../../api/chargemaster-api';
+import { addChargeMasterApi, deleteChargeMasterApi, getChargeDetailsApi, getChargesOfSocietyApi, updateChargeMasterApi } from '../../../api/chargemaster-api';
 import ChargeViewModal from '../../../common/modals/chargeViewModal';
 
 export default function SocietyView() {
@@ -632,6 +632,7 @@ export default function SocietyView() {
     switch (modal) {
       case "addcharge":
         setaddcharge(false);
+        setEditing(false)
         break;
 
       case "addnotices":
@@ -655,6 +656,7 @@ export default function SocietyView() {
         break;
       case "viewcharge":
         setviewcharge(false);
+        setEditing(false)
         break;
 
     }
@@ -845,7 +847,7 @@ export default function SocietyView() {
           return;
         }
 
-        if (field && typeof field === 'object' && field.label && field.value) {
+        if (field && typeof field === 'object' ) {
           if (field.value !== '' && field.value !== null) {
             // requestBody[key] = field.value;
             const newKey = keyMapping[key] || key;
@@ -857,11 +859,16 @@ export default function SocietyView() {
           }
         }
       });
-      const response = await addChargeMasterApi(requestBody)
+      let response;
+      if (editing) {
+        response = await updateChargeMasterApi(requestBody, singleChargeData?.chargeNumber)
+      } else {
+        response = await addChargeMasterApi(requestBody)
+      }
       if (response.status === 200) {
         viewDemoClose("addcharge");
         showToast("success", response.data.message)
-        // fetchAllNotice()
+        fetchChargeData()
       }
     } catch (error) {
       const errorMessage = handleApiError(error)
