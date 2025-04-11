@@ -73,23 +73,23 @@ const validationSchema = Yup.object({
         .test("is-before-start-date", "Interest Start Date must be before the Start Date of next month", function (value) {
             const { startDate } = this.parent;
             if (value && startDate) {
-              const startDateObj = new Date(startDate);
-              const nextMonth = new Date(startDateObj.setMonth(startDateObj.getMonth() + 1));
-              nextMonth.setDate(1);
-              return new Date(value) < nextMonth;
+                const startDateObj = new Date(startDate);
+                const nextMonth = new Date(startDateObj.setMonth(startDateObj.getMonth() + 1));
+                nextMonth.setDate(1);
+                return new Date(value) < nextMonth;
             }
             return true;
-          }),
+        }),
 
     interestDueDate: Yup.date()
         .nullable(),
-        // .test("is-before-start-date", "Interest Due Date must be before the Start Date", function (value) {
-        //     const { startDate } = this.parent;
-        //     if (value && startDate) {
-        //         return new Date(value) < new Date(startDate);
-        //     }
-        //     return true; 
-        // }),
+    // .test("is-before-start-date", "Interest Due Date must be before the Start Date", function (value) {
+    //     const { startDate } = this.parent;
+    //     if (value && startDate) {
+    //         return new Date(value) < new Date(startDate);
+    //     }
+    //     return true; 
+    // }),
 
     startDate: Yup.date()
         .required("Start Date is required")
@@ -184,7 +184,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
         }
     }
 
-   
+
     const maintenanceOptions = [
         { value: "Society", label: "Society" },
         { value: "Property", label: "Property" }
@@ -257,15 +257,16 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                 enableReinitialize
                 initialValues={{
                     chargeName: initialVals?.chargeName || "",
+                    chargeNumber: initialVals?.chargeNumber || "",
                     chargeType: { label: initialVals?.chargeType || "", value: initialVals?.chargeType || "" },
                     chargeMasterType: { label: initialVals?.chargeMasterType || "", value: initialVals?.chargeMasterType || "" },
-                    property: { label: initialVals?.propertyName || "", value: initialVals?.propertyIdentifier || "" },
-                    societyName: { label: initialVals?.societyName || "", value: initialVals?.societyIdentifier || "" },
-                    wing: { label: initialVals?.wingName || "", value: initialVals?.wingIdentifier || "" },
-                    tower: { label: initialVals?.towerName || "", value: initialVals?.towerIdentifier || "" },
+                    property: { label: initialVals?.property?.propertyName || "", value: initialVals?.property?.propertyIdentifier || "" },
+                    societyName: { label: initialVals?.society?.societyName || "", value: initialVals?.society?.societyIdentifier || "" },
+                    wing: { label: initialVals?.wing?.wingName || "", value: initialVals?.wing?.wingIdentifier || "" },
+                    tower: { label: initialVals?.tower?.towerName || "", value: initialVals?.tower?.towerIdentifier || "" },
                     billingType: { label: initialVals?.billingType || "", value: initialVals?.billingType || "" },
                     interestStartDate: initialVals?.interestStartDate || "",
-                    interestDueDate: initialVals?.interestDueDate || "",
+                    dueDate: initialVals?.dueDate || "",
                     rateOfInterest: initialVals?.rateOfInterest || "",
                     psfRate: initialVals?.psfRate || "",
                     // area: initialVals?.area || "",
@@ -276,7 +277,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                     billingFrequency: initialVals?.billingFrequency || "",
                     endDate: initialVals?.endDate || "",
                     startDate: initialVals?.startDate || "",
-                    gstPercentage: initialVals?.gstPercentage || ""
+                    gstPercentage: initialVals?.gst || ""
                 }}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
@@ -303,6 +304,21 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                             setFieldValue("interestStartDate", societyData.interestCalculationStartDate?.split('T')[0] || "");
                         }
                     }, [societyData, setFieldValue]);
+                    useEffect(() => {
+                        if (["Wing", "Property", "Tower"].includes(values.chargeMasterType?.value)&&values.societyName.value) {
+                            fetchTowersForDropDown(values.societyName)
+                        }
+                    }, [values.societyName.value,values.chargeMasterType.value])
+                    useEffect(() => {
+                        if (["Wing", "Property"].includes(values.chargeMasterType?.value)&&values.tower.value) {
+                            fetchWingsForDropDown(values.tower)
+                        }
+                    }, [values.tower.value,values.chargeMasterType.value])
+                    useEffect(() => {
+                        if (["Property"].includes(values.chargeMasterType?.value)&&values.wing.value) {
+                            fetchPropertiesForDropDown(values.wing)
+                        }
+                    }, [values.wing.value,values.chargeMasterType.value])
                     const getMultiplier = (billingFrequency: string) => {
                         switch (billingFrequency) {
                             case "Monthly":
@@ -327,7 +343,15 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                     <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
                                             <Form.Label>Charge Number</Form.Label>
-                                            <p className='form-control bg-light'></p>
+                                            <Form.Control
+                                                type="text"
+                                                className="form-control"
+                                                name="chargeNumber"
+                                                value={values.chargeNumber}
+                                                onChange={handleChange}
+                                                placeholder="charge Name"
+                                                disabled
+                                            />
                                         </Form.Group>
                                     </Col>
                                     {/* <Col xl={6}>
@@ -569,7 +593,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             </Form.Group>
                                         </Col>
                                     }
-                                    {
+                                    {/* {
                                         (values.chargeType?.value === 'Maintenance' ||
                                             (values.chargeType?.value === 'Additional Bill' && values.interestApplicable?.value === 'Yes')) && <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
@@ -585,7 +609,22 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                 )}
                                             </Form.Group>
                                         </Col>
-                                    }
+                                    } */}
+                                    <Col xl={6}>
+                                        <Form.Group className="form-group mb-1">
+                                            <Form.Label>Due Date<span className="text-danger">*</span></Form.Label>
+                                            <FormControl
+                                                type="date"
+                                                name="interestDueDate"
+                                                value={values.dueDate}
+                                                onChange={handleChange}
+                                            />
+                                            {errors.dueDate && touched.dueDate && (
+                                                <div className="text-danger">{errors.dueDate as string}</div>
+                                            )}
+                                        </Form.Group>
+                                    </Col>
+
 
                                     <Col xl={6}>
                                         <Form.Group className="form-group mb-1">
