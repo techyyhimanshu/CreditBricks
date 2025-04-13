@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
@@ -30,9 +30,19 @@ export default function Applications() {
   const [addrentagreement, setaddrentagreement] = useState(false);
   const [addsharecerificate, setaddsharecerificate] = useState(false);
   const [tenatview, settenatview] = useState(false);
+  const [termsconditionsview, settermsconditionsview] = useState(false);
+  const [gatepassview, setgatepassview] = useState(false);
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
+
+      case "gatepassview":
+        setgatepassview(true);
+        break;
+
+      case "termsconditionsview":
+        settermsconditionsview(true);
+        break;
 
       case "tenatview":
         settenatview(true);
@@ -83,55 +93,63 @@ export default function Applications() {
         setapplication(false);
         break;
 
-        case "addcelebration":
-          setaddcelebration(true);
-          setapplication(false);
-          break;
+      case "addcelebration":
+        setaddcelebration(true);
+        setapplication(false);
+        break;
 
-        case "addtheater":
-            setaddtheater(true);
-            setapplication(false);
-            break;
+      case "addtheater":
+        setaddtheater(true);
+        setapplication(false);
+        break;
 
-        case "addbanquethall":
-              setaddbanquethall(true);
-              setapplication(false);
-              break;
+      case "addbanquethall":
+        setaddbanquethall(true);
+        setapplication(false);
+        break;
 
-        case "addswimmingpool":
-          setaddswimmingpool(true);
-                setapplication(false);
-                break;
+      case "addswimmingpool":
+        setaddswimmingpool(true);
+        setapplication(false);
+        break;
 
-        case "addclubhouse":
-            setaddclubhouse(true);
-            setapplication(false);
-             break;
+      case "addclubhouse":
+        setaddclubhouse(true);
+        setapplication(false);
+        break;
 
-        case "addplayarea":
-          setaddplayarea(true);
-          setapplication(false);
-           break;
+      case "addplayarea":
+        setaddplayarea(true);
+        setapplication(false);
+        break;
 
-           case "addturfarea":
-          setaddturfarea(true);
-          setapplication(false);
-           break;
+      case "addturfarea":
+        setaddturfarea(true);
+        setapplication(false);
+        break;
 
-           case "addrentagreement":
-            setaddrentagreement(true);
-          setapplication(false);
-           break;
+      case "addrentagreement":
+        setaddrentagreement(true);
+        setapplication(false);
+        break;
 
-           case "addsharecerificate":
-            setaddsharecerificate(true);
-          setapplication(false);
-           break;
+      case "addsharecerificate":
+        setaddsharecerificate(true);
+        setapplication(false);
+        break;
     }
   };
 
   const viewDemoClose = (modal: any) => {
     switch (modal) {
+
+      case "gatepassview":
+        setgatepassview(false);
+        break;
+
+      case "termsconditionsview":
+        settermsconditionsview(false);
+        break;
 
       case "tenatview":
         settenatview(false);
@@ -182,33 +200,33 @@ export default function Applications() {
         setaddtheater(false);
         break;
 
-        case "addbanquethall":
+      case "addbanquethall":
         setaddbanquethall(false);
         break;
 
-        case "addswimmingpool":
-          setaddswimmingpool(false);
-           break;
+      case "addswimmingpool":
+        setaddswimmingpool(false);
+        break;
 
-           case "addclubhouse":
-            setaddclubhouse(false);
-             break;
+      case "addclubhouse":
+        setaddclubhouse(false);
+        break;
 
-             case "addplayarea":
-            setaddplayarea(false);
-             break;
+      case "addplayarea":
+        setaddplayarea(false);
+        break;
 
-             case "addturfarea":
-            setaddturfarea(false);
-             break;
+      case "addturfarea":
+        setaddturfarea(false);
+        break;
 
-             case "addrentagreement":
-              setaddrentagreement(false);
-             break;
+      case "addrentagreement":
+        setaddrentagreement(false);
+        break;
 
-             case "addsharecerificate":
-              setaddsharecerificate(false);
-             break;
+      case "addsharecerificate":
+        setaddsharecerificate(false);
+        break;
 
     }
   };
@@ -258,30 +276,30 @@ export default function Applications() {
 
   ];
 
-const member = [
-  { value: "1", label: "Test Member 1" },
-  { value: "2", label: "Test Member 2" },
+  const member = [
+    { value: "1", label: "Test Member 1" },
+    { value: "2", label: "Test Member 2" },
 
-];
+  ];
 
-const gatepasstenant = [
-  { value: "1", label: "Neha Gupta" }
+  const gatepasstenant = [
+    { value: "1", label: "Neha Gupta" }
 
-];
+  ];
 
-const vendor = [
-  { value: "1", label: "Ajay Kumar" }
+  const vendor = [
+    { value: "1", label: "Ajay Kumar" }
 
-];
+  ];
 
-const gatetypesubcategory = [
-  { value: "1", label: "Member Shifting In" },
-  { value: "2", label: "Member Shifting Out" },
-  { value: "3", label: "Tenant Shifting In" },
-  { value: "4", label: "Tenant Shifting Out" },
-  { value: "5", label: "Asset Moving In" },
-  { value: "6", label: "Asset Moving Out" },
-];
+  const gatetypesubcategory = [
+    { value: "1", label: "Member Shifting In" },
+    { value: "2", label: "Member Shifting Out" },
+    { value: "3", label: "Tenant Shifting In" },
+    { value: "4", label: "Tenant Shifting Out" },
+    { value: "5", label: "Asset Moving In" },
+    { value: "6", label: "Asset Moving Out" },
+  ];
 
   const applicationtype = [
     { value: "1", label: "All" },
@@ -419,6 +437,9 @@ const gatetypesubcategory = [
         </div>
         <div className="right-content">
           <span className='float-end btn btn-primary btn-sm' onClick={() => { viewDemoShow("addapplication"); }}><i className="bi bi-plus"></i> Add Applications</span>
+
+      {/* Add Application Modal   */}
+
           <Modal show={addapplication} size="lg" centered>
             <Modal.Header>
               <Modal.Title>Applications</Modal.Title>
@@ -577,419 +598,419 @@ const gatetypesubcategory = [
             </Modal.Header>
 
             <Modal.Body className='bg-light'>
-            <Accordion defaultActiveKey="basicinfo">
-      <Accordion.Item eventKey="basicinfo">
-        <Accordion.Header>Basic Information</Accordion.Header>
-        <Accordion.Body className='p-2'>
-<Row>
-<Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Society </Form.Label>
-                    <Select
-                      options={society}
-                      placeholder="Select society"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
+              <Accordion defaultActiveKey="basicinfo">
+                <Accordion.Item eventKey="basicinfo">
+                  <Accordion.Header>Basic Information</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select society"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
 
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Property </Form.Label>
-                    <Select
-                      options={property}
-                      placeholder="Select property"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Gate Type </Form.Label>
-                    <Select
-                      options={gatetype}
-                      placeholder="Select type"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Gate Type </Form.Label>
+                          <Select
+                            options={gatetype}
+                            placeholder="Select type"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
 
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Category </Form.Label>
-                    <Select
-                      options={gatetypecategory}
-                      placeholder="Select category"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Category </Form.Label>
+                          <Select
+                            options={gatetypecategory}
+                            placeholder="Select category"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
 
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Sub Category </Form.Label>
-                    <Select
-                      options={gatetypesubcategory}
-                      placeholder="Select sub category"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Sub Category </Form.Label>
+                          <Select
+                            options={gatetypesubcategory}
+                            placeholder="Select sub category"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
 
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Member </Form.Label>
-                    <Select
-                      options={member}
-                      placeholder="Select member"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-
-
-                <Col xl={2}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Date of Entry</Form.Label>
-                    <Form.Control
-                      type="date"
-                      placeholder="dd/mm/yyyy"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={2}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Time In</Form.Label>
-                    <Form.Control
-                      type="time"
-                      placeholder=""
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={2}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Date of Exit</Form.Label>
-                    <Form.Control
-                      type="date"
-                      placeholder="dd/mm/yyyy"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={2}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Time Out</Form.Label>
-                    <Form.Control
-                      type="time"
-                      placeholder=""
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={4}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Gate Pass Number</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Gate Pass Number"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Tenant <span className='text-info float-end cursor' onClick={() => { viewDemoShow("tenatview"); }}>View Tenant Detail</span> </Form.Label>
-                    <Select
-                      options={gatepasstenant}
-                      placeholder="Select tenant"
-                      classNamePrefix="Select2"
-                    />
-                  </Form.Group>
-                </Col>
-
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Vendor <span className='text-info float-end cursor'>View Vendor Detail</span> </Form.Label>
-                    <Select
-                      options={vendor}
-                      placeholder="Select vendor"
-                      classNamePrefix="Select2"
-                    />
-                  </Form.Group>
-                </Col>
-
-
-</Row>
-        </Accordion.Body>
-      </Accordion.Item>
-      <Accordion.Item eventKey="ApplicationDescription">
-        <Accordion.Header>Application Description</Accordion.Header>
-        <Accordion.Body className='p-2'>
-          <Row>
-        <Col xl={12}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Purpose</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Purpose"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={12}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Description
-                      <small className='float-end'>max 250 character</small>
-                    </Form.Label>
-                    <textarea className="form-control" placeholder='Details'></textarea>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                </Row>
-        </Accordion.Body>
-      </Accordion.Item>
-
-      <Accordion.Item eventKey="vehicledetails">
-        <Accordion.Header>Vehicle And Driver Details</Accordion.Header>
-        <Accordion.Body className='p-2'>
-          <Row>
-          <Col xl={4}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Driver Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Name"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={4}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Driver Contact Details</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Contact"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={4}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Vehicle Number</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Number"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={4}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Vehicle Model</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="model"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Vehicle Nature </Form.Label>
-                    <Select
-                      options={vehiclenature}
-                      placeholder="Select nature"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl="4">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Vehicle Type </Form.Label>
-                    <Select
-                      options={vehicletypegatepass}
-                      placeholder="Select type"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                </Row>
-        </Accordion.Body>
-      </Accordion.Item>
-
-      <Accordion.Item eventKey="contactpersondetails">
-        <Accordion.Header>Contact Person Details</Accordion.Header>
-        <Accordion.Body className='p-2'>
-          <Row>
-          <Col xl={6}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Contact Person Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Name"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                <Col xl={6}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Contact Person Number</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Number"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl={12}>
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Remarks
-                      <small className='float-end'>max 250 character</small>
-                    </Form.Label>
-                    <textarea className="form-control" placeholder='remarks' cols="60" rows="5"></textarea>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-
-                </Row>
-        </Accordion.Body>
-      </Accordion.Item>
-
-      <Accordion.Item eventKey="approvaldetails">
-        <Accordion.Header>Approval Details</Accordion.Header>
-        <Accordion.Body className='p-2'>
-          <Row>
-          <Col xl={4}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Society </Form.Label>
-                              <Select
-                                options={society}
-                                placeholder="Select Society"
-                                classNamePrefix="Select2"
-                              />
-                            </Form.Group>
-                          </Col>
-
-                          <Col xl={4}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Property </Form.Label>
-                              <Select
-                                options={property}
-                                placeholder="Select property"
-                                classNamePrefix="Select2"
-                              />
-                            </Form.Group>
-                          </Col>
-
-                          <Col xl={4}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Tower </Form.Label>
-                              <Select
-                                options={wing}
-                                placeholder="Select Tower"
-                                classNamePrefix="Select2"
-                              />
-                            </Form.Group>
-                          </Col>
-
-
-                          <Col xl={4}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Wing </Form.Label>
-                              <Select
-                                options={wing}
-                                placeholder="Select Wing"
-                                classNamePrefix="Select2"
-                              />
-                            </Form.Group>
-                          </Col>
-
-                          <Col xl={4}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Flat </Form.Label>
-                              <Select
-                                options={flat}
-                                placeholder="Select Flat"
-                                classNamePrefix="Select2"
-                              />
-                            </Form.Group>
-                          </Col>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Member </Form.Label>
+                          <Select
+                            options={member}
+                            placeholder="Select member"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
 
 
 
-                          <Col xl={4}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Approver Name</Form.Label>
-                              <Form.Control
-                                type="text"
-                                name="approverName"
-                                placeholder="Approver Name"
-                                className="form-control"
-                              />
-                            </Form.Group>
-                          </Col>
+                      <Col xl={2}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Date of Entry</Form.Label>
+                          <Form.Control
+                            type="date"
+                            placeholder="dd/mm/yyyy"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={2}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Time In</Form.Label>
+                          <Form.Control
+                            type="time"
+                            placeholder=""
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={2}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Date of Exit</Form.Label>
+                          <Form.Control
+                            type="date"
+                            placeholder="dd/mm/yyyy"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={2}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Time Out</Form.Label>
+                          <Form.Control
+                            type="time"
+                            placeholder=""
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Gate Pass Number</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Gate Pass Number"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Tenant <span className='text-info float-end cursor' onClick={() => { viewDemoShow("tenatview"); }}>View Tenant Detail</span> </Form.Label>
+                          <Select
+                            options={gatepasstenant}
+                            placeholder="Select tenant"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
 
-                          <Col xl={4}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Approver Contact</Form.Label>
-                              <Form.Control
-                                type="text"
-                                name="contactdetails"
-                                placeholder="Contact"
-                                className="form-control"
-                              />
-                            </Form.Group>
-                          </Col>
-
-                          <Col xl={4}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Designation </Form.Label>
-                              <Select
-                                options={designation}
-                                placeholder="Select Designation"
-                                classNamePrefix="Select2"
-                              />
-                            </Form.Group>
-                          </Col>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Vendor <span className='text-info float-end cursor'>View Vendor Detail</span> </Form.Label>
+                          <Select
+                            options={vendor}
+                            placeholder="Select vendor"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
 
 
-                </Row>
-        </Accordion.Body>
-      </Accordion.Item>
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="ApplicationDescription">
+                  <Accordion.Header>Application Description</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl={12}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Purpose</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Purpose"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={12}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Description
+                            <small className='float-end'>max 250 character</small>
+                          </Form.Label>
+                          <textarea className="form-control" placeholder='Details'></textarea>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
 
-    </Accordion>
+                <Accordion.Item eventKey="vehicledetails">
+                  <Accordion.Header>Vehicle And Driver Details</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Driver Name</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Name"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Driver Contact Details</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Contact"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Vehicle Number</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Number"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
 
-    <Col xl={12} className='p-0'>
-<label><input type="checkbox" className='float-start m-2'/><b className='float-start mt-1 cursor'> Terms & Conditions</b></label>
-</Col>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Vehicle Model</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="model"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Vehicle Nature </Form.Label>
+                          <Select
+                            options={vehiclenature}
+                            placeholder="Select nature"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Vehicle Type </Form.Label>
+                          <Select
+                            options={vehicletypegatepass}
+                            placeholder="Select type"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+                <Accordion.Item eventKey="contactpersondetails">
+                  <Accordion.Header>Contact Person Details</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Contact Person Name</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Name"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Contact Person Number</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Number"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={12}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Remarks
+                            <small className='float-end'>max 250 character</small>
+                          </Form.Label>
+                          <textarea className="form-control" placeholder='remarks' cols="60" rows="5"></textarea>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+                <Accordion.Item eventKey="approvaldetails">
+                  <Accordion.Header>Approval Details</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Tower </Form.Label>
+                          <Select
+                            options={wing}
+                            placeholder="Select Tower"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Wing </Form.Label>
+                          <Select
+                            options={wing}
+                            placeholder="Select Wing"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Flat </Form.Label>
+                          <Select
+                            options={flat}
+                            placeholder="Select Flat"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Name</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="approverName"
+                            placeholder="Approver Name"
+                            className="form-control"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Contact</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="contactdetails"
+                            placeholder="Contact"
+                            className="form-control"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Designation </Form.Label>
+                          <Select
+                            options={designation}
+                            placeholder="Select Designation"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+              </Accordion>
+
+              <Col xl={12} className='p-0'>
+                <label><input type="checkbox" className='float-start m-2' /><b className='float-start mt-1 cursor' onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label>
+              </Col>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="default" onClick={() => { viewDemoClose("addgatepass"); }}>
@@ -1002,8 +1023,229 @@ const gatetypesubcategory = [
             </Modal.Footer>
           </Modal>
 
-           {/* Tenant View */}
-           <Modal show={tenatview} size="xl" centered>
+             {/* gate pass view modal */}
+             <Modal show={gatepassview} size='xl' centered>
+            <Modal.Header>
+              <Modal.Title>Gate Pass Details</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("gatepassview"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body>
+                 <Tabs
+                              defaultActiveKey="Tab 01"
+                              id="uncontrolled-tab-example"
+                              className="panel-tabs main-nav-line bd-b-1"
+                              transition={false}
+                            >
+
+                              <Tab eventKey="Tab 01" title="Details">
+                              <Row>
+  <Col xl={8}>
+  <Card className='box-shadow border mt-3 border-primary'>
+                    <Card.Body>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Information</h5>
+                      <Row>
+                        <Col xl={12} className='mb-2'>
+                          <Form.Label>Society</Form.Label>
+                          <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-14 text-info'>Credit Bricks PVt Ltd</Link>
+                        </Col>
+
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Property</Form.Label>
+                          <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-14 text-info'>A101</Link>
+                        </Col>
+
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Gate Type</Form.Label>
+                          <p className='tx-14'>Inward</p>
+                        </Col>
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Category</Form.Label>
+                          <p className='tx-14 col-sm-11 p-0'>Tenant</p>
+                        </Col>
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Tenant Name</Form.Label>
+                          <p className='tx-14 col-sm-11 p-0'>Ajay Sharma</p>
+                        </Col>
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Sub Category</Form.Label>
+                          <p className='tx-14 col-sm-11 p-0'>Tenant Shifting In</p>
+                        </Col>
+
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Member</Form.Label>
+                          <p className='tx-14'>Test Member 1</p>
+                        </Col>
+
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Gate Pass Number</Form.Label>
+                          <p className='tx-14'>-</p>
+                        </Col>
+
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Entry Date & Time</Form.Label>
+                          <p className='tx-14 col-sm-11 p-0'>10/21/2023, 12:00 PM</p>
+                        </Col>
+
+                        <Col xl={4} className='mb-2'>
+                          <Form.Label>Exit Date & Time</Form.Label>
+                          <p className='tx-14'>10/23/2023, 12:00 PM </p>
+                        </Col>
+
+                      </Row>
+                    </Card.Body>
+                  </Card>
+
+                  <Card className='box-shadow border border-primary'>
+                                <Card.Body>
+                                  <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Approval Details</h5>
+
+                                  <table className='table mt-3'>
+                          <thead>
+                            <tr>
+                              <th>Society</th>
+                              <th>Tower</th>
+                              <th>Wing</th>
+                              <th>Flat </th>
+                              <th>Approver</th>
+                              <th>Designation</th>
+                              <th>Application Type</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                               <td className='align-top'>-</td>
+                              <td className='align-top'>Tower A</td>
+                              <td className='align-top'>A</td>
+                              <td className='align-top'>123</td>
+                              <td>Sandeep Singh<br/><span className='text-muted'>9876543212</span></td>
+                              <td className='align-top'>Secretary</td>
+                              <td className='align-top'>Flat Resale</td>
+                       </tr>
+
+
+                          </tbody>
+                        </table>
+
+                                  </Card.Body>
+                                  </Card>
+  </Col>
+
+  <Col xl={4}>
+  <Card className='box-shadow border mt-3 border-primary'>
+                    <Card.Body>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Vehicle and Driver Details</h5>
+                      <Row>
+                                    <Col xl={5} className='mb-1 tx-12'>Driver Name</Col>
+                                    <Col xl={7} className='tx-semibold tx-14'>Rakesh Kumar</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Driver Contact </Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>9876543212</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Vehicle Number</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>HR4A7986</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Vehicle Model</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>-</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Vehicle Nature</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>Visitor Parking</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Vehicle Type</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>SUV</Col>
+                                  </Row>
+                    </Card.Body>
+                  </Card>
+
+                  <Card className='box-shadow border border-primary'>
+                    <Card.Body>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Contact Person Details</h5>
+                      <Row>
+                                    <Col xl={5} className='mb-1 tx-12'>Contact Person</Col>
+                                    <Col xl={7} className='tx-semibold tx-14'>Anisha Bansal</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Contact Number </Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>8800654786</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Remarks</Col>
+                                    <Col xl={7} className='tx-semibold tx-12'>-</Col>
+
+                                  </Row>
+                    </Card.Body>
+                  </Card>
+
+
+                  <Card className='box-shadow border border-primary'>
+                    <Card.Body>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Application Description</h5>
+                      <Row>
+                                    <Col xl={12} className='mb-1 tx-12'>Purpose</Col>
+                                    <Col xl={12} className='tx-semibold tx-14'>-</Col>
+                                    <Col xl={12} className='mb-1 tx-12'>Description </Col>
+                                    <Col xl={12} className='tx-semibold tx-12'>-</Col>
+
+                                  </Row>
+                    </Card.Body>
+                  </Card>
+  </Col>
+
+</Row>
+                              </Tab>
+                              <Tab eventKey="ApprovalHistory" title="Approval History">
+
+                                <div className="table-responsive min-height500">
+                                  <table className='table table-bordered'>
+                                    <thead>
+                                      <tr>
+                                        <th>Step Name</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>	Assigned To</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td>Approval level 2</td>
+                                        <td>4/21/2023, 3:06 PM</td>
+                                        <td>Rejected</td>
+                                        <td>	Sarjerao Shinde</td>
+                                        </tr>
+
+                                      <tr>
+                                        <td>Approval level 1</td>
+                                        <td>4/21/2023, 3:02 PM</td>
+                                        <td>Approved</td>
+                                        <td>System Admin</td>
+                                     </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </Tab>
+
+
+                            </Tabs>
+
+
+            </Modal.Body>
+           </Modal>
+
+          {/* Terms & condition modal */}
+          <Modal show={termsconditionsview} centered>
+            <Modal.Header>
+              <Modal.Title>Terms & Conditions</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("termsconditionsview"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body>
+            <Col xl={12} className='mb-1 tx-12 text-justify'><ol className='ps-2'><li className='mb-1'>Interest will be charged at 1.75% p.m. after the due date.</li>
+                              <li className='mb-1'>The cheque should be drawn in favor of CreditBricks Society. </li>
+                              <li className='mb-1'>No claim in respect of this bill will be entertained unless notified in writing within 10 days from the date of this bill.</li>
+                              <li className='mb-1'>If the dues are not cleared within 90 days, then the member shall be termed as a defaulter, and appropriate action will be taken by the society against the defaulters as per the Bylaws</li>
+                              <li className='mb-1'>In case of no response on the payment for a prolonged period the membership from the society can be terminated and expulsion procedure can be initiated.</li> <li>The penalty charges do not create any right in your favor.</li>
+                              <li className='mb-1'>Society reserves the right to enhance the penalty in case of continuing default and misuse.</li></ol></Col>
+
+            </Modal.Body>
+           </Modal>
+
+          {/* Tenant View */}
+          <Modal show={tenatview} size="xl" centered>
             <Modal.Header>
               <Modal.Title>Tenant Details</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("tenatview"); }}>
@@ -1012,204 +1254,204 @@ const gatetypesubcategory = [
             </Modal.Header>
 
             <Modal.Body className='bg-light'>
- <Row>
-        <Col xl={8}>
-          <Card>
-            <Card.Body>
-              <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Details</h5>
               <Row>
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Society Name</Form.Label>
-                  <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>N/A</Link>
+                <Col xl={8}>
+                  <Card>
+                    <Card.Body>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Details</h5>
+                      <Row>
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Society Name</Form.Label>
+                          <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>N/A</Link>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Property Name</Form.Label>
+                          <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>N/A</Link>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Tenant Name</Form.Label>
+                          <p className='tx-15'>Rohit Sharma</p>
+                        </Col>
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Tenant Number</Form.Label>
+                          <p className='tx-15 col-sm-11 p-0'>1212621024</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Alternative Mobile</Form.Label>
+                          <p className='tx-15 col-sm-11 p-0'>-</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Tenant Email</Form.Label>
+                          <p className='tx-15'>orhit@gmail.com</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Date Of Birth</Form.Label>
+                          <p className='tx-15'>2025-02-27</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Address</Form.Label>
+                          <p className='tx-15 col-sm-11 p-0'>123st lauren</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>City</Form.Label>
+                          <p className='tx-15'>Delhi</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>State</Form.Label>
+                          <p className='tx-15'>Delhi</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Country</Form.Label>
+                          <p className='tx-15'>India</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Pincode</Form.Label>
+                          <p className='tx-15'>250007</p>
+                        </Col>
+
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Family Members</Form.Label>
+                          <p className='tx-15'>8</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Pets</Form.Label>
+                          <p className='tx-15'>false</p>
+                        </Col>
+
+                      </Row>
+                    </Card.Body>
+                  </Card>
+
                 </Col>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Property Name</Form.Label>
-                  <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>N/A</Link>
-                </Col>
+                <Col xl={4}>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Tenant Name</Form.Label>
-                  <p className='tx-15'>Rohit Sharma</p>
-                </Col>
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Tenant Number</Form.Label>
-                  <p className='tx-15 col-sm-11 p-0'>1212621024</p>
-                </Col>
+                  <Card>
+                    <Card.Body className='pb-3'>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Current Lease</h5>
+                      <Row>
+                        <Col xl={6}>
+                          <p className='mb-0 text-muted'>Agreement Start Date</p>
+                          <p className='tx-15 tx-semibold'>2025-02-28</p>
+                          <p className='mb-0 text-muted'>Agreement End Date</p>
+                          <p className='tx-15 tx-semibold mb-2'>2025-04-05</p>
+                        </Col>
+                        <Col xl={6} className='text-end'>
+                          <p className='mb-0 text-muted'>Monthly Rent</p>
+                          <p className='tx-15 tx-semibold text-primary'>₹ 5000</p>
+                          <p className='mb-0 pt-2 text-muted'></p>
+                          {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
+                        </Col>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Alternative Mobile</Form.Label>
-                  <p className='tx-15 col-sm-11 p-0'>-</p>
-                </Col>
+                        <Col xl={12}>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Tenant Email</Form.Label>
-                  <p className='tx-15'>orhit@gmail.com</p>
-                </Col>
+                          <Row>
+                            <Col xl={6} className='text-muted text-bold'>
+                              180 days left
+                            </Col>
+                            <Col xl={6} className='text-end text-muted text-bold'>
+                              365 days left
+                            </Col>
+                          </Row>
+                        </Col>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Date Of Birth</Form.Label>
-                  <p className='tx-15'>2025-02-27</p>
-                </Col>
+                        <Col xl={6}>
+                          <p className='mb-0 mt-2 text-muted'>Due Amount</p>
+                          <p className='tx-15 tx-semibold'>₹ 1000</p>
+                        </Col>
+                        <Col xl={6}>
+                          <p className='mb-0 mt-2 text-muted text-end'>Deposit Amount</p>
+                          <p className='tx-15 tx-semibold mb-0 text-end'>₹ 4000</p>
+                        </Col>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Address</Form.Label>
-                  <p className='tx-15 col-sm-11 p-0'>123st lauren</p>
-                </Col>
+                      </Row>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>City</Form.Label>
-                  <p className='tx-15'>Delhi</p>
-                </Col>
+                    </Card.Body>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>State</Form.Label>
-                  <p className='tx-15'>Delhi</p>
-                </Col>
-
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Country</Form.Label>
-                  <p className='tx-15'>India</p>
-                </Col>
-
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Pincode</Form.Label>
-                  <p className='tx-15'>250007</p>
-                </Col>
+                  </Card>
 
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Family Members</Form.Label>
-                  <p className='tx-15'>8</p>
-                </Col>
+                  <Card>
+                    <Card.Body className='pb-1'>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
+                      <Row>
+                        <Col xl={2} className='p-0'>
+                          <img
+                            alt="" className='w-100'
+                            src={imagesData('pdficon')}
+                          />
+                        </Col>
+                        <Col xl={9} className='p-0'>
+                          <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : 565675756</p>
+                          <Link to={``} className="text-info">Download</Link>
+                        </Col>
+                      </Row>
 
-                <Col xl={6} className='mb-2'>
-                  <Form.Label>Pets</Form.Label>
-                  <p className='tx-15'>false</p>
-                </Col>
 
+                      <Row>
+                        <Col xl={2} className='p-0'>
+                          <img alt="" className='w-100'
+                            src={imagesData('pdficon')}
+                          />
+                        </Col>
+                        <Col xl={9} className='p-0'>
+                          <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
+                          <Link to={``}
+                            className="text-info">
+                            Download
+                          </Link>
+                        </Col>
+
+                      </Row>
+                    </Card.Body>
+                  </Card>
+
+
+                  <Card>
+                    <Card.Body className='pb-1'>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
+                      <Row>
+
+
+
+                        <Row>
+                          <Col xl={2} className='p-0'>
+                            <img
+                              alt="Vehicle Icon"
+                              className='w-100'
+                              src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
+                            />
+                          </Col>
+                          <Col xl={9} className='p-0'>
+                            <p className='tx-14 mb-0 mt-2 tx-semibold'>
+                              Vehicle No. dl1ct1004  <span className='text-muted'>(4Wheeler)</span>
+                            </p>
+                            <Link to={``}
+                              className="text-info" >
+                              Download
+                            </Link>
+                          </Col>
+                        </Row>
+
+                      </Row>
+                    </Card.Body>
+                  </Card>
+
+
+                </Col>
               </Row>
-            </Card.Body>
-          </Card>
-
-        </Col>
-
-        <Col xl={4}>
-
-          <Card>
-            <Card.Body className='pb-3'>
-              <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Current Lease</h5>
-              <Row>
-                <Col xl={6}>
-                  <p className='mb-0 text-muted'>Agreement Start Date</p>
-                  <p className='tx-15 tx-semibold'>2025-02-28</p>
-                  <p className='mb-0 text-muted'>Agreement End Date</p>
-                  <p className='tx-15 tx-semibold mb-2'>2025-04-05</p>
-                </Col>
-                <Col xl={6} className='text-end'>
-                  <p className='mb-0 text-muted'>Monthly Rent</p>
-                  <p className='tx-15 tx-semibold text-primary'>₹ 5000</p>
-                  <p className='mb-0 pt-2 text-muted'></p>
-                  {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
-                </Col>
-
-                <Col xl={12}>
-
-                  <Row>
-                    <Col xl={6} className='text-muted text-bold'>
-                      180 days left
-                    </Col>
-                    <Col xl={6} className='text-end text-muted text-bold'>
-                      365 days left
-                    </Col>
-                  </Row>
-                </Col>
-
-                <Col xl={6}>
-                  <p className='mb-0 mt-2 text-muted'>Due Amount</p>
-                  <p className='tx-15 tx-semibold'>₹ 1000</p>
-                </Col>
-                <Col xl={6}>
-                  <p className='mb-0 mt-2 text-muted text-end'>Deposit Amount</p>
-                  <p className='tx-15 tx-semibold mb-0 text-end'>₹ 4000</p>
-                </Col>
-
-              </Row>
-
-            </Card.Body>
-
-          </Card>
-
-
-          <Card>
-            <Card.Body className='pb-1'>
-              <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
-            <Row>
-                    <Col xl={2} className='p-0'>
-                      <img
-                        alt="" className='w-100'
-                        src={imagesData('pdficon')}
-                      />
-                    </Col>
-                    <Col xl={9} className='p-0'>
-                      <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : 565675756</p>
-                      <Link to={``} className="text-info">Download</Link>
-                    </Col>
-                  </Row>
-
-
-              <Row>
-             <Col xl={2} className='p-0'>
-                      <img  alt="" className='w-100'
-                        src={imagesData('pdficon')}
-                      />
-                    </Col>
-                    <Col xl={9} className='p-0'>
-                      <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
-                      <Link to={``}
-                        className="text-info">
-                        Download
-                      </Link>
-                    </Col>
-
-              </Row>
-            </Card.Body>
-          </Card>
-
-
-          <Card>
-            <Card.Body className='pb-1'>
-              <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
-              <Row>
-
-
-
-                    <Row>
-                      <Col xl={2} className='p-0'>
-                        <img
-                          alt="Vehicle Icon"
-                          className='w-100'
-                          src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
-                        />
-                      </Col>
-                      <Col xl={9} className='p-0'>
-                        <p className='tx-14 mb-0 mt-2 tx-semibold'>
-                          Vehicle No. dl1ct1004  <span className='text-muted'>(4Wheeler)</span>
-                        </p>
-                        <Link to={``}
-                          className="text-info" >
-                          Download
-                        </Link>
-                      </Col>
-                    </Row>
-
-              </Row>
-            </Card.Body>
-          </Card>
-
-
-        </Col>
-      </Row>
             </Modal.Body>
 
           </Modal>
@@ -2301,63 +2543,63 @@ const gatetypesubcategory = [
                     <Form.Label clas>Does this celebration include any of the following?</Form.Label>
                     <Form.Group className="form-group mb-0">
 
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Catering Service</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Catering Service</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="CateringService" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="CateringService" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="CateringService" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="CateringService" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Decorations</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Decorations</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="Decorations" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="Decorations" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="Decorations" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="Decorations" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Sound System</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Sound System</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="SoundSystem" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="SoundSystem" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="SoundSystem" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="SoundSystem" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Guest Parking</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Guest Parking</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="GuestParking" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="GuestParking" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="GuestParking" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="GuestParking" />
+                        </Col>
 
-                    </Row>
-                  </Form.Group>
+                      </Row>
+                    </Form.Group>
                   </Form.Group>
                 </Col>
 
@@ -2388,8 +2630,8 @@ const gatetypesubcategory = [
             </Modal.Footer>
           </Modal>
 
- {/* Add theater */}
- <Modal show={addtheater} centered>
+          {/* Add theater */}
+          <Modal show={addtheater} centered>
             <Modal.Header>
               <Modal.Title>Theater</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addtheater"); }}>
@@ -2444,7 +2686,7 @@ const gatetypesubcategory = [
                 <Col xl={12}>
                   <Form.Group className="form-group">
                     <Form.Label clas>Do you have passes for all the participants?</Form.Label>
-                   <Row>
+                    <Row>
 
                       <Col lg={2} className='mt-2'>
 
@@ -2455,7 +2697,7 @@ const gatetypesubcategory = [
                         <Form.Check type="radio" label="No" name="participants" />
                       </Col>
 
-     </Row>
+                    </Row>
 
                   </Form.Group>
                 </Col>
@@ -2487,8 +2729,8 @@ const gatetypesubcategory = [
             </Modal.Footer>
           </Modal>
 
-           {/* Add Banquet Hall */}
-           <Modal show={addbanquethall} size='lg' centered>
+          {/* Add Banquet Hall */}
+          <Modal show={addbanquethall} size='lg' centered>
             <Modal.Header>
               <Modal.Title>Banquet Hall</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addbanquethall"); }}>
@@ -2608,63 +2850,63 @@ const gatetypesubcategory = [
                     <Form.Label clas>Does this celebration include any of the following?</Form.Label>
                     <Form.Group className="form-group mb-0">
 
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Catering Service</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Catering Service</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="CateringService" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="CateringService" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="CateringService" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="CateringService" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Decorations</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Decorations</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="Decorations" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="Decorations" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="Decorations" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="Decorations" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Sound System</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Sound System</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="SoundSystem" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="SoundSystem" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="SoundSystem" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="SoundSystem" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Guest Parking</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Guest Parking</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="GuestParking" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="GuestParking" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="GuestParking" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="GuestParking" />
+                        </Col>
 
-                    </Row>
-                  </Form.Group>
+                      </Row>
+                    </Form.Group>
                   </Form.Group>
                 </Col>
 
@@ -2695,8 +2937,8 @@ const gatetypesubcategory = [
             </Modal.Footer>
           </Modal>
 
-              {/* Add Club House */}
-              <Modal show={addclubhouse} size='lg' centered>
+          {/* Add Club House */}
+          <Modal show={addclubhouse} size='lg' centered>
             <Modal.Header>
               <Modal.Title>Club House</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addclubhouse"); }}>
@@ -2816,63 +3058,63 @@ const gatetypesubcategory = [
                     <Form.Label clas>Does this celebration include any of the following?</Form.Label>
                     <Form.Group className="form-group mb-0">
 
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Catering Service</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Catering Service</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="CateringService" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="CateringService" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="CateringService" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="CateringService" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Decorations</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Decorations</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="Decorations" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="Decorations" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="Decorations" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="Decorations" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Sound System</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Sound System</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="SoundSystem" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="SoundSystem" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="SoundSystem" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="SoundSystem" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Guest Parking</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Guest Parking</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="GuestParking" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="GuestParking" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="GuestParking" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="GuestParking" />
+                        </Col>
 
-                    </Row>
-                  </Form.Group>
+                      </Row>
+                    </Form.Group>
                   </Form.Group>
                 </Col>
 
@@ -2903,8 +3145,8 @@ const gatetypesubcategory = [
             </Modal.Footer>
           </Modal>
 
- {/* Add Swimming pool */}
- <Modal show={addswimmingpool} centered>
+          {/* Add Swimming pool */}
+          <Modal show={addswimmingpool} centered>
             <Modal.Header>
               <Modal.Title>Swimming Pool</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addswimmingpool"); }}>
@@ -2949,7 +3191,7 @@ const gatetypesubcategory = [
                 <Col xl={12}>
                   <Form.Group className="form-group mb-0">
                     <Form.Label clas>Do you have passes for all the participants?</Form.Label>
-                   <Row>
+                    <Row>
 
                       <Col lg={2} className='mt-2'>
 
@@ -2960,7 +3202,7 @@ const gatetypesubcategory = [
                         <Form.Check type="radio" label="No" name="participants" />
                       </Col>
 
-     </Row>
+                    </Row>
 
                   </Form.Group>
                 </Col>
@@ -2969,8 +3211,8 @@ const gatetypesubcategory = [
                 <Col xl={12}>
                   <Form.Group className="form-group mb-0">
                     <Form.Label clas>Do you have swimming costume for all the
-                    participants?</Form.Label>
-                   <Row>
+                      participants?</Form.Label>
+                    <Row>
 
                       <Col lg={2} className='mt-2'>
 
@@ -2981,7 +3223,7 @@ const gatetypesubcategory = [
                         <Form.Check type="radio" label="No" name="participants" />
                       </Col>
 
-     </Row>
+                    </Row>
 
                   </Form.Group>
                 </Col>
@@ -3013,8 +3255,8 @@ const gatetypesubcategory = [
             </Modal.Footer>
           </Modal>
 
-    {/* Add Play Area */}
-    <Modal show={addplayarea} size='lg' centered>
+          {/* Add Play Area */}
+          <Modal show={addplayarea} size='lg' centered>
             <Modal.Header>
               <Modal.Title>Play Area</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addplayarea"); }}>
@@ -3134,63 +3376,63 @@ const gatetypesubcategory = [
                     <Form.Label clas>Does this celebration include any of the following?</Form.Label>
                     <Form.Group className="form-group mb-0">
 
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Catering Service</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Catering Service</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="CateringService" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="CateringService" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="CateringService" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="CateringService" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Decorations</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Decorations</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="Decorations" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="Decorations" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="Decorations" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="Decorations" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Sound System</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Sound System</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="SoundSystem" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="SoundSystem" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="SoundSystem" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="SoundSystem" />
+                        </Col>
 
-                    </Row>
-                    <Row>
-                      <Col lg={8}>
-                      <Form.Label className='text-muted'>Guest Parking</Form.Label>
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                      </Row>
+                      <Row>
+                        <Col lg={8}>
+                          <Form.Label className='text-muted'>Guest Parking</Form.Label>
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="Yes" name="GuestParking" />
-                      </Col>
-                      <Col lg={2} className='mt-2'>
+                          <Form.Check type="radio" label="Yes" name="GuestParking" />
+                        </Col>
+                        <Col lg={2} className='mt-2'>
 
-                        <Form.Check type="radio" label="No" name="GuestParking" />
-                      </Col>
+                          <Form.Check type="radio" label="No" name="GuestParking" />
+                        </Col>
 
-                    </Row>
-                  </Form.Group>
+                      </Row>
+                    </Form.Group>
                   </Form.Group>
                 </Col>
 
@@ -3222,8 +3464,8 @@ const gatetypesubcategory = [
           </Modal>
 
 
- {/* Add Turf Area */}
- <Modal show={addturfarea} centered>
+          {/* Add Turf Area */}
+          <Modal show={addturfarea} centered>
             <Modal.Header>
               <Modal.Title>Turf Area</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addturfarea"); }}>
@@ -3268,7 +3510,7 @@ const gatetypesubcategory = [
                 <Col xl={12}>
                   <Form.Group className="form-group mb-0">
                     <Form.Label clas>Do you have passes for all the participants?</Form.Label>
-                   <Row>
+                    <Row>
 
                       <Col lg={2} className='mt-2'>
 
@@ -3279,7 +3521,7 @@ const gatetypesubcategory = [
                         <Form.Check type="radio" label="No" name="participants" />
                       </Col>
 
-     </Row>
+                    </Row>
 
                   </Form.Group>
                 </Col>
@@ -3288,7 +3530,7 @@ const gatetypesubcategory = [
                 <Col xl={12}>
                   <Form.Group className="form-group mb-0">
                     <Form.Label clas>Do you have game resources for all the participants?</Form.Label>
-                   <Row>
+                    <Row>
 
                       <Col lg={2} className='mt-2'>
 
@@ -3299,7 +3541,7 @@ const gatetypesubcategory = [
                         <Form.Check type="radio" label="No" name="participants" />
                       </Col>
 
-     </Row>
+                    </Row>
 
                   </Form.Group>
                 </Col>
@@ -3331,8 +3573,8 @@ const gatetypesubcategory = [
             </Modal.Footer>
           </Modal>
 
-           {/* Add Rent Agreement */}
-    <Modal show={addrentagreement} size='lg' centered>
+          {/* Add Rent Agreement */}
+          <Modal show={addrentagreement} size='lg' centered>
             <Modal.Header>
               <Modal.Title>Rent Agreement</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addrentagreement"); }}>
@@ -3485,7 +3727,7 @@ const gatetypesubcategory = [
                   </Form.Group>
                 </Col>
                 <Col xl={12}>
-                <strong>If the renewal is for the same tenant</strong>
+                  <strong>If the renewal is for the same tenant</strong>
                 </Col>
                 <Col xl={4}>
                   <Form.Group className="form-group mt-3">
@@ -3537,8 +3779,8 @@ const gatetypesubcategory = [
             </Modal.Footer>
           </Modal>
 
-                 {/* Add Share Certificate */}
-    <Modal show={addsharecerificate} size='lg' centered>
+          {/* Add Share Certificate */}
+          <Modal show={addsharecerificate} size='lg' centered>
             <Modal.Header>
               <Modal.Title>Share Certificate</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addsharecerificate"); }}>
@@ -3553,12 +3795,12 @@ const gatetypesubcategory = [
                 <Col xl={12}>
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Have the following documents been submitted to
-                    the society office?</Form.Label>
+                      the society office?</Form.Label>
 
                     <Row>
-                    <Col lg={6}>
-                    <Form.Label className='text-muted'>Flat Agreement Copy</Form.Label>
-                    </Col>
+                      <Col lg={6}>
+                        <Form.Label className='text-muted'>Flat Agreement Copy</Form.Label>
+                      </Col>
                       <Col lg={2} className='mt-3'>
 
                         <Form.Check type="radio" label="Yes" name="FlatAgreementCopy" />
@@ -3569,15 +3811,15 @@ const gatetypesubcategory = [
                       </Col>
                       <Col lg={2} className='mt-3'>
 
-<Form.Check type="radio" label="N/A" name="FlatAgreementCopy" />
-</Col>
+                        <Form.Check type="radio" label="N/A" name="FlatAgreementCopy" />
+                      </Col>
 
                     </Row>
 
                     <Row>
-                    <Col lg={6}>
-                    <Form.Label className='text-muted'>Home Loan Sanction Letter</Form.Label>
-                    </Col>
+                      <Col lg={6}>
+                        <Form.Label className='text-muted'>Home Loan Sanction Letter</Form.Label>
+                      </Col>
                       <Col lg={2} className='mt-3'>
 
                         <Form.Check type="radio" label="Yes" name="homeloansanctionletter" />
@@ -3588,16 +3830,16 @@ const gatetypesubcategory = [
                       </Col>
                       <Col lg={2} className='mt-3'>
 
-<Form.Check type="radio" label="N/A" name="homeloansanctionletter" />
-</Col>
+                        <Form.Check type="radio" label="N/A" name="homeloansanctionletter" />
+                      </Col>
 
                     </Row>
 
 
                     <Row>
-                    <Col lg={6}>
-                    <Form.Label className='text-muted'>Flat Registration Details </Form.Label>
-                    </Col>
+                      <Col lg={6}>
+                        <Form.Label className='text-muted'>Flat Registration Details </Form.Label>
+                      </Col>
                       <Col lg={2} className='mt-3'>
 
                         <Form.Check type="radio" label="Yes" name="flatregistrationdetails" />
@@ -3608,8 +3850,8 @@ const gatetypesubcategory = [
                       </Col>
                       <Col lg={2} className='mt-3'>
 
-<Form.Check type="radio" label="N/A" name="flatregistrationdetails" />
-</Col>
+                        <Form.Check type="radio" label="N/A" name="flatregistrationdetails" />
+                      </Col>
 
                     </Row>
 
@@ -3623,9 +3865,9 @@ const gatetypesubcategory = [
                     <Form.Label>Applicable only to flat resale transactions</Form.Label>
 
                     <Row>
-                    <Col lg={6}>
-                    <Form.Label className='text-muted'>Flat Agreement Copy</Form.Label>
-                    </Col>
+                      <Col lg={6}>
+                        <Form.Label className='text-muted'>Flat Agreement Copy</Form.Label>
+                      </Col>
                       <Col lg={2} className='mt-3'>
 
                         <Form.Check type="radio" label="Yes" name="FlatAgreementCopy1" />
@@ -3636,15 +3878,15 @@ const gatetypesubcategory = [
                       </Col>
                       <Col lg={2} className='mt-3'>
 
-<Form.Check type="radio" label="N/A" name="FlatAgreementCopy1" />
-</Col>
+                        <Form.Check type="radio" label="N/A" name="FlatAgreementCopy1" />
+                      </Col>
 
                     </Row>
 
                     <Row>
-                    <Col lg={6}>
-                    <Form.Label className='text-muted'>Home Loan Sanction Letter</Form.Label>
-                    </Col>
+                      <Col lg={6}>
+                        <Form.Label className='text-muted'>Home Loan Sanction Letter</Form.Label>
+                      </Col>
                       <Col lg={2} className='mt-3'>
 
                         <Form.Check type="radio" label="Yes" name="homeloansanctionletter1" />
@@ -3655,16 +3897,16 @@ const gatetypesubcategory = [
                       </Col>
                       <Col lg={2} className='mt-3'>
 
-<Form.Check type="radio" label="N/A" name="homeloansanctionletter1" />
-</Col>
+                        <Form.Check type="radio" label="N/A" name="homeloansanctionletter1" />
+                      </Col>
 
                     </Row>
 
 
                     <Row>
-                    <Col lg={6}>
-                    <Form.Label className='text-muted'>Flat Registration Details </Form.Label>
-                    </Col>
+                      <Col lg={6}>
+                        <Form.Label className='text-muted'>Flat Registration Details </Form.Label>
+                      </Col>
                       <Col lg={2} className='mt-3'>
 
                         <Form.Check type="radio" label="Yes" name="flatregistrationdetails1" />
@@ -3675,8 +3917,8 @@ const gatetypesubcategory = [
                       </Col>
                       <Col lg={2} className='mt-3'>
 
-<Form.Check type="radio" label="N/A" name="flatregistrationdetails1" />
-</Col>
+                        <Form.Check type="radio" label="N/A" name="flatregistrationdetails1" />
+                      </Col>
 
                     </Row>
 
@@ -3690,9 +3932,9 @@ const gatetypesubcategory = [
                     <Form.Label>Applicable only to rented flats</Form.Label>
 
                     <Row>
-                    <Col lg={6}>
-                    <Form.Label className='text-muted'>Rent Agreement Copy</Form.Label>
-                    </Col>
+                      <Col lg={6}>
+                        <Form.Label className='text-muted'>Rent Agreement Copy</Form.Label>
+                      </Col>
                       <Col lg={2} className='mt-3'>
 
                         <Form.Check type="radio" label="Yes" name="RentAgreementCopy" />
@@ -3703,15 +3945,15 @@ const gatetypesubcategory = [
                       </Col>
                       <Col lg={2} className='mt-3'>
 
-<Form.Check type="radio" label="N/A" name="RentAgreementCopy" />
-</Col>
+                        <Form.Check type="radio" label="N/A" name="RentAgreementCopy" />
+                      </Col>
 
                     </Row>
 
                     <Row>
-                    <Col lg={6}>
-                    <Form.Label className='text-muted'>Police Verification</Form.Label>
-                    </Col>
+                      <Col lg={6}>
+                        <Form.Label className='text-muted'>Police Verification</Form.Label>
+                      </Col>
                       <Col lg={2} className='mt-3'>
 
                         <Form.Check type="radio" label="Yes" name="PoliceVerification" />
@@ -3722,8 +3964,8 @@ const gatetypesubcategory = [
                       </Col>
                       <Col lg={2} className='mt-3'>
 
-<Form.Check type="radio" label="N/A" name="PoliceVerification" />
-</Col>
+                        <Form.Check type="radio" label="N/A" name="PoliceVerification" />
+                      </Col>
 
                     </Row>
 
@@ -3824,24 +4066,24 @@ const gatetypesubcategory = [
                     <th>S.no.</th>
                     <th>Application Id</th>
                     <th>Property</th>
+                    <th>Member</th>
+                    <th>Society</th>
                     <th>Application Category</th>
-                    <th>Assign To</th>
-                    <th>Date & Time</th>
                     <th>Status</th>
+                    <th>Date & Time</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>1</td>
-                    <td><span className='text-info cursor'>#565767</span></td>
-                    <td>A101</td>
+                    <td><span onClick={() => { viewDemoShow("gatepassview"); }}className='text-info cursor'>AP-00012</span></td>
+                    <td><Link to={``} className='text-info'>A101</Link></td>
+                    <td><Link to={``} className='text-info'>Test CreditBricks Society</Link></td>
+                    <td>Tests society Member</td>
                     <td>Gate Pass</td>
-                    <td>Rajesh </td>
-
+                    <td>Level 2 Rejected</td>
                     <td>02/3/2025</td>
-                    <td>Pending</td>
-
                     <td><Dropdown >
                       <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
                         Action
@@ -3849,55 +4091,11 @@ const gatetypesubcategory = [
 
                       <Dropdown.Menu>
                         <Dropdown.Item >Edit</Dropdown.Item>
-                        <Dropdown.Item>Assign To</Dropdown.Item>
                         <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown></td>
                   </tr>
-                  <tr>
-                    <td>2</td>
-                    <td><span className='text-info cursor'>#565767</span></td>
-                    <td>A101</td>
-                    <td>Parking</td>
-                    <td>Rajesh </td>
 
-                    <td>02/3/2025</td>
-                    <td>Pending</td>
-
-                    <td><Dropdown >
-                      <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                        Action
-                      </Dropdown.Toggle>
-
-                      <Dropdown.Menu>
-                        <Dropdown.Item >Edit</Dropdown.Item>
-                        <Dropdown.Item>Assign To</Dropdown.Item>
-                        <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown></td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td><span className='text-info cursor'>#565767</span></td>
-                    <td>A101</td>
-                    <td>Celebration</td>
-                    <td>Rajesh </td>
-
-                    <td>02/3/2025</td>
-                    <td>Pending</td>
-
-                    <td><Dropdown >
-                      <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                        Action
-                      </Dropdown.Toggle>
-
-                      <Dropdown.Menu>
-                        <Dropdown.Item >Edit</Dropdown.Item>
-                        <Dropdown.Item>Assign To</Dropdown.Item>
-                        <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown></td>
-                  </tr>
 
                 </tbody>
               </table>

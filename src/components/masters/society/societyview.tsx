@@ -1,8 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
-import { Col, Row, Card, Form, Dropdown, Tabs, Tab, FormLabel, FormCheck, Button, Modal, FormControl } from "react-bootstrap";
+import { Col, Row, Card,  Dropdown, Tabs, Tab, FormLabel} from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
-import Select from "react-select";
 import { getAnnouncementsOfSocietyApi, getNoticesOfSocietyApi, getSocietyDetailsApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../../api/society-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { deletePropertyApi } from '../../../api/property-api';
@@ -22,6 +21,8 @@ import TowerModal from '../../../common/modals/towerModal';
 import { deleteTowerApi, updateTowerApi } from '../../../api/tower-api';
 import TestLoader from '../../../layout/layoutcomponent/testloader';
 import ChargeMasterModal from '../../../common/modals/chargeMasterModal';
+import { addChargeMasterApi, deleteChargeMasterApi, getChargeDetailsApi, getChargesOfSocietyApi, updateChargeMasterApi } from '../../../api/chargemaster-api';
+import ChargeViewModal from '../../../common/modals/chargeViewModal';
 
 export default function SocietyView() {
   const [singleSocietyData, setSingleSocietydata] = useState<any>([])
@@ -38,8 +39,12 @@ export default function SocietyView() {
   const [towerData, setTowerData] = useState<any>([])
   const [wingData, setWingData] = useState<any>([])
   const [singleAnnouncementData, setSingleAnnouncementData] = useState<any>(null);
+  const [chargeData, setChargeData] = useState<any>([])
+  const [singleChargeData, setSingleChargeData] = useState<any>(null);
   const [addannouncement, setaddannouncement] = useState(false);
   const [viewannouncement, setviewannouncement] = useState(false);
+  const [viewcharge, setviewcharge] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const params = useParams()
   const identifier = params.identifier as string
@@ -216,6 +221,80 @@ export default function SocietyView() {
 
     },
   ];
+
+  const chargeMasterColumns = [
+    {
+      name: 'S.No',
+      cell: (_: any, index: number) => index + 1,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Charge Number',
+      selector: (row: any) => row.chargeNumber,
+      sortable: true,
+    },
+    {
+      name: 'Charge Name',
+      cell: (row: any) => {
+        return (
+          <span className='text-info cursor' onClick={() => { fetchSingleChargeData(row.chargeNumber, "viewcharge") }}>{row.chargeName}</span>
+        )
+      },
+      sortable: true,
+    },
+    {
+      name: 'Charge Type',
+      selector: (row: any) => row.chargeType,
+      sortable: true,
+    },
+    {
+      name: 'Charge Master Type',
+      selector: (row: any) => row.chargeMasterType,
+      sortable: true,
+    },
+    {
+      name: 'Billing Type',
+      selector: (row: any) => row.billingType,
+      sortable: true,
+    },
+    {
+      name: 'Due Date',
+      selector: (row: any) => row.dueDate,
+      sortable: true,
+    },
+    {
+      name: 'Start Date',
+      selector: (row: any) => row.startDate,
+      sortable: true,
+    },
+    {
+      name: 'End Date',
+      selector: (row: any) => row.endDate,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => {
+              setEditing(true)
+              fetchSingleChargeData(row.chargeNumber, "addcharge")
+            }}>Edit</Dropdown.Item>
+            <Dropdown.Item className='text-danger' onClick={() => handleChargeDelete(row)}>Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
+      ),
+
+    },
+  ];
   const towerColumns = [
     {
       name: 'S.No',
@@ -309,6 +388,11 @@ export default function SocietyView() {
     data: wingData
   };
 
+  const chargeTableData = {
+    columns: chargeMasterColumns,
+    data: chargeData
+  };
+
   useEffect(() => {
     if (singleSocietyData?.properties) {
       const formattedData = singleSocietyData?.properties.map((property: any, index: number) => (
@@ -316,7 +400,7 @@ export default function SocietyView() {
           sno: index + 1,
           propertyName: property.propertyName,
           propertyIdentifier: property.propertyIdentifier,
-          memberName: `${property?.member?.firstName||""} ${property?.member?.middleName||""} ${property?.member?.lastName||""}`,
+          memberName: `${property?.member?.firstName || ""} ${property?.member?.middleName || ""} ${property?.member?.lastName || ""}`,
           societyName: property.societyName,
           societyIdentifier: property.societyIdentifier,
           tenantName: `${property?.tenant?.firstName || ""} ${property?.tenant?.middleName || ""} ${property?.tenant?.lastName || ""}`,
@@ -464,6 +548,40 @@ export default function SocietyView() {
 
     }
   }
+  const fetchChargeData = async () => {
+    try {
+      const response = await getChargesOfSocietyApi(identifier)
+      const data = response.data.data
+      const formattedData = data.map((charge: any, index: number) => (
+        {
+          sno: index + 1,
+          chargeName: charge.chargeName,
+          chargeNumber: charge.chargeNumber,
+          chargeType: charge.chargeType,
+          chargeMasterType: charge.chargeMasterType,
+          billingType: charge.billingType,
+          startDate: charge.startDate,
+          endDate: charge.endDate,
+          dueDate: charge.dueDate,
+        }
+      ));
+      setChargeData(formattedData);
+    } catch (error) {
+
+    }
+  }
+
+  const fetchSingleChargeData = async (id: string, type: string) => {
+    try {
+      const response = await getChargeDetailsApi(id)
+      const data = response.data.data
+      setSingleChargeData(data);
+    } catch (error) {
+
+    } finally {
+      viewDemoShow(type)
+    }
+  }
 
   useEffect(() => {
 
@@ -473,48 +591,9 @@ export default function SocietyView() {
       fetchAnnouncementData()
       fetchTowersData()
       fetchWingsData()
+      fetchChargeData()
     }
   }, [])
-  const chargename = [
-    { value: "1", label: "--None--" },
-    { value: "2", label: "Lift Charges" },
-    { value: "3", label: "Electricity Charges" },
-    { value: "4", label: "Water Charges" },
-  ]
-
-  const property = [
-    { value: "1", label: "A101 (Mr. Vinod Kumar Pandia)" },
-    { value: "2", label: "A102 (Mrs. Rohini Sharma)" },
-  ]
-
-  const chargemastertype = [
-    { value: "1", label: "--None--" },
-    { value: "2", label: "Society" },
-    { value: "3", label: "Property" },
-  ]
-
-  const societyname = [
-    { value: "1", label: "Society 1" },
-    { value: "2", label: "Society 2" },
-  ]
-
-  const wing = [
-    { value: "1", label: "A" },
-    { value: "2", label: "A" },
-  ]
-
-  const chargetype = [
-    { value: "1", label: "--None--" },
-    { value: "2", label: "Maintenance" },
-    { value: "3", label: "Application" },
-  ]
-
-  const billingtype = [
-    { value: "1", label: "--None--" },
-    { value: "2", label: "PSF" },
-    { value: "3", label: "Lumpsum" },
-    { value: "4", label: "Narration" },
-  ]
 
   const [addcharge, setaddcharge] = useState(false);
   const viewDemoShow = (modal: any) => {
@@ -540,6 +619,9 @@ export default function SocietyView() {
       case "viewannouncement":
         setviewannouncement(true);
         break;
+      case "viewcharge":
+        setviewcharge(true);
+        break;
 
 
     }
@@ -549,6 +631,7 @@ export default function SocietyView() {
     switch (modal) {
       case "addcharge":
         setaddcharge(false);
+        setEditing(false)
         break;
 
       case "addnotices":
@@ -569,6 +652,10 @@ export default function SocietyView() {
 
       case "viewannouncement":
         setviewannouncement(false);
+        break;
+      case "viewcharge":
+        setviewcharge(false);
+        setEditing(false)
         break;
 
     }
@@ -734,11 +821,57 @@ export default function SocietyView() {
 
   }
 
-  const handleChargeMasterSubmit = async(values:any)=>{
+  const handleChargeMasterSubmit = async (values: any) => {
     try {
-      console.log("kartik",values)
-    } catch (error) {
 
+      const keyMapping: any = {
+        societyName: 'societyIdentifier',
+        tower: 'towerIdentifier',
+        wing: 'wingIdentifier',
+        property: 'propertyIdentifier',
+      };
+
+
+      const requestBody: any = {};
+
+      Object.keys(values).forEach((key) => {
+        const field = values[key];
+
+        if (key === 'interestApplicable') {
+          if (field && field.value === 'Yes') {
+            requestBody[key] = true;
+          } else if (field && field.value === 'No') {
+            requestBody[key] = false;
+          }
+          return;
+        }
+
+        if (field && typeof field === 'object' ) {
+          if (field.value !== '' && field.value !== null) {
+            // requestBody[key] = field.value;
+            const newKey = keyMapping[key] || key;
+            requestBody[newKey] = field.value;
+          }
+        } else {
+          if (field !== '' && field !== null) {
+            requestBody[key] = field;
+          }
+        }
+      });
+      let response;
+      if (editing) {
+        response = await updateChargeMasterApi(requestBody, singleChargeData?.chargeNumber)
+      } else {
+        response = await addChargeMasterApi(requestBody)
+      }
+      if (response.status === 200) {
+        viewDemoClose("addcharge");
+        showToast("success", response.data.message)
+        fetchChargeData()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
     }
   }
 
@@ -750,6 +883,11 @@ export default function SocietyView() {
   const handleNoticeViewClose = () => {
     viewDemoClose("viewnotice")
     setSingleNoticeData(null)
+  }
+
+  const handleChargeViewClose = () => {
+    viewDemoClose("viewcharge")
+    setSingleChargeData(null)
   }
 
   const handleAnnouncementClose = () => {
@@ -791,26 +929,26 @@ export default function SocietyView() {
     })()
   }
 
-    type Row = {
-    societyIdentifier: string;
-    sno: number;
-    societyName: string;
-    address: string;
-    country: string;
-    state: string;
-    city: string;
-    registrationNumber: string;
-    tanNumber: string;
-    panNumber: string;
-    signatory: string;
-    hsnCode: string;
-    gstin: string;
-    bankName: string;
-    accountNumber: string;
-    branchName: string;
-    ifscCode: string;
-    chequeFavourable: string;
-  };
+  // type Row = {
+  //   societyIdentifier: string;
+  //   sno: number;
+  //   societyName: string;
+  //   address: string;
+  //   country: string;
+  //   state: string;
+  //   city: string;
+  //   registrationNumber: string;
+  //   tanNumber: string;
+  //   panNumber: string;
+  //   signatory: string;
+  //   hsnCode: string;
+  //   gstin: string;
+  //   bankName: string;
+  //   accountNumber: string;
+  //   branchName: string;
+  //   ifscCode: string;
+  //   chequeFavourable: string;
+  // };
 
   const handleWingDelete = (data: any) => {
     ; (async () => {
@@ -860,6 +998,22 @@ export default function SocietyView() {
     })()
   }
 
+  const handleChargeDelete = (row: any) => {
+    ; (async () => {
+      try {
+
+        const response = await deleteChargeMasterApi(row.chargeNumber)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          fetchChargeData()
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
+
 
   return (
     <>
@@ -869,7 +1023,7 @@ export default function SocietyView() {
             <div className="breadcrumb-header justify-content-between">
               <div className="left-content">
                 <span className="main-content-title mg-b-0 mg-b-lg-1 text-capitalize"> <Link to={`${import.meta.env.BASE_URL}society/societymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> {singleSocietyData?.societyName || "N/A"}
-                <Link to={``} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal ' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span>
+                  <Link to={`${import.meta.env.BASE_URL}society/editsocietymaster/${identifier}`} className='tx-16 btn btn-primary ms-2 btn-sm tx-normal ' title="Edit"><i className='bi bi-pencil ms-1'></i></Link></span>
               </div>
             </div>
 
@@ -973,55 +1127,55 @@ export default function SocietyView() {
                                   <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">List of Committee Members</h5>
 
                                   <table className='table mt-3'>
-                          <thead>
-                            <tr>
-                              <th>S.no.</th>
-                              <th>Society</th>
-                              <th>Tower</th>
-                              <th>Wing</th>
-                              <th>Flat </th>
-                              <th>Approver</th>
-                              <th>Designation</th>
-                              <th>Application Type</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td className='align-top'>1</td>
-                              <td className='align-top'>Association</td>
-                              <td className='align-top'>Tower A</td>
-                              <td className='align-top'>A</td>
-                              <td className='align-top'>123</td>
-                              <td>Sandeep Singh<br/><span className='text-muted'>9876543212</span></td>
-                              <td className='align-top'>Secretary</td>
-                              <td className='align-top'>Flat Resale</td>
-                       </tr>
-                       <tr>
-                              <td className='align-top'>2</td>
-                              <td className='align-top'>Association</td>
-                              <td className='align-top'>Tower A</td>
-                              <td className='align-top'>A</td>
-                              <td className='align-top'>123</td>
-                              <td>Sandeep Singh<br/><span className='text-muted'>9876543212</span></td>
-                              <td className='align-top'>Secretary</td>
-                              <td className='align-top'>Flat Resale</td>
-                       </tr>
-                       <tr>
-                              <td className='align-top'>3</td>
-                              <td className='align-top'>Association</td>
-                              <td className='align-top'>Tower A</td>
-                              <td className='align-top'>A</td>
-                              <td className='align-top'>123</td>
-                              <td>Sandeep Singh<br/><span className='text-muted'>9876543212</span></td>
-                              <td className='align-top'>Secretary</td>
-                              <td className='align-top'>Flat Resale</td>
-                       </tr>
+                                    <thead>
+                                      <tr>
+                                        <th>S.no.</th>
+                                        <th>Society</th>
+                                        <th>Tower</th>
+                                        <th>Wing</th>
+                                        <th>Flat </th>
+                                        <th>Approver</th>
+                                        <th>Designation</th>
+                                        <th>Application Type</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td className='align-top'>1</td>
+                                        <td className='align-top'>Association</td>
+                                        <td className='align-top'>Tower A</td>
+                                        <td className='align-top'>A</td>
+                                        <td className='align-top'>123</td>
+                                        <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
+                                        <td className='align-top'>Secretary</td>
+                                        <td className='align-top'>Flat Resale</td>
+                                      </tr>
+                                      <tr>
+                                        <td className='align-top'>2</td>
+                                        <td className='align-top'>Association</td>
+                                        <td className='align-top'>Tower A</td>
+                                        <td className='align-top'>A</td>
+                                        <td className='align-top'>123</td>
+                                        <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
+                                        <td className='align-top'>Secretary</td>
+                                        <td className='align-top'>Flat Resale</td>
+                                      </tr>
+                                      <tr>
+                                        <td className='align-top'>3</td>
+                                        <td className='align-top'>Association</td>
+                                        <td className='align-top'>Tower A</td>
+                                        <td className='align-top'>A</td>
+                                        <td className='align-top'>123</td>
+                                        <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
+                                        <td className='align-top'>Secretary</td>
+                                        <td className='align-top'>Flat Resale</td>
+                                      </tr>
 
-                          </tbody>
-                        </table>
+                                    </tbody>
+                                  </table>
 
-                                  </Card.Body>
-                                  </Card>
+                                </Card.Body>
+                              </Card>
                             </Col>
                             <Col xl={4} className='p-0 pe-3'>
 
@@ -1030,8 +1184,8 @@ export default function SocietyView() {
                                 <Card.Body>
                                   <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Society Document Details</h5>
                                   <Row>
-                                    <Col xl={12} className='mb-1 tx-12'>Society Registration Number</Col>
-                                    <Col xl={12} className='tx-semibold mb-2 tx-14 text-primary'>{singleSocietyData?.registrationNumber || "N/A"}</Col>
+                                    <Col xl={5} className='mb-1 tx-12'>Registration Number</Col>
+                                    <Col xl={7} className='tx-semibold mb-2 tx-14 text-primary'>{singleSocietyData?.registrationNumber || "N/A"}</Col>
                                     <Col xl={5} className='mb-1 tx-12'>TAN number</Col>
                                     <Col xl={7} className='tx-semibold tx-12'>{singleSocietyData?.tanNumber || "N/A"}</Col>
                                     <Col xl={5} className='mb-1 tx-12'>PAN No</Col>
@@ -1111,7 +1265,9 @@ export default function SocietyView() {
 
                                         <Row className="mt-2">
                                           {/* QR Code Image */}
-                                          <Col xl={12} className='mt-2 tx-12'>
+                                          <Col xl={5} className='mb-1 tx-12'>Society Payment QR Code</Col>
+                                          <Col xl={6} className='mt-2 tx-12'>
+
                                             <img crossOrigin="anonymous" src={account?.paymentQrPath ? import.meta.env.VITE_STATIC_PATH + account?.paymentQrPath : 'https://static.wixstatic.com/media/794e6d_d0eb1012228446ba8436ac24a1f5ad00~mv2.jpeg/v1/fill/w_440,h_380,al_c,q_80,usm_0.33_1.00_0.00,enc_avif,quality_auto/Union%20Bank%20QR%20Code.jpeg'} alt="QR Code" />
                                           </Col>
                                         </Row>
@@ -1123,6 +1279,22 @@ export default function SocietyView() {
                                   ) : (
                                     <p>No account details available.</p>
                                   )}
+                                </Card.Body>
+                              </Card>
+
+                              <Card>
+                                <Card.Body>
+                                  <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Terms and Conditions</h5>
+                                  <Row>
+                                    <Col xl={12} className='mb-1 tx-12 text-justify'><ol className='ps-2'><li className='mb-1'>Interest will be charged at 1.75% p.m. after the due date.</li>
+                                      <li className='mb-1'>The cheque should be drawn in favor of CreditBricks Society. </li>
+                                      <li className='mb-1'>No claim in respect of this bill will be entertained unless notified in writing within 10 days from the date of this bill.</li>
+                                      <li className='mb-1'>If the dues are not cleared within 90 days, then the member shall be termed as a defaulter, and appropriate action will be taken by the society against the defaulters as per the Bylaws</li>
+                                      <li className='mb-1'>In case of no response on the payment for a prolonged period the membership from the society can be terminated and expulsion procedure can be initiated.</li> <li>The penalty charges do not create any right in your favor.</li>
+                                      <li className='mb-1'>Society reserves the right to enhance the penalty in case of continuing default and misuse.</li></ol></Col>
+
+                                  </Row>
+
                                 </Card.Body>
                               </Card>
 
@@ -1231,217 +1403,26 @@ export default function SocietyView() {
                               <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Charge Master
                                 <span className='float-end btn btn-primary btn-sm' onClick={() => viewDemoShow("addcharge")}>+ Charge Master</span>
                               </h5>
-                              {/* <Modal show={addcharge} size="lg" >
-                                <Modal.Header>
-                                  <Modal.Title>Charge Master</Modal.Title>
-                                  <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addcharge"); }}>
-                                    x
-                                  </Button>
-                                </Modal.Header>
-                                <Modal.Body>
-                                  <Row>
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Charge Number</Form.Label>
-                                        <p className='form-control bg-light'></p>
-                                      </Form.Group>
-                                    </Col>
-                                    <Col xl={6}></Col>
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Charge Name<span className="text-danger">*</span></Form.Label>
-                                        <Select
-                                          options={chargename}
-                                          placeholder="Select name"
-                                          classNamePrefix="Select2"
-                                        />
-                                      </Form.Group>
-                                    </Col>
 
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Is Active</Form.Label>
-                                        <FormCheck type="checkbox" className='ms-3 mt-2 me-1'></FormCheck>
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Charge Master Type</Form.Label>
-                                        <Select
-                                          options={chargemastertype}
-                                          placeholder="Search Properties"
-                                          isMulti
-                                          classNamePrefix="Select2"
-                                        />
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Charge Type<span className="text-danger">*</span></Form.Label>
-                                        <Select
-                                          options={chargetype}
-                                          placeholder="Select Type"
-                                          isMulti
-                                          classNamePrefix="Select2"
-                                        />
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Property</Form.Label>
-                                        <Select
-                                          options={property}
-                                          placeholder="Select Properties"
-                                          isMulti
-                                          classNamePrefix="Select2"
-                                        />
-                                      </Form.Group>
-                                    </Col>
-
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Society Name<span className="text-danger">*</span></Form.Label>
-                                        <Select
-                                          options={societyname}
-                                          placeholder="Search Society"
-                                          isMulti
-                                          classNamePrefix="Select2"
-                                        />
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Wing</Form.Label>
-                                        <Select
-                                          options={wing}
-                                          placeholder="Search Wing"
-                                          isMulti
-                                          classNamePrefix="Select2"
-                                        />
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Billing Type<span className="text-danger">*</span></Form.Label>
-                                        <Select
-                                          options={billingtype}
-                                          placeholder="Select Type"
-                                          isMulti
-                                          classNamePrefix="Select2"
-                                        />
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>Start Date<span className="text-danger">*</span></Form.Label>
-                                        <FormControl type="date" className='form-control'></FormControl>
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>End Date<span className="text-danger">*</span></Form.Label>
-                                        <FormControl type="date" className='form-control'></FormControl>
-                                      </Form.Group>
-                                    </Col>
-
-                                    <Col xl={6}>
-                                      <Form.Group className="form-group mb-1">
-                                        <Form.Label>GST %</Form.Label>
-                                        <FormControl type="text" className='form-control' placeholder='0.00%'></FormControl>
-                                      </Form.Group>
-                                    </Col>
-
-                                  </Row>
-                                </Modal.Body>
-                                <Modal.Footer>
-                                  <Button variant="default" onClick={() => { viewDemoClose("addcharge"); }}>
-                                    Close
-                                  </Button>
-                                  <Button variant="primary" onClick={() => { viewDemoClose("addcharge"); }}>
-                                    Save
-                                  </Button>
-
-                                </Modal.Footer>
-                              </Modal> */}
+                              {/* {
+                                <ChargeMasterModal show={addcharge} onClose={handleChargeMasterClose} editing={false} onSave={handleChargeMasterSubmit} />
+                              } */}
                               {
-                                <ChargeMasterModal show={addcharge} onClose={handleChargeMasterClose} editing={false} onSave={handleChargeMasterSubmit}/>
+                                singleChargeData && addcharge ? <ChargeMasterModal show={addcharge} onClose={handleChargeMasterClose} editing={editing} initialVals={singleChargeData} onSave={handleChargeMasterSubmit} /> : <ChargeMasterModal show={addcharge} onClose={handleChargeMasterClose} editing={editing} onSave={handleChargeMasterSubmit} />
                               }
 
                               <div className='p-0 mt-4'>
-                                <table className='table'>
-                                  <thead>
-                                    <tr>
-                                      <th>S.No.</th>
-                                      <th>Charge Number</th>
-                                      <th>Charge Name</th>
-                                      <th>Charge Type</th>
-                                      <th>Billing Type</th>
-                                      <th>Narration</th>
-                                      <th className='text-end'>PSF Rate</th>
-                                      <th className='text-end'>Amount</th>
-                                      <th>Is Active</th>
-                                      <th>Start Date</th>
-                                      <th>End Date</th>
-                                      <th>Action</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <tr>
-                                      <td>1</td>
-                                      <td><Link to={``}>CM-0165</Link></td>
-                                      <td>Other Charges</td>
-                                      <td>Maintenance</td>
-                                      <td>LumpSum</td>
-                                      <td></td>
-                                      <td className='text-end'>₹0.00</td>
-                                      <td className='text-end'>₹2,850.00</td>
-                                      <td className='text-center'><FormCheck type="checkbox" checked disabled></FormCheck></td>
-                                      <td>4/1/2024</td>
-                                      <td>4/30/2024</td>
-                                      <td><Dropdown >
-                                        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                          Action
-                                        </Dropdown.Toggle>
+                                <div className="table-responsive ">
+                                  <DataTableExtensions {...chargeTableData}>
+                                    <DataTable
+                                      columns={chargeMasterColumns}
+                                      data={chargeData}
+                                      pagination
 
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item onClick={() => viewDemoShow("addcharge")}>Edit</Dropdown.Item>
-                                          <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown></td>
-                                    </tr>
-                                    <tr>
-                                      <td>2</td>
-                                      <td><Link to={``}>CM-0165</Link></td>
-                                      <td>Other Charges</td>
-                                      <td>Maintenance</td>
-                                      <td>LumpSum</td>
-                                      <td></td>
-                                      <td className='text-end'>₹0.00</td>
-                                      <td className='text-end'>₹2,850.00</td>
-                                      <td className='text-center'><FormCheck type="checkbox" checked disabled></FormCheck></td>
-                                      <td>4/1/2024</td>
-                                      <td>4/30/2024</td>
-                                      <td><Dropdown >
-                                        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                          Action
-                                        </Dropdown.Toggle>
 
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item onClick={() => viewDemoShow("addcharge")}>Edit</Dropdown.Item>
-                                          <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown></td>
-                                    </tr>
-                                  </tbody>
-                                </table>
+                                    />
+                                  </DataTableExtensions>
+                                </div>
                               </div>
                             </Card.Body>
                           </Card>
@@ -1461,54 +1442,7 @@ export default function SocietyView() {
                             <Card.Body>
                               <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Notices</h5>
                               <div className='p-0 mt-4'>
-                                {/* <table className='table'>
-                            <thead>
-                              <tr>
-                                <th>S.No.</th>
-                                <th>Society Notice No.</th>
-                                <th>Active</th>
-                                <th>Start Date</th>
-                                <th>Valid Date</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>1</td>
-                                <td>S-0000</td>
-                                <td> <FormCheck type="checkbox" className='ms-4' disabled></FormCheck></td>
-                                <td>5/25/2023</td>
-                                <td>6/14/2023</td>
-                                <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
 
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-                              <tr>
-                                <td>2</td>
-                                <td>S-0000</td>
-                                <td> <FormCheck type="checkbox" className='ms-4' checked disabled></FormCheck></td>
-                                <td>5/25/2023</td>
-                                <td>6/14/2023</td>
-                                <td><Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
-
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item><Link to={``}>Edit</Link></Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                              </tr>
-                            </tbody>
-                          </table> */}
                                 <div className="table-responsive ">
                                   <DataTableExtensions {...tableData}>
                                     <DataTable
@@ -1562,45 +1496,6 @@ export default function SocietyView() {
                           <Card.Body>
                             <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Tower Details</h5>
                             <div className='p-0 mt-4'>
-                              {/* <table className='table'>
-                          <thead>
-                            <tr>
-                              <th >S.No.</th>
-                              <th>Tower/Block Name</th>
-                              <th >Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>A</td>
-                              <td><Dropdown >
-                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                  Action
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                  <Dropdown.Item>Edit</Dropdown.Item>
-                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown></td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>A</td>
-                              <td><Dropdown >
-                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                  Action
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                  <Dropdown.Item>Edit</Dropdown.Item>
-                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown></td>
-                            </tr>
-                          </tbody>
-                        </table> */}
                               <div className="table-responsive ">
                                 <DataTableExtensions {...towerTableData}>
                                   <DataTable
@@ -1621,45 +1516,6 @@ export default function SocietyView() {
                           <Card.Body>
                             <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Wing Details</h5>
                             <div className='p-0 mt-4'>
-                              {/* <table className='table'>
-                          <thead>
-                            <tr>
-                              <th >S.No.</th>
-                              <th>Wing</th>
-                              <th >Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>1</td>
-                              <td>A</td>
-                              <td><Dropdown >
-                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                  Action
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                  <Dropdown.Item>Edit</Dropdown.Item>
-                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown></td>
-                            </tr>
-                            <tr>
-                              <td>2</td>
-                              <td>A</td>
-                              <td><Dropdown >
-                                <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                  Action
-                                </Dropdown.Toggle>
-
-                                <Dropdown.Menu>
-                                  <Dropdown.Item>Edit</Dropdown.Item>
-                                  <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown></td>
-                            </tr>
-                          </tbody>
-                        </table> */}
                               <div className="table-responsive ">
                                 <DataTableExtensions {...wingTableData}>
                                   <DataTable
@@ -1694,6 +1550,9 @@ export default function SocietyView() {
             }
             {
               viewannouncement && singleAnnouncementData && <AnnouncementViewModal show={viewannouncement} onClose={handleAnnouncementViewClose} initialVals={singleAnnouncementData} />
+            }
+            {
+              viewcharge && singleChargeData && <ChargeViewModal show={viewcharge} onClose={handleChargeViewClose} initialVals={singleChargeData} />
             }
             {
               singleWingdata && addwing && <WingModal show={addwing} onClose={handleWingClose} editing={true} initialVals={singleWingdata} onSave={handleWingSubmit} />
