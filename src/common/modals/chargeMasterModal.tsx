@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Modal, Button, Row, Col, Form, FormControl, FormCheck } from 'react-bootstrap';
-import { Formik, Field, Form as FormikForm } from 'formik';
+import { Modal, Button, Row, Col, Form, FormControl } from 'react-bootstrap';
+import { Formik, Form as FormikForm } from 'formik';
 import Select from 'react-select';
 import * as Yup from 'yup';
-import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } from '../../api/society-api';
+import { getAllSocietyApi,  getSocietyDetailsApi } from '../../api/society-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { showToast } from '../services/toastServices';
 import { getTowerWingsApi } from '../../api/wing-api';
@@ -272,12 +272,13 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                     // area: initialVals?.area || "",
                     narration: { value: initialVals?.narration || "", label: initialVals?.narration || "" },
                     amount: initialVals?.amount || "",
-                    interestApplicable: { label: initialVals?.interestApplicable || "", value: initialVals?.interestApplicable || "" },
+                    // interestApplicable: initialVals?.interestApplicable === true? { label: "Yes", value: "Yes" }: initialVals?.interestApplicable === false? { label: "No", value: "No" }: { label: "", value: "" },
+                    interestApplicable:initialVals?.rateOfInterest? { label: "Yes", value: "Yes" }: initialVals?.chargeType === "Additional Bill"? { label: "No", value: "No" }: { label: "", value: "" },
                     totalAmount: initialVals?.totalAmount || "",
                     billingFrequency: initialVals?.billingFrequency || "",
                     endDate: initialVals?.endDate || "",
                     startDate: initialVals?.startDate || "",
-                    gstPercentage: initialVals?.gst || ""
+                    gst: initialVals?.gst || ""
                 }}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
@@ -305,20 +306,20 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                         }
                     }, [societyData, setFieldValue]);
                     useEffect(() => {
-                        if (["Wing", "Property", "Tower"].includes(values.chargeMasterType?.value)&&values.societyName.value) {
+                        if (["Wing", "Property", "Tower"].includes(values.chargeMasterType?.value) && values.societyName?.value) {
                             fetchTowersForDropDown(values.societyName)
                         }
-                    }, [values.societyName.value,values.chargeMasterType.value])
+                    }, [values.societyName?.value, values.chargeMasterType?.value])
                     useEffect(() => {
-                        if (["Wing", "Property"].includes(values.chargeMasterType?.value)&&values.tower.value) {
+                        if (["Wing", "Property"].includes(values.chargeMasterType?.value) && values.tower?.value) {
                             fetchWingsForDropDown(values.tower)
                         }
-                    }, [values.tower.value,values.chargeMasterType.value])
+                    }, [values.tower?.value, values.chargeMasterType?.value])
                     useEffect(() => {
-                        if (["Property"].includes(values.chargeMasterType?.value)&&values.wing.value) {
+                        if (["Property"].includes(values.chargeMasterType?.value) && values.wing?.value) {
                             fetchPropertiesForDropDown(values.wing)
                         }
-                    }, [values.wing.value,values.chargeMasterType.value])
+                    }, [values.wing?.value, values.chargeMasterType?.value])
                     const getMultiplier = (billingFrequency: string) => {
                         switch (billingFrequency) {
                             case "Monthly":
@@ -615,7 +616,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             <Form.Label>Due Date<span className="text-danger">*</span></Form.Label>
                                             <FormControl
                                                 type="date"
-                                                name="interestDueDate"
+                                                name="dueDate"
                                                 value={values.dueDate}
                                                 onChange={handleChange}
                                             />
@@ -766,9 +767,9 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                             <Form.Label>GST %</Form.Label>
                                             <FormControl
                                                 type="text"
-                                                name="gstPercentage"
+                                                name="gst"
                                                 className='form-control'
-                                                value={values.gstPercentage}
+                                                value={values.gst}
                                                 onChange={handleChange}
                                                 placeholder='0.00%'
                                             />

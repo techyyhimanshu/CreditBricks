@@ -39,7 +39,7 @@ export const getChargeDetailsApi = async (identifier: string): Promise<any> => {
 
 export const updateChargeMasterApi = async (data:any,id:string): Promise<any> => {
     try {
-        const response = await axiosInstance.patch(`charge/cg/${id}`,data)
+        const response = await axiosInstance.patch(`charge/${id}`,data)
         return response
     } catch (error) {
         throw error
