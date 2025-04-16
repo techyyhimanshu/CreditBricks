@@ -95,6 +95,7 @@
     "styled-components": "^6.1.11",
     "suneditor": "^2.47.0",
     "suneditor-react": "^3.6.1",
+    "sweetalert2": "^11.18.0",
     "uploader": "^3.48.3",
     "url-rewrite": "^0.4.2",
     "xlsx": "^0.18.5",

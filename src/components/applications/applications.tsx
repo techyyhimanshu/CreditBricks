@@ -231,6 +231,12 @@ export default function Applications() {
     }
   };
 
+  const day = [
+    { value: "1", label: "Full Day" },
+    { value: "2", label: "First Half" },
+    { value: "3", label: "Second Half" },
+  ]
+
   const vehicletypegatepass = [
     { value: "1", label: "Sedan" },
     { value: "2", label: "Coupe" },
@@ -436,7 +442,7 @@ export default function Applications() {
           <span className="main-content-title mg-b-0 mg-b-lg-1"> Applications</span>
         </div>
         <div className="right-content">
-          <span className='float-end btn btn-primary btn-sm' onClick={() => { viewDemoShow("addapplication"); }}><i className="bi bi-plus"></i> Add Applications</span>
+          <span className='float-end btn btn-primary p-1 pe-2 ps-2 me-1' onClick={() => { viewDemoShow("addapplication"); }}><i className="bi bi-plus"></i> Add Applications</span>
 
       {/* Add Application Modal   */}
 
@@ -2778,7 +2784,19 @@ export default function Applications() {
                   </Form.Group>
                 </Col>
 
-                <Col xl="4">
+                <Col xl="2">
+                  <Form.Group className="form-group mb-0">
+                    <Form.Label>Day</Form.Label>
+                    <Select
+                      options={day}
+                      placeholder="Select day"
+                      classNamePrefix="Select2"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl="2">
                   <Form.Group className="form-group mb-0">
                     <Form.Label>No. of Guest </Form.Label>
                     <Form.Control
@@ -4194,7 +4212,8 @@ export default function Applications() {
 
           <Card className='mt-3'>
             <CardHeader>
-              <h3 className='card-title'>   List of Apllications</h3>
+              <h3 className='card-title float-start'>   List of Apllications </h3>
+              <Link to={`${import.meta.env.BASE_URL}eventbooking/eventbooking`} className='float-end btn btn-primary p-1 pe-2 ps-2 me-1'><i className='bi bi-calendar'></i>&nbsp; Event Calendar</Link>
             </CardHeader>
             <Card.Body className='pt-0'>
               <table className='table'>
