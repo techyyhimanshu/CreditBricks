@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab, InputGroup } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
@@ -2808,53 +2808,40 @@ export default function Applications() {
                   </Form.Group>
                 </Col>
 
-                <Col xl={2}>
+                <Col xl={4}>
                   <Form.Group className="form-group mb-0">
-                    <Form.Label>Start Date</Form.Label>
-                    <Form.Control
-                      type="date"
-                      placeholder="dd/mm/yyyy"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                    <Form.Label>Start Date & Time</Form.Label>
+                    <InputGroup className="input-group w-100 datetimepicker-2">
+
+<Form.Control
+  className="form-control"
+    id="datetime-local"
+    type="datetime-local"
+    defaultValue="2020-01-16T14:22"
+
+  />
+</InputGroup>
                   </Form.Group>
                 </Col>
 
-                <Col xl={2}>
+
+                <Col xl={4}>
                   <Form.Group className="form-group mb-0">
-                    <Form.Label>Time In</Form.Label>
-                    <Form.Control
-                      type="time"
-                      placeholder=""
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                    <Form.Label>End Date & Time</Form.Label>
+                    <InputGroup className="input-group w-100 datetimepicker-2">
+
+<Form.Control
+  className="form-control"
+    id="datetime-local"
+    type="datetime-local"
+    defaultValue="2020-01-16T14:22"
+
+  />
+</InputGroup>
                   </Form.Group>
                 </Col>
 
-                <Col xl={2}>
-                  <Form.Group className="form-group mb-0">
-                    <Form.Label>End Date</Form.Label>
-                    <Form.Control
-                      type="date"
-                      placeholder="dd/mm/yyyy"
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
 
-                <Col xl={2}>
-                  <Form.Group className="form-group mb-0">
-                    <Form.Label>Time Ount</Form.Label>
-                    <Form.Control
-                      type="time"
-                      placeholder=""
-                      className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
 
 
 
