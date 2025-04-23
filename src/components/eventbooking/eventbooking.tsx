@@ -1,5 +1,5 @@
 import  { Fragment, useEffect, useState } from "react";
-import {  Button, Card, Col, Row, Modal, Form } from "react-bootstrap";
+import {  Button, Card, Col, Row, Modal, Form, InputGroup } from "react-bootstrap";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -7,6 +7,7 @@ import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 import Accordion from 'react-bootstrap/Accordion';
 import Select from "react-select";
 import { Link } from "react-router-dom";
+
 
 export function EventBooking (){
 
@@ -284,7 +285,7 @@ export function EventBooking (){
                                   </Form.Group>
                                 </Col>
 
-                                <Col xl="2">
+                                <Col xl="4">
                                   <Form.Group className="form-group mb-0">
                                     <Form.Label>Day</Form.Label>
                                     <Select
@@ -296,7 +297,7 @@ export function EventBooking (){
                                   </Form.Group>
                                 </Col>
 
-                                <Col xl="2">
+                                <Col xl="4">
                                   <Form.Group className="form-group mb-0">
                                     <Form.Label>No. of Guest </Form.Label>
                                     <Form.Control
@@ -308,19 +309,29 @@ export function EventBooking (){
                                   </Form.Group>
                                 </Col>
 
-                                <Col xl={2}>
+                                <Col xl={4}>
                                   <Form.Group className="form-group mb-0">
-                                    <Form.Label>Start Date</Form.Label>
-                                    <Form.Control
+                                    <Form.Label>Start Date & Time</Form.Label>
+                                    <InputGroup className="input-group w-100 datetimepicker-2">
+
+                  <Form.Control
+                    className="form-control"
+                      id="datetime-local"
+                      type="datetime-local"
+                      defaultValue="2020-01-16T14:22"
+
+                    />
+                </InputGroup>
+                                    {/* <Form.Control
                                       type="date"
                                       placeholder="dd/mm/yyyy"
                                       className="form-control"
-                                    ></Form.Control>
+                                    ></Form.Control> */}
                                     {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                   </Form.Group>
                                 </Col>
 
-                                <Col xl={2}>
+                                {/* <Col xl={2}>
                                   <Form.Group className="form-group mb-0">
                                     <Form.Label>Time In</Form.Label>
                                     <Form.Control
@@ -328,31 +339,23 @@ export function EventBooking (){
                                       placeholder=""
                                       className="form-control"
                                     ></Form.Control>
-                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                                  </Form.Group>
-                                </Col>
 
-                                <Col xl={2}>
-                                  <Form.Group className="form-group mb-0">
-                                    <Form.Label>End Date</Form.Label>
-                                    <Form.Control
-                                      type="date"
-                                      placeholder="dd/mm/yyyy"
-                                      className="form-control"
-                                    ></Form.Control>
-                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                   </Form.Group>
-                                </Col>
+                                </Col> */}
 
-                                <Col xl={2}>
+                                <Col xl={4}>
                                   <Form.Group className="form-group mb-0">
-                                    <Form.Label>Time Ount</Form.Label>
-                                    <Form.Control
-                                      type="time"
-                                      placeholder=""
-                                      className="form-control"
-                                    ></Form.Control>
-                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                    <Form.Label>End Date & Time</Form.Label>
+                                    <InputGroup className="input-group w-100 datetimepicker-2">
+
+<Form.Control
+  className="form-control"
+    id="datetime-local"
+    type="datetime-local"
+    defaultValue="2020-01-16T14:22"
+
+  />
+</InputGroup>
                                   </Form.Group>
                                 </Col>
 
@@ -462,7 +465,7 @@ export function EventBooking (){
                                     <Form.Label>Remarks
                                       <small className='text-muted float-end'>max 250 Character</small>
                                     </Form.Label>
-                                    <textarea className="form-control" placeholder='Remarks' cols="60" rows="5"></textarea>
+                                    <textarea className="form-control" placeholder='Remarks'></textarea>
                                     {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                   </Form.Group>
                                 </Col>
