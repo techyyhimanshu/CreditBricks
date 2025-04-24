@@ -244,16 +244,6 @@ export default function Applications() {
     { value: "3", label: "Second Half" },
   ]
 
-  const vehicletypegatepass = [
-    { value: "1", label: "Sedan" },
-    { value: "2", label: "Coupe" },
-    { value: "3", label: "Sports Car" },
-    { value: "4", label: "Station Wagon" },
-    { value: "5", label: "Hatchback" },
-    { value: "6", label: "Convertible" },
-    { value: "7", label: "SUV" },
-    { value: "8", label: "Minivan" },
-  ]
 
   const flat = [
     { value: "1", label: "Select Flat " },
@@ -266,15 +256,6 @@ export default function Applications() {
     { value: "1", label: "Secretary " },
     { value: "2", label: "Committe Member " },
   ]
-
-
-  const vehiclenature = [
-    { value: "1", label: "Member Parking" },
-    { value: "2", label: "Visitor Parking" },
-    { value: "2", label: "Other" },
-  ]
-
-
   const status = [
     { value: "", label: "All" },
     { value: "In-Progress", label: "In-Progress" },
@@ -445,6 +426,8 @@ export default function Applications() {
     viewDemoClose("addgatepass")
     // setSingleAnnouncementData(null)
   }
+
+
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
