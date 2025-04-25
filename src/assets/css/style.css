@@ -7621,7 +7621,7 @@ select.form-control[multiple] {
 }
 
 textarea.form-control {
-    height: auto;
+    height: auto !important;
 }
 
 .form-group {
@@ -85932,3 +85932,5 @@ width: 100%;
     .cashtable .form-control{height:30px !important}
     .padding-right40{padding-right: 40px;}
 .min-height500{min-height: 500px;}
+
+.css-13cymwt-control{min-height: 41px;}
