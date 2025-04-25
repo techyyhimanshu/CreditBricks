@@ -237,11 +237,12 @@ export default function Applications() {
     { value: "3", label: "Second Half" },
   ]
 
-  const changeoldname = [
-    { value: "1", label: "Tisha Sharma" },
-    { value: "2", label: "Rajiv Kumar" },
-    { value: "3", label: "Suneel Singh" },
+  const duration = [
+    { value: "1", label: "1hr" },
+    { value: "2", label: "2hrs" },
+    { value: "3", label: "3hrs" },
   ]
+
 
   const medicaldiseases = [
     { value: "1", label: "Yes" },
@@ -1479,7 +1480,7 @@ export default function Applications() {
           </Modal>
 
           {/* Add Change In Name */}
-          <Modal show={addchangeinname} centered>
+          <Modal show={addchangeinname} centered size='lg'>
             <Modal.Header>
               <Modal.Title>Change In Name</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addchangeinname"); }}>
@@ -1489,7 +1490,7 @@ export default function Applications() {
 
             <Modal.Body>
               <Row>
-                <Col xl="12">
+                <Col xl="6">
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Society </Form.Label>
                     <Select
@@ -1501,7 +1502,7 @@ export default function Applications() {
                   </Form.Group>
                 </Col>
 
-                <Col xl="12">
+                <Col xl="6">
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Property </Form.Label>
                     <Select
@@ -1513,37 +1514,44 @@ export default function Applications() {
                   </Form.Group>
                 </Col>
                 <Col xl="12">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Change Type </Form.Label>
-                    <Select
-                      options={changetype}
-                      placeholder="Select type"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl="12">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>Old Name  </Form.Label>
-                    <Select
-                      options={changeoldname}
-                      placeholder="Select name"
-                      classNamePrefix="Select2"
-                    />
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
-                </Col>
-                <Col xl="12">
-                  <Form.Group className="form-group mb-1">
-                    <Form.Label>New Name  </Form.Label>
-                    <Form.Control
+                <table className='table border mt-3 bg-white'>
+                        <thead>
+                          <tr>
+                            <th>Owner Type</th>
+                            <th>Old Name</th>
+                            <th>New Name</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Owner</td>
+                            <td>Suneel Singh</td>
+                            <td>
+                              <Form.Control
                       type="text"
+                      disabled
                       placeholder="New Name"
                       className="form-control"
-                    ></Form.Control>
-                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                  </Form.Group>
+                    ></Form.Control></td>
+                            <td><i className='bi bi-pencil text-primary cursor'></i></td>
+                          </tr>
+
+                          <tr>
+                            <td>Co-Owner</td>
+                            <td>Vishal Singh</td>
+                            <td>
+                              <Form.Control
+                      type="text"
+                      disabled
+                      placeholder="New Name"
+                      className="form-control"
+                    ></Form.Control></td>
+                            <td><i className='bi bi-pencil text-primary cursor'></i></td>
+                          </tr>
+
+                        </tbody>
+                      </table>
                 </Col>
 
               </Row>
@@ -3469,7 +3477,7 @@ export default function Applications() {
                   </Row>
                 </div>
 
-                <Col xl={5}>
+                <Col xl={4}>
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Pool Date & Timing</Form.Label>
                     <InputGroup className="input-group w-100 datetimepicker-2">
@@ -3482,9 +3490,23 @@ export default function Applications() {
 
 />
 </InputGroup>
+
                     {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                   </Form.Group>
+</Col>
+<Col xl={4}>
 
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Duration</Form.Label>
+                        <Select
+                          options={duration}
+                          placeholder="Select duration"
+                          classNamePrefix="Select2"
+                        />
+                        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                      </Form.Group>
+                    </Col>
+<Col xl={12}>
                   <Form.Group className="form-group">
                     <Form.Label>Remarks
                       <small className='text-muted float-end'>max 250 Character</small>
@@ -3499,7 +3521,7 @@ export default function Applications() {
 
 
                 <Col xl={6}>
-                  <Form.Group className="form-group mt-4">
+                  <Form.Group className="form-group">
                     <Form.Label clas>Do you have passes for all the participants?</Form.Label>
                     <Row>
 
@@ -3515,7 +3537,8 @@ export default function Applications() {
                     </Row>
 
                   </Form.Group>
-
+</Col>
+<Col xl={6}>
                   <Form.Group className="form-group mb-0">
                     <Form.Label clas>Do you have swimming costume for all the
                       participants?</Form.Label>
@@ -3539,7 +3562,7 @@ export default function Applications() {
 
 
 
-                <Col lg={12} className='tx-bold'>
+                <Col lg={12} className='tx-bold mt-2'>
 
                   <Form.Check type="checkbox" label="Terms and Conditions" />
                 </Col>
