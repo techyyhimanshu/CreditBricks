@@ -623,7 +623,7 @@ export default function Applications() {
                 <Col xl={3}>
                   <div className='applicationbox' onClick={() => { viewDemoShow ('addbadminton'); }}>
                     <img alt="" src={imagesData('badminton')} />
-                    <p>Badminton Count</p>
+                    <p>Badminton Court</p>
                   </div>
                 </Col>
 
