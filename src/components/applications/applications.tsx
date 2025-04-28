@@ -32,9 +32,27 @@ export default function Applications() {
   const [tenatview, settenatview] = useState(false);
   const [termsconditionsview, settermsconditionsview] = useState(false);
   const [gatepassview, setgatepassview] = useState(false);
+  const [addnomination, setaddnomination] = useState(false);
+  const [addbadminton, setaddbadminton] = useState(false);
+  const [addfoodcourt, setaddfoodcourt] = useState(false);
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
+
+      case "addfoodcourt":
+        setaddfoodcourt(true);
+        setapplication(false);
+        break;
+
+      case "addbadminton":
+        setaddbadminton(true);
+        setapplication(false);
+        break;
+
+      case "addnomination":
+        setaddnomination(true);
+        setapplication(false);
+        break;
 
       case "gatepassview":
         setgatepassview(true);
@@ -142,6 +160,18 @@ export default function Applications() {
 
   const viewDemoClose = (modal: any) => {
     switch (modal) {
+
+      case "addfoodcourt":
+        setaddfoodcourt(false);
+         break;
+
+      case "addbadminton":
+        setaddbadminton(false);
+         break;
+
+      case "addnomination":
+        setaddnomination(false);
+        break;
 
       case "gatepassview":
         setgatepassview(false);
@@ -584,21 +614,21 @@ export default function Applications() {
                   </div>
                 </Col>
                 <Col xl={3}>
-                  <div className='applicationbox'>
+                  <div className='applicationbox' onClick={() => { viewDemoShow ('addnomination'); }}>
                     <img alt="" src={imagesData('nomination')} />
                     <p> Nomination</p>
                   </div>
                 </Col>
 
                 <Col xl={3}>
-                  <div className='applicationbox'>
+                  <div className='applicationbox' onClick={() => { viewDemoShow ('addbadminton'); }}>
                     <img alt="" src={imagesData('badminton')} />
                     <p>Badminton Count</p>
                   </div>
                 </Col>
 
                 <Col xl={3}>
-                  <div className='applicationbox'>
+                  <div className='applicationbox' onClick={() => { viewDemoShow ('addfoodcourt'); }}>
                     <img alt="" src={imagesData('foodcourt')} />
                     <p>Food Court</p>
                   </div>
@@ -4990,6 +5020,704 @@ export default function Applications() {
                 Close
               </Button>
               <Button variant="primary" onClick={() => { viewDemoClose("addsharecerificate"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
+
+          {/* Add Nomination */}
+          <Modal show={addnomination} size='lg' centered>
+            <Modal.Header>
+              <Modal.Title>Nomination</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addnomination"); }}>
+                x
+              </Button>
+            </Modal.Header>
+            <Modal.Body className='bg-light'>
+              <Accordion defaultActiveKey="basicinfo">
+                <Accordion.Item eventKey="basicinfo">
+                  <Accordion.Header>Owner Details</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select society"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Name</Form.Label>
+                          <Select
+                            options={member}
+                            placeholder="Select name"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Name of the Nominee</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter name"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={12}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Permanent Address of the Nominee
+                            <small className='text-muted float-end'>max 250 Character</small>
+                          </Form.Label>
+                          <textarea className="form-control" placeholder='Address'></textarea>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Relationship with the Nominatore</Form.Label>
+                          <Select
+                            options={relation}
+                            placeholder="Select relation"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Share of each Nominee <small className='text-muted'>(in Percentage)</small></Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="12%"
+                            className="form-control"
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Date of Birth of Nominee if the Nominee is a Minor</Form.Label>
+                          <Form.Control
+                            type="date"
+                            placeholder="%"
+                            className="form-control"
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+                <Accordion.Item eventKey="approvaldetails">
+                  <Accordion.Header>Co-owner Details</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                  <Row>
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select society"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Name</Form.Label>
+                          <Select
+                            options={member}
+                            placeholder="Select name"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Name of the Nominee</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter name"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={12}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Permanent Address of the Nominee
+                            <small className='text-muted float-end'>max 250 Character</small>
+                          </Form.Label>
+                          <textarea className="form-control" placeholder='Address'></textarea>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl="6">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Relationship with the Nominatore</Form.Label>
+                          <Select
+                            options={relation}
+                            placeholder="Select relation"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Share of each Nominee <small className='text-muted'>(in Percentage)</small></Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="12%"
+                            className="form-control"
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Date of Birth of Nominee if the Nominee is a Minor</Form.Label>
+                          <Form.Control
+                            type="date"
+                            placeholder="%"
+                            className="form-control"
+                          ></Form.Control>
+                        </Form.Group>
+                      </Col>
+
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+              </Accordion>
+
+              <Col xl={12} className='p-0'>
+                <label><input type="checkbox" className='float-start m-2' /><b className='float-start mt-1 cursor' onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label>
+              </Col>
+            </Modal.Body>
+
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("addnomination"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("addnomination"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
+
+  {/* Add Badminton */}
+  <Modal show={addbadminton} centered>
+            <Modal.Header>
+              <Modal.Title>Badminton Court</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addbadminton"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='pt-1'>
+              <Row>
+
+              <Col xl={12}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={12}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+                <Col xl="12">
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>No of Participants</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Number"
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Date & Timing</Form.Label>
+                    <Form.Control
+                      type="time"
+                      placeholder=""
+                      className="form-control"
+                    ></Form.Control>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+
+
+
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label clas>Do you have passes for all the participants?</Form.Label>
+                    <Row>
+
+                      <Col lg={2} className='mt-2'>
+
+                        <Form.Check type="radio" label="Yes" name="participants" />
+                      </Col>
+                      <Col lg={2} className='mt-2'>
+
+                        <Form.Check type="radio" label="No" name="participants" />
+                      </Col>
+
+                    </Row>
+
+                  </Form.Group>
+                </Col>
+
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label clas>Do you have game resources for all the participants?</Form.Label>
+                    <Row>
+
+                      <Col lg={2} className='mt-2'>
+
+                        <Form.Check type="radio" label="Yes" name="participants" />
+                      </Col>
+                      <Col lg={2} className='mt-2'>
+
+                        <Form.Check type="radio" label="No" name="participants" />
+                      </Col>
+
+                    </Row>
+
+                  </Form.Group>
+                </Col>
+
+                <Col xl={12}>
+                  <Form.Group className="form-group">
+                    <Form.Label>Remarks
+                      <small className='text-muted float-end'>max 250 Character</small>
+                    </Form.Label>
+                    <textarea className="form-control" placeholder='Remarks'></textarea>
+                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+
+                <Col lg={12} className='tx-bold'>
+
+                  <Form.Check type="checkbox" label="Terms and Conditions" />
+                </Col>
+              </Row>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("addbadminton"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("addbadminton"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
+
+           {/* Add Food Court */}
+           <Modal show={addfoodcourt} size='xl' centered>
+            <Modal.Header>
+              <Modal.Title>Celebration</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addfoodcourt"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='bg-light'>
+              <Accordion defaultActiveKey="basicinfo">
+                <Accordion.Item eventKey="basicinfo">
+                  <Accordion.Header>Basic Information</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select society"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Occasion</Form.Label>
+                          <Select
+                            options={occasion}
+                            placeholder="Select occasion"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="2">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Day</Form.Label>
+                          <Select
+                            options={day}
+                            placeholder="Select day"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="2">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>No. of Guest </Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Number"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Start Date & Time</Form.Label>
+                          <InputGroup className="input-group w-100 datetimepicker-2">
+
+                            <Form.Control
+                              className="form-control"
+                              id="datetime-local"
+                              type="datetime-local"
+                              defaultValue="2020-01-16T14:22"
+
+                            />
+                          </InputGroup>
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>End Date & Time</Form.Label>
+                          <InputGroup className="input-group w-100 datetimepicker-2">
+
+                            <Form.Control
+                              className="form-control"
+                              id="datetime-local"
+                              type="datetime-local"
+                              defaultValue="2020-01-16T14:22"
+
+                            />
+                          </InputGroup>
+                        </Form.Group>
+                      </Col>
+
+
+
+
+
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Venue</Form.Label>
+                          <Select
+                            options={venue}
+                            placeholder="Select venue"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Name of the Organizer</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="name"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Contatc Details</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="details"
+                            className="form-control"
+                          ></Form.Control>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+                      <Col xl={12}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label clas>Does this celebration include any of the following?</Form.Label>
+                          <Form.Group className="form-group mb-0">
+
+                            <Row>
+                              <Col lg={10}>
+                                <Form.Label className='text-muted'>Catering Service</Form.Label>
+                              </Col>
+                              <Col lg={1} className='mt-2'>
+
+                                <Form.Check type="radio" label="Yes" name="CateringService" />
+                              </Col>
+                              <Col lg={1} className='mt-2'>
+
+                                <Form.Check type="radio" label="No" name="CateringService" />
+                              </Col>
+
+                            </Row>
+                            <Row>
+                              <Col lg={10}>
+                                <Form.Label className='text-muted'>Decorations</Form.Label>
+                              </Col>
+                              <Col lg={1} className='mt-2'>
+
+                                <Form.Check type="radio" label="Yes" name="Decorations" />
+                              </Col>
+                              <Col lg={1} className='mt-2'>
+
+                                <Form.Check type="radio" label="No" name="Decorations" />
+                              </Col>
+
+                            </Row>
+                            <Row>
+                              <Col lg={10}>
+                                <Form.Label className='text-muted'>Sound System</Form.Label>
+                              </Col>
+                              <Col lg={1} className='mt-2'>
+
+                                <Form.Check type="radio" label="Yes" name="SoundSystem" />
+                              </Col>
+                              <Col lg={1} className='mt-2'>
+
+                                <Form.Check type="radio" label="No" name="SoundSystem" />
+                              </Col>
+
+                            </Row>
+                            <Row>
+                              <Col lg={10}>
+                                <Form.Label className='text-muted'>Guest Parking</Form.Label>
+                              </Col>
+                              <Col lg={1} className='mt-2'>
+
+                                <Form.Check type="radio" label="Yes" name="GuestParking" />
+                              </Col>
+                              <Col lg={1} className='mt-2'>
+
+                                <Form.Check type="radio" label="No" name="GuestParking" />
+                              </Col>
+
+                            </Row>
+                          </Form.Group>
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={12}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Remarks
+                            <small className='text-muted float-end'>max 250 Character</small>
+                          </Form.Label>
+                          <textarea className="form-control" placeholder='Remarks'></textarea>
+                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+                <Accordion.Item eventKey="approvaldetails">
+                  <Accordion.Header>Approval Details</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Tower </Form.Label>
+                          <Select
+                            options={wing}
+                            placeholder="Select Tower"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Wing </Form.Label>
+                          <Select
+                            options={wing}
+                            placeholder="Select Wing"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Flat </Form.Label>
+                          <Select
+                            options={flat}
+                            placeholder="Select Flat"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Name</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="approverName"
+                            placeholder="Approver Name"
+                            className="form-control"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Contact</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="contactdetails"
+                            placeholder="Contact"
+                            className="form-control"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Designation </Form.Label>
+                          <Select
+                            options={designation}
+                            placeholder="Select Designation"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+              </Accordion>
+
+              <Col xl={12} className='p-0'>
+                <label><input type="checkbox" className='float-start m-2' /><b className='float-start mt-1 cursor' onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label>
+              </Col>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("addfoodcourt"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("addfoodcourt"); }}>
                 Save
               </Button>
 
