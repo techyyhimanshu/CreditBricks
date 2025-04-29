@@ -9,7 +9,7 @@ import { Field, Formik, Form as FormikForm } from "formik";
 import { getTenantOptions } from "../../api/property-api";
 import { getMemberForDropDownApi } from "../../api/user-api";
 import { getVendorForDropDownApi } from "../../api/vendor-api";
-import { createNewGatePassApi } from "../../api/applications-api";
+import { createNewGatePassApi } from "../../api/application-api";
 
 interface ProductModalProps {
     show: boolean;
@@ -164,7 +164,6 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 contactPersonNumber: values.contactPersonNumber,
                 remarks: values.remarks
             }
-            console.log(values)
             const response = await createNewGatePassApi(formattedData)
             if (response.status === 200) {
                 showToast("success", "Gate pass created successfully")
@@ -212,7 +211,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
 
                     }}
                     onSubmit={handleSubmit}>
-                    {({ values, handleChange, setFieldValue }) => {
+                    {({ values, setFieldValue }) => {
                         return (
                             <FormikForm>
                                 <Modal.Body className='bg-light'>
