@@ -10,212 +10,6 @@ import { getAllAccountsApi } from '../../api/account-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { freeze } from '@reduxjs/toolkit';
 import TestLoader from '../../layout/layoutcomponent/testloader';
-
-
-
-// const data = [
-//   {
-//     id: 1,
-//     sno: '1',
-//     name: '',
-//     invoicenumber: '1',
-//     property: '800',
-//     invctype: 'Maintenance',
-//     invcdt: '8/16/2024',
-//     duedt: '4/15/2024',
-//     totalamt: '₹2,850.00',
-//     totalpaidamt: '₹2,850.00',
-//     totaloutstanding: '₹0.00',
-//     status: 'Paid'
-//   },
-//   {
-//     id: 2,
-//     sno: '2',
-//     name: '',
-//     invoicenumber: '1',
-//     property: '800',
-//     invctype: 'Maintenance',
-//     invcdt: '8/16/2024',
-//     duedt: '4/15/2024',
-//     totalamt: '₹2,850.00',
-//     totalpaidamt: '₹2,850.00',
-//     totaloutstanding: '₹0.00',
-//     status: 'Paid'
-//   },
-//   {
-//     id: 3,
-//     sno: '3',
-//     name: '',
-//     invoicenumber: '1',
-//     property: '800',
-//     invctype: 'Maintenance',
-//     invcdt: '8/16/2024',
-//     duedt: '4/15/2024',
-//     totalamt: '₹2,850.00',
-//     totalpaidamt: '₹2,850.00',
-//     totaloutstanding: '₹0.00',
-//     status: 'Paid'
-//   },
-//   {
-//     id: 4,
-//     sno: '4',
-//     name: '',
-//     invoicenumber: '1',
-//     property: '800',
-//     invctype: 'Maintenance',
-//     invcdt: '8/16/2024',
-//     duedt: '4/15/2024',
-//     totalamt: '₹2,850.00',
-//     totalpaidamt: '₹2,850.00',
-//     totaloutstanding: '₹0.00',
-//     status: 'Unpaid'
-//   },
-//   {
-//     id: 5,
-//     sno: '5',
-//     name: '',
-//     invoicenumber: '1',
-//     property: '800',
-//     invctype: 'Maintenance',
-//     invcdt: '8/16/2024',
-//     duedt: '4/15/2024',
-//     totalamt: '₹2,850.00',
-//     totalpaidamt: '₹2,850.00',
-//     totaloutstanding: '₹0.00',
-//     status: 'Unpaid'
-//   },
-//   {
-//     id: 6,
-//     sno: '6',
-//     name: '',
-//     invoicenumber: '1',
-//     property: '800',
-//     invctype: 'Maintenance',
-//     invcdt: '8/16/2024',
-//     duedt: '4/15/2024',
-//     totalamt: '₹2,850.00',
-//     totalpaidamt: '₹2,850.00',
-//     totaloutstanding: '₹0.00',
-//   },
-//   {
-//     id: 7,
-//     sno: '7',
-//     name: '',
-//     invoicenumber: '1',
-//     property: '800',
-//     invctype: 'Maintenance',
-//     invcdt: '8/16/2024',
-//     duedt: '4/15/2024',
-//     totalamt: '₹2,850.00',
-//     totalpaidamt: '₹2,850.00',
-//     totaloutstanding: '₹0.00',
-//   },
-//   {
-//     id: 8,
-//     sno: '8',
-//     name: '',
-//     invoicenumber: '1',
-//     property: '800',
-//     invctype: 'Maintenance',
-//     invcdt: '8/16/2024',
-//     duedt: '4/15/2024',
-//     totalamt: '₹2,850.00',
-//     totalpaidamt: '₹2,850.00',
-//     totaloutstanding: '₹0.00',
-//   },
-// ]
-
-const receiptcolumns = [
-  {
-    name: 'S.No.',
-    selector: (row: any) => row.sno,
-    sortable: true,
-  },
-  {
-    name: 'Date',
-    selector: (row: any) => row.date,
-    sortable: true,
-  },
-  {
-    name: 'Receipt ID',
-    cell: () => <Link className="text-primary" to="">#RECPT457476 </Link>,
-    sortable: true,
-  },
-
-  {
-    name: 'Amount',
-    cell: () => <span><i className="bi bi-currency"></i> 800.00 </span>,
-    sortable: true,
-  },
-
-  {
-    name: 'Action',
-    sortable: true,
-    cell: () => <button type="button" className="btn btn-light btn-sm">Edit</button>,
-  },
-];
-
-const receiptdata = [
-  {
-    id: 1,
-    sno: '1',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-
-
-  },
-  {
-    id: 2,
-    sno: '2',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-  },
-  {
-    id: 3,
-    sno: '3',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-  },
-  {
-    id: 4,
-    sno: '4',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-  },
-  {
-    id: 5,
-    sno: '5',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-  },
-  {
-    id: 6,
-    sno: '6',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-  },
-  {
-    id: 7,
-    sno: '7',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-  },
-  {
-    id: 8,
-    sno: '8',
-    date: '12/12/2024',
-    invoiceid: 'Tax',
-    amt: '800',
-  },
-]
-
 export default function Accounts() {
   const [accountdata, setAccountdata] = useState<any>([]);
   const [paynow, setpaynow] = useState(false);
@@ -339,7 +133,7 @@ export default function Accounts() {
 
         <Dropdown.Menu>
           <Dropdown.Item>Edit</Dropdown.Item>
-          <Dropdown.Item onClick={() => { setAmountToPay(row.totalOutstanding), viewDemoShow("paynow"); }}>Pay Now</Dropdown.Item>
+          {row.status === 'Unpaid' || row.status === 'Partially Paid' ? <Dropdown.Item onClick={() => { setAmountToPay(row.totalOutstanding); viewDemoShow("paynow") }}>Pay Now</Dropdown.Item> : ""}
           <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>,
@@ -379,6 +173,7 @@ export default function Accounts() {
           sno: index + 1,
           name: account?.name,
           invoiceNumber: account?.invoiceNumber,
+          propertyName: account?.property?.propertyName,
           status: account?.status,
           type: account?.type,
           dueDate: account?.dueDate,
@@ -386,7 +181,7 @@ export default function Accounts() {
           totalAmount: account?.totalAmount,
           totalPaidAmount: account?.totalPaidAmount,
           propertyIdentifier: account.propertyIdentifier,
-          totalOutstanding: Number(account.totalAmount) - Number(account.totalPaidAmount)
+          totalOutstanding: account?.invoicePaymentOutstanding?.principleOutstanding * 1 + account?.invoicePaymentOutstanding?.interestOutstanding * 1,
         }
 
       ));
