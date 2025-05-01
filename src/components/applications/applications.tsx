@@ -7,6 +7,7 @@ import Select from "react-select";
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { imagesData } from "../../common/commonimages";
 import Accordion from 'react-bootstrap/Accordion';
+import EventModal from '../../common/modals/eventModal';
 
 
 export default function Applications() {
@@ -163,11 +164,11 @@ export default function Applications() {
 
       case "addfoodcourt":
         setaddfoodcourt(false);
-         break;
+        break;
 
       case "addbadminton":
         setaddbadminton(false);
-         break;
+        break;
 
       case "addnomination":
         setaddnomination(false);
@@ -488,6 +489,23 @@ export default function Applications() {
 
   ];
 
+  const handleBanquetClose = () => {
+    viewDemoClose("addbanquethall");
+  }
+  const handleClubHouseClose = () => {
+    viewDemoClose("addclubhouse");
+  }
+  const handleFoodCourtClose = () => {
+    viewDemoClose("addfoodcourt");
+  }
+  const handlePlayAreaClose = () => {
+    viewDemoClose("addplayarea");
+  }
+  const handleCelebrationClose = () => {
+    viewDemoClose("addcelebration");
+  }
+
+
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -614,21 +632,21 @@ export default function Applications() {
                   </div>
                 </Col>
                 <Col xl={3}>
-                  <div className='applicationbox' onClick={() => { viewDemoShow ('addnomination'); }}>
+                  <div className='applicationbox' onClick={() => { viewDemoShow('addnomination'); }}>
                     <img alt="" src={imagesData('nomination')} />
                     <p> Nomination</p>
                   </div>
                 </Col>
 
                 <Col xl={3}>
-                  <div className='applicationbox' onClick={() => { viewDemoShow ('addbadminton'); }}>
+                  <div className='applicationbox' onClick={() => { viewDemoShow('addbadminton'); }}>
                     <img alt="" src={imagesData('badminton')} />
                     <p>Badminton Court</p>
                   </div>
                 </Col>
 
                 <Col xl={3}>
-                  <div className='applicationbox' onClick={() => { viewDemoShow ('addfoodcourt'); }}>
+                  <div className='applicationbox' onClick={() => { viewDemoShow('addfoodcourt'); }}>
                     <img alt="" src={imagesData('foodcourt')} />
                     <p>Food Court</p>
                   </div>
@@ -954,7 +972,7 @@ export default function Applications() {
                           <Form.Label>Remarks
                             <small className='float-end'>max 250 character</small>
                           </Form.Label>
-                          <textarea className="form-control" placeholder='remarks' cols="60" rows="5"></textarea>
+                          <textarea className="form-control" placeholder='remarks' ></textarea>
                           {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
@@ -1550,44 +1568,44 @@ export default function Applications() {
                   </Form.Group>
                 </Col>
                 <Col xl="12">
-                <table className='table border mt-3 bg-white'>
-                        <thead>
-                          <tr>
-                            <th>Owner Type</th>
-                            <th>Old Name</th>
-                            <th>New Name</th>
-                            <th></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>Owner</td>
-                            <td>Suneel Singh</td>
-                            <td>
-                              <Form.Control
-                      type="text"
-                      disabled
-                      placeholder="New Name"
-                      className="form-control"
-                    ></Form.Control></td>
-                            <td><i className='bi bi-pencil text-primary cursor'></i></td>
-                          </tr>
+                  <table className='table border mt-3 bg-white'>
+                    <thead>
+                      <tr>
+                        <th>Owner Type</th>
+                        <th>Old Name</th>
+                        <th>New Name</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Owner</td>
+                        <td>Suneel Singh</td>
+                        <td>
+                          <Form.Control
+                            type="text"
+                            disabled
+                            placeholder="New Name"
+                            className="form-control"
+                          ></Form.Control></td>
+                        <td><i className='bi bi-pencil text-primary cursor'></i></td>
+                      </tr>
 
-                          <tr>
-                            <td>Co-Owner</td>
-                            <td>Vishal Singh</td>
-                            <td>
-                              <Form.Control
-                      type="text"
-                      disabled
-                      placeholder="New Name"
-                      className="form-control"
-                    ></Form.Control></td>
-                            <td><i className='bi bi-pencil text-primary cursor'></i></td>
-                          </tr>
+                      <tr>
+                        <td>Co-Owner</td>
+                        <td>Vishal Singh</td>
+                        <td>
+                          <Form.Control
+                            type="text"
+                            disabled
+                            placeholder="New Name"
+                            className="form-control"
+                          ></Form.Control></td>
+                        <td><i className='bi bi-pencil text-primary cursor'></i></td>
+                      </tr>
 
-                        </tbody>
-                      </table>
+                    </tbody>
+                  </table>
                 </Col>
 
               </Row>
@@ -1614,36 +1632,36 @@ export default function Applications() {
 
             <Modal.Body>
               <Row>
-              <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select Society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Society </Form.Label>
+                    <Select
+                      options={society}
+                      placeholder="Select Society"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col xl="6">
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Property </Form.Label>
+                    <Select
+                      options={property}
+                      placeholder="Select property"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col xl="6">
                   <Form.Group className="form-group">
                     <Form.Label>Member Name</Form.Label>
 
-                          <Select
-                            options={member}
-                            placeholder="Select member"
-                            classNamePrefix="Select2"
-                          />
+                    <Select
+                      options={member}
+                      placeholder="Select member"
+                      classNamePrefix="Select2"
+                    />
                     {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                   </Form.Group>
                 </Col>
@@ -1767,27 +1785,27 @@ export default function Applications() {
 
             <Modal.Body>
               <Row>
-              <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select Society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={4}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Society </Form.Label>
+                    <Select
+                      options={society}
+                      placeholder="Select Society"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
 
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={4}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Property </Form.Label>
+                    <Select
+                      options={property}
+                      placeholder="Select property"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
                 <Col xl="4">
                   <Form.Group className="form-group">
                     <Form.Label>Vehicle Type </Form.Label>
@@ -1870,7 +1888,7 @@ export default function Applications() {
                 </Col>
                 <Col xl={12}>
                   <Form.Group className="form-group float-end">
-                   <Button type="button" className='btn btn-default'>+ Add More Vehicle</Button>
+                    <Button type="button" className='btn btn-default'>+ Add More Vehicle</Button>
                   </Form.Group>
                 </Col>
 
@@ -2252,7 +2270,7 @@ export default function Applications() {
                       <Col xl={6}>
                         <Form.Group className="form-group mb-0">
                           <Form.Label>Upload Reciept
-                          <small className='text-muted float-end'>Size : Max 2MB</small>
+                            <small className='text-muted float-end'>Size : Max 2MB</small>
                           </Form.Label>
                           <Row>
                             <Col xl={12} className='mt-1'>
@@ -2271,7 +2289,7 @@ export default function Applications() {
                       <Col xl={6}>
                         <Form.Group className="form-group mb-0">
                           <Form.Label>Upload loan Closure Letter
-                          <small className='text-muted float-end'>Size : Max 2MB</small>
+                            <small className='text-muted float-end'>Size : Max 2MB</small>
                           </Form.Label>
                           <Row>
                             <Col xl={12} className='mt-1'>
@@ -2457,27 +2475,27 @@ export default function Applications() {
 
             <Modal.Body className='pt-1'>
               <Row>
-              <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select Society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Society </Form.Label>
+                    <Select
+                      options={society}
+                      placeholder="Select Society"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={6}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Property </Form.Label>
+                    <Select
+                      options={property}
+                      placeholder="Select property"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
                 <Col xl="6">
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Work Type </Form.Label>
@@ -2966,6 +2984,7 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal>
+          {addcelebration && <EventModal show={addcelebration} onClose={handleCelebrationClose} editing={false}  name="Celebration" />}
 
           {/* Add theater */}
           <Modal show={addtheater} centered>
@@ -2979,27 +2998,27 @@ export default function Applications() {
             <Modal.Body className='pt-1'>
               <Row>
 
-              <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select Society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Society </Form.Label>
+                    <Select
+                      options={society}
+                      placeholder="Select Society"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Property </Form.Label>
+                    <Select
+                      options={property}
+                      placeholder="Select property"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
                 <Col xl="12">
                   <Form.Group className="form-group mb-1">
                     <Form.Label>No of Participants</Form.Label>
@@ -3016,10 +3035,10 @@ export default function Applications() {
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Show</Form.Label>
                     <Select
-                            options={showname}
-                            placeholder="Select show"
-                            classNamePrefix="Select2"
-                          />
+                      options={showname}
+                      placeholder="Select show"
+                      classNamePrefix="Select2"
+                    />
                     {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                   </Form.Group>
                 </Col>
@@ -3087,7 +3106,7 @@ export default function Applications() {
           </Modal>
 
           {/* Add Banquet Hall */}
-          <Modal show={addbanquethall} size='xl' centered>
+          {/* <Modal show={addbanquethall} size='xl' centered>
             <Modal.Header>
               <Modal.Title>Banquet Hall</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addbanquethall"); }}>
@@ -3108,7 +3127,6 @@ export default function Applications() {
                             placeholder="Select society"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -3120,7 +3138,6 @@ export default function Applications() {
                             placeholder="Select property"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl="4">
@@ -3131,7 +3148,6 @@ export default function Applications() {
                             placeholder="Select occasion"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -3143,7 +3159,6 @@ export default function Applications() {
                             placeholder="Select day"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -3155,7 +3170,6 @@ export default function Applications() {
                             placeholder="Number"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -3204,7 +3218,6 @@ export default function Applications() {
                             placeholder="Select venue"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={4}>
@@ -3215,7 +3228,6 @@ export default function Applications() {
                             placeholder="name"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -3227,7 +3239,6 @@ export default function Applications() {
                             placeholder="details"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={12}>
@@ -3301,7 +3312,6 @@ export default function Applications() {
                             <small className='text-muted float-end'>max 250 Character</small>
                           </Form.Label>
                           <textarea className="form-control" placeholder='Remarks'></textarea>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -3428,8 +3438,8 @@ export default function Applications() {
               </Button>
 
             </Modal.Footer>
-          </Modal>
-
+          </Modal> */}
+          {addbanquethall && <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet Hall" />}
           {/* Add Club House */}
           <Modal show={addclubhouse} size='xl' centered>
             <Modal.Header>
@@ -3773,6 +3783,7 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal>
+          {addclubhouse && <EventModal show={addclubhouse} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" />}
 
           {/* Add Swimming pool */}
           <Modal show={addswimmingpool} centered size='xl'>
@@ -4019,6 +4030,7 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal>
+
 
           {/* Add Play Area */}
           <Modal show={addplayarea} size='xl' centered>
@@ -4363,6 +4375,7 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal>
+          {addplayarea && <EventModal show={addplayarea} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />}
 
 
           {/* Add Turf Area */}
@@ -4376,27 +4389,27 @@ export default function Applications() {
 
             <Modal.Body className='pt-1'>
               <Row>
-              <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select Society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Society </Form.Label>
+                    <Select
+                      options={society}
+                      placeholder="Select Society"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Property </Form.Label>
+                    <Select
+                      options={property}
+                      placeholder="Select property"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
 
                 <Col xl="12">
                   <Form.Group className="form-group mb-1">
@@ -5041,7 +5054,7 @@ export default function Applications() {
                 <Accordion.Item eventKey="approvaldetails">
                   <Accordion.Header>Co-owner Details</Accordion.Header>
                   <Accordion.Body className='p-2'>
-                  <Row>
+                    <Row>
                       <Col xl="6">
                         <Form.Group className="form-group mb-1">
                           <Form.Label>Society </Form.Label>
@@ -5156,8 +5169,8 @@ export default function Applications() {
             </Modal.Footer>
           </Modal>
 
-  {/* Add Badminton */}
-  <Modal show={addbadminton} centered>
+          {/* Add Badminton */}
+          <Modal show={addbadminton} centered>
             <Modal.Header>
               <Modal.Title>Badminton Court</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addbadminton"); }}>
@@ -5168,27 +5181,27 @@ export default function Applications() {
             <Modal.Body className='pt-1'>
               <Row>
 
-              <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select Society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Society </Form.Label>
+                    <Select
+                      options={society}
+                      placeholder="Select Society"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
+                <Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Property </Form.Label>
+                    <Select
+                      options={property}
+                      placeholder="Select property"
+                      classNamePrefix="Select2"
+                    />
+                  </Form.Group>
+                </Col>
                 <Col xl="12">
                   <Form.Group className="form-group mb-1">
                     <Form.Label>No of Participants</Form.Label>
@@ -5282,8 +5295,8 @@ export default function Applications() {
             </Modal.Footer>
           </Modal>
 
-           {/* Add Food Court */}
-           <Modal show={addfoodcourt} size='xl' centered>
+          {/* Add Food Court */}
+          <Modal show={addfoodcourt} size='xl' centered>
             <Modal.Header>
               <Modal.Title>Celebration</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addfoodcourt"); }}>
@@ -5625,6 +5638,8 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal>
+
+          {addfoodcourt && <EventModal show={addfoodcourt} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
 
         </div>
       </div>
