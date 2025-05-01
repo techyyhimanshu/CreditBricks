@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab, InputGroup } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab, InputGroup, Nav } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
@@ -36,9 +36,15 @@ export default function Applications() {
   const [addnomination, setaddnomination] = useState(false);
   const [addbadminton, setaddbadminton] = useState(false);
   const [addfoodcourt, setaddfoodcourt] = useState(false);
+  const [addothers, setothers] = useState(false);
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
+
+      case "addothers":
+        setothers(true);
+        setapplication(false);
+        break;
 
       case "addfoodcourt":
         setaddfoodcourt(true);
@@ -162,6 +168,10 @@ export default function Applications() {
   const viewDemoClose = (modal: any) => {
     switch (modal) {
 
+      case "addothers":
+        setothers(false);
+        break;
+
       case "addfoodcourt":
         setaddfoodcourt(false);
         break;
@@ -261,6 +271,12 @@ export default function Applications() {
 
     }
   };
+
+  const otherstype = [
+    { value: "1", label: "Notice" },
+    { value: "2", label: "Announcement" },
+    { value: "3", label: "Community" },
+  ]
 
   const showname = [
     { value: "1", label: "Show 1" },
@@ -653,7 +669,7 @@ export default function Applications() {
                 </Col>
 
                 <Col xl={3}>
-                  <div className='applicationbox'>
+                  <div className='applicationbox' onClick={() => { viewDemoShow('addothers'); }}>
                     <img alt="" src={imagesData('others')} />
                     <p> Others</p>
                   </div>
@@ -5641,6 +5657,526 @@ export default function Applications() {
 
           {addfoodcourt && <EventModal show={addfoodcourt} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
 
+
+   {/* Add Others */}
+   <Modal show={addothers} size='xl' centered>
+            <Modal.Header>
+              <Modal.Title>Others</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addothers"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='bg-light'>
+            <div className="tab-menu-heading tabs-style-4 ps-3">
+                        <div className="tabs-menu ">
+
+                          <Tab.Container
+                            id="left-tabs-example"
+                            defaultActiveKey="TabStyle01"
+                          >
+                            <Row>
+                              <Col sm={4} className='p-0'>
+                                <Nav variant="pills" className="flex-column">
+                                  <Nav.Item>
+                                    <Nav.Link eventKey="TabStyle01" className='rounded-0'>
+                                      {" "}
+                                  Document Submission
+                                    </Nav.Link>
+                                  </Nav.Item>
+                                  <Nav.Item>
+                                    <Nav.Link eventKey="TabStyle02" className='rounded-0'>
+                                      {" "}
+                              Enquiry
+                                    </Nav.Link>
+                                  </Nav.Item>
+                                  <Nav.Item>
+                                    <Nav.Link eventKey="TabStyle03" className='rounded-0'>
+                                      {" "}
+                                   Others
+                                    </Nav.Link>
+                                  </Nav.Item>
+
+                                </Nav>
+                              </Col>
+                              <Col sm={8} className='p-0'>
+                                <Tab.Content className="tabs-style-4 card ps-4 pb-5 rounded-0">
+                                  <Tab.Pane eventKey="TabStyle01">
+                                    <div
+                                      className="panel-body tabs-menu-body"
+                                      id="tab21"
+                                    >
+                                      <Row>
+                                                  <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+                      </Row>
+
+                                  <Form.Group>
+
+                                    <Form.Label className='tx-16'>Document Submission</Form.Label>
+                                    <Row>
+                                      <Col xl={6}>
+                                      <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                       Agreement Copy
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+                                      <Col xl={6}>
+
+
+                  <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                       Index 2
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+
+                                      <Col xl={6}>
+
+                  <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                       Rent Agreement
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+
+                                      <Col xl={6}>
+
+                  <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                     Police Verification
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+                                      <Col xl={6}>
+                                      <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                     Loan Sanction Letter
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+                                      <Col xl={6}>
+                                      <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                  Others
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+
+                                      <Col xl={12}>
+<Form.Group className='mt-4'>
+<Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
+<Form.Control className="form-control" type="file" />
+</Form.Group>
+</Col>
+
+
+<Col xl={12}>
+<Form.Group className='mt-4'>
+<Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
+<Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
+</Form.Group>
+</Col>
+                                    </Row>
+
+
+
+
+
+
+
+
+
+                                  </Form.Group>
+                                    </div>
+                                  </Tab.Pane>
+                                  <Tab.Pane eventKey="TabStyle02">
+                                  <div
+                                      className="panel-body tabs-menu-body"
+                                      id="tab22"
+                                    >
+                                      <Row>
+                                                  <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+                      </Row>
+
+                                  <Form.Group>
+
+                                    <Form.Label className='tx-16'>Enquiry</Form.Label>
+                                    <Row>
+                                      <Col xl={6}>
+                                      <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                       Contact Detials of the Committee Members
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+                                      <Col xl={6}>
+
+
+                  <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                             Contact Detials of the Members
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+
+                                      <Col xl={6}>
+
+                  <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                      Access to the Society Documents
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+
+                                      <Col xl={6}>
+
+                  <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                    Contact Detials of the Vendors
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+                                      <Col xl={6}>
+                                      <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+                    Property Tax Related
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+                                      <Col xl={6}>
+                                      <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+            Society Bank Details
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+
+                                      <Col xl={6}>
+                                      <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+        Upcoming Events
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+
+                                      <Col xl={6}>
+                                      <div className="checkbox mt-3">
+                    <div className="custom-checkbox custom-control">
+                      <Form.Control
+                        type="checkbox"
+                        data-checkboxes="mygroup"
+                        className="custom-control-input"
+                        id="checkbox-2"
+                      />
+                      <Form.Label
+                        htmlFor="checkbox-2"
+                        className="custom-control-label mt-1"
+                      >
+       Others
+                      </Form.Label>
+                    </div>
+                  </div>
+                                      </Col>
+
+                                      <Col xl={12}>
+<Form.Group className='mt-4'>
+<Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
+<Form.Control className="form-control" type="file" />
+</Form.Group>
+</Col>
+
+
+<Col xl={12}>
+<Form.Group className='mt-4'>
+<Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
+<Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
+</Form.Group>
+</Col>
+                                    </Row>
+
+
+
+
+
+
+
+
+
+                                  </Form.Group>
+                                    </div>
+                                  </Tab.Pane>
+                                  <Tab.Pane eventKey="TabStyle03">
+                                  <div
+                                      className="panel-body tabs-menu-body"
+                                      id="tab23"
+                                    >
+                                      <Row>
+                                                  <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={society}
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                        </Form.Group>
+                      </Col>
+                      </Row>
+
+                                  <Form.Group>
+
+                                    <Form.Label className='tx-16'>Type</Form.Label>
+                                    <Row>
+                                      <Col xl={12}>
+                                      <Select
+                            options={otherstype}
+                            placeholder="Select"
+                            classNamePrefix="Select2"
+                          />
+                                      </Col>
+
+
+                                      <Col xl={12}>
+<Form.Group className='mt-4'>
+<Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
+<Form.Control className="form-control" type="file" />
+</Form.Group>
+</Col>
+
+
+<Col xl={12}>
+<Form.Group className='mt-4'>
+<Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
+<Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
+</Form.Group>
+</Col>
+                                    </Row>
+
+
+
+
+
+
+
+
+
+                                  </Form.Group>
+                                    </div>
+                                  </Tab.Pane>
+
+                                </Tab.Content>
+                              </Col>
+                            </Row>
+                          </Tab.Container>
+                        </div>
+                      </div>
+
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="default" onClick={() => { viewDemoClose("addothers"); }}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={() => { viewDemoClose("addothers"); }}>
+                Save
+              </Button>
+
+            </Modal.Footer>
+          </Modal>
         </div>
       </div>
 
