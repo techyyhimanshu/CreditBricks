@@ -94,7 +94,7 @@ export const Sidebarcomponents = [
   { path: `${import.meta.env.BASE_URL}pages/authentication/sigup`, title: "Sign Up" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/forgotpassword`, title: "Forgot Password" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/resetpassword`, title: "Reset Password" },
-  { path: `${import.meta.env.BASE_URL}pages/authentication/complaintstatus`, title: "ComplaintStatus" },
+  { path: `${import.meta.env.BASE_URL}ages/authentication/complaintstatus`, title: "ComplaintStatus" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/underconstruction`, title: "UnderConstruction" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/404error`, title: "404 Error" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/500error`, title: "500 Error" },

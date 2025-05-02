@@ -192,15 +192,15 @@ export const MENUITEMS = [
       },
 
 
-      {
-        title: "Parking",
-        icon: (<i className="side-menu__icon bi bi-list-task"></i>
-        ),
-        path: `${import.meta.env.BASE_URL}parking/parking`,
-        type: "link",
-        selected: false,
-        active: false,
-      },
+      // {
+      //   title: "Parking",
+      //   icon: (<i className="side-menu__icon bi bi-list-task"></i>
+      //   ),
+      //   path: `${import.meta.env.BASE_URL}parking/parking`,
+      //   type: "link",
+      //   selected: false,
+      //   active: false,
+      // },
       {
         title: "Loans",
         icon: (<i className="side-menu__icon bi bi-cash-stack"></i>
@@ -230,59 +230,90 @@ export const MENUITEMS = [
         active: false,
 
       },
-      {
-        title: "Vehicle",
-        icon: (<i className="side-menu__icon bi bi-list-task"></i>
-        ),
-        path: ``,
-        type: "link",
-        selected: false,
-        active: false,
-      },
-      {
-        title: "Visitors",
-        icon: (<i className="side-menu__icon bi bi-people"></i>
-        ),
-        path: ``,
-        type: "link",
-        selected: false,
-        active: false,
 
-      },
+      // {
+      //   title: "Visitors",
+      //   icon: (<i className="side-menu__icon bi bi-people"></i>
+      //   ),
+      //   path: ``,
+      //   type: "link",
+      //   selected: false,
+      //   active: false,
+
+      // },
+
+      // {
+      //   title: "Pets",
+      //   icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
+      //   ),
+      //   path: ``,
+      //   type: "link",
+      //   selected: false,
+      //   active: false,
+
+      // },
+
+      // {
+      //   title: "Helpers",
+      //   icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
+      //   ),
+      //   path: ``,
+      //   type: "sub",
+      //   selected: false,
+      //   active: false,
+
+      // },
+
+      // {
+      //   title: "Community",
+      //   icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
+      //   ),
+      //   path: ``,
+      //   type: "sub",
+      //   selected: false,
+      //   active: false,
+
+      // },
 
       {
-        title: "Pets",
-        icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
-        ),
-        path: ``,
-        type: "link",
-        selected: false,
-        active: false,
-
-      },
-
-      {
-        title: "Helpers",
-        icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
+        title: "Approve Templates",
+        icon: (
+          <i className="side-menu__icon bi bi-file"></i>
         ),
         path: ``,
         type: "sub",
-        selected: false,
         active: false,
+        selected: false,
+        children: [
+          {
+            path: `${import.meta.env.BASE_URL}complaintstatus`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Complaint Status",
+            type: "link",
+            active: false,
+            selected: false,
+          },
+          {
+            path: ``,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Celebration Booking",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
+          {
+            path: ``,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Flate Resale",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
+        ],
 
       },
-
-      {
-        title: "Community",
-        icon: (<i className="side-menu__icon bi bi-file-earmark-text"></i>
-        ),
-        path: ``,
-        type: "sub",
-        selected: false,
-        active: false,
-
-      },
-
 
       {
         title: "Support",
@@ -297,7 +328,7 @@ export const MENUITEMS = [
           {
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
             title: "Email",
-            type: "sub",
+            type: "link",
             active: false,
             selected: false,
           },
