@@ -39,6 +39,12 @@ export default function Accounts() {
     { value: "3", label: "A103" }
   ];
 
+  const paymenttype = [
+    { value: "1", label: "Cash" },
+    { value: "2", label: "Cheque" }
+  ];
+
+
   const [select, setSelect] = useState(false);
   const [exportshow, setExport] = useState(false);
 
@@ -56,13 +62,11 @@ export default function Accounts() {
       name: 'Name',
       selector: (row: any) => row.name,
       sortable: true,
-      width: '82px'
     },
     {
       name: 'Inv No',
       selector: (row: any) => row.invoiceNumber,
       sortable: true,
-      width: '220px'
     },
 
     {
@@ -71,14 +75,13 @@ export default function Accounts() {
         <Link to={`${import.meta.env.BASE_URL}property/propertyview/${row.propertyIdentifier}`} className='text-info'>{row.propertyName || ""}</Link>
       ),
       sortable: true,
-      width: "110px"
     },
 
     {
       name: 'Inv Type',
       selector: (row: any) => row.type,
       sortable: true,
-      width: "130px"
+
     },
 
     {
@@ -119,7 +122,7 @@ export default function Accounts() {
         </span>
       ),
       sortable: true,
-      width: "90px"
+
     },
 
     {
@@ -348,16 +351,16 @@ export default function Accounts() {
               >
 
                 <Tab eventKey="Tab 01" title="Invoice">
-                  <Row className='bg-light'>
+                  <Row className='bg-light p-2'>
                     <Col xl={2}>
-                      <Form.Group className="form-group">
+                      <Form.Group className="form-group mb-0">
                         <Form.Label>Date <span className="text-danger">*</span></Form.Label>
                         <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
                       </Form.Group>
                     </Col>
 
                     <Col xl={4}>
-                      <Form.Group className="form-group">
+                      <Form.Group className="form-group mb-0">
                         <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
 
                         <div className="SlectBox">
@@ -374,7 +377,7 @@ export default function Accounts() {
                     </Col>
 
                     <Col xl={2}>
-                      <Form.Group className="form-group">
+                      <Form.Group className="form-group mb-0">
                         <Form.Label>Invoice ID <span className="text-danger">*</span></Form.Label>
                         <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
                       </Form.Group>
@@ -382,7 +385,7 @@ export default function Accounts() {
 
 
                     <Col xl={2}>
-                      <Form.Group className="form-group">
+                      <Form.Group className="form-group mb-0">
                         <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
                         <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
                       </Form.Group>
@@ -448,16 +451,16 @@ export default function Accounts() {
                   </div>
                 </Tab>
                 <Tab eventKey="Receipt" title="Receipt">
-                  <Row className='bg-light'>
+                  <Row className='bg-light p-2'>
                     <Col xl={2}>
-                      <Form.Group className="form-group">
+                      <Form.Group className="form-group mb-0">
                         <Form.Label>Date <span className="text-danger">*</span></Form.Label>
                         <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
                       </Form.Group>
                     </Col>
 
                     <Col xl={4}>
-                      <Form.Group className="form-group">
+                      <Form.Group className="form-group mb-0">
                         <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
 
                         <div className="SlectBox">
@@ -474,7 +477,7 @@ export default function Accounts() {
                     </Col>
 
                     <Col xl={2}>
-                      <Form.Group className="form-group">
+                      <Form.Group className="form-group mb-0">
                         <Form.Label>Receipt ID <span className="text-danger">*</span></Form.Label>
                         <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
                       </Form.Group>
@@ -482,7 +485,7 @@ export default function Accounts() {
 
 
                     <Col xl={2}>
-                      <Form.Group className="form-group">
+                      <Form.Group className="form-group mb-0">
                         <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
                         <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
                       </Form.Group>
@@ -774,6 +777,101 @@ export default function Accounts() {
                     </tbody>
                   </table>
                 </Tab>
+
+                <Tab eventKey="CashChequeLog" title="Cash & Cheque Log">
+                  <Row className='bg-light p-2'>
+                    <Col xl={2}>
+                      <Form.Group className="form-group">
+                        <Form.Label>Date <span className="text-danger">*</span></Form.Label>
+                        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={4}>
+                      <Form.Group className="form-group">
+                        <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+
+                        <div className="SlectBox">
+                          <Select
+                            options={propertyoption}
+                            placeholder="Select Property"
+                            // classNamePrefix="selectform"
+                            classNamePrefix='Select2' className="multi-select"
+                          />
+                        </div>
+
+
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={2}>
+                      <Form.Group className="form-group">
+                        <Form.Label>Payment Type <span className="text-danger">*</span></Form.Label>
+                        <Select
+                            options={paymenttype}
+                            placeholder="Select type"
+                            // classNamePrefix="selectform"
+                            classNamePrefix='Select2' className="multi-select"
+                          />
+                      </Form.Group>
+                    </Col>
+
+
+                    <Col xl={2}>
+                      <Form.Group className="form-group">
+                        <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
+                        <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={2}>
+                      <Form.Label className='mb-4'></Form.Label>
+                      <button type="button" className="btn btn-primary mt-1 me-1" onClick={() => viewDemoShow("select")}>Search</button>
+
+                    </Col>
+
+                  </Row>
+                  <div className="table-responsive ">
+                    <table className='table table-bordered'>
+                      <thead>
+                        <tr>
+                          <th>S.No.</th>
+                          <th>Date</th>
+                          <th>Amount</th>
+                          <th>Check Number</th>
+                          <th>Payment Mode</th>
+                          <th>Payee/Description</th>
+                         <th>Status</th>
+                         <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td>12/01/25</td>
+                          <td>1,250</td>
+                          <td>98765432</td>
+                          <td>Cheque</td>
+                          <td>Maintenance</td>
+                          <td>Approve</td>
+                          <td><Button type="button" className='btn btn-sm btn-success'><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
+</tr>
+<tr>
+                          <td>2</td>
+                          <td>16/01/25</td>
+                          <td>2,390</td>
+                          <td>-</td>
+                          <td>Cash</td>
+                          <td>Maintenance</td>
+                          <td>Approve</td>
+                          <td><Button type="button" className='btn btn-sm btn-success'><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
+</tr>
+
+                      </tbody>
+                    </table>
+                  </div>
+                </Tab>
+
               </Tabs>
 
 
