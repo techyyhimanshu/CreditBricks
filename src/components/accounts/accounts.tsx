@@ -6,7 +6,7 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
-import { getAllAccountsApi } from '../../api/account-api';
+import { getAllAccountsApi, getAllReceiptsApi } from '../../api/account-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { freeze } from '@reduxjs/toolkit';
 import TestLoader from '../../layout/layoutcomponent/testloader';
@@ -32,6 +32,7 @@ export default function Accounts() {
   ]);
   const [cashview, setcashview] = useState(false);
   const [chequeview, setchequeview] = useState(false);
+  const [receiptData, setReceiptData] = useState([]);
 
   const propertyoption = [
     { value: "1", label: "A101" },
@@ -197,11 +198,37 @@ export default function Accounts() {
     }
   }
 
+  const fetchAllReceipts = async () => {
+    try {
+      const response = await getAllReceiptsApi()
+      const data = response.data.data
+      const formattedData = data.map((reciept: any, index: number) => (
+        {
+          sno: index + 1,
+          receiptNumber: reciept?.receiptNumber,
+          propertyName: reciept?.property?.propertyName,
+          receiptType: reciept?.invoice?.type,
+          totalAmountPaid: reciept?.paidAmount,
+          onAccountBalance: reciept?.currentRemainingAmount,
+          paymentMode: reciept?.paymentMode,
+          date: reciept?.invoice?.billStartDate,
+          createdDate: reciept?.loggedAt,
+        }
+
+      ));
+      setReceiptData(formattedData)
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
 
   useEffect(() => {
-
     fetchAllAccounts();
+    fetchAllReceipts();
   }, [])
 
 
@@ -539,69 +566,49 @@ export default function Accounts() {
                     <table className='table table-bordered'>
                       <thead>
                         <tr>
-                          <th>Name</th>
-                          <th>Property</th>
-                          <th>Memeber Name</th>
-                          <th>Receipt Type</th>
-                          <th>Total Amount</th>
-                          <th>On Account Balance</th>
+                          <th>S.No</th>
                           <th>Receipt No.</th>
+                          <th>Property</th>
+                          {/* <th>Memeber Name</th> */}
+                          <th>Receipt Type</th>
+                          <th>Total Paid Amount</th>
+                          <th>On Account Balance</th>
                           <th>Payment Mode</th>
                           <th>Date</th>
                           <th>Created DT</th>
-                          <th></th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td className='text-info'>RC-06913</td>
-                          <td className='text-info'>A 101</td>
-                          <td>Mr. Vinod Kumar Pandia</td>
-                          <td>Maintenance</td>
-                          <td>₹14,706.00</td>
-                          <td>₹16,554.00</td>
+                        {receiptData.map((item: any, index: any) => {
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{item.receiptNumber}</td>
+                              <td>{item.propertyName}</td>
+                              {/* <td>{item.membername}</td> */}
+                              <td>{item.receiptType}</td>
+                              <td>{item.totalAmountPaid}</td>
+                              <td>{item.onAccountBalance}</td>
+                              {item.paymentMode === "Cash" ?
+                                <td className='text-info cursor' onClick={() => { viewDemoShow("cashview"); }}>{item.paymentMode}</td>
+                                : <td className='text-info cursor' onClick={() => { viewDemoShow("chequeview"); }}>{item.paymentMode}</td>}
+                              <td>{item.date}</td>
+                              <td>{item.createdDate}</td>
+                              <td>
+                                <Dropdown >
+                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                    Action
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item>Edit </Dropdown.Item>
+                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown></td>
+                            </tr>
+                          )
+                        })}
 
-                          <td>1</td>
-                          <td className='text-info cursor' onClick={() => { viewDemoShow("cashview"); }}>Cash</td>
-                          <td>3/31/2024</td>
-                          <td>8/17/2024, 8:37 PM</td>
-                          <td>
-                            <Dropdown >
-                              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                Action
-                              </Dropdown.Toggle>
-
-                              <Dropdown.Menu>
-                                <Dropdown.Item>Edit </Dropdown.Item>
-                                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown></td>
-                        </tr>
-
-                        <tr>
-                          <td className='text-info'>RC-06913</td>
-                          <td className='text-info'>A 101</td>
-                          <td>Mr. Vinod Kumar Pandia</td>
-                          <td>Maintenance</td>
-                          <td>₹14,706.00</td>
-                          <td>₹16,554.00</td>
-
-                          <td>1</td>
-                          <td className='text-info cursor' onClick={() => { viewDemoShow("chequeview"); }}>Cheque</td>
-                          <td>3/31/2024</td>
-                          <td>8/17/2024, 8:37 PM</td>
-                          <td>
-                            <Dropdown >
-                              <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                Action
-                              </Dropdown.Toggle>
-
-                              <Dropdown.Menu>
-                                <Dropdown.Item>Edit </Dropdown.Item>
-                                <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                              </Dropdown.Menu>
-                            </Dropdown></td>
-                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -808,11 +815,11 @@ export default function Accounts() {
                       <Form.Group className="form-group">
                         <Form.Label>Payment Type <span className="text-danger">*</span></Form.Label>
                         <Select
-                            options={paymenttype}
-                            placeholder="Select type"
-                            // classNamePrefix="selectform"
-                            classNamePrefix='Select2' className="multi-select"
-                          />
+                          options={paymenttype}
+                          placeholder="Select type"
+                          // classNamePrefix="selectform"
+                          classNamePrefix='Select2' className="multi-select"
+                        />
                       </Form.Group>
                     </Col>
 
@@ -841,8 +848,8 @@ export default function Accounts() {
                           <th>Check Number</th>
                           <th>Payment Mode</th>
                           <th>Payee/Description</th>
-                         <th>Status</th>
-                         <th>Action</th>
+                          <th>Status</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -855,8 +862,8 @@ export default function Accounts() {
                           <td>Maintenance</td>
                           <td>Approve</td>
                           <td><Button type="button" className='btn btn-sm btn-success'><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
-</tr>
-<tr>
+                        </tr>
+                        <tr>
                           <td>2</td>
                           <td>16/01/25</td>
                           <td>2,390</td>
@@ -865,7 +872,7 @@ export default function Accounts() {
                           <td>Maintenance</td>
                           <td>Approve</td>
                           <td><Button type="button" className='btn btn-sm btn-success'><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
-</tr>
+                        </tr>
 
                       </tbody>
                     </table>

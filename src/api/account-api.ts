@@ -10,4 +10,13 @@ export const getAllAccountsApi = async (): Promise<any> => {
     }
 }
 
+export const getAllReceiptsApi = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`payment/receipt/all`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 
