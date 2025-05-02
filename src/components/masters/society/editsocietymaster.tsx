@@ -145,8 +145,26 @@ export default function EditSocietyMaster() {
   ]
 
   const designation = [
-    { value: "Secretary", label: "Secretary " },
-    { value: "Committe Member", label: "Committe Member" },
+    const designation = [
+      { value: "Chairman", label: "Chairman " },
+      { value: " Vice Chairman", label: " Vice Chairman" },
+      { value: "Secretary", label: "Secretary " },
+      { value: " Joint Secretary", label: " Joint Secretary" },
+      { value: "Trader", label: "Trader " },
+      { value: " Joint Trader", label: " Joint Trader" },
+      { value: "Committee Member", label: "Committee Member " },
+      { value: "Director", label: "Director" },
+      { value: "Joint Director", label: "Joint Director " },
+      { value: "Independent Advisor", label: "Independent Advisor" },
+      { value: "Advisor", label: "Advisor " },
+      { value: "Nominal Member", label: "Nominal Member" },
+      { value: "Internal Auditor", label: "Internal Auditor " },
+      { value: "Ordinary Member", label: "Ordinary Member " },
+      { value: "Member", label: "Member " },
+      { value: "Flat Owner", label: "Flat Owner " },
+      { value: " Joint Owner", label: " Joint Owner " },
+      { value: " CoOwner", label: " Co-Owner" },
+    ]
   ]
 
   const applicationtype = [
