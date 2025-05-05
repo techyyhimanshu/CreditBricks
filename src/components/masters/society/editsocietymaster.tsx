@@ -158,7 +158,7 @@ export default function EditSocietyMaster() {
     { value: "Due Date", label: "Due Date" },
   ]
 
-  const designation = [
+ 
     const designation = [
       { value: "Chairman", label: "Chairman " },
       { value: " Vice Chairman", label: " Vice Chairman" },
@@ -179,7 +179,7 @@ export default function EditSocietyMaster() {
       { value: " Joint Owner", label: " Joint Owner " },
       { value: " CoOwner", label: " Co-Owner" },
     ]
-  ]
+  
 
   const applicationtype = [
     { value: "Gate Pass", label: "Gate Pass" },
