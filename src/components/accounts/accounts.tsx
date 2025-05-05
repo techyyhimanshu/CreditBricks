@@ -6,7 +6,7 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
-import { getAllAccountsApi, getAllReceiptsApi } from '../../api/account-api';
+import { getAllAccountsApi, getAllPaymentLogsApi, getAllReceiptsApi } from '../../api/account-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { freeze } from '@reduxjs/toolkit';
 import TestLoader from '../../layout/layoutcomponent/testloader';
@@ -51,6 +51,9 @@ export default function Accounts() {
 
   const [receiptadd, setReceiptadd] = useState(false);
   const [receiptexportshow, setExportreceipt] = useState(false);
+  const [cashViewData, setCashViewData] = useState<any>({});
+  const [chequeViewData, setChequeViewData] = useState<any>({});
+  const [paymentLogData, setPaymentLogData] = useState<any>([]);
 
   const columns = [
     {
@@ -206,6 +209,7 @@ export default function Accounts() {
         {
           sno: index + 1,
           receiptNumber: reciept?.receiptNumber,
+          propertyIdentifier: reciept?.property?.propertyIdentifier,
           propertyName: reciept?.property?.propertyName,
           receiptType: reciept?.invoice?.type,
           totalAmountPaid: reciept?.paidAmount,
@@ -213,6 +217,8 @@ export default function Accounts() {
           paymentMode: reciept?.paymentMode,
           date: reciept?.invoice?.billStartDate,
           createdDate: reciept?.loggedAt,
+          cashData: reciept?.cash,
+          chequeData: reciept?.cheque,
         }
 
       ));
@@ -225,10 +231,35 @@ export default function Accounts() {
     }
   }
 
+  const fetchAllPaymentLogs = async () => {
+    try {
+      const response = await getAllPaymentLogsApi()
+      const data = response.data.data
+      const formattedData = data.map((paymentLog: any, index: number) => (
+        {
+          sno: index + 1,
+          date: paymentLog?.createdAt,
+          amount: paymentLog?.amount,
+          chequeNumber: paymentLog?.cheque?.chequeNumber,
+          paymentMethod: paymentLog?.paymentMethod,
+          status: paymentLog?.paymentStatus,
+        }
+      ));
+      setPaymentLogData(formattedData)
+
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
 
   useEffect(() => {
     fetchAllAccounts();
     fetchAllReceipts();
+    fetchAllPaymentLogs();
   }, [])
 
 
@@ -585,14 +616,20 @@ export default function Accounts() {
                             <tr key={index}>
                               <td>{index + 1}</td>
                               <td>{item.receiptNumber}</td>
-                              <td>{item.propertyName}</td>
+                              <td>{<Link to={`/property/propertyview/${item.propertyIdentifier}`} className='text-info'>{item.propertyName}</Link>}</td>
                               {/* <td>{item.membername}</td> */}
                               <td>{item.receiptType}</td>
                               <td>{item.totalAmountPaid}</td>
                               <td>{item.onAccountBalance}</td>
                               {item.paymentMode === "Cash" ?
-                                <td className='text-info cursor' onClick={() => { viewDemoShow("cashview"); }}>{item.paymentMode}</td>
-                                : <td className='text-info cursor' onClick={() => { viewDemoShow("chequeview"); }}>{item.paymentMode}</td>}
+                                <td className='text-info cursor' onClick={() => {
+                                  setCashViewData(item.cashData);
+                                  viewDemoShow("cashview");
+                                }}>{item.paymentMode}</td>
+                                : <td className='text-info cursor' onClick={() => {
+                                  setChequeViewData(item.chequeData);
+                                  viewDemoShow("chequeview");
+                                }}>{item.paymentMode}</td>}
                               <td>{item.date}</td>
                               <td>{item.createdDate}</td>
                               <td>
@@ -853,27 +890,22 @@ export default function Accounts() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>12/01/25</td>
-                          <td>1,250</td>
-                          <td>98765432</td>
-                          <td>Cheque</td>
-                          <td>Maintenance</td>
-                          <td>Approve</td>
-                          <td><Button type="button" className='btn btn-sm btn-success'><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>16/01/25</td>
-                          <td>2,390</td>
-                          <td>-</td>
-                          <td>Cash</td>
-                          <td>Maintenance</td>
-                          <td>Approve</td>
-                          <td><Button type="button" className='btn btn-sm btn-success'><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
-                        </tr>
 
+                        {paymentLogData.map((item: any, index: any) => {
+                          return (
+                            <tr>
+                              <td>{index + 1}</td>
+                              <td>{item.date.split('T')[0]}</td>
+                              <td>{item.amount}</td>
+                              <td>{item.chequeNumber ? item.chequeNumber : '-'}</td>
+                              <td>{item.paymentMethod}</td>
+                              <td>{"-"}</td>
+                              <td>{item.status}</td>
+                              <td><Button type="button" className='btn btn-sm btn-success'><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
+                            </tr>
+
+                          )
+                        })}
                       </tbody>
                     </table>
                   </div>
@@ -1220,7 +1252,7 @@ export default function Accounts() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
+                        {/* <tr>
                           <td>2000</td>
                           <td>X</td>
                           <td><Form.Control className='form-control' disabled value={5} type="text"></Form.Control></td>
@@ -1233,89 +1265,89 @@ export default function Accounts() {
                           <td><Form.Control className='form-control' disabled value={8} type="text"></Form.Control></td>
                           <td>=</td>
                           <td className='text-end tx-semibold'>8,000</td>
-                        </tr>
+                        </tr> */}
                         <tr>
                           <td>500</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled value={4} type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled value={cashViewData?.notesDetails?.['500'] ?? 0} type="text"></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>2,000</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['500'] ?? 0) * 500).toLocaleString()}</td>
                         </tr>
                         <tr>
                           <td>200</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled value={6} type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled value={cashViewData?.notesDetails?.['200'] ?? 0} type="text"></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>1,200</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['200'] ?? 0) * 200).toLocaleString()}</td>
                         </tr>
                         <tr>
                           <td>100</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled value={5} type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled value={cashViewData?.notesDetails?.['100'] ?? 0} type="text"></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>500</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['100'] ?? 0) * 100).toLocaleString()}</td>
                         </tr>
                         <tr>
                           <td>50</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled value={2} type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled value={cashViewData?.notesDetails?.['50'] ?? 0} type="text"></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>100</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['50'] ?? 0) * 50).toLocaleString()}</td>
                         </tr>
                         <tr>
                           <td>20</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled type="text" value={cashViewData?.notesDetails?.['20'] ?? 0}></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>0</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['20'] ?? 0) * 20).toLocaleString()}</td>
                         </tr>
                         <tr>
                           <td>10</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled type="text" value={cashViewData?.notesDetails?.['10'] ?? 0}></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>0</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['10'] ?? 0) * 10).toLocaleString()}</td>
                         </tr>
                         <tr>
                           <td>5</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled type="text" value={cashViewData?.notesDetails?.['5'] ?? 0}></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>0</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['5'] ?? 0) * 5).toLocaleString()}</td>
                         </tr>
                         <tr>
                           <td>2</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled type="text" value={cashViewData?.notesDetails?.['2'] ?? 0}></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>0</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['2'] ?? 0) * 2).toLocaleString()}</td>
                         </tr>
                         <tr>
                           <td>1</td>
                           <td>X</td>
-                          <td><Form.Control className='form-control' disabled type="text"></Form.Control></td>
+                          <td><Form.Control className='form-control' disabled type="text" value={cashViewData?.notesDetails?.['1'] ?? 0}></Form.Control></td>
                           <td>=</td>
-                          <td className='text-end tx-semibold'>0</td>
+                          <td className='text-end tx-semibold'>{((cashViewData?.notesDetails?.['1'] ?? 0) * 1).toLocaleString()}</td>
                         </tr>
                       </tbody>
                       <tfoot>
                         <tr>
                           <th colSpan={4} className='text-white tx-semibold'>Grand Total</th>
-                          <th className='text-end text-white'>22,700</th>
+                          <th className='text-end text-white'>{(cashViewData?.amountInFigures * 1).toLocaleString()}</th>
                         </tr>
                       </tfoot>
                     </table>
                   </Col>
                   <Col xl={6} className='pt-5 ps-4'>
-                    <Col xl={12} className='w-100 tx-26 text-center tx-bold mb-5'><i className="fa fa-rupee"></i> 22,700.00</Col>
+                    <Col xl={12} className='w-100 tx-26 text-center tx-bold mb-5'><i className="fa fa-rupee"></i>{(cashViewData?.amountInFigures * 1).toLocaleString()}</Col>
                     <FormGroup>
                       <FormLabel className='text-black'>Total Amount (in words)</FormLabel>
-                      <Form.Control className='form-control' value={'Twenty two thousand seven hundred'} type="text"></Form.Control>
+                      <Form.Control className='form-control' value={cashViewData?.amountInWords} type="text"></Form.Control>
                     </FormGroup>
                     <hr />
                     <FormGroup className='mt-3'>
                       <FormLabel className='text-black'>Mobile Number</FormLabel>
-                      <Form.Control className='form-control' value={9876543212} disabled type="text"></Form.Control>
+                      <Form.Control className='form-control' value={"0000000000"} disabled type="text"></Form.Control>
                     </FormGroup>
 
 
@@ -1336,61 +1368,61 @@ export default function Accounts() {
             </Modal.Header>
 
             <Modal.Body className='bg-light pt-2'>
-              <Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> 22,700.00</Col>
+              <Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i>{(chequeViewData?.amountInFigures * 1).toLocaleString()}</Col>
               <Card className='m-2 p-3'>
                 <Row>
                   <Col xl={6}>
                     <FormGroup>
                       <FormLabel>Cheque Date</FormLabel>
-                      <Form.Control className='form-control' value={'3/31/2024'} disabled type="text" />
+                      <Form.Control className='form-control' value={chequeViewData?.chequeDate} disabled type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={6}>
                     <FormGroup>
                       <FormLabel>Cheque Issued Date</FormLabel>
-                      <Form.Control className='form-control' value={'3/31/2024'} disabled type="text" />
+                      <Form.Control className='form-control' value={chequeViewData?.chequeDate} disabled type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={6}>
                     <FormGroup>
                       <FormLabel>Cheque Recived Date</FormLabel>
-                      <Form.Control className='form-control' value={'3/31/2024'} disabled type="text" />
+                      <Form.Control className='form-control' value={chequeViewData?.createdAt} disabled type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={6}>
                     <FormGroup>
                       <FormLabel>Cheque Number</FormLabel>
-                      <Form.Control className='form-control' value={45456547} disabled type="text" />
+                      <Form.Control className='form-control' value={chequeViewData?.chequeNumber} disabled type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={12}>
                     <FormGroup>
                       <FormLabel>Bank Name</FormLabel>
-                      <Form.Control className='form-control' value={'HDFC Bank'} disabled type="text" />
+                      <Form.Control className='form-control' value={chequeViewData?.bankName} disabled type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={12}>
                     <FormGroup>
                       <FormLabel>Branch</FormLabel>
-                      <Form.Control className='form-control' value={'Noida'} disabled type="text" />
+                      <Form.Control className='form-control' value={chequeViewData?.branchName} disabled type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={12}>
                     <FormGroup>
                       <FormLabel>Amount (in figures)</FormLabel>
-                      <Form.Control className='form-control' value={22700} disabled type="text" />
+                      <Form.Control className='form-control' value={(chequeViewData?.amountInFigures * 1).toLocaleString()} disabled type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={12}>
                     <FormGroup>
                       <FormLabel>Amount (in words)</FormLabel>
-                      <Form.Control className='form-control' disabled value={'Twenty two thousand seven hundred'} type="text" />
+                      <Form.Control className='form-control' disabled value={chequeViewData?.amountInWords} type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={12}>
                     <FormGroup>
                       <FormLabel>Mobile Number</FormLabel>
-                      <Form.Control className='form-control' value={9876543212} disabled type="text" />
+                      <Form.Control className='form-control' value={"000000000"} disabled type="text" />
                     </FormGroup>
                   </Col>
                 </Row>
@@ -1405,6 +1437,6 @@ export default function Accounts() {
       </Row>
 
 
-    </Fragment>
+    </Fragment >
   );
 }

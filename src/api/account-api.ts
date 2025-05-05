@@ -19,4 +19,13 @@ export const getAllReceiptsApi = async (): Promise<any> => {
     }
 }
 
+export const getAllPaymentLogsApi = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`payment/payment-log/all`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 
