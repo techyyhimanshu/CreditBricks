@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Accordion, Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
 import Select from "react-select";
 import 'suneditor/dist/css/suneditor.min.css';
-import { getAllSocietyApi, getPropertiesOfSocietyApi } from "../../api/society-api";
+import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } from "../../api/society-api";
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
-import { createNewGatePassApi } from "../../api/application-api";
+import { createNewGatePassApi, getAllVenueApi, getSocietyVenueApi } from "../../api/application-api";
 
 interface ProductModalProps {
     show: boolean;
@@ -14,7 +14,7 @@ interface ProductModalProps {
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
-    name:string;
+    name: string;
     isShow?: boolean;
     editing: boolean;
     eventVenue?: string;
@@ -26,9 +26,11 @@ interface ProductModalProps {
 const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, eventVenue, name }) => {
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
+    const [commiteeMemberData, setCommiteeMemberData] = useState<any>(null);
+    const [venuesForDropDown, setVenuesForDropDown] = useState([]);
 
     useEffect(() => {
-        // fetchSocietiesForDropDown()
+        fetchSocietiesForDropDown()
     }, [])
 
     const fetchSocietiesForDropDown = async () => {
@@ -56,6 +58,45 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
         } catch (error) {
             const errorMessage = handleApiError(error)
             showToast("error", errorMessage)
+        }
+    }
+    const fetchVenuesForSociety = async (society: any) => {
+        try {
+            const response = await getSocietyVenueApi(society.value);
+            // const response = await getAllVenueApi();
+            const formattedData = response.data.data.map((item: any) => ({
+                value: item.venueId,
+                label: item.venueName,
+            }));
+            setVenuesForDropDown(formattedData);
+        } catch (error) {
+            const errorMessage = handleApiError(error)
+            showToast("error", errorMessage)
+        }
+    }
+
+    const fetchApproverDetails = async (society: any,setFieldValue:any) => {
+        try {
+            const response = await getSocietyDetailsApi(society.value)
+            const members = response.data.data?.committeeMembers || [];
+
+            const matched = members.find((member: any) =>
+                Array.isArray(member.applicationType) &&
+                member.applicationType.includes(name)
+            );
+            if (matched) {
+                setFieldValue("tower", { value: matched.towerIdentifier, label: matched.towerName });
+                setFieldValue("wing", { value: matched.wingIdentifier, label: matched.wingName });
+                setFieldValue("approverSociety", { value: matched.societyIdentifier, label: matched.societyName });
+                setFieldValue("approverProperty", { value: matched.propertyIdentifier, label: matched.propertyName });
+                setFieldValue("approverName", matched.fullName);
+                setFieldValue("approverContact", matched.contactNumber);
+                setFieldValue("designation", { value: matched.designation, label: matched.designation });
+              }
+            setCommiteeMemberData(matched)
+        } catch (error: any) {
+            const errorMessage = handleApiError(error)
+            showToast('error', errorMessage)
         }
     }
 
@@ -92,6 +133,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
 
     const handleSubmit = async (values: any) => {
+        console.log(values)
         try {
             const formattedData = {
                 societyIdentifier: values.society.value,
@@ -141,12 +183,19 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                         CateringService: initialVals ? initialVals.CateringService : "",
                         Decorations: initialVals ? initialVals.Decorations : "",
                         SoundSystem: initialVals ? initialVals.SoundSystem : "",
-                        GuestParking: initialVals ? initialVals.GuestParking : ""
+                        GuestParking: initialVals ? initialVals.GuestParking : "",
+                        tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
+                        wing: { value: initialVals?.wingIdentifier || "", label: initialVals?.wingName || "" },
+                        approverSociety: { value: initialVals?.socityIdentifier || "", label: initialVals?.societyName || "" },
+                        approverProperty: initialVals ? { label: initialVals.propertyName, value: initialVals.propertyIdentifier } : { label: "", value: "" },
+                        approverName: initialVals?.fullName || "",
+                        approverContact: initialVals?.contactNumber || "",
+                        designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
 
                     }}
                     onSubmit={handleSubmit}>
                     {({ values, handleChange, setFieldValue }) => {
-                        const forcedVenue = eventVenue; 
+                        const forcedVenue = eventVenue;
 
                         useEffect(() => {
                             if (forcedVenue) {
@@ -175,6 +224,8 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 value={values.society}
                                                                 onChange={(selected) => {
                                                                     fetchPropertiesForDropDown(selected);
+                                                                    fetchVenuesForSociety(selected)
+                                                                    fetchApproverDetails(selected,setFieldValue)
                                                                     setFieldValue("society", selected);
                                                                 }}
                                                             />
@@ -283,7 +334,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Venue </Form.Label>
                                                             <Select
-                                                                options={venue}
+                                                                options={venuesForDropDown}
                                                                 placeholder="Select venue"
                                                                 classNamePrefix="Select2"
                                                                 name="venue"
@@ -453,98 +504,118 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                             <Accordion.Header>Approval Details</Accordion.Header>
                                             <Accordion.Body className='p-2'>
                                                 <Row>
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Society </Form.Label>
                                                             <Select
-                                                                // options={society}
+                                                                name='approverSociety'
                                                                 placeholder="Select Society"
                                                                 classNamePrefix="Select2"
+                                                                onChange={(selected) => setFieldValue("approverSociety", selected)}
+                                                                value={values.approverSociety}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
-                                                    <Col xl={4}>
-                                                        <Form.Group className="form-group mb-1">
-                                                            <Form.Label>Property </Form.Label>
-                                                            <Select
-                                                                // options={property}
-                                                                placeholder="Select property"
-                                                                classNamePrefix="Select2"
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
 
-                                                    <Col xl={4}>
+
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Tower </Form.Label>
                                                             <Select
-                                                                // options={wing}
+                                                                // options={towerOptions}
                                                                 placeholder="Select Tower"
                                                                 classNamePrefix="Select2"
+                                                                name='tower'
+                                                                onChange={(selected) => {
+                                                                    // fetchWingsForDropDown(selected);
+                                                                    // setFieldValue("wing", null);
+                                                                    // setFieldValue("property", null);
+                                                                    setFieldValue("tower", selected);
+                                                                }}
+                                                                value={values.tower}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
 
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Wing </Form.Label>
                                                             <Select
-                                                                // options={wing}
                                                                 placeholder="Select Wing"
                                                                 classNamePrefix="Select2"
+                                                                name='wing'
+                                                                onChange={(selected) => {
+                                                                    // fetchPropertiesForDropDown(selected);
+                                                                    // setFieldValue("property", null);
+                                                                    setFieldValue("wing", selected);
+                                                                }}
+                                                                value={values.wing}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
-
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
-                                                            <Form.Label>Flat </Form.Label>
+                                                            <Form.Label>Property </Form.Label>
                                                             <Select
-                                                                // options={flat}
-                                                                placeholder="Select Flat"
+                                                                placeholder="Select property"
+                                                                options={propertiesForDropDown}
                                                                 classNamePrefix="Select2"
+                                                                name='approverProperty'
+                                                                onChange={(selected) => setFieldValue("approverProperty", selected)}
+                                                                value={values.approverProperty}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
-
-
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Approver Name</Form.Label>
-                                                            <Form.Control
+                                                            <Field
                                                                 type="text"
                                                                 name="approverName"
                                                                 placeholder="Approver Name"
                                                                 className="form-control"
+                                                                value={values.approverName}
+                                                                disabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Approver Contact</Form.Label>
-                                                            <Form.Control
+                                                            <Field
                                                                 type="text"
-                                                                name="contactdetails"
+                                                                name="approverContact"
                                                                 placeholder="Contact"
                                                                 className="form-control"
+                                                                value={values.approverContact}
+                                                                disabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Designation </Form.Label>
                                                             <Select
                                                                 // options={designation}
                                                                 placeholder="Select Designation"
                                                                 classNamePrefix="Select2"
+                                                                name='designation'
+                                                                onChange={(selected) => setFieldValue("designation", selected)}
+                                                                value={values.designation}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
+
 
 
                                                 </Row>
