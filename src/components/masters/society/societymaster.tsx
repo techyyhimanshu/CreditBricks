@@ -105,6 +105,8 @@ export default function SocietyMaster() {
           <Dropdown.Menu>
             <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}society/editsocietymaster/${row.societyIdentifier}`}
             >Edit</Link> </Dropdown.Item>
+            <Dropdown.Item><Link to={`${import.meta.env.BASE_URL}parententity/addparententity`}
+            >Add Parent</Link> </Dropdown.Item>
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row)} >Delete</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>

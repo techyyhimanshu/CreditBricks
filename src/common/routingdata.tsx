@@ -29,6 +29,7 @@ const AddVendorMaster = lazy(() => import('../components/masters/vendor/addvendo
 const EditVendorMaster = lazy(() => import('../components/masters/vendor/editvendormaster'));
 const VendorView = lazy(() => import('../components/masters/vendor/vendorview'));
 const ParentEntity = lazy(() => import('../components/parententity/parententity'));
+const AddParentEntity = lazy(() => import('../components/parententity/addparententity'));
 const Loans = lazy(() => import('../components/loans/loans'));
 const Tenant = lazy(() => import('../components/tenant/tenant'));
 const TenantView = lazy(() => import('../components/tenant/tenantview'));
@@ -41,6 +42,7 @@ const Announcements = lazy(() => import('../components/announcement/announcement
 const Parking = lazy(() => import('../components/parking/parking'));
 const EventBooking = lazy(() => import('../components/eventbooking/eventbooking'));
 
+
 export const Routingdata = [
   //Dashboard
   { path: `${import.meta.env.BASE_URL}dashboard/dashboard1`, element: <Dashboard /> },
@@ -51,6 +53,7 @@ export const Routingdata = [
   { path: `${import.meta.env.BASE_URL}society/editsocietymaster/:identifier`, element: <EditSocietyMaster /> },
   { path: `${import.meta.env.BASE_URL}society/societyview/:identifier`, element: <SocietyView /> },
   { path: `${import.meta.env.BASE_URL}parententity/parententity`, element: <ParentEntity /> },
+  { path: `${import.meta.env.BASE_URL}parententity/addparententity`, element: <AddParentEntity /> },
   { path: `${import.meta.env.BASE_URL}property/propertymaster`, element: <PropertyMaster /> },
   { path: `${import.meta.env.BASE_URL}property/addpropertymaster`, element: <AddPropertyMaster /> },
   { path: `${import.meta.env.BASE_URL}property/editpropertymaster/:identifier`, element: <EditPropertyMaster /> },
@@ -91,7 +94,7 @@ export const Sidebarcomponents = [
   { path: `${import.meta.env.BASE_URL}pages/authentication/sigup`, title: "Sign Up" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/forgotpassword`, title: "Forgot Password" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/resetpassword`, title: "Reset Password" },
-  { path: `${import.meta.env.BASE_URL}pages/authentication/complaintstatus`, title: "ComplaintStatus" },
+  { path: `${import.meta.env.BASE_URL}ages/authentication/complaintstatus`, title: "ComplaintStatus" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/underconstruction`, title: "UnderConstruction" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/404error`, title: "404 Error" },
   { path: `${import.meta.env.BASE_URL}pages/authentication/500error`, title: "500 Error" },
