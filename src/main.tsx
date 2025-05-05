@@ -80,7 +80,7 @@ return(
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/forgotpassword`} element={<ForgotPassword />} />
               <Route path={`${import.meta.env.BASE_URL}/resetpassword`} element={<ResetPassword />} />
               <Route path={`${import.meta.env.BASE_URL}verifyemail`} element={<VerifyEmail />} />
-              <Route path={`${import.meta.env.BASE_URL}pages/authentication/complaintstatus`} element={<ComplaintStatus />} />
+              <Route path={`${import.meta.env.BASE_URL}complaintstatus`} element={<ComplaintStatus />} />
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/404error`} element={<Error404 />} />
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/500error`} element={<Error500 />} />
               <Route path={`${import.meta.env.BASE_URL}pages/authentication/privacypolicy`} element={<PrivacyPolicy />} />
