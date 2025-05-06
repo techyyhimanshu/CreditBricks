@@ -49,9 +49,18 @@ export const getSocietyVenueApi = async (id:string): Promise<any> => {
     }
 }
 
+export const getEventDetailsApi = async (id:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`event/${id}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 export const deleteApplicationApi = async (id:string): Promise<any> => {
     try {
-        const response = await axiosInstance.delete(`event/${id}`)
+        const response = await axiosInstance.delete(`event/applications/${id}`)
         return response
     } catch (error) {
         throw error
