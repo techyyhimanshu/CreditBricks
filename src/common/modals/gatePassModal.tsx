@@ -13,7 +13,7 @@ import { createNewGatePassApi } from "../../api/application-api";
 
 interface ProductModalProps {
     show: boolean;
-    // onSave: (values: any) => void;
+    onSave: (values: any) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -24,7 +24,7 @@ interface ProductModalProps {
 
 }
 
-const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing }) => {
+const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, onSave }) => {
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [tenantsForDropDown, setTenantsForDropDown] = useState([]);
@@ -164,10 +164,13 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 contactPersonNumber: values.contactPersonNumber,
                 remarks: values.remarks
             }
-            const response = await createNewGatePassApi(formattedData)
-            if (response.status === 200) {
-                showToast("success", "Gate pass created successfully")
+            if(onSave){
+                onSave(formattedData)
             }
+            // const response = await createNewGatePassApi(formattedData)
+            // if (response.status === 200) {
+            //     showToast("success", "Gate pass created successfully")
+            // }
         } catch (error) {
             const errorMessage = handleApiError(error)
             showToast("error", errorMessage)
