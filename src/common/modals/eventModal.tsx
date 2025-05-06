@@ -24,6 +24,7 @@ interface ProductModalProps {
 }
 
 const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, eventVenue, name, onSave, modal }) => {
+    console.log(initialVals)
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [commiteeMemberData, setCommiteeMemberData] = useState<any>(null);
@@ -176,23 +177,24 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                     </Button>
                 </Modal.Header>
                 <Formik
+                enableReinitialize
                     initialValues=
                     {{
                         society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
-                        property: initialVals ? { label: initialVals.propertyName, value: initialVals.propertyIdentifier } : { label: "", value: "" },
-                        venue: initialVals ? { label: initialVals.venue, value: initialVals.venue } : { label: "", value: "" },
-                        occasion: initialVals ? { label: initialVals.occasion, value: initialVals.occasion } : { label: "", value: "" },
-                        day: initialVals ? { label: initialVals.day, value: initialVals.day } : { label: "", value: "" },
-                        guestNo: initialVals ? initialVals.guestNo : "",
-                        entryDateTime: initialVals ? initialVals.entryDateTime : "",
-                        exitDateTime: initialVals ? initialVals.exitDateTime : "",
-                        organizerName: initialVals ? initialVals.organizerName : "",
-                        contactNo: initialVals ? initialVals.contactNo : "",
+                        property: initialVals ? { label: initialVals.property?.propertyName, value: initialVals.property?.propertyIdentifier } : { label: "", value: "" },
+                        venue: initialVals ? { label: initialVals.venue?.venuName, value: initialVals.venue?.venuId } : { label: "", value: "" },
+                        occasion: initialVals ? { label: initialVals.occasionId, value: initialVals.occasionId } : { label: "", value: "" },
+                        day: initialVals ? { label: initialVals.shift, value: initialVals.shift } : { label: "", value: "" },
+                        guestNo: initialVals ? initialVals.guestCount : "",
+                        entryDateTime: initialVals ? initialVals.startDate : "",
+                        exitDateTime: initialVals ? initialVals.endDate : "",
+                        organizerName: initialVals ? initialVals.organizer : "",
+                        contactNo: initialVals ? initialVals.contact : "",
                         remarks: initialVals ? initialVals.remarks : "",
-                        CateringService: initialVals ? initialVals.CateringService : "",
-                        Decorations: initialVals ? initialVals.Decorations : "",
-                        SoundSystem: initialVals ? initialVals.SoundSystem : "",
-                        GuestParking: initialVals ? initialVals.GuestParking : "",
+                        CateringService: initialVals ? initialVals.Catering : "",
+                        Decorations: initialVals ? initialVals.decorations : "",
+                        SoundSystem: initialVals ? initialVals.sound : "",
+                        GuestParking: initialVals ? initialVals.guestParking : "",
                         tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
                         wing: { value: initialVals?.wingIdentifier || "", label: initialVals?.wingName || "" },
                         approverSociety: { value: initialVals?.socityIdentifier || "", label: initialVals?.societyName || "" },
@@ -298,6 +300,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 placeholder="Number"
                                                                 className="form-control"
                                                                 name="guestNo"
+                                                                value={values.guestNo}
                                                                 onChange={handleChange}
                                                             ></Form.Control>
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
@@ -364,6 +367,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 placeholder="Name"
                                                                 className="form-control"
                                                                 name="organizerName"
+                                                                value={values.organizerName}
                                                                 onChange={handleChange}
                                                             ></Form.Control>
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
@@ -377,6 +381,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 placeholder="Number"
                                                                 className="form-control"
                                                                 name="contactNo"
+                                                                value={values.contactNo}
                                                                 onChange={handleChange}
                                                             ></Form.Control>
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
