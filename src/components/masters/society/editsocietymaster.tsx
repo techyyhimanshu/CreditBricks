@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, CardHeader, Dropdown } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, CardHeader, Modal } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import DataTableExtensions from "react-data-table-component-extensions";
 import Select from "react-select";
@@ -14,13 +14,18 @@ import { getSocietyDetailsApi, updateSocietyApi } from '../../../api/society-api
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { handleApiError } from '../../../helpers/handle-api-error';
 import DataTable from 'react-data-table-component';
-import { getWingPropertiesApi } from '../../../api/property-api';
+import { getSinglePropertyDetailsApi, getWingPropertiesApi } from '../../../api/property-api';
 import { getTowerWingsApi } from '../../../api/wing-api';
 import { getSocietyTowersApi } from '../../../api/tower-api';
-import { addNewCommiteeMemberApi } from '../../../api/commitee-api';
+import { addNewCommiteeMemberApi, deleteCommiteeMemberApi, updateCommiteeMemberApi } from '../../../api/commitee-api';
+import { getMemberDetailApi } from '../../../api/member-api';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
+}
+interface OptionType {
+  label: string;
+  value: string;
 }
 const stateCitiesTyped: StateCities = stateCities;
 export default function EditSocietyMaster() {
@@ -63,9 +68,12 @@ export default function EditSocietyMaster() {
     }]
   });
   const [commiteeMemberData, setCommiteeMemberData] = useState<any[]>([]);
+  const [singleCommiteeMemberData, setSingleCommiteeMemberData] = useState<any>(null);
+  const [editCommiteeMember, setEditCommiteeMember] = useState(false);
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
   const [towerOptions, setTowerOptions] = useState<any[]>([]);
   const [wingOptions, setWingOptions] = useState<any[]>([]);
+  const [memberOptions, setMemberOptions] = useState<any[]>([]);
   const params = useParams()
   const identifier = params.identifier as string
 
@@ -93,11 +101,11 @@ export default function EditSocietyMaster() {
     },
     {
       name: "Approver Name",
-      selector: (row: any) => row.approverName,
+      selector: (row: any) => row.fullName,
     },
     {
       name: "Approver Contact",
-      selector: (row: any) => row.approverContact,
+      selector: (row: any) => row.contactNumber,
     },
     {
       name: "Designation",
@@ -105,17 +113,23 @@ export default function EditSocietyMaster() {
     },
     {
       name: "Application Type",
-      selector: (row: any) => row.applicationType,
+      selector: (row: any) =>
+        Array.isArray(row.applicationType)
+          ? row.applicationType.map((opt: any) => opt.label || opt).join(", ")
+          : row.applicationType,
     },
 
     {
       name: "Actions",
-      cell: (row: any, index: number) => (
+      cell: (row: any) => (
         <div>
           <button className="btn btn-light btn-sm"
+            type='button'
+            onClick={() => { setSingleCommiteeMemberData(row), viewDemoShow("editCommiteeMember") }}
           >Edit</button>
           <button className="btn bg-info-transparent ms-2 btn-sm"
-          onClick={() => handleDelete(index)}
+            type='button'
+            onClick={() => handleDelete(row.committeeMemberIdentifier)}
           >Delete</button>
         </div>
       ),
@@ -126,17 +140,19 @@ export default function EditSocietyMaster() {
     data: commiteeMemberData
   };
   useEffect(() => {
-    const fetchSocietyDetails = async () => {
-      try {
-        const response = await getSocietyDetailsApi(identifier)
-        setCurrentSociety(response.data.data)
-      } catch (error: any) {
-        const errorMessage = handleApiError(error)
-        showToast('error', errorMessage)
-      }
-    }
     fetchSocietyDetails()
   }, [])
+
+  const fetchSocietyDetails = async () => {
+    try {
+      const response = await getSocietyDetailsApi(identifier)
+      setCurrentSociety(response.data.data)
+      setCommiteeMemberData(response.data.data?.committeeMembers)
+    } catch (error: any) {
+      const errorMessage = handleApiError(error)
+      showToast('error', errorMessage)
+    }
+  }
 
   const countryOptions: any = [{ value: "India", label: "India" }]
   const calculationtype = [
@@ -144,33 +160,37 @@ export default function EditSocietyMaster() {
     { value: "Due Date", label: "Due Date" },
   ]
 
+
   const designation = [
-    const designation = [
-      { value: "Chairman", label: "Chairman " },
-      { value: " Vice Chairman", label: " Vice Chairman" },
-      { value: "Secretary", label: "Secretary " },
-      { value: " Joint Secretary", label: " Joint Secretary" },
-      { value: "Trader", label: "Trader " },
-      { value: " Joint Trader", label: " Joint Trader" },
-      { value: "Committee Member", label: "Committee Member " },
-      { value: "Director", label: "Director" },
-      { value: "Joint Director", label: "Joint Director " },
-      { value: "Independent Advisor", label: "Independent Advisor" },
-      { value: "Advisor", label: "Advisor " },
-      { value: "Nominal Member", label: "Nominal Member" },
-      { value: "Internal Auditor", label: "Internal Auditor " },
-      { value: "Ordinary Member", label: "Ordinary Member " },
-      { value: "Member", label: "Member " },
-      { value: "Flat Owner", label: "Flat Owner " },
-      { value: " Joint Owner", label: " Joint Owner " },
-      { value: " CoOwner", label: " Co-Owner" },
-    ]
+    { value: "Chairman", label: "Chairman " },
+    { value: " Vice Chairman", label: " Vice Chairman" },
+    { value: "Secretary", label: "Secretary " },
+    { value: " Joint Secretary", label: " Joint Secretary" },
+    { value: "Trader", label: "Trader " },
+    { value: " Joint Trader", label: " Joint Trader" },
+    { value: "Committee Member", label: "Committee Member " },
+    { value: "Director", label: "Director" },
+    { value: "Joint Director", label: "Joint Director " },
+    { value: "Independent Advisor", label: "Independent Advisor" },
+    { value: "Advisor", label: "Advisor " },
+    { value: "Nominal Member", label: "Nominal Member" },
+    { value: "Internal Auditor", label: "Internal Auditor " },
+    { value: "Ordinary Member", label: "Ordinary Member " },
+    { value: "Member", label: "Member " },
+    { value: "Flat Owner", label: "Flat Owner " },
+    { value: " Joint Owner", label: " Joint Owner " },
+    { value: " CoOwner", label: " Co-Owner" },
   ]
+
 
   const applicationtype = [
     { value: "Gate Pass", label: "Gate Pass" },
     { value: "Flat Resale", label: "Flat Resale" },
     { value: "Celebration", label: "Celebration" },
+    { value: "Club House", label: "Club House" },
+    { value: "Play Area", label: "Play Area" },
+    { value: "Food Court", label: "Food Court" },
+    { value: "Banquet hall", label: "Banquet hall" },
 
   ]
 
@@ -279,6 +299,60 @@ export default function EditSocietyMaster() {
     }
   }
 
+  const fetchPropertyDetails = async (property: any) => {
+    try {
+      const response = await getSinglePropertyDetailsApi(property.value);
+
+      const formattedData = response.data.data?.propertyMembers?.map((item: any) => {
+        const { firstName, middleName, lastName } = item.member;
+        const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+
+
+        return {
+          value: item.memberIdentifier,
+          label: fullName,
+        };
+      });
+
+      setMemberOptions(formattedData); 
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  };
+
+  const fetchMemberDetails = async (member: any,setFieldValue:any) => {
+    try {
+      const response = await getMemberDetailApi(member.value);
+      setFieldValue("approverContact",response.data.data?.mobileNumber)      
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  };
+
+
+
+  const viewDemoShow = (modal: any) => {
+    switch (modal) {
+      case "editCommiteeMember":
+        setEditCommiteeMember(true);
+        break;
+
+    }
+  };
+
+  const viewDemoClose = (modal: any) => {
+    switch (modal) {
+      case "editCommiteeMember":
+        setEditCommiteeMember(false);
+        setSingleCommiteeMemberData(null)
+        break;
+
+
+    }
+  };
+
   const fetchTowersForDropDown = async () => {
     try {
       const response = await getSocietyTowersApi(identifier);
@@ -293,7 +367,7 @@ export default function EditSocietyMaster() {
     }
   }
 
-  const handleAdd = async (values: any) => {
+  const handleAdd = async (values: any, setFieldValue: any) => {
     const newMember = {
       societyName: values.societyName,
       societyIdentifier: identifier,
@@ -303,15 +377,25 @@ export default function EditSocietyMaster() {
       wingName: values.wing?.label,
       propertyIdentifier: values.property?.value,
       propertyName: values.property?.label,
-      fullName: values.approverName,
+      fullName: values.approverName?.label,
       contactNumber: values.approverContact,
       designation: values.designation?.value,
-      applicationType: values.applicationType?.value,
+      // applicationType: values.applicationType?.value,
+      applicationType: values.applicationType.map((item: any) => item.value),
     };
     try {
+
       const response = await addNewCommiteeMemberApi(newMember)
       if (response.status === 200) {
-        setCommiteeMemberData((prevData) => [...prevData, newMember]);
+        fetchSocietyDetails()
+        setFieldValue("tower", { value: "", label: "" });
+        setFieldValue("wing", { value: "", label: "" });
+        setFieldValue("society", { value: "", label: "" });
+        setFieldValue("property", { value: "", label: "" });
+        setFieldValue("approverName", "");
+        setFieldValue("approverContact", "");
+        setFieldValue("designation", { value: "", label: "" });
+        setFieldValue("applicationType", []);
       }
     } catch (error) {
       const errorMessage = handleApiError(error);
@@ -319,11 +403,50 @@ export default function EditSocietyMaster() {
     }
   };
 
-  const handleDelete = (indexToDelete:number) => {
-    setCommiteeMemberData((prevData:any) =>
-      prevData.filter((_:any, index:number) => index !== indexToDelete)
-    );
+  const handleDelete = async (indexToDelete: string) => {
+    // setCommiteeMemberData((prevData: any) =>
+    //   prevData.filter((_: any, index: number) => index !== indexToDelete)
+    // );
+
+    try {
+      const response = await deleteCommiteeMemberApi(indexToDelete)
+      if (response.status === 200) {
+        showToast("success", response.data.message)
+        fetchSocietyDetails()
+      }
+    } catch (error) {
+
+    }
   };
+
+  const handleCommiteeMemberUpdate = async (values: any) => {
+    try {
+      const newMember = {
+        societyName: values.society?.label,
+        societyIdentifier: identifier,
+        towerIdentifier: values.tower?.value,
+        towerName: values.tower?.label,
+        wingIdentifier: values.wing?.value,
+        wingName: values.wing?.label,
+        propertyIdentifier: values.property?.value,
+        propertyName: values.property?.label,
+        fullName: values.approverName,
+        contactNumber: values.approverContact,
+        designation: values.designation?.value,
+        applicationType: values.applicationType.map((item: any) => item.value),
+      };
+
+      const response = await updateCommiteeMemberApi(newMember, singleCommiteeMemberData.committeeMemberIdentifier)
+      if (response.status === 201 || response.status === 200) {
+        showToast("success", response.data.message);
+        fetchSocietyDetails()
+      }
+      viewDemoClose("editCommiteeMember");
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -367,16 +490,17 @@ export default function EditSocietyMaster() {
               wing: { value: currentSociety?.wingIdentifier || "", label: currentSociety?.wingName || "" },
               society: { value: identifier || "", label: currentSociety?.societyName || "" },
               property: currentSociety ? { label: currentSociety.propertyName, value: currentSociety.propertyIdentifier } : { label: "", value: "" },
-              approverName: "",
+              approverName: { label: "", value: "" },
               approverContact: "",
               designation: { value: currentSociety?.designation || "", label: currentSociety?.designation || "" },
-              applicationType: { value: currentSociety?.applicationType || "", label: currentSociety?.applicationType || "" },
+              // applicationType: { value: currentSociety?.applicationType || "", label: currentSociety?.applicationType || "" },
+              applicationType: []
             }
             }
             // validationSchema={validationScWhema}
             onSubmit={handleSubmit}
           >
-            {({ setFieldValue, values }) => {
+            {({ setFieldValue, values, resetForm }) => {
               const getFileExtension = (fileName: string) => {
                 if (!fileName) {
                   return '';
@@ -894,7 +1018,10 @@ export default function EditSocietyMaster() {
                                 options={propertiesForDropDown}
                                 classNamePrefix="Select2"
                                 name='property'
-                                onChange={(selected) => setFieldValue("property", selected)}
+                                onChange={(selected) => {
+                                  setFieldValue("property", selected)
+                                  fetchPropertyDetails(selected)
+                                }}
                                 value={values.property}
                               />
                             </Form.Group>
@@ -913,7 +1040,7 @@ export default function EditSocietyMaster() {
 
 
 
-                          <Col xl={4}>
+                          {/* <Col xl={4}>
                             <Form.Group className="form-group mb-1">
                               <Form.Label>Approver Name</Form.Label>
                               <Field
@@ -921,6 +1048,22 @@ export default function EditSocietyMaster() {
                                 name="approverName"
                                 placeholder="Approver Name"
                                 className="form-control"
+                                value={values.approverName}
+                              />
+                            </Form.Group>
+                          </Col> */}
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Approver Name </Form.Label>
+                              <Select
+                                options={memberOptions}
+                                placeholder="Select Approver"
+                                classNamePrefix="Select2"
+                                name='approverName'
+                                onChange={(selected) => {
+                                  fetchMemberDetails(selected,setFieldValue)
+                                  setFieldValue("approverName", selected);
+                                }}
                                 value={values.approverName}
                               />
                             </Form.Group>
@@ -958,7 +1101,8 @@ export default function EditSocietyMaster() {
                           <Col xl={4}>
                             <Form.Group className="form-group mb-1">
                               <Form.Label>Application Type </Form.Label>
-                              <Select
+                              <Select<OptionType, true>
+                                isMulti
                                 options={applicationtype}
                                 placeholder="Select Type"
                                 classNamePrefix="Select2"
@@ -973,8 +1117,8 @@ export default function EditSocietyMaster() {
 
                           <Col xl={12}>
                             <Form.Group className="form-group float-end pt-2">
-                              <Button className="btn btn-default ms-2" type="button">Clear </Button>
-                              <Button className="btn btn-primary" type="button" onClick={() => handleAdd(values)}>ADD </Button>
+                              <Button className="btn btn-default ms-2" type="button" onClick={() => resetForm()}>Clear </Button>
+                              <Button className="btn btn-primary" type="button" onClick={() => handleAdd(values, setFieldValue)}>ADD </Button>
                             </Form.Group>
                           </Col>
                         </Row>
@@ -1040,6 +1184,195 @@ export default function EditSocietyMaster() {
         ) : (
           <p>Loading society data...</p>
         )}
+        <Modal show={editCommiteeMember} centered>
+          <Modal.Header>
+            <Modal.Title>Edit Commitee Member</Modal.Title>
+            <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("editCommiteeMember"); }}>
+              x
+            </Button>
+          </Modal.Header>
+          <Formik
+            enableReinitialize
+            initialValues={{
+              commiteeMemberId: singleCommiteeMemberData?.commiteeMemberId || "",
+              tower: { value: singleCommiteeMemberData?.towerIdentifier || "", label: singleCommiteeMemberData?.towerName || "" },
+              wing: { value: singleCommiteeMemberData?.wingIdentifier || "", label: singleCommiteeMemberData?.wingName || "" },
+              society: { value: identifier || "", label: currentSociety?.societyName || "" },
+              property: singleCommiteeMemberData ? { label: singleCommiteeMemberData.propertyName, value: singleCommiteeMemberData.propertyIdentifier } : { label: "", value: "" },
+              approverName: singleCommiteeMemberData?.fullName || "",
+              approverContact: singleCommiteeMemberData?.contactNumber || "",
+              designation: { value: singleCommiteeMemberData?.designation || "", label: singleCommiteeMemberData?.designation || "" },
+              // applicationType: { value: singleCommiteeMemberData?.applicationType || "", label: singleCommiteeMemberData?.applicationType || "" },
+              applicationType: Array.isArray(singleCommiteeMemberData?.applicationType)
+                ? singleCommiteeMemberData.applicationType.map((item: any) => ({ label: item, value: item }))
+                : [],
+            }}
+            onSubmit={handleCommiteeMemberUpdate}
+          >
+            {({ setFieldValue, values }) => {
+              return (
+                <FormikForm>
+                  <Modal.Body className='pt-1'>
+                    <Row>
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            name='society'
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                            onChange={(selected) => setFieldValue("society", selected)}
+                            value={values.society}
+                            isDisabled
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Tower </Form.Label>
+                          <Select
+                            options={towerOptions}
+                            placeholder="Select Tower"
+                            classNamePrefix="Select2"
+                            name='tower'
+                            onChange={(selected) => {
+                              fetchWingsForDropDown(selected);
+                              setFieldValue("wing", null);
+                              setFieldValue("property", null);
+                              setFieldValue("tower", selected);
+                            }}
+                            value={values.tower}
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Wing </Form.Label>
+                          <Select
+                            options={wingOptions}
+                            placeholder="Select Wing"
+                            classNamePrefix="Select2"
+                            name='wing'
+                            onChange={(selected) => {
+                              fetchPropertiesForDropDown(selected);
+                              setFieldValue("property", null);
+                              setFieldValue("wing", selected);
+                            }}
+                            value={values.wing}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            placeholder="Select property"
+                            options={propertiesForDropDown}
+                            classNamePrefix="Select2"
+                            name='property'
+                            onChange={(selected) => setFieldValue("property", selected)}
+                            value={values.property}
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      {/* <Col xl={6}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Flat </Form.Label>
+                              <Select
+                                placeholder="Select Flat"
+                                classNamePrefix="Select2"
+                                name='flat'
+                              />
+                            </Form.Group>
+                          </Col> */}
+
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Name</Form.Label>
+                          <Field
+                            type="text"
+                            name="approverName"
+                            placeholder="Approver Name"
+                            className="form-control"
+                            value={values.approverName}
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Contact</Form.Label>
+                          <Field
+                            type="text"
+                            name="approverContact"
+                            placeholder="Contact"
+                            className="form-control"
+                            value={values.approverContact}
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Designation </Form.Label>
+                          <Select
+                            options={designation}
+                            placeholder="Select Designation"
+                            classNamePrefix="Select2"
+                            name='designation'
+                            onChange={(selected) => setFieldValue("designation", selected)}
+                            value={values.designation}
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Application Type </Form.Label>
+                          <Select
+                            isMulti
+                            options={applicationtype}
+                            placeholder="Select Type"
+                            classNamePrefix="Select2"
+                            name='applicationType'
+                            onChange={(selected) => setFieldValue("applicationType", selected)}
+                            value={values.applicationType}
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+
+
+                    </Row>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="default" onClick={() => { viewDemoClose("editCommiteeMember"); }}>
+                      Close
+                    </Button>
+                    <Button variant="primary" type='submit' >
+                      Save
+                    </Button>
+
+                  </Modal.Footer>
+                </FormikForm>
+              )
+            }}
+          </Formik>
+
+
+        </Modal>
       </Row>
       <CustomToastContainer />
 
