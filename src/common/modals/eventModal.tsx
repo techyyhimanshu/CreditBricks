@@ -10,7 +10,7 @@ import { createNewGatePassApi, getAllVenueApi, getSocietyVenueApi } from "../../
 
 interface ProductModalProps {
     show: boolean;
-    // onSave: (values: any) => void;
+    onSave?: (values: any,modal:string) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -19,11 +19,11 @@ interface ProductModalProps {
     editing: boolean;
     eventVenue?: string;
     initialVals?: any;
-
+    modal:string
 
 }
 
-const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, eventVenue, name }) => {
+const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, eventVenue, name, onSave, modal }) => {
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [commiteeMemberData, setCommiteeMemberData] = useState<any>(null);
@@ -133,18 +133,26 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
 
     const handleSubmit = async (values: any) => {
-        console.log(values)
         try {
             const formattedData = {
-                societyIdentifier: values.society.value,
-                propertyIdentifier: values.property.value,
-                gateType: values.gateType.value,
-                category: values.category.value,
-                subCategory: values.subCategory.value,
-                entryDateTime: values.entryDateTime,
-                exitDateTime: values.exitDateTime,
-                userIdentifier: values.tenant.value ? values.tenant.value : values.member.value ? values.member.value : values.vendor.value,
-                remarks: values.remarks
+                propertyIdentifier: values?.property?.value,
+                applicationType: name,
+                occasionId: values?.occasion?.value, 
+                shift: values?.day?.value,
+                startDate: values?.entryDateTime,
+                endDate: values?.exitDateTime,
+                venueId: values?.venue?.value,
+                organizer: values?.organizerName,
+                contact: `${values?.contactNo}`,
+                remark: values?.remarks,
+                catering: values?.CateringService === "Yes",
+                decorations: values?.Decorations === "Yes",
+                sound: values?.SoundSystem === "Yes",
+                guestParking: values?.GuestParking === "Yes",
+                createdBy: "admin_user" 
+              };
+            if(onSave){
+                onSave(formattedData,modal)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
