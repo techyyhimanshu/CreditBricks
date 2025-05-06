@@ -163,6 +163,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
             showToast("error", errorMessage)
         }
     }
+    console.log(venuesForDropDown)
 
 
     return (
@@ -207,12 +208,12 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
                         useEffect(() => {
                             if (forcedVenue) {
-                                const matchedVenue = venue.find(v => v.value === forcedVenue);
+                                const matchedVenue = venuesForDropDown.find((v:any) => v.label === forcedVenue);
                                 if (matchedVenue) {
                                     setFieldValue("venue", matchedVenue);
                                 }
                             }
-                        }, [forcedVenue, setFieldValue, venue]);
+                        }, [forcedVenue, setFieldValue, venuesForDropDown]);
                         return (
                             <FormikForm>
                                 <Modal.Body className='bg-light'>
