@@ -16,3 +16,20 @@ export const getAllGatePassApi = async (): Promise<any> => {
         throw error
     }
 }
+export const getAllVenueApi = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`venue/all`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getSocietyVenueApi = async (id:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`venue/society/${id}`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
