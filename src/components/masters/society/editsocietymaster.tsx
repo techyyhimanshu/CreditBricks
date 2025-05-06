@@ -14,10 +14,11 @@ import { getSocietyDetailsApi, updateSocietyApi } from '../../../api/society-api
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { handleApiError } from '../../../helpers/handle-api-error';
 import DataTable from 'react-data-table-component';
-import { getWingPropertiesApi } from '../../../api/property-api';
+import { getSinglePropertyDetailsApi, getWingPropertiesApi } from '../../../api/property-api';
 import { getTowerWingsApi } from '../../../api/wing-api';
 import { getSocietyTowersApi } from '../../../api/tower-api';
 import { addNewCommiteeMemberApi, deleteCommiteeMemberApi, updateCommiteeMemberApi } from '../../../api/commitee-api';
+import { getMemberDetailApi } from '../../../api/member-api';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
@@ -72,6 +73,7 @@ export default function EditSocietyMaster() {
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
   const [towerOptions, setTowerOptions] = useState<any[]>([]);
   const [wingOptions, setWingOptions] = useState<any[]>([]);
+  const [memberOptions, setMemberOptions] = useState<any[]>([]);
   const params = useParams()
   const identifier = params.identifier as string
 
@@ -158,33 +160,37 @@ export default function EditSocietyMaster() {
     { value: "Due Date", label: "Due Date" },
   ]
 
- 
-    const designation = [
-      { value: "Chairman", label: "Chairman " },
-      { value: " Vice Chairman", label: " Vice Chairman" },
-      { value: "Secretary", label: "Secretary " },
-      { value: " Joint Secretary", label: " Joint Secretary" },
-      { value: "Trader", label: "Trader " },
-      { value: " Joint Trader", label: " Joint Trader" },
-      { value: "Committee Member", label: "Committee Member " },
-      { value: "Director", label: "Director" },
-      { value: "Joint Director", label: "Joint Director " },
-      { value: "Independent Advisor", label: "Independent Advisor" },
-      { value: "Advisor", label: "Advisor " },
-      { value: "Nominal Member", label: "Nominal Member" },
-      { value: "Internal Auditor", label: "Internal Auditor " },
-      { value: "Ordinary Member", label: "Ordinary Member " },
-      { value: "Member", label: "Member " },
-      { value: "Flat Owner", label: "Flat Owner " },
-      { value: " Joint Owner", label: " Joint Owner " },
-      { value: " CoOwner", label: " Co-Owner" },
-    ]
-  
+
+  const designation = [
+    { value: "Chairman", label: "Chairman " },
+    { value: " Vice Chairman", label: " Vice Chairman" },
+    { value: "Secretary", label: "Secretary " },
+    { value: " Joint Secretary", label: " Joint Secretary" },
+    { value: "Trader", label: "Trader " },
+    { value: " Joint Trader", label: " Joint Trader" },
+    { value: "Committee Member", label: "Committee Member " },
+    { value: "Director", label: "Director" },
+    { value: "Joint Director", label: "Joint Director " },
+    { value: "Independent Advisor", label: "Independent Advisor" },
+    { value: "Advisor", label: "Advisor " },
+    { value: "Nominal Member", label: "Nominal Member" },
+    { value: "Internal Auditor", label: "Internal Auditor " },
+    { value: "Ordinary Member", label: "Ordinary Member " },
+    { value: "Member", label: "Member " },
+    { value: "Flat Owner", label: "Flat Owner " },
+    { value: " Joint Owner", label: " Joint Owner " },
+    { value: " CoOwner", label: " Co-Owner" },
+  ]
+
 
   const applicationtype = [
     { value: "Gate Pass", label: "Gate Pass" },
     { value: "Flat Resale", label: "Flat Resale" },
     { value: "Celebration", label: "Celebration" },
+    { value: "Club House", label: "Club House" },
+    { value: "Play Area", label: "Play Area" },
+    { value: "Food Court", label: "Food Court" },
+    { value: "Banquet hall", label: "Banquet hall" },
 
   ]
 
@@ -293,6 +299,40 @@ export default function EditSocietyMaster() {
     }
   }
 
+  const fetchPropertyDetails = async (property: any) => {
+    try {
+      const response = await getSinglePropertyDetailsApi(property.value);
+
+      const formattedData = response.data.data?.propertyMembers?.map((item: any) => {
+        const { firstName, middleName, lastName } = item.member;
+        const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+
+
+        return {
+          value: item.memberIdentifier,
+          label: fullName,
+        };
+      });
+
+      setMemberOptions(formattedData); 
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  };
+
+  const fetchMemberDetails = async (member: any,setFieldValue:any) => {
+    try {
+      const response = await getMemberDetailApi(member.value);
+      setFieldValue("approverContact",response.data.data?.mobileNumber)      
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  };
+
+
+
   const viewDemoShow = (modal: any) => {
     switch (modal) {
       case "editCommiteeMember":
@@ -337,14 +377,14 @@ export default function EditSocietyMaster() {
       wingName: values.wing?.label,
       propertyIdentifier: values.property?.value,
       propertyName: values.property?.label,
-      fullName: values.approverName,
+      fullName: values.approverName?.label,
       contactNumber: values.approverContact,
       designation: values.designation?.value,
       // applicationType: values.applicationType?.value,
       applicationType: values.applicationType.map((item: any) => item.value),
     };
     try {
-      
+
       const response = await addNewCommiteeMemberApi(newMember)
       if (response.status === 200) {
         fetchSocietyDetails()
@@ -450,7 +490,7 @@ export default function EditSocietyMaster() {
               wing: { value: currentSociety?.wingIdentifier || "", label: currentSociety?.wingName || "" },
               society: { value: identifier || "", label: currentSociety?.societyName || "" },
               property: currentSociety ? { label: currentSociety.propertyName, value: currentSociety.propertyIdentifier } : { label: "", value: "" },
-              approverName: "",
+              approverName: { label: "", value: "" },
               approverContact: "",
               designation: { value: currentSociety?.designation || "", label: currentSociety?.designation || "" },
               // applicationType: { value: currentSociety?.applicationType || "", label: currentSociety?.applicationType || "" },
@@ -978,7 +1018,10 @@ export default function EditSocietyMaster() {
                                 options={propertiesForDropDown}
                                 classNamePrefix="Select2"
                                 name='property'
-                                onChange={(selected) => setFieldValue("property", selected)}
+                                onChange={(selected) => {
+                                  setFieldValue("property", selected)
+                                  fetchPropertyDetails(selected)
+                                }}
                                 value={values.property}
                               />
                             </Form.Group>
@@ -997,7 +1040,7 @@ export default function EditSocietyMaster() {
 
 
 
-                          <Col xl={4}>
+                          {/* <Col xl={4}>
                             <Form.Group className="form-group mb-1">
                               <Form.Label>Approver Name</Form.Label>
                               <Field
@@ -1005,6 +1048,22 @@ export default function EditSocietyMaster() {
                                 name="approverName"
                                 placeholder="Approver Name"
                                 className="form-control"
+                                value={values.approverName}
+                              />
+                            </Form.Group>
+                          </Col> */}
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Approver Name </Form.Label>
+                              <Select
+                                options={memberOptions}
+                                placeholder="Select Approver"
+                                classNamePrefix="Select2"
+                                name='approverName'
+                                onChange={(selected) => {
+                                  fetchMemberDetails(selected,setFieldValue)
+                                  setFieldValue("approverName", selected);
+                                }}
                                 value={values.approverName}
                               />
                             </Form.Group>

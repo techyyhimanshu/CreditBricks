@@ -10,7 +10,7 @@ import stateCities from "../masters/stateCity.json"
 import { Link, useParams } from "react-router-dom";
 // import { Uploader } from 'uploader';
 // import { UploadButton } from 'react-uploader';
-import { getSocietyDetailsApi, updateSocietyApi } from '../../api/society-api';
+import { getAllSocietyApi, getSocietyDetailsApi, updateSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import DataTable from 'react-data-table-component';
@@ -65,6 +65,7 @@ export default function AddParentEntity() {
   const [commiteeMemberData, setCommiteeMemberData] = useState<any[]>([]);
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
   const [towerOptions, setTowerOptions] = useState<any[]>([]);
+  const [societyDropDownData, setSocietyDropDownData] = useState<any[]>([]);
   const [wingOptions, setWingOptions] = useState<any[]>([]);
   const params = useParams()
   const identifier = params.identifier as string
@@ -125,18 +126,18 @@ export default function AddParentEntity() {
     columns,
     data: commiteeMemberData
   };
-  useEffect(() => {
-    const fetchSocietyDetails = async () => {
-      try {
-        const response = await getSocietyDetailsApi(identifier)
-        setCurrentSociety(response.data.data)
-      } catch (error: any) {
-        const errorMessage = handleApiError(error)
-        showToast('error', errorMessage)
-      }
-    }
-    fetchSocietyDetails()
-  }, [])
+  // useEffect(() => {
+  //   const fetchSocietyDetails = async () => {
+  //     try {
+  //       const response = await getSocietyDetailsApi(identifier)
+  //       setCurrentSociety(response.data.data)
+  //     } catch (error: any) {
+  //       const errorMessage = handleApiError(error)
+  //       showToast('error', errorMessage)
+  //     }
+  //   }
+  //   fetchSocietyDetails()
+  // }, [])
 
   const countryOptions: any = [{ value: "India", label: "India" }]
   const calculationtype = [
@@ -227,19 +228,19 @@ export default function AddParentEntity() {
 
       ; (async () => {
         try {
-          const response = await updateSocietyApi(societyDataToUpdate, currentSociety.societyIdentifier)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            // window.location.href = "/society/societymaster"
-            // Update specific society in the list
-            // setSocietyData(prevData =>
-            //   prevData.map(society =>
-            //     society.societyIdentifier === currentSociety.societyIdentifier
-            //       ? { ...society, ...data }
-            //       : society
-            //   )
-            // );
-          }
+          // const response = await updateSocietyApi(societyDataToUpdate, currentSociety.societyIdentifier)
+          // if (response.status === 200) {
+          //   showToast("success", response.data.message)
+          //   // window.location.href = "/society/societymaster"
+          //   // Update specific society in the list
+          //   // setSocietyData(prevData =>
+          //   //   prevData.map(society =>
+          //   //     society.societyIdentifier === currentSociety.societyIdentifier
+          //   //       ? { ...society, ...data }
+          //   //       : society
+          //   //   )
+          //   // );
+          // }
         } catch (error: any) {
           const errorMessage = handleApiError(error);
           showToast("error", errorMessage);
@@ -250,7 +251,23 @@ export default function AddParentEntity() {
   }
   useEffect(() => {
     fetchTowersForDropDown()
+    fetchSocietiesForDropDown()
   }, [])
+
+  const fetchSocietiesForDropDown = async () => {
+    try {
+      const response = await getAllSocietyApi();
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.societyIdentifier,
+        label: item.societyName,
+      }));
+      setSocietyDropDownData(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+
 
   const fetchPropertiesForDropDown = async (society: any) => {
     try {
@@ -326,6 +343,7 @@ export default function AddParentEntity() {
       prevData.filter((_: any, index: number) => index !== indexToDelete)
     );
   };
+  console.log(societyDropDownData)
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -848,11 +866,12 @@ export default function AddParentEntity() {
 
                           <Card.Body className='pt-3'>
                             <Row>
-                              <Col xl={4}>
+                              <Col xl={6}>
                                 <Form.Group className="form-group">
                                   <Form.Label>Society Name <span className="text-danger">*</span></Form.Label>
                                   <Select
-                                    options={society}
+                                    isMulti
+                                    options={societyDropDownData}
                                     placeholder="Select Society"
                                     classNamePrefix="Select2"
                                   />
@@ -860,7 +879,7 @@ export default function AddParentEntity() {
                                 </Form.Group>
                               </Col>
 
-                              <Col xl={4}>
+                              {/* <Col xl={4}>
                                 <Form.Group className="form-group">
                                   <Form.Label className='pb-1'></Form.Label>
                                   <Button type='button' className='btn btn-primary mt-3'>
@@ -868,8 +887,8 @@ export default function AddParentEntity() {
                                   </Button>
 
                                 </Form.Group>
-                              </Col>
-                              <Col xl="12">
+                              </Col> */}
+                              {/* <Col xl="12">
                                 <table className='table border mt-3 bg-white'>
                                   <thead>
                                     <tr>
@@ -885,7 +904,7 @@ export default function AddParentEntity() {
 
                                   </tbody>
                                 </table>
-                              </Col>
+                              </Col> */}
 
                             </Row>
                           </Card.Body>
@@ -1054,9 +1073,9 @@ export default function AddParentEntity() {
 
                   </Accordion>
                   <span className='float-end mb-5'>
-                      <Button variant="default ms-3"> Cancel </Button>
-                      <Button className="btn btn-primary" type="submit">Update </Button>
-                    </span>
+                    <Button variant="default ms-3"> Cancel </Button>
+                    <Button className="btn btn-primary" type="submit">Update </Button>
+                  </span>
 
                 </FormikForm>
               )

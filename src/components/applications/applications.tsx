@@ -8,6 +8,12 @@ import { showToast, CustomToastContainer } from '../../common/services/toastServ
 import { imagesData } from "../../common/commonimages";
 import Accordion from 'react-bootstrap/Accordion';
 import EventModal from '../../common/modals/eventModal';
+import { createNewEventApi, createNewGatePassApi, getAllApplicationApi } from '../../api/application-api';
+import { handleApiError } from '../../helpers/handle-api-error';
+import TestLoader from '../../layout/layoutcomponent/testloader';
+import DataTable from 'react-data-table-component';
+import DataTableExtensions from "react-data-table-component-extensions"
+import GatePassModal from '../../common/modals/gatePassModal';
 
 
 export default function Applications() {
@@ -36,7 +42,155 @@ export default function Applications() {
   const [addnomination, setaddnomination] = useState(false);
   const [addbadminton, setaddbadminton] = useState(false);
   const [addfoodcourt, setaddfoodcourt] = useState(false);
+  const [applicationData, setApplicationData] = useState<any[]>([])
   const [addothers, setothers] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const columns = [
+    {
+      name: 'S.No',
+      selector: (row: any) => row.sno,
+      sortable: true,
+      width: '80px'
+    },
+    {
+      name: 'Application Id',
+      cell: (row: any) => (
+        <span className='text-info cursor' onClick={() => {
+          viewDemoShow("gatepassview")
+          // setComplaintToView(row) 
+        }}
+        >{row.id}</span>
+      ),
+      sortable: true,
+    },
+    {
+      name: 'Property',
+      cell: (row: any) => {
+        return (
+          <span>{row.propertyName}</span>
+        )
+      },
+      sortable: true,
+    },
+
+    // {
+    //   name: 'Member',
+    //   selector: (row: any) => row.categoryName,
+    //   sortable: true,
+    // },
+    {
+      name: 'Society',
+      selector: (row: any) => row.societyName,
+      sortable: true,
+    },
+    {
+      name: 'Application Category',
+      selector: (row: any) => row.applicationType,
+      sortable: true,
+    },
+    {
+      name: 'Status',
+      selector: (row: any) => row.status,
+      sortable: true,
+    },
+    {
+      name: 'Date & Time',
+      selector: (row: any) => row.date,
+      sortable: true,
+    },
+
+
+    {
+      name: 'Action',
+      sortable: true,
+      cell: (row: any) => (
+        <Dropdown >
+          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+            Action
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu>
+            <Dropdown.Item onClick={() => {
+              // setComplaintToView(row) 
+              // setEditing(true)
+              // viewDemoShow("addcomplaint") 
+            }}>Edit</Dropdown.Item>
+
+            <Dropdown.Item className='text-danger' >Delete</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+
+      ),
+
+    },
+  ];
+
+  const tableData = {
+    columns,
+    data: applicationData
+  };
+
+  useEffect(() => {
+    fetchAllApplications();
+  }, []);
+
+  const fetchAllApplications = async () => {
+    try {
+      const response = await getAllApplicationApi()
+      if (response.status === 200) {
+        const formattedData = response.data.data.map((complaint: any, index: number) => {
+          return {
+            sno: index + 1,
+            id: complaint?.applicationIdentifier || "",
+            societyName: complaint?.societyName || "",
+            propertyName: complaint?.propertyName || "",
+            applicationType: complaint?.applicationType || "",
+            status: complaint?.approvedStatus || "",
+            date: `${complaint?.date}, ${complaint?.time}` || "",
+            subCategory: complaint?.subCategory?.name || "",
+          }
+        })
+        setApplicationData(formattedData);
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleEventSave = async (values: any, modal: string) => {
+    try {
+      const response = await createNewEventApi(values)
+      if (response.status === 200 || response.status === 201) {
+        showToast("success", response.data.message)
+        fetchAllApplications()
+      }
+
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      viewDemoClose(modal)
+    }
+  }
+  const handleGatePassSave = async (values: any) => {
+    try {
+      const response = await createNewGatePassApi(values)
+      if (response.status === 200|| response.status === 201) {
+        showToast("success", "Gate pass created successfully")
+        fetchAllApplications()
+      }
+
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      viewDemoClose("addgatepass")
+    }
+  }
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -528,6 +682,9 @@ export default function Applications() {
   const handleBanquetClose = () => {
     viewDemoClose("addbanquethall");
   }
+  const handleGatePassClose = () => {
+    viewDemoClose("addgatepass");
+  }
   const handleClubHouseClose = () => {
     viewDemoClose("addclubhouse");
   }
@@ -702,7 +859,7 @@ export default function Applications() {
           </Modal>
 
           {/* Add Gate Pass */}
-          <Modal show={addgatepass} size="xl" centered>
+          {/* <Modal show={addgatepass} size="xl" centered>
             <Modal.Header>
               <Modal.Title>Gate Pass</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addgatepass"); }}>
@@ -724,7 +881,6 @@ export default function Applications() {
                             placeholder="Select society"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -736,7 +892,6 @@ export default function Applications() {
                             placeholder="Select property"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl="4">
@@ -747,7 +902,6 @@ export default function Applications() {
                             placeholder="Select type"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -759,7 +913,6 @@ export default function Applications() {
                             placeholder="Select category"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -771,7 +924,6 @@ export default function Applications() {
                             placeholder="Select sub category"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -783,7 +935,6 @@ export default function Applications() {
                             placeholder="Select member"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -797,7 +948,6 @@ export default function Applications() {
                             placeholder="dd/mm/yyyy"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={2}>
@@ -808,7 +958,6 @@ export default function Applications() {
                             placeholder=""
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={2}>
@@ -819,7 +968,6 @@ export default function Applications() {
                             placeholder="dd/mm/yyyy"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={2}>
@@ -830,7 +978,6 @@ export default function Applications() {
                             placeholder=""
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={4}>
@@ -841,7 +988,6 @@ export default function Applications() {
                             placeholder="Gate Pass Number"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl="4">
@@ -882,7 +1028,6 @@ export default function Applications() {
                             placeholder="Purpose"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={12}>
@@ -891,7 +1036,6 @@ export default function Applications() {
                             <small className='float-end'>max 250 character</small>
                           </Form.Label>
                           <textarea className="form-control" placeholder='Details'></textarea>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                     </Row>
@@ -910,7 +1054,6 @@ export default function Applications() {
                             placeholder="Name"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={4}>
@@ -921,7 +1064,6 @@ export default function Applications() {
                             placeholder="Contact"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
                       <Col xl={4}>
@@ -932,7 +1074,6 @@ export default function Applications() {
                             placeholder="Number"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -944,7 +1085,7 @@ export default function Applications() {
                             placeholder="model"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                          
                         </Form.Group>
                       </Col>
 
@@ -956,7 +1097,6 @@ export default function Applications() {
                             placeholder="Select nature"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -968,7 +1108,6 @@ export default function Applications() {
                             placeholder="Select type"
                             classNamePrefix="Select2"
                           />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                         </Form.Group>
                       </Col>
 
@@ -988,7 +1127,7 @@ export default function Applications() {
                             placeholder="Name"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                          
                         </Form.Group>
                       </Col>
 
@@ -1000,7 +1139,7 @@ export default function Applications() {
                             placeholder="Number"
                             className="form-control"
                           ></Form.Control>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                          
                         </Form.Group>
                       </Col>
                       <Col xl={12}>
@@ -1009,7 +1148,7 @@ export default function Applications() {
                             <small className='float-end'>max 250 character</small>
                           </Form.Label>
                           <textarea className="form-control" placeholder='remarks' ></textarea>
-                          {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                          
                         </Form.Group>
                       </Col>
 
@@ -1134,7 +1273,10 @@ export default function Applications() {
               </Button>
 
             </Modal.Footer>
-          </Modal>
+          </Modal> */}
+          {
+            addgatepass && <GatePassModal show={addgatepass} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={false} />
+          }
 
           {/* gate pass view modal */}
           <Modal show={gatepassview} size='xl' centered>
@@ -1733,7 +1875,7 @@ export default function Applications() {
                       placeholder="Name"
                       className="form-control"
                     ></Form.Control>
-                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                    
                   </Form.Group>
                 </Col>
                 <Col xl={6}>
@@ -3020,7 +3162,7 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal>
-          {addcelebration && <EventModal show={addcelebration} onClose={handleCelebrationClose} editing={false}  name="Celebration" />}
+          {addcelebration && <EventModal show={addcelebration} onSave={handleEventSave} onClose={handleCelebrationClose} editing={false} name="Celebration" modal="addcelebration" />}
 
           {/* Add theater */}
           <Modal show={addtheater} centered>
@@ -3475,7 +3617,7 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal> */}
-          {addbanquethall && <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet Hall" />}
+          {addbanquethall && <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet Hall" modal="addbanquethall" />}
           {/* Add Club House */}
           <Modal show={addclubhouse} size='xl' centered>
             <Modal.Header>
@@ -3819,7 +3961,7 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal>
-          {addclubhouse && <EventModal show={addclubhouse} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" />}
+          {addclubhouse && <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" modal="addclubhouse" />}
 
           {/* Add Swimming pool */}
           <Modal show={addswimmingpool} centered size='xl'>
@@ -3834,7 +3976,7 @@ export default function Applications() {
             <Modal.Body className='pt-0'>
               <Row>
 
-              <Col xl="6">
+                <Col xl="6">
                   <Form.Group className="form-group mb-1">
                     <Form.Label>Society </Form.Label>
                     <Select
@@ -3970,31 +4112,31 @@ export default function Applications() {
                     <Form.Label>Pool Date & Timing</Form.Label>
                     <InputGroup className="input-group w-100 datetimepicker-2">
 
-<Form.Control
-  className="form-control"
-  id="datetime-local"
-  type="datetime-local"
-  defaultValue="2020-01-16T14:22"
+                      <Form.Control
+                        className="form-control"
+                        id="datetime-local"
+                        type="datetime-local"
+                        defaultValue="2020-01-16T14:22"
 
-/>
-</InputGroup>
+                      />
+                    </InputGroup>
 
                     {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                   </Form.Group>
-</Col>
-<Col xl={4}>
+                </Col>
+                <Col xl={4}>
 
-                      <Form.Group className="form-group mb-1">
-                        <Form.Label>Duration</Form.Label>
-                        <Select
-                          options={duration}
-                          placeholder="Select duration"
-                          classNamePrefix="Select2"
-                        />
-                        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                      </Form.Group>
-                    </Col>
-<Col xl={12}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Duration</Form.Label>
+                    <Select
+                      options={duration}
+                      placeholder="Select duration"
+                      classNamePrefix="Select2"
+                    />
+                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                  </Form.Group>
+                </Col>
+                <Col xl={12}>
                   <Form.Group className="form-group">
                     <Form.Label>Remarks
                       <small className='text-muted float-end'>max 250 Character</small>
@@ -4025,8 +4167,8 @@ export default function Applications() {
                     </Row>
 
                   </Form.Group>
-</Col>
-<Col xl={6}>
+                </Col>
+                <Col xl={6}>
                   <Form.Group className="form-group mb-0">
                     <Form.Label clas>Do you have swimming costume for all the
                       participants?</Form.Label>
@@ -4411,7 +4553,7 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal>
-          {addplayarea && <EventModal show={addplayarea} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />}
+          {addplayarea && <EventModal show={addplayarea} modal="addplayarea" onSave={handleEventSave} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />}
 
 
           {/* Add Turf Area */}
@@ -5675,11 +5817,11 @@ export default function Applications() {
             </Modal.Footer>
           </Modal>
 
-          {addfoodcourt && <EventModal show={addfoodcourt} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
+          {addfoodcourt && <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
 
 
-   {/* Add Others */}
-   <Modal show={addothers} size='xl' centered>
+          {/* Add Others */}
+          <Modal show={addothers} size='xl' centered>
             <Modal.Header>
               <Modal.Title>Others</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addothers"); }}>
@@ -5688,220 +5830,220 @@ export default function Applications() {
             </Modal.Header>
 
             <Modal.Body className='bg-light'>
-            <div className="tab-menu-heading tabs-style-4 ps-3">
-                        <div className="tabs-menu ">
+              <div className="tab-menu-heading tabs-style-4 ps-3">
+                <div className="tabs-menu ">
 
-                          <Tab.Container
-                            id="left-tabs-example"
-                            defaultActiveKey="TabStyle01"
-                          >
-                            <Row>
-                              <Col sm={3} className='p-0'>
-                                <Nav variant="pills" className="flex-column">
-                                  <Nav.Item>
-                                    <Nav.Link eventKey="TabStyle01" className='rounded-0'>
-                                      {" "}
-                                  Document Submission
-                                    </Nav.Link>
-                                  </Nav.Item>
-                                  <Nav.Item>
-                                    <Nav.Link eventKey="TabStyle02" className='rounded-0'>
-                                      {" "}
+                  <Tab.Container
+                    id="left-tabs-example"
+                    defaultActiveKey="TabStyle01"
+                  >
+                    <Row>
+                      <Col sm={3} className='p-0'>
+                        <Nav variant="pills" className="flex-column">
+                          <Nav.Item>
+                            <Nav.Link eventKey="TabStyle01" className='rounded-0'>
+                              {" "}
+                              Document Submission
+                            </Nav.Link>
+                          </Nav.Item>
+                          <Nav.Item>
+                            <Nav.Link eventKey="TabStyle02" className='rounded-0'>
+                              {" "}
                               Enquiry
-                                    </Nav.Link>
-                                  </Nav.Item>
-                                  <Nav.Item>
-                                    <Nav.Link eventKey="TabStyle03" className='rounded-0'>
-                                      {" "}
-                                   Others
-                                    </Nav.Link>
-                                  </Nav.Item>
+                            </Nav.Link>
+                          </Nav.Item>
+                          <Nav.Item>
+                            <Nav.Link eventKey="TabStyle03" className='rounded-0'>
+                              {" "}
+                              Others
+                            </Nav.Link>
+                          </Nav.Item>
 
-                                </Nav>
-                              </Col>
-                              <Col sm={9} className='p-0'>
-                                <Tab.Content className="tabs-style-4 card ps-4 pb-5 rounded-0">
-                                  <Tab.Pane eventKey="TabStyle01">
-                                    <div
-                                      className="panel-body tabs-menu-body"
-                                      id="tab21"
-                                    >
-                                      <Row>
-                                                  <Col xl={6}>
-                        <Form.Group className="form-groupx">
-                          <Form.Label className='tx-16'>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
+                        </Nav>
                       </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label className='tx-16'>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
-                      </Row>
-
-                                  <Form.Group className="form-group">
-
-                                    <Form.Label className='tx-16'>Document Submission</Form.Label>
+                      <Col sm={9} className='p-0'>
+                        <Tab.Content className="tabs-style-4 card ps-4 pb-5 rounded-0">
+                          <Tab.Pane eventKey="TabStyle01">
+                            <div
+                              className="panel-body tabs-menu-body"
+                              id="tab21"
+                            >
+                              <Row>
+                                <Col xl={6}>
+                                  <Form.Group className="form-groupx">
+                                    <Form.Label className='tx-16'>Society </Form.Label>
                                     <Select
-                            options={documentsubmission}
-                            placeholder="Select submission"
-                            classNamePrefix="Select2"
-                          />
-      </Form.Group>
-
-<Form.Group className="form-group">
-<Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-<Form.Control className="form-control" type="file" />
-</Form.Group>
-
-<Form.Group className="form-group">
-<Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-<Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-</Form.Group>
-
-
-                                    </div>
-                                  </Tab.Pane>
-                                  <Tab.Pane eventKey="TabStyle02">
-                                  <div
-                                      className="panel-body tabs-menu-body"
-                                      id="tab22"
-                                    >
-                                      <Row>
-                                                  <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label className='tx-16'>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group">
-                          <Form.Label className='tx-16'>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
-                      </Row>
-
-                      <Form.Group className="form-group">
-
-                                    <Form.Label className='tx-16'>Enquiry</Form.Label>
-                                    <Select
-                            options={enquiry}
-                            placeholder="Select enquiry"
-                            classNamePrefix="Select2"
-                          />
-
-
- </Form.Group>
-
-                                      <Form.Group className="form-group">
-<Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-<Form.Control className="form-control" type="file" />
-</Form.Group>
-
-<Form.Group className="form-group">
-<Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-<Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-</Form.Group>
-
-                                    </div>
-                                  </Tab.Pane>
-                                  <Tab.Pane eventKey="TabStyle03">
-                                  <div
-                                      className="panel-body tabs-menu-body"
-                                      id="tab23"
-                                    >
-                                      <Row>
-                                                  <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label className='tx-16'>Society </Form.Label>
-                          <Select
-                            options={society}
-                            placeholder="Select society"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label className='tx-16'>Property </Form.Label>
-                          <Select
-                            options={property}
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                        </Form.Group>
-                      </Col>
-                      </Row>
-
-                                  <Form.Group>
-
-                                    <Form.Label className='tx-16'>Type</Form.Label>
-                                    <Row>
-                                      <Col xl={12}>
-                                      <Select
-                            options={otherstype}
-                            placeholder="Select"
-                            classNamePrefix="Select2"
-                          />
-                                      </Col>
-
-
-                                      <Col xl={12}>
-<Form.Group className='mt-4'>
-<Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-<Form.Control className="form-control" type="file" />
-</Form.Group>
-</Col>
-
-
-<Col xl={12}>
-<Form.Group className='mt-4'>
-<Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-<Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-</Form.Group>
-</Col>
-                                    </Row>
-
-
-
-
-
-
-
-
-
+                                      options={society}
+                                      placeholder="Select society"
+                                      classNamePrefix="Select2"
+                                    />
                                   </Form.Group>
-                                    </div>
-                                  </Tab.Pane>
+                                </Col>
 
-                                </Tab.Content>
-                              </Col>
-                            </Row>
-                          </Tab.Container>
-                        </div>
-                      </div>
+                                <Col xl={6}>
+                                  <Form.Group className="form-group">
+                                    <Form.Label className='tx-16'>Property </Form.Label>
+                                    <Select
+                                      options={property}
+                                      placeholder="Select property"
+                                      classNamePrefix="Select2"
+                                    />
+                                  </Form.Group>
+                                </Col>
+                              </Row>
+
+                              <Form.Group className="form-group">
+
+                                <Form.Label className='tx-16'>Document Submission</Form.Label>
+                                <Select
+                                  options={documentsubmission}
+                                  placeholder="Select submission"
+                                  classNamePrefix="Select2"
+                                />
+                              </Form.Group>
+
+                              <Form.Group className="form-group">
+                                <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
+                                <Form.Control className="form-control" type="file" />
+                              </Form.Group>
+
+                              <Form.Group className="form-group">
+                                <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
+                                <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
+                              </Form.Group>
+
+
+                            </div>
+                          </Tab.Pane>
+                          <Tab.Pane eventKey="TabStyle02">
+                            <div
+                              className="panel-body tabs-menu-body"
+                              id="tab22"
+                            >
+                              <Row>
+                                <Col xl={6}>
+                                  <Form.Group className="form-group">
+                                    <Form.Label className='tx-16'>Society </Form.Label>
+                                    <Select
+                                      options={society}
+                                      placeholder="Select society"
+                                      classNamePrefix="Select2"
+                                    />
+                                  </Form.Group>
+                                </Col>
+
+                                <Col xl={6}>
+                                  <Form.Group className="form-group">
+                                    <Form.Label className='tx-16'>Property </Form.Label>
+                                    <Select
+                                      options={property}
+                                      placeholder="Select property"
+                                      classNamePrefix="Select2"
+                                    />
+                                  </Form.Group>
+                                </Col>
+                              </Row>
+
+                              <Form.Group className="form-group">
+
+                                <Form.Label className='tx-16'>Enquiry</Form.Label>
+                                <Select
+                                  options={enquiry}
+                                  placeholder="Select enquiry"
+                                  classNamePrefix="Select2"
+                                />
+
+
+                              </Form.Group>
+
+                              <Form.Group className="form-group">
+                                <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
+                                <Form.Control className="form-control" type="file" />
+                              </Form.Group>
+
+                              <Form.Group className="form-group">
+                                <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
+                                <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
+                              </Form.Group>
+
+                            </div>
+                          </Tab.Pane>
+                          <Tab.Pane eventKey="TabStyle03">
+                            <div
+                              className="panel-body tabs-menu-body"
+                              id="tab23"
+                            >
+                              <Row>
+                                <Col xl={6}>
+                                  <Form.Group className="form-group mb-1">
+                                    <Form.Label className='tx-16'>Society </Form.Label>
+                                    <Select
+                                      options={society}
+                                      placeholder="Select society"
+                                      classNamePrefix="Select2"
+                                    />
+                                  </Form.Group>
+                                </Col>
+
+                                <Col xl={6}>
+                                  <Form.Group className="form-group mb-1">
+                                    <Form.Label className='tx-16'>Property </Form.Label>
+                                    <Select
+                                      options={property}
+                                      placeholder="Select property"
+                                      classNamePrefix="Select2"
+                                    />
+                                  </Form.Group>
+                                </Col>
+                              </Row>
+
+                              <Form.Group>
+
+                                <Form.Label className='tx-16'>Type</Form.Label>
+                                <Row>
+                                  <Col xl={12}>
+                                    <Select
+                                      options={otherstype}
+                                      placeholder="Select"
+                                      classNamePrefix="Select2"
+                                    />
+                                  </Col>
+
+
+                                  <Col xl={12}>
+                                    <Form.Group className='mt-4'>
+                                      <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
+                                      <Form.Control className="form-control" type="file" />
+                                    </Form.Group>
+                                  </Col>
+
+
+                                  <Col xl={12}>
+                                    <Form.Group className='mt-4'>
+                                      <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
+                                      <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
+                                    </Form.Group>
+                                  </Col>
+                                </Row>
+
+
+
+
+
+
+
+
+
+                              </Form.Group>
+                            </div>
+                          </Tab.Pane>
+
+                        </Tab.Content>
+                      </Col>
+                    </Row>
+                  </Tab.Container>
+                </div>
+              </div>
 
             </Modal.Body>
             <Modal.Footer>
@@ -5978,7 +6120,7 @@ export default function Applications() {
               <Link to={`${import.meta.env.BASE_URL}eventbooking/eventbooking`} className='float-end btn btn-primary p-1 pe-2 ps-2 me-1'><i className='bi bi-calendar'></i>&nbsp; Event Calendar</Link>
             </CardHeader>
             <Card.Body className='pt-0'>
-              <table className='table'>
+              {/* <table className='table'>
                 <thead>
                   <tr>
                     <th>S.no.</th>
@@ -6016,7 +6158,20 @@ export default function Applications() {
 
 
                 </tbody>
-              </table>
+              </table> */}
+              <div className="table-responsive ">
+                <DataTableExtensions {...tableData}>
+                  <DataTable
+                    columns={columns}
+                    data={applicationData}
+                    pagination
+                    progressPending={isLoading}
+                    progressComponent={<TestLoader />}
+
+
+                  />
+                </DataTableExtensions>
+              </div>
 
             </Card.Body>
           </Card>
@@ -6029,3 +6184,7 @@ export default function Applications() {
     </Fragment >
   );
 }
+
+
+{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
