@@ -6,11 +6,11 @@ import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } fro
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
-import { createNewGatePassApi, getAllVenueApi, getSocietyVenueApi } from "../../api/application-api";
+import { getSocietyVenueApi } from "../../api/application-api";
 
 interface ProductModalProps {
     show: boolean;
-    onSave?: (values: any,modal:string) => void;
+    onSave?: (values: any, modal: string) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -19,7 +19,7 @@ interface ProductModalProps {
     editing: boolean;
     eventVenue?: string;
     initialVals?: any;
-    modal:string
+    modal: string
 
 }
 
@@ -27,7 +27,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
     console.log(initialVals)
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
-    const [commiteeMemberData, setCommiteeMemberData] = useState<any>(null);
+    const [, setCommiteeMemberData] = useState<any>(null);
     const [venuesForDropDown, setVenuesForDropDown] = useState([]);
 
     useEffect(() => {
@@ -76,7 +76,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
         }
     }
 
-    const fetchApproverDetails = async (society: any,setFieldValue:any) => {
+    const fetchApproverDetails = async (society: any, setFieldValue: any) => {
         try {
             const response = await getSocietyDetailsApi(society.value)
             const members = response.data.data?.committeeMembers || [];
@@ -93,7 +93,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 setFieldValue("approverName", matched.fullName);
                 setFieldValue("approverContact", matched.contactNumber);
                 setFieldValue("designation", { value: matched.designation, label: matched.designation });
-              }
+            }
             setCommiteeMemberData(matched)
         } catch (error: any) {
             const errorMessage = handleApiError(error)
@@ -122,15 +122,15 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
         { value: "Second Half", label: "Second Half" },
     ]
 
-    const venue = [
-        { value: "Flat", label: "Flat" },
-        { value: "Banquet Hall", label: "Banquet Hall" },
-        { value: "Parking Area", label: "Parking Area" },
-        { value: "Club House", label: "Club House" },
-        { value: "Play Area", label: "Play Area" },
-        { value: "Pool Area", label: "Pool Area" },
-        { value: "Food Court", label: "Food Court" },
-    ]
+    // const venue = [
+    //     { value: "Flat", label: "Flat" },
+    //     { value: "Banquet Hall", label: "Banquet Hall" },
+    //     { value: "Parking Area", label: "Parking Area" },
+    //     { value: "Club House", label: "Club House" },
+    //     { value: "Play Area", label: "Play Area" },
+    //     { value: "Pool Area", label: "Pool Area" },
+    //     { value: "Food Court", label: "Food Court" },
+    // ]
 
 
     const handleSubmit = async (values: any) => {
@@ -138,7 +138,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
             const formattedData = {
                 propertyIdentifier: values?.property?.value,
                 applicationType: name,
-                occasionId: values?.occasion?.value, 
+                occasionId: values?.occasion?.value,
                 shift: values?.day?.value,
                 startDate: values?.entryDateTime,
                 endDate: values?.exitDateTime,
@@ -150,10 +150,10 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 decorations: values?.Decorations === "Yes",
                 sound: values?.SoundSystem === "Yes",
                 guestParking: values?.GuestParking === "Yes",
-                createdBy: "admin_user" 
-              };
-            if(onSave){
-                onSave(formattedData,modal)
+                createdBy: "admin_user"
+            };
+            if (onSave) {
+                onSave(formattedData, modal)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
@@ -177,7 +177,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                     </Button>
                 </Modal.Header>
                 <Formik
-                enableReinitialize
+                    enableReinitialize
                     initialValues=
                     {{
                         society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
@@ -210,7 +210,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
                         useEffect(() => {
                             if (forcedVenue) {
-                                const matchedVenue = venuesForDropDown.find((v:any) => v.label === forcedVenue);
+                                const matchedVenue = venuesForDropDown.find((v: any) => v.label === forcedVenue);
                                 if (matchedVenue) {
                                     setFieldValue("venue", matchedVenue);
                                 }
@@ -236,7 +236,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 onChange={(selected) => {
                                                                     fetchPropertiesForDropDown(selected);
                                                                     fetchVenuesForSociety(selected)
-                                                                    fetchApproverDetails(selected,setFieldValue)
+                                                                    fetchApproverDetails(selected, setFieldValue)
                                                                     setFieldValue("society", selected);
                                                                 }}
                                                             />
