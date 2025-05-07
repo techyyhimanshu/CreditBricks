@@ -6,7 +6,7 @@ import { getAllSocietyApi, getPropertiesOfSocietyApi } from "../../api/society-a
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
-import { getTenantOptions } from "../../api/property-api";
+import { getMembersOfPropertyApi, getTenantsOfPropertyApi } from "../../api/property-api";
 import { getMemberForDropDownApi } from "../../api/user-api";
 import { getVendorForDropDownApi } from "../../api/vendor-api";
 import { createNewGatePassApi } from "../../api/application-api";
@@ -64,7 +64,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
     }
     const fetchTenantsForDropDown = async (propertyIdentifier: string) => {
         try {
-            const response = await getTenantOptions(propertyIdentifier);
+            const response = await getTenantsOfPropertyApi(propertyIdentifier);
             const formattedData = response.data.data.map((item: any) => ({
                 value: item.tenantIdentifier,
                 label: `${item.firstName} ${item.middleName} ${item.lastName}`,
@@ -75,9 +75,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
             showToast("error", errorMessage)
         }
     }
-    const fetchMembersForDropDown = async () => {
+    const fetchMembersForDropDown = async (propertyIdentifier: string) => {
         try {
-            const response = await getMemberForDropDownApi();
+            const response = await getMembersOfPropertyApi(propertyIdentifier);
             const formattedData = response.data.data.map((item: any) => ({
                 value: item.identifier,
                 label: `${item.firstName} ${item.middleName} ${item.lastName}`,
@@ -286,7 +286,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                     switch (selected?.label) {
                                                                         case "Tenant": fetchTenantsForDropDown(values.property.value)
                                                                             break;
-                                                                        case "Member": fetchMembersForDropDown()
+                                                                        case "Member": fetchMembersForDropDown(values.property.value)
                                                                             break;
                                                                         case "Material": fetchVendorsForDropDown()
                                                                     }

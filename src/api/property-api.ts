@@ -41,9 +41,17 @@ export const getSinglePropertyDetailsApi = async (propertyId: string): Promise<a
         throw error
     }
 }
-export const getTenantOptions = async (propertyIdentifier: string): Promise<any> => {
+export const getTenantsOfPropertyApi = async (propertyIdentifier: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/property/${propertyIdentifier}/tenants`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getMembersOfPropertyApi = async (propertyIdentifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/property/${propertyIdentifier}/members`)
         return response
     } catch (error) {
         throw error
