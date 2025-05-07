@@ -36,7 +36,7 @@ axiosInstance.interceptors.response.use(
                 // Update the new access token
                 const newAccessToken = refreshResponse.data.accessToken;
                 // localStorage.setItem("accessToken", newAccessToken);
-                Cookies.set("accessToken", newAccessToken);
+                // Cookies.set("accessToken", newAccessToken);
 
                 // Retry the original request with the new access token
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
