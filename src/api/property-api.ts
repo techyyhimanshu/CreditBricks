@@ -14,7 +14,7 @@ export const addPropertyApi = async (data: any): Promise<any> => {
         throw error
     }
 }
-export const getAllPropertyApi = async (identifier?:string): Promise<any> => {
+export const getAllPropertyApi = async (identifier?: string): Promise<any> => {
     try {
         const params = identifier ? { wing_identifier: identifier } : {};
         const response = await axiosInstance.get(`/property/all`, { params })
@@ -24,7 +24,7 @@ export const getAllPropertyApi = async (identifier?:string): Promise<any> => {
     }
 }
 
-export const getWingPropertiesApi = async (identifier:string): Promise<any> => {
+export const getWingPropertiesApi = async (identifier: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`wing/${identifier}/properties`)
         return response
@@ -41,9 +41,9 @@ export const getSinglePropertyDetailsApi = async (propertyId: string): Promise<a
         throw error
     }
 }
-export const getTenantOptions = async (): Promise<any> => {
+export const getTenantOptions = async (propertyIdentifier: string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`/tenant/ddl`)
+        const response = await axiosInstance.get(`/property/${propertyIdentifier}/tenants`)
         return response
     } catch (error) {
         throw error
@@ -75,7 +75,7 @@ export const getPropertLoansApi = async (propertyId: string): Promise<any> => {
 }
 export const updatePropertyApi = async (data: any, id: any): Promise<any> => {
     try {
-       
+
         const response = await axiosInstance.patch(`/property/${id}`, data)
         return response
     } catch (error) {
