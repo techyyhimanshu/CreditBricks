@@ -294,7 +294,16 @@ export const MENUITEMS = [
             selected: false,
           },
           {
-            path: ``,
+            path: `${import.meta.env.BASE_URL}gatepassapproval`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Gate Pass",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
+          {
+            path: `${import.meta.env.BASE_URL}celebrationbooking`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
             title: "Celebration Booking",
             type: "link",
@@ -302,14 +311,14 @@ export const MENUITEMS = [
             active: false,
           },
 
-          {
-            path: ``,
-            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
-            title: "Flate Resale",
-            type: "link",
-            selected: false,
-            active: false,
-          },
+          // {
+          //   path: ``,
+          //   icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+          //   title: "Flate Resale",
+          //   type: "link",
+          //   selected: false,
+          //   active: false,
+          // },
 
         ],
 

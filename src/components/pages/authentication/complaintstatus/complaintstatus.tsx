@@ -96,7 +96,6 @@ const ComplaintStatus = () => {
 
               </Row>
               <Col xl={12} className="p-0 text-end pt-3">
-              <Button type='button' className='btn btn-default ms-2'>Close</Button>
               <Button type='button' className='btn btn-primary'>Save</Button>
               </Col>
                       </div>

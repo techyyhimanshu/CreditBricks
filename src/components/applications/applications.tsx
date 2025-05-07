@@ -59,7 +59,7 @@ export default function Applications() {
       cell: (row: any) => (
         <span className='text-info cursor' onClick={() => {
           viewDemoShow("gatepassview")
-          // setComplaintToView(row) 
+          // setComplaintToView(row)
         }}
         >{row.id}</span>
       ),
@@ -114,9 +114,9 @@ export default function Applications() {
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => {
               fetchEventDetails(row.id)
-              // setComplaintToView(row) 
+              // setComplaintToView(row)
               // setEditing(true)
-              viewDemoShow("addbanquethall") 
+              viewDemoShow("addbanquethall")
             }}>Edit</Dropdown.Item>
 
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
@@ -211,7 +211,7 @@ export default function Applications() {
    const handleDelete = (id: string) => {
       ; (async () => {
         try {
-  
+
           const response = await deleteApplicationApi(id)
           if (response.status === 200) {
             showToast("success", response.data.message)
@@ -889,7 +889,7 @@ export default function Applications() {
             </Modal.Body>
 
           </Modal>
-          
+
           {
             addgatepass && <GatePassModal show={addgatepass} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={false} />
           }
@@ -932,13 +932,15 @@ export default function Applications() {
                               <Form.Label>Gate Type</Form.Label>
                               <p className='tx-14'>Inward</p>
                             </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Member</Form.Label>
+                              <p className='tx-14'>Test Member 1</p>
+                            </Col>
+
                             <Col xl={4} className='mb-2'>
                               <Form.Label>Category</Form.Label>
                               <p className='tx-14 col-sm-11 p-0'>Tenant</p>
-                            </Col>
-                            <Col xl={4} className='mb-2'>
-                              <Form.Label>Tenant Name</Form.Label>
-                              <p className='tx-14 col-sm-11 p-0'>Ajay Sharma</p>
                             </Col>
                             <Col xl={4} className='mb-2'>
                               <Form.Label>Sub Category</Form.Label>
@@ -946,9 +948,12 @@ export default function Applications() {
                             </Col>
 
                             <Col xl={4} className='mb-2'>
-                              <Form.Label>Member</Form.Label>
-                              <p className='tx-14'>Test Member 1</p>
+                              <Form.Label>Tenant Name</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>Ajay Sharma</p>
                             </Col>
+
+
+
 
                             <Col xl={4} className='mb-2'>
                               <Form.Label>Gate Pass Number</Form.Label>
@@ -969,7 +974,7 @@ export default function Applications() {
                         </Card.Body>
                       </Card>
 
-                      <Card className='box-shadow border border-primary'>
+                      <Card className='box-shadow border border-primary mb-2'>
                         <Card.Body>
                           <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Approval Details</h5>
 
@@ -1002,6 +1007,8 @@ export default function Applications() {
 
                         </Card.Body>
                       </Card>
+
+                      <p className='ps-2'>Powered by <strong>CreditBricks</strong></p>
                     </Col>
 
                     <Col xl={4}>
@@ -1491,7 +1498,7 @@ export default function Applications() {
                       placeholder="Name"
                       className="form-control"
                     ></Form.Control>
-                    
+
                   </Form.Group>
                 </Col>
                 <Col xl={6}>
@@ -2436,7 +2443,7 @@ export default function Applications() {
           </Modal>
 
           {/* Add celebration */}
-          
+
           {addcelebration && <EventModal show={addcelebration} onSave={handleEventSave} onClose={handleCelebrationClose} editing={false} name="Celebration" modal="addcelebration" />}
 
           {/* Add theater */}
@@ -2558,11 +2565,11 @@ export default function Applications() {
             </Modal.Footer>
           </Modal>
 
-          
+
           {addbanquethall && banquetToView? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={banquetToView} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall"/>:<EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />}
           {/* {addbanquethall && <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />} */}
           {/* Add Club House */}
-          
+
           {addclubhouse && <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" modal="addclubhouse" />}
 
           {/* Add Swimming pool */}
@@ -2813,7 +2820,7 @@ export default function Applications() {
 
 
           {/* Add Play Area */}
-          
+
           {addplayarea && <EventModal show={addplayarea} modal="addplayarea" onSave={handleEventSave} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />}
 
 
@@ -3735,7 +3742,7 @@ export default function Applications() {
           </Modal>
 
           {/* Add Food Court */}
-          
+
 
           {addfoodcourt && <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
 

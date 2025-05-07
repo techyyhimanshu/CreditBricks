@@ -1120,19 +1120,19 @@ export default function Accounts() {
                 <Row>
                   <Col xl={6}>
                     <FormGroup>
-                      <FormLabel>Cheque Date</FormLabel>
+                      <FormLabel>Cheque Issued Date</FormLabel>
                       <Form.Control className='form-control' type="date" />
                     </FormGroup>
                   </Col>
                   <Col xl={6}>
                     <FormGroup>
-                      <FormLabel>Cheque Issued Date</FormLabel>
+                      <FormLabel>Cheque Receipt Date</FormLabel>
                       <Form.Control className='form-control' value={'3/31/2024'} type="text" />
                     </FormGroup>
                   </Col>
                   <Col xl={6}>
                     <FormGroup>
-                      <FormLabel>Cheque Recived Date</FormLabel>
+                      <FormLabel>Cheque Clearing Date</FormLabel>
                       <Form.Control className='form-control' value={'3/31/2024'} type="text" />
                     </FormGroup>
                   </Col>
