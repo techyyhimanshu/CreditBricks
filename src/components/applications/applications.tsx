@@ -8,7 +8,7 @@ import { showToast, CustomToastContainer } from '../../common/services/toastServ
 import { imagesData } from "../../common/commonimages";
 import Accordion from 'react-bootstrap/Accordion';
 import EventModal from '../../common/modals/eventModal';
-import { createNewEventApi, createNewGatePassApi, deleteApplicationApi, getAllApplicationApi } from '../../api/application-api';
+import { createNewEventApi, createNewGatePassApi, deleteApplicationApi, getAllApplicationApi, getEventDetailsApi } from '../../api/application-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import TestLoader from '../../layout/layoutcomponent/testloader';
 import DataTable from 'react-data-table-component';
@@ -45,6 +45,7 @@ export default function Applications() {
   const [applicationData, setApplicationData] = useState<any[]>([])
   const [addothers, setothers] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [banquetToView,setBanquetToView]=useState(null)
 
   const columns = [
     {
@@ -112,9 +113,10 @@ export default function Applications() {
 
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => {
+              fetchEventDetails(row.id)
               // setComplaintToView(row) 
               // setEditing(true)
-              // viewDemoShow("addcomplaint") 
+              viewDemoShow("addbanquethall") 
             }}>Edit</Dropdown.Item>
 
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
@@ -161,6 +163,20 @@ export default function Applications() {
     }
   }
 
+  const fetchEventDetails = async (id:string) => {
+    try {
+      const response = await getEventDetailsApi(id)
+      if (response.status === 200) {
+        setBanquetToView(response.data.data)
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const handleEventSave = async (values: any, modal: string) => {
     try {
       const response = await createNewEventApi(values)
@@ -193,7 +209,6 @@ export default function Applications() {
   }
 
    const handleDelete = (id: string) => {
-    console.log(id)
       ; (async () => {
         try {
   
@@ -2544,7 +2559,8 @@ export default function Applications() {
           </Modal>
 
           
-          {addbanquethall && <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />}
+          {addbanquethall && banquetToView? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={banquetToView} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall"/>:<EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />}
+          {/* {addbanquethall && <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />} */}
           {/* Add Club House */}
           
           {addclubhouse && <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" modal="addclubhouse" />}

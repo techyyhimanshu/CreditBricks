@@ -62,9 +62,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
             showToast("error", errorMessage)
         }
     }
-    const fetchTenantsForDropDown = async () => {
+    const fetchTenantsForDropDown = async (propertyIdentifier: string) => {
         try {
-            const response = await getTenantOptions();
+            const response = await getTenantOptions(propertyIdentifier);
             const formattedData = response.data.data.map((item: any) => ({
                 value: item.tenantIdentifier,
                 label: `${item.firstName} ${item.middleName} ${item.lastName}`,
@@ -164,7 +164,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 contactPersonNumber: values.contactPersonNumber,
                 remarks: values.remarks
             }
-            if(onSave){
+            if (onSave) {
                 onSave(formattedData)
             }
             // const response = await createNewGatePassApi(formattedData)
@@ -284,7 +284,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                 onChange={(selected) => {
                                                                     setFieldValue("category", selected);
                                                                     switch (selected?.label) {
-                                                                        case "Tenant": fetchTenantsForDropDown()
+                                                                        case "Tenant": fetchTenantsForDropDown(values.property.value)
                                                                             break;
                                                                         case "Member": fetchMembersForDropDown()
                                                                             break;
