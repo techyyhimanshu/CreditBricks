@@ -20,6 +20,30 @@ export interface Igetdata{
     userId?:string
 }
 
+export interface ViewGatePassData {
+  gatePassNumber: string;
+  societyIdentifier: string;
+  propertyIdentifier: string;
+  gateType: string;
+  category: string;
+  subCategory: string;
+  userIdentifier: string;
+  tenantName?: string;
+  entryTime?: string;
+  exitTime?: string;
+  purpose: string;
+  description: string;
+  driverName: string;
+  driverMobileNumber: string;
+  vehicleNumber: string;
+  vehicleModel: string;
+  vehicleNature: string;
+  vehicleType: string;
+  contactPersonName: string;
+  contactPersonNumber: string;
+  remarks: string;
+}
+
 export interface Igetsearched extends Igetdata{
     search:string
 }

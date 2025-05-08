@@ -7,12 +7,11 @@ import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
 import { getMembersOfPropertyApi, getTenantsOfPropertyApi } from "../../api/property-api";
-import { getMemberForDropDownApi } from "../../api/user-api";
 import { getVendorForDropDownApi } from "../../api/vendor-api";
 
 interface ProductModalProps {
     show: boolean;
-    onSave: (values: any) => void;
+    onSave: (values: any,editing:boolean) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -127,6 +126,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         { value: "Visitor Parking", label: "Visitor Parking" },
         { value: "Other", label: "Other" },
     ]
+    console.log(initialVals)
 
     const vehicletypegatepass = [
         { value: "Sedan", label: "Sedan" },
@@ -165,7 +165,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
 
     const handleSubmit = async (values: any) => {
         try {
-            const formattedData = {
+            const formattedData:any = {
                 societyIdentifier: values.society.value,
                 propertyIdentifier: values.property.value,
                 gateType: values.gateType.value,
@@ -193,8 +193,11 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 approverContact: initialVals?.contactNumber || "",
                 designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
             }
+            if(editing){
+                formattedData.gatePassNumber=initialVals.gatePassNumber
+            }
             if (onSave) {
-                onSave(formattedData)
+                onSave(formattedData,editing)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
@@ -219,14 +222,15 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 <Formik
                     initialValues=
                     {{
-                        society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
-                        property: initialVals ? { label: initialVals.propertyName, value: initialVals.propertyIdentifier } : { label: "", value: "" },
+                        society: initialVals ? { label: initialVals.society?.societyName, value: initialVals.society?.societyIdentifier } : { label: "", value: "" },
+                        property: initialVals ? { label: initialVals.property?.propertyName, value: initialVals.property?.propertyIdentifier } : { label: "", value: "" },
                         gateType: initialVals ? { label: initialVals.gateType, value: initialVals.gateTypeIdentifier } : { label: "", value: "" },
                         category: initialVals ? { label: initialVals.category, value: initialVals.gateTypeCategoryIdentifier } : { label: "", value: "" },
                         subCategory: initialVals ? { label: initialVals.subCategory, value: initialVals.gateTypeSubCategoryIdentifier } : { label: "", value: "" },
                         entryDateTime: initialVals ? initialVals.entryDateTime : "",
                         exitDateTime: initialVals ? initialVals.exitDateTime : "",
-                        member: initialVals ? { label: initialVals.memberName, value: initialVals.memberIdentifier } : { label: "", value: "" },
+                        gatePassNumber:initialVals?initialVals.gatePassNumber:"",
+                        member: initialVals ? { label: `${initialVals.user.firstName || ""} ${initialVals.user.middleName || ""} ${initialVals.user.lastName || ""}`.replace(/\s+/g, " ").trim(), value: initialVals.user?.identifier } : { label: "", value: "" },
                         tenant: initialVals ? { label: initialVals.tenantName, value: initialVals.tenantIdentifier } : { label: "", value: "" },
                         vendor: initialVals ? { label: initialVals.vendorName, value: initialVals.vendorIdentifier } : { label: "", value: "" },
                         vehicleNature: initialVals ? { label: initialVals.vehicleNature, value: initialVals.vehicleNatureIdentifier } : { label: "", value: "" },
@@ -361,7 +365,6 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                     className="form-control"
                                                                     id="datetime-local"
                                                                     type="datetime-local"
-                                                                    defaultValue="2020-01-16T14:22"
                                                                     name="entryDateTime"
                                                                     value={values.entryDateTime}
                                                                 />
@@ -379,7 +382,6 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                     className="form-control"
                                                                     id="datetime-local"
                                                                     type="datetime-local"
-                                                                    defaultValue="2020-01-16T14:22"
                                                                     name="exitDateTime"
                                                                     value={values.exitDateTime}
 
@@ -395,6 +397,8 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                             <Form.Control
                                                                 type="text"
                                                                 disabled
+                                                                name="gatePassNumber"
+                                                                value={values.gatePassNumber}
                                                                 placeholder="Gate Pass Number"
                                                                 className="form-control"
                                                             ></Form.Control>
