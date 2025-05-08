@@ -1,19 +1,21 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab, InputGroup, Nav } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab, InputGroup } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { imagesData } from "../../common/commonimages";
 import Accordion from 'react-bootstrap/Accordion';
 import EventModal from '../../common/modals/eventModal';
-import { createNewEventApi, createNewGatePassApi, deleteApplicationApi, getAllApplicationApi, getEventDetailsApi } from '../../api/application-api';
+import { createNewDocumentSubmissionApi, createNewEnquiryApi, createNewEventApi, createNewGatePassApi, createNewOtherApplicationApi, deleteApplicationApi, getAllApplicationApi, getApplicationDetailsApi, updateEventApi, updateGatePassApi } from '../../api/application-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import TestLoader from '../../layout/layoutcomponent/testloader';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import GatePassModal from '../../common/modals/gatePassModal';
+import OtherApplicationModal from '../../common/modals/otherApplicationModal';
+import { ViewGatePassData } from '../../common/services/database';
 
 
 export default function Applications() {
@@ -45,7 +47,20 @@ export default function Applications() {
   const [applicationData, setApplicationData] = useState<any[]>([])
   const [addothers, setothers] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [banquetToView,setBanquetToView]=useState(null)
+  const [singleBanquetHallData, setSingleBanquetHallData] = useState(null);
+  const [singleCelebrationData, setSingleCelebrationData] = useState(null);
+  const [singleClubhouseData, setSingleClubhouseData] = useState(null);
+  const [singlePlayAreaData, setSinglePlayAreaData] = useState(null);
+  const [singleFoodCourtData, setSingleFoodCourtData] = useState(null);
+  const [singleContactUpdateData, setSingleContactUpdateData] = useState(null);
+  const [singleSwimmingPoolData, setSingleSwimmingPoolData] = useState(null);
+  const [singleParkingData, setSingleParkingData] = useState(null);
+  const [singleOthersData, setSingleOthersData] = useState(null);
+  const [singleInteriorData, setSingleInteriorData] = useState(null);
+  const [singleGatePassData, setSingleGatePassData] = useState(null);
+  const [viewGatePassData, setViewGatePassData] = useState<ViewGatePassData | null>(null);
+  const [singleChangeInNameData, setSingleChangeInNameData] = useState(null);
+  const [singleFlatResaleData, setSingleFlatResaleData] = useState(null);
 
   const columns = [
     {
@@ -58,8 +73,7 @@ export default function Applications() {
       name: 'Application Id',
       cell: (row: any) => (
         <span className='text-info cursor' onClick={() => {
-          viewDemoShow("gatepassview")
-          // setComplaintToView(row)
+          fetchEventDetailsForView(row.id)
         }}
         >{row.id}</span>
       ),
@@ -113,10 +127,7 @@ export default function Applications() {
 
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => {
-              fetchEventDetails(row.id)
-              // setComplaintToView(row)
-              // setEditing(true)
-              viewDemoShow("addbanquethall")
+              fetchEventDetails(row.id);
             }}>Edit</Dropdown.Item>
 
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
@@ -163,23 +174,197 @@ export default function Applications() {
     }
   }
 
-  const fetchEventDetails = async (id:string) => {
+  const fetchEventDetails = async (id: string) => {
+    const prefix = id.split('-')[0];
+    setIsLoading(true);
+
     try {
-      const response = await getEventDetailsApi(id)
+      const response = await getApplicationDetailsApi(id);
+
       if (response.status === 200) {
-        setBanquetToView(response.data.data)
+        const data = response.data.data;
+
+        switch (prefix) {
+          case "BH":
+            setSingleBanquetHallData(data);
+            viewDemoShow("addbanquethall");
+            break;
+
+          case "CB":
+            setSingleCelebrationData(data);
+            viewDemoShow("addcelebration");
+            break;
+
+          case "CH":
+            setSingleClubhouseData(data);
+            viewDemoShow("addclubhouse");
+            break;
+
+          case "PA":
+            setSinglePlayAreaData(data);
+            viewDemoShow("addplayarea");
+            break;
+
+          case "FC":
+            setSingleFoodCourtData(data);
+            viewDemoShow("addfoodcourt");
+            break;
+
+          case "CP":
+            setSingleContactUpdateData(data);
+            viewDemoShow("addcontactupdate");
+            break;
+
+          case "SW":
+            setSingleSwimmingPoolData(data);
+            viewDemoShow("addswimmingpool");
+            break;
+
+          case "PK":
+            setSingleParkingData(data);
+            viewDemoShow("addparking");
+            break;
+
+          case "OD":
+          case "OE":
+          case "OO":
+            setSingleOthersData(data);
+            viewDemoShow("addothers");
+            break;
+
+          case "IN":
+            setSingleInteriorData(data);
+            viewDemoShow("addinterior");
+            break;
+
+          case "GP":
+            setSingleGatePassData(data);
+            viewDemoShow("addgatepass");
+            break;
+
+          case "NC":
+            setSingleChangeInNameData(data);
+            viewDemoShow("addchangeinname");
+            break;
+
+          case "FR":
+            setSingleFlatResaleData(data);
+            viewDemoShow("addflatresale");
+            break;
+
+          default:
+            console.warn(`Unhandled application type: ${prefix}`);
+            break;
+        }
       }
     } catch (error) {
       const errorMessage = handleApiError(error);
       showToast("error", errorMessage);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  const handleEventSave = async (values: any, modal: string) => {
+  const fetchEventDetailsForView = async (id: string) => {
+    const prefix = id.split('-')[0];
+    setIsLoading(true);
+
     try {
-      const response = await createNewEventApi(values)
+      const response = await getApplicationDetailsApi(id);
+
+      if (response.status === 200) {
+        const data = response.data.data;
+
+        switch (prefix) {
+          case "BH":
+            setSingleBanquetHallData(data);
+            viewDemoShow("viewEvent");
+            break;
+
+          case "CB":
+            setSingleCelebrationData(data);
+            viewDemoShow("viewEvent");
+            break;
+
+          case "CH":
+            setSingleClubhouseData(data);
+            viewDemoShow("viewEvent");
+            break;
+
+          case "PA":
+            setSinglePlayAreaData(data);
+            viewDemoShow("viewEvent");
+            break;
+
+          case "FC":
+            setSingleFoodCourtData(data);
+            viewDemoShow("viewEvent");
+            break;
+
+          case "CP":
+            setSingleContactUpdateData(data);
+            viewDemoShow("viewcontactupdate");
+            break;
+
+          case "SW":
+            setSingleSwimmingPoolData(data);
+            viewDemoShow("viewswimmingpool");
+            break;
+
+          case "PK":
+            setSingleParkingData(data);
+            viewDemoShow("viewparking");
+            break;
+
+          case "OD":
+          case "OE":
+          case "OO":
+            setSingleOthersData(data);
+            viewDemoShow("viewothers");
+            break;
+
+          case "IN":
+            setSingleInteriorData(data);
+            viewDemoShow("viewinterior");
+            break;
+
+          case "GP":
+            setViewGatePassData(data);
+            viewDemoShow("gatepassview");
+            break;
+
+          case "NC":
+            setSingleChangeInNameData(data);
+            viewDemoShow("viewchangeinname");
+            break;
+
+          case "FR":
+            setSingleFlatResaleData(data);
+            viewDemoShow("viewflatresale");
+            break;
+
+          default:
+            console.warn(`Unhandled application type: ${prefix}`);
+            break;
+        }
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const handleEventSave = async (values: any, modal: string, editing: boolean) => {
+    try {
+      let response;
+      if (editing) {
+        response = await updateEventApi(values, values?.eventId || "")
+      } else {
+        response = await createNewEventApi(values)
+      }
       if (response.status === 200 || response.status === 201) {
         showToast("success", response.data.message)
         fetchAllApplications()
@@ -192,11 +377,16 @@ export default function Applications() {
       viewDemoClose(modal)
     }
   }
-  const handleGatePassSave = async (values: any) => {
+  const handleGatePassSave = async (values: any,editing:boolean) => {
     try {
-      const response = await createNewGatePassApi(values)
-      if (response.status === 200|| response.status === 201) {
-        showToast("success", "Gate pass created successfully")
+      let response;
+      if (editing) {
+        response = await updateGatePassApi(values, values?.gatePassNumber || "")
+      } else {
+        response = await createNewGatePassApi(values)
+      }
+      if (response.status === 200 || response.status === 201) {
+        showToast("success", response.data.message)
         fetchAllApplications()
       }
 
@@ -207,22 +397,47 @@ export default function Applications() {
       viewDemoClose("addgatepass")
     }
   }
+  const handleOtherApplicationSave = async (values: any, tab: string) => {
+    try {
+      let response;
 
-   const handleDelete = (id: string) => {
-      ; (async () => {
-        try {
+      if (tab === "documentSubmission") {
+        response = await createNewDocumentSubmissionApi(values);
+      } else if (tab === "enquiry") {
+        response = await createNewEnquiryApi(values);
+      } else if (tab === "other") {
+        response = await createNewOtherApplicationApi(values);
+      } else {
+        showToast("error", "Unknown tab selected");
+      }
+      if (response.status === 200 || response.status === 201) {
+        showToast("success", response.data.message)
+        fetchAllApplications()
+      }
 
-          const response = await deleteApplicationApi(id)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            setApplicationData((prevData: any) => prevData.filter((society: any) => society.id !== id))
-          }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error)
-          showToast("error", errorMessage)
-        }
-      })()
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      viewDemoClose("addothers")
     }
+  }
+
+  const handleDelete = (id: string) => {
+    ; (async () => {
+      try {
+
+        const response = await deleteApplicationApi(id)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          setApplicationData((prevData: any) => prevData.filter((society: any) => society.id !== id))
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -356,10 +571,12 @@ export default function Applications() {
 
       case "addothers":
         setothers(false);
+        setSingleOthersData(null)
         break;
 
       case "addfoodcourt":
         setaddfoodcourt(false);
+        setSingleFoodCourtData(null)
         break;
 
       case "addbadminton":
@@ -372,6 +589,7 @@ export default function Applications() {
 
       case "gatepassview":
         setgatepassview(false);
+        setViewGatePassData(null)
         break;
 
       case "termsconditionsview":
@@ -388,6 +606,7 @@ export default function Applications() {
 
       case "addgatepass":
         setaddgatepass(false);
+        setSingleGatePassData(null)
         break;
 
       case "addchangeinname":
@@ -421,6 +640,7 @@ export default function Applications() {
 
       case "addcelebration":
         setaddcelebration(false);
+        setSingleCelebrationData(null)
         break;
 
       case "addtheater":
@@ -429,6 +649,7 @@ export default function Applications() {
 
       case "addbanquethall":
         setaddbanquethall(false);
+        setSingleBanquetHallData(null);
         break;
 
       case "addswimmingpool":
@@ -436,11 +657,13 @@ export default function Applications() {
         break;
 
       case "addclubhouse":
-        setaddclubhouse(false);
+        setaddclubhouse(false),
+          setSingleClubhouseData(null);
         break;
 
       case "addplayarea":
         setaddplayarea(false);
+        setSinglePlayAreaData(null)
         break;
 
       case "addturfarea":
@@ -458,31 +681,6 @@ export default function Applications() {
     }
   };
 
-  const enquiry = [
-    { value: "1", label: "Contact Detials of the Committee Members" },
-    { value: "2", label: "Contact Detials of the Members" },
-    { value: "3", label: "Access to the Society Documents" },
-    { value: "4", label: "Contact Detials of the Vendors" },
-    { value: "5", label: "Property Tax Related" },
-    { value: "6", label: "Society Bank Details" },
-    { value: "7", label: "Upcoming Events" },
-    { value: "8", label: "Others" },
-  ]
-
-  const documentsubmission = [
-    { value: "1", label: "Agreement Copy" },
-    { value: "2", label: "Index 2" },
-    { value: "3", label: "Rent Agreement" },
-    { value: "4", label: "Police Verification" },
-    { value: "5", label: "Loan Sanction Letter" },
-    { value: "6", label: "Others" },
-  ]
-
-  const otherstype = [
-    { value: "1", label: "Notice" },
-    { value: "2", label: "Announcement" },
-    { value: "3", label: "Community" },
-  ]
 
   const showname = [
     { value: "1", label: "Show 1" },
@@ -490,11 +688,7 @@ export default function Applications() {
     { value: "3", label: "Show 3" },
   ]
 
-  const day = [
-    { value: "1", label: "Full Day" },
-    { value: "2", label: "First Half" },
-    { value: "3", label: "Second Half" },
-  ]
+
 
   const duration = [
     { value: "1", label: "1hr" },
@@ -511,36 +705,6 @@ export default function Applications() {
   const gender = [
     { value: "1", label: "Male" },
     { value: "2", label: "Female" },
-  ]
-
-  const vehicletypegatepass = [
-    { value: "1", label: "Sedan" },
-    { value: "2", label: "Coupe" },
-    { value: "3", label: "Sports Car" },
-    { value: "4", label: "Station Wagon" },
-    { value: "5", label: "Hatchback" },
-    { value: "6", label: "Convertible" },
-    { value: "7", label: "SUV" },
-    { value: "8", label: "Minivan" },
-  ]
-
-  const flat = [
-    { value: "1", label: "Select Flat " },
-  ]
-
-  const wing = [
-    { value: "1", label: "Select Wing " },
-  ]
-  const designation = [
-    { value: "1", label: "Secretary " },
-    { value: "2", label: "Committe Member " },
-  ]
-
-
-  const vehiclenature = [
-    { value: "1", label: "Member Parking" },
-    { value: "2", label: "Visitor Parking" },
-    { value: "2", label: "Other" },
   ]
 
 
@@ -564,25 +728,6 @@ export default function Applications() {
 
   ];
 
-  const gatepasstenant = [
-    { value: "1", label: "Neha Gupta" }
-
-  ];
-
-  const vendor = [
-    { value: "1", label: "Ajay Kumar" }
-
-  ];
-
-  const gatetypesubcategory = [
-    { value: "1", label: "Member Shifting In" },
-    { value: "2", label: "Member Shifting Out" },
-    { value: "3", label: "Tenant Shifting In" },
-    { value: "4", label: "Tenant Shifting Out" },
-    { value: "5", label: "Asset Moving In" },
-    { value: "6", label: "Asset Moving Out" },
-  ];
-
   const applicationtype = [
     { value: "1", label: "All" },
     { value: "2", label: "Gate Pass" },
@@ -604,23 +749,6 @@ export default function Applications() {
     { value: "18", label: "Badminton Count" },
     { value: "19", label: "Food Court" },
     { value: "20", label: "Others" },
-  ]
-
-  const gatetype = [
-    { value: "1", label: "Inward" },
-    { value: "2", label: "Outward" },
-    { value: "2", label: "Internal" },
-  ]
-
-  const gatetypecategory = [
-    { value: "1", label: "Member" },
-    { value: "2", label: "Tenant" },
-    { value: "2", label: "Material" },
-  ]
-
-  const changetype = [
-    { value: "1", label: "Owner" },
-    { value: "2", label: "Co-owner" },
   ]
 
   const society = [
@@ -674,27 +802,6 @@ export default function Applications() {
 
   ]
 
-  const occasion = [
-    { value: "1", label: "Birthday" },
-    { value: "2", label: "Marriage" },
-    { value: "3", label: "House Warming" },
-    { value: "4", label: "Naming Ceremony" },
-    { value: "5", label: "Anniversary" },
-    { value: "6", label: "Festivals" },
-    { value: "7", label: "Reunion" },
-    { value: "8", label: "Retirement" },
-    { value: "9", label: "Other" },
-    { value: "10", label: "Get Together" },
-    { value: "11", label: "Event" },
-    { value: "12", label: "Camp" },
-  ]
-
-  const venue = [
-    { value: "1", label: "Flat" },
-    { value: "2", label: "Banquet Hall" },
-    { value: "3", label: "Parking Area" },
-  ]
-
   const sportactivity = [
     { value: "1", label: "Football" },
     { value: "2", label: "Cricket" },
@@ -722,6 +829,9 @@ export default function Applications() {
   }
   const handleFoodCourtClose = () => {
     viewDemoClose("addfoodcourt");
+  }
+  const handleOtherApplicationClose = () => {
+    viewDemoClose("addothers");
   }
   const handlePlayAreaClose = () => {
     viewDemoClose("addplayarea");
@@ -891,7 +1001,7 @@ export default function Applications() {
           </Modal>
 
           {
-            addgatepass && <GatePassModal show={addgatepass} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={false} />
+            addgatepass && singleGatePassData ? <GatePassModal show={addgatepass} initialVals={singleGatePassData} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={true} /> : <GatePassModal show={addgatepass} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={false} />
           }
 
           {/* gate pass view modal */}
@@ -903,7 +1013,7 @@ export default function Applications() {
               </Button>
             </Modal.Header>
 
-            <Modal.Body>
+            {/* <Modal.Body>
               <Tabs
                 defaultActiveKey="Tab 01"
                 id="uncontrolled-tab-example"
@@ -1056,6 +1166,196 @@ export default function Applications() {
                             <Col xl={12} className='tx-semibold tx-14'>-</Col>
                             <Col xl={12} className='mb-1 tx-12'>Description </Col>
                             <Col xl={12} className='tx-semibold tx-12'>-</Col>
+
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+
+                  </Row>
+                </Tab>
+                <Tab eventKey="ApprovalHistory" title="Approval History">
+
+                  <div className="table-responsive min-height500">
+                    <table className='table table-bordered'>
+                      <thead>
+                        <tr>
+                          <th>Step Name</th>
+                          <th>Date</th>
+                          <th>Status</th>
+                          <th>	Assigned To</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Approval level 2</td>
+                          <td>4/21/2023, 3:06 PM</td>
+                          <td>Rejected</td>
+                          <td>	Sarjerao Shinde</td>
+                        </tr>
+
+                        <tr>
+                          <td>Approval level 1</td>
+                          <td>4/21/2023, 3:02 PM</td>
+                          <td>Approved</td>
+                          <td>System Admin</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </Tab>
+
+
+              </Tabs>
+
+
+            </Modal.Body> */}
+            <Modal.Body>
+              <Tabs
+                defaultActiveKey="Tab 01"
+                id="uncontrolled-tab-example"
+                className="panel-tabs main-nav-line bd-b-1"
+                transition={false}
+              >
+
+                <Tab eventKey="Tab 01" title="Details">
+                  <Row>
+                    <Col xl={8}>
+                      <Card className='box-shadow border mt-3 border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Information</h5>
+                          <Row>
+                            <Col xl={12} className='mb-2'>
+                              <Form.Label>Society</Form.Label>
+                              <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-14 text-info'>{viewGatePassData?.societyIdentifier || ""}</Link>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Property</Form.Label>
+                              <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-14 text-info'>{viewGatePassData?.propertyIdentifier || ""}</Link>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Gate Type</Form.Label>
+                              <p className='tx-14'>{viewGatePassData?.gateType || ""}</p>
+                            </Col>
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Category</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>{viewGatePassData?.category || ""}</p>
+                            </Col>
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Tenant Name</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>{viewGatePassData?.tenantName || ""}</p>
+                            </Col>
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Sub Category</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>{viewGatePassData?.subCategory || ""}</p>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Member</Form.Label>
+                              <p className='tx-14'>{viewGatePassData?.userIdentifier || ""}</p>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Gate Pass Number</Form.Label>
+                              <p className='tx-14'>{viewGatePassData?.gatePassNumber || ""}</p>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Entry Date & Time</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>{viewGatePassData?.entryTime || ""}</p>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Exit Date & Time</Form.Label>
+                              <p className='tx-14'>{viewGatePassData?.exitTime || ""}</p>
+                            </Col>
+
+                          </Row>
+                        </Card.Body>
+                      </Card>
+
+                      <Card className='box-shadow border border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Approval Details</h5>
+
+                          <table className='table mt-3'>
+                            <thead>
+                              <tr>
+                                <th>Society</th>
+                                <th>Tower</th>
+                                <th>Wing</th>
+                                <th>Flat </th>
+                                <th>Approver</th>
+                                <th>Designation</th>
+                                <th>Application Type</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td className='align-top'>-</td>
+                                <td className='align-top'>Tower A</td>
+                                <td className='align-top'>A</td>
+                                <td className='align-top'>123</td>
+                                <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
+                                <td className='align-top'>Secretary</td>
+                                <td className='align-top'>Flat Resale</td>
+                              </tr>
+
+
+                            </tbody>
+                          </table>
+
+                        </Card.Body>
+                      </Card>
+                    </Col>
+
+                    <Col xl={4}>
+                      <Card className='box-shadow border mt-3 border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Vehicle and Driver Details</h5>
+                          <Row>
+                            <Col xl={5} className='mb-1 tx-12'>Driver Name</Col>
+                            <Col xl={7} className='tx-semibold tx-14'>{viewGatePassData?.driverName || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Driver Contact </Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.driverMobileNumber || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Vehicle Number</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.vehicleNumber || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Vehicle Model</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.vehicleModel || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Vehicle Nature</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.vehicleNature || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Vehicle Type</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.vehicleType || ""}</Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+
+                      <Card className='box-shadow border border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Contact Person Details</h5>
+                          <Row>
+                            <Col xl={5} className='mb-1 tx-12'>Contact Person</Col>
+                            <Col xl={7} className='tx-semibold tx-14'>{viewGatePassData?.contactPersonName || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Contact Number </Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.contactPersonNumber || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Remarks</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.remarks || ""}</Col>
+
+                          </Row>
+                        </Card.Body>
+                      </Card>
+
+
+                      <Card className='box-shadow border border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Application Description</h5>
+                          <Row>
+                            <Col xl={12} className='mb-1 tx-12'>Purpose</Col>
+                            <Col xl={12} className='tx-semibold tx-14'>{viewGatePassData?.purpose || ""}</Col>
+                            <Col xl={12} className='mb-1 tx-12'>Description </Col>
+                            <Col xl={12} className='tx-semibold tx-12'>{viewGatePassData?.description || ""}</Col>
 
                           </Row>
                         </Card.Body>
@@ -3744,11 +4044,11 @@ export default function Applications() {
           {/* Add Food Court */}
 
 
-          {addfoodcourt && <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
+          {addfoodcourt && singleFoodCourtData ? <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} initialVals={singleFoodCourtData} onClose={handleFoodCourtClose} editing={true} eventVenue="Food Court" name="Food Court" /> : <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
 
 
           {/* Add Others */}
-          <Modal show={addothers} size='xl' centered>
+          {/* <Modal show={addothers} size='xl' centered>
             <Modal.Header>
               <Modal.Title>Others</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addothers"); }}>
@@ -3982,7 +4282,8 @@ export default function Applications() {
               </Button>
 
             </Modal.Footer>
-          </Modal>
+          </Modal> */}
+          {addothers && singleOthersData ? <OtherApplicationModal initialVals={singleOthersData} show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={false} /> : <OtherApplicationModal show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={false} />}
         </div>
       </div>
 
@@ -4113,5 +4414,5 @@ export default function Applications() {
 }
 
 
-{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */ }
+{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */ }

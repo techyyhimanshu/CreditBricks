@@ -8,9 +8,64 @@ export const createNewGatePassApi = async (gatePassData: any): Promise<any> => {
         throw error
     }
 }
+export const updateGatePassApi = async (gatePassData: any,id:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.patch(`gatepass/${id}`, gatePassData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const createNewEventApi = async (eventData: any): Promise<any> => {
     try {
         const response = await axiosInstance.post(`event/new`, eventData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const updateEventApi = async (eventData: any,id:string): Promise<any> => {
+    try {
+        const response = await axiosInstance.patch(`event/${id}`, eventData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const createNewEnquiryApi = async (data: any): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.post(`other-enquiry/new-other-enquiry`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const createNewDocumentSubmissionApi = async (data: any): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.post(`other-document/new-other-document`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const createNewOtherApplicationApi = async (data: any): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.post(`other-other/new-other-other`, formData)
         return response
     } catch (error) {
         throw error
@@ -49,9 +104,9 @@ export const getSocietyVenueApi = async (id:string): Promise<any> => {
     }
 }
 
-export const getEventDetailsApi = async (id:string): Promise<any> => {
+export const getApplicationDetailsApi = async (id:string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`event/${id}`)
+        const response = await axiosInstance.get(`event/applications/${id}`)
         return response
     } catch (error) {
         throw error
