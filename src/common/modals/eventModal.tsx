@@ -10,7 +10,7 @@ import { getSocietyVenueApi } from "../../api/application-api";
 
 interface ProductModalProps {
     show: boolean;
-    onSave?: (values: any, modal: string) => void;
+    onSave?: (values: any, modal: string,editing:boolean) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -24,11 +24,11 @@ interface ProductModalProps {
 }
 
 const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, eventVenue, name, onSave, modal }) => {
-    console.log(initialVals)
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [, setCommiteeMemberData] = useState<any>(null);
     const [venuesForDropDown, setVenuesForDropDown] = useState([]);
+
 
     useEffect(() => {
         fetchSocietiesForDropDown()
@@ -122,6 +122,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
         { value: "Second Half", label: "Second Half" },
     ]
 
+
     // const venue = [
     //     { value: "Flat", label: "Flat" },
     //     { value: "Banquet Hall", label: "Banquet Hall" },
@@ -135,7 +136,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
     const handleSubmit = async (values: any) => {
         try {
-            const formattedData = {
+            const formattedData:any = {
                 propertyIdentifier: values?.property?.value,
                 applicationType: name,
                 occasionId: values?.occasion?.value,
@@ -152,8 +153,11 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 guestParking: values?.GuestParking === "Yes",
                 createdBy: "admin_user"
             };
+            if(editing){
+                formattedData.eventId=initialVals?.eventId
+            }
             if (onSave) {
-                onSave(formattedData, modal)
+                onSave(formattedData, modal, editing)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
@@ -164,7 +168,11 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
             showToast("error", errorMessage)
         }
     }
-    console.log(venuesForDropDown)
+
+    const formatDateTimeUTC = (isoString: string) => {
+        if (!isoString) return "";
+        return isoString.slice(0, 16); // trims to 'YYYY-MM-DDTHH:mm'
+    };
 
 
     return (
@@ -182,19 +190,19 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                     {{
                         society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
                         property: initialVals ? { label: initialVals.property?.propertyName, value: initialVals.property?.propertyIdentifier } : { label: "", value: "" },
-                        venue: initialVals ? { label: initialVals.venue?.venuName, value: initialVals.venue?.venuId } : { label: "", value: "" },
+                        venue: initialVals ? { label: initialVals.venue?.venueName, value: initialVals.venue?.venueId } : { label: "", value: "" },
                         occasion: initialVals ? { label: initialVals.occasionId, value: initialVals.occasionId } : { label: "", value: "" },
                         day: initialVals ? { label: initialVals.shift, value: initialVals.shift } : { label: "", value: "" },
                         guestNo: initialVals ? initialVals.guestCount : "",
-                        entryDateTime: initialVals ? initialVals.startDate : "",
-                        exitDateTime: initialVals ? initialVals.endDate : "",
+                        entryDateTime: initialVals ? formatDateTimeUTC(initialVals.startDate) : "",
+                        exitDateTime: initialVals ? formatDateTimeUTC(initialVals.endDate) : "",
                         organizerName: initialVals ? initialVals.organizer : "",
                         contactNo: initialVals ? initialVals.contact : "",
                         remarks: initialVals ? initialVals.remarks : "",
-                        CateringService: initialVals ? initialVals.Catering : "",
-                        Decorations: initialVals ? initialVals.decorations : "",
-                        SoundSystem: initialVals ? initialVals.sound : "",
-                        GuestParking: initialVals ? initialVals.guestParking : "",
+                        CateringService: initialVals?.catering === true ? "Yes" : initialVals?.catering === false ? "No" : "",
+                        Decorations: initialVals?.decorations === true ? "Yes" : initialVals?.decorations === false ? "No" : "",
+                        SoundSystem: initialVals?.sound === true ? "Yes" : initialVals?.sound === false ? "No" : "",
+                        GuestParking: initialVals?.guestParking === true ? "Yes" : initialVals?.guestParking === false ? "No" : "",
                         tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
                         wing: { value: initialVals?.wingIdentifier || "", label: initialVals?.wingName || "" },
                         approverSociety: { value: initialVals?.socityIdentifier || "", label: initialVals?.societyName || "" },
