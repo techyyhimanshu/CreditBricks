@@ -45,6 +45,8 @@ export default function AddVendorMaster() {
         vendorAddress: values.vendorAddress,
         gstin: values.gstin,
         pan: values.pan,
+        totalQunatity: values.totalQunatity,
+        usedQuantity: values.usedQuantity,
         aadharNumber: values.aadharNumber,
         product: values.product.value,
         serviceType: values.serviceType.value,
@@ -86,6 +88,8 @@ export default function AddVendorMaster() {
           gstin: '',
           aadharNumber: "",
           pan: '',
+          totalQunatity: '',
+          usedQunatity: '',
           product: { value: "", label: "" },
           serviceType: { value: "", label: "" },
           frequency: { value: "", label: "" },
@@ -174,6 +178,30 @@ export default function AddVendorMaster() {
                                   type="text"
                                   name="pan"
                                   placeholder="PAN Number"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Total Quantity</Form.Label>
+                                <Field
+                                  type="number"
+                                  name="totalQuantity"
+                                  placeholder="Total quantity"
+                                  className="form-control"
+                                />
+                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              </Form.Group>
+                            </Col>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Used Quantity</Form.Label>
+                                <Field
+                                  type="number"
+                                  name="usedQuantity"
+                                  placeholder="Used quantity"
                                   className="form-control"
                                 />
                                 {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}

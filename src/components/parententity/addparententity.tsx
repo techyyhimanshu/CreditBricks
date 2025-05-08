@@ -1,7 +1,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, CardHeader, Accordion } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, CardHeader, Accordion, Modal } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import DataTableExtensions from "react-data-table-component-extensions";
 import Select from "react-select";
@@ -14,13 +14,18 @@ import { getAllSocietyApi, getSocietyDetailsApi, updateSocietyApi } from '../../
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import DataTable from 'react-data-table-component';
-import { getWingPropertiesApi } from '../../api/property-api';
+import { getSinglePropertyDetailsApi, getWingPropertiesApi } from '../../api/property-api';
 import { getTowerWingsApi } from '../../api/wing-api';
 import { getSocietyTowersApi } from '../../api/tower-api';
-import { addNewCommiteeMemberApi } from '../../api/commitee-api';
+import { addNewCommiteeMemberApi, updateCommiteeMemberApi } from '../../api/commitee-api';
+import { getMemberDetailApi } from '../../api/member-api';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
+}
+interface OptionType {
+  label: string;
+  value: string;
 }
 const stateCitiesTyped: StateCities = stateCities;
 export default function AddParentEntity() {
@@ -63,10 +68,13 @@ export default function AddParentEntity() {
     }]
   });
   const [commiteeMemberData, setCommiteeMemberData] = useState<any[]>([]);
+  const [singleCommiteeMemberData, setSingleCommiteeMemberData] = useState<any>(null);
+  const [editCommiteeMember, setEditCommiteeMember] = useState(false);
   const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
   const [towerOptions, setTowerOptions] = useState<any[]>([]);
   const [societyDropDownData, setSocietyDropDownData] = useState<any[]>([]);
   const [wingOptions, setWingOptions] = useState<any[]>([]);
+  const [memberOptions, setMemberOptions] = useState<any[]>([]);
   const params = useParams()
   const identifier = params.identifier as string
 
@@ -114,6 +122,7 @@ export default function AddParentEntity() {
       cell: (row: any, index: number) => (
         <div>
           <button className="btn btn-light btn-sm"
+            onClick={() => { setSingleCommiteeMemberData(row), viewDemoShow("editCommiteeMember") }}
           >Edit</button>
           <button className="btn bg-info-transparent ms-2 btn-sm"
             onClick={() => handleDelete(index)}
@@ -181,9 +190,25 @@ export default function AddParentEntity() {
     { value: "Yearly", label: "Yearly" },
   ]
 
-  const society = [
-    { value: "1", label: "testname " },
-  ]
+  const viewDemoShow = (modal: any) => {
+    switch (modal) {
+      case "editCommiteeMember":
+        setEditCommiteeMember(true);
+        break;
+
+    }
+  };
+
+  const viewDemoClose = (modal: any) => {
+    switch (modal) {
+      case "editCommiteeMember":
+        setEditCommiteeMember(false);
+        setSingleCommiteeMemberData(null)
+        break;
+
+
+    }
+  };
 
   const [cityOptions, setCityOptions] = useState<any>([]);
 
@@ -250,7 +275,6 @@ export default function AddParentEntity() {
 
   }
   useEffect(() => {
-    fetchTowersForDropDown()
     fetchSocietiesForDropDown()
   }, [])
 
@@ -298,21 +322,60 @@ export default function AddParentEntity() {
     }
   }
 
-  const fetchTowersForDropDown = async () => {
-    try {
-      const response = await getSocietyTowersApi(identifier);
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.towerIdentifier,
-        label: item.towerName,
-      }));
-      setTowerOptions(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
+  const fetchTowersForDropDown = async (data: any) => {
+    const allTowers: any[] = [];
+
+    for (const society of data) {
+      try {
+        const response = await getSocietyTowersApi(society.value);
+        const towers = response.data.data.map((item: any) => ({
+          value: item.towerIdentifier,
+          label: item.towerName,
+        }));
+        allTowers.push(...towers);
+      } catch (error) {
+        const errorMessage = handleApiError(error);
+        showToast("error", errorMessage);
+      }
     }
+
+    setTowerOptions(allTowers);
   }
 
-  const handleAdd = async (values: any) => {
+  const fetchPropertyDetails = async (property: any) => {
+    try {
+      const response = await getSinglePropertyDetailsApi(property.value);
+
+      const formattedData = response.data.data?.propertyMembers?.map((item: any) => {
+        const { firstName, middleName, lastName } = item.member;
+        const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+
+
+        return {
+          value: item.memberIdentifier,
+          label: fullName,
+        };
+      });
+
+      setMemberOptions(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  };
+
+  const fetchMemberDetails = async (member: any, setFieldValue: any) => {
+    try {
+      const response = await getMemberDetailApi(member.value);
+      setFieldValue("approverContact", response.data.data?.mobileNumber)
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  };
+
+
+  const handleAdd = async (values: any, setFieldValue: any) => {
     const newMember = {
       societyName: values.societyName,
       societyIdentifier: identifier,
@@ -322,16 +385,35 @@ export default function AddParentEntity() {
       wingName: values.wing?.label,
       propertyIdentifier: values.property?.value,
       propertyName: values.property?.label,
-      fullName: values.approverName,
+      fullName: values.approverName?.label,
       contactNumber: values.approverContact,
       designation: values.designation?.value,
-      applicationType: values.applicationType?.value,
+      // applicationType: values.applicationType?.value,
+      applicationType: values.applicationType.map((item: any) => item.value),
     };
     try {
-      const response = await addNewCommiteeMemberApi(newMember)
-      if (response.status === 200) {
-        setCommiteeMemberData((prevData) => [...prevData, newMember]);
-      }
+      setCommiteeMemberData((prevData) => [...prevData, newMember]);
+      setFieldValue("tower", { value: "", label: "" });
+      setFieldValue("wing", { value: "", label: "" });
+      setFieldValue("society", { value: "", label: "" });
+      setFieldValue("property", { value: "", label: "" });
+      setFieldValue("approverName", "");
+      setFieldValue("approverContact", "");
+      setFieldValue("designation", { value: "", label: "" });
+      setFieldValue("applicationType", []);
+
+      // const response = await addNewCommiteeMemberApi(newMember)
+
+      // if (response.status === 200) {
+      //   setFieldValue("tower", { value: "", label: "" });
+      //   setFieldValue("wing", { value: "", label: "" });
+      //   setFieldValue("society", { value: "", label: "" });
+      //   setFieldValue("property", { value: "", label: "" });
+      //   setFieldValue("approverName", "");
+      //   setFieldValue("approverContact", "");
+      //   setFieldValue("designation", { value: "", label: "" });
+      //   setFieldValue("applicationType", []);
+      // }
     } catch (error) {
       const errorMessage = handleApiError(error);
       showToast("error", errorMessage);
@@ -343,7 +425,34 @@ export default function AddParentEntity() {
       prevData.filter((_: any, index: number) => index !== indexToDelete)
     );
   };
-  console.log(societyDropDownData)
+
+  const handleCommiteeMemberUpdate = async (values: any) => {
+    try {
+      const newMember = {
+        societyName: values.society?.label,
+        societyIdentifier: identifier,
+        towerIdentifier: values.tower?.value,
+        towerName: values.tower?.label,
+        wingIdentifier: values.wing?.value,
+        wingName: values.wing?.label,
+        propertyIdentifier: values.property?.value,
+        propertyName: values.property?.label,
+        fullName: values.approverName,
+        contactNumber: values.approverContact,
+        designation: values.designation?.value,
+        applicationType: values.applicationType.map((item: any) => item.value),
+      };
+
+      const response = await updateCommiteeMemberApi(newMember, singleCommiteeMemberData.committeeMemberIdentifier)
+      if (response.status === 201 || response.status === 200) {
+        showToast("success", response.data.message);
+      }
+      viewDemoClose("editCommiteeMember");
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -387,16 +496,17 @@ export default function AddParentEntity() {
               wing: { value: currentSociety?.wingIdentifier || "", label: currentSociety?.wingName || "" },
               society: { value: identifier || "", label: currentSociety?.societyName || "" },
               property: currentSociety ? { label: currentSociety.propertyName, value: currentSociety.propertyIdentifier } : { label: "", value: "" },
-              approverName: "",
+              approverName: { label: "", value: "" },
               approverContact: "",
               designation: { value: currentSociety?.designation || "", label: currentSociety?.designation || "" },
-              applicationType: { value: currentSociety?.applicationType || "", label: currentSociety?.applicationType || "" },
+              applicationType: [],
+              childSociety: []
             }
             }
             // validationSchema={validationScWhema}
             onSubmit={handleSubmit}
           >
-            {({ setFieldValue, values }) => {
+            {({ setFieldValue, values, resetForm }) => {
               const getFileExtension = (fileName: string) => {
                 if (!fileName) {
                   return '';
@@ -874,10 +984,16 @@ export default function AddParentEntity() {
                                     options={societyDropDownData}
                                     placeholder="Select Society"
                                     classNamePrefix="Select2"
+                                    name='childSociety'
+                                    onChange={(selected) => {setFieldValue("childSociety", selected)
+                                      fetchTowersForDropDown(selected || []);
+                                    }}
+                                    value={values.childSociety}
                                   />
                                   <ErrorMessage name="societyName" component="div" className="text-danger" />
                                 </Form.Group>
                               </Col>
+
 
                               {/* <Col xl={4}>
                                 <Form.Group className="form-group">
@@ -982,7 +1098,10 @@ export default function AddParentEntity() {
                                     options={propertiesForDropDown}
                                     classNamePrefix="Select2"
                                     name='property'
-                                    onChange={(selected) => setFieldValue("property", selected)}
+                                    onChange={(selected) => {
+                                      setFieldValue("property", selected)
+                                      fetchPropertyDetails(selected)
+                                    }}
                                     value={values.property}
                                   />
                                 </Form.Group>
@@ -1003,12 +1122,16 @@ export default function AddParentEntity() {
 
                               <Col xl={4}>
                                 <Form.Group className="form-group mb-1">
-                                  <Form.Label>Approver Name</Form.Label>
-                                  <Field
-                                    type="text"
-                                    name="approverName"
-                                    placeholder="Approver Name"
-                                    className="form-control"
+                                  <Form.Label>Approver Name </Form.Label>
+                                  <Select
+                                    options={memberOptions}
+                                    placeholder="Select Approver"
+                                    classNamePrefix="Select2"
+                                    name='approverName'
+                                    onChange={(selected) => {
+                                      fetchMemberDetails(selected, setFieldValue)
+                                      setFieldValue("approverName", selected);
+                                    }}
                                     value={values.approverName}
                                   />
                                 </Form.Group>
@@ -1046,7 +1169,8 @@ export default function AddParentEntity() {
                               <Col xl={4}>
                                 <Form.Group className="form-group mb-1">
                                   <Form.Label>Application Type </Form.Label>
-                                  <Select
+                                  <Select<OptionType, true>
+                                    isMulti
                                     options={applicationtype}
                                     placeholder="Select Type"
                                     classNamePrefix="Select2"
@@ -1061,11 +1185,16 @@ export default function AddParentEntity() {
 
                               <Col xl={12}>
                                 <Form.Group className="form-group float-end pt-2">
-                                  <Button className="btn btn-default ms-2" type="button">Clear </Button>
-                                  <Button className="btn btn-primary" type="button" onClick={() => handleAdd(values)}>ADD </Button>
+                                  <Button className="btn btn-default ms-2" type="button" onClick={() => resetForm()}>Clear </Button>
+                                  <Button className="btn btn-primary" type="button" onClick={() => handleAdd(values, setFieldValue)}>ADD </Button>
                                 </Form.Group>
                               </Col>
                             </Row>
+                            <Col xl={12}>
+                              <DataTableExtensions {...tableData}>
+                                <DataTable columns={columns} data={commiteeMemberData} pagination fixedHeader />
+                              </DataTableExtensions>
+                            </Col>
                           </Card.Body>
                         </Card>
                       </Accordion.Body>
@@ -1074,7 +1203,7 @@ export default function AddParentEntity() {
                   </Accordion>
                   <span className='float-end mb-5'>
                     <Button variant="default ms-3"> Cancel </Button>
-                    <Button className="btn btn-primary" type="submit">Update </Button>
+                    <Button className="btn btn-primary" type="submit">Save </Button>
                   </span>
 
                 </FormikForm>
@@ -1084,6 +1213,195 @@ export default function AddParentEntity() {
         ) : (
           <p>Loading society data...</p>
         )}
+        <Modal show={editCommiteeMember} centered>
+          <Modal.Header>
+            <Modal.Title>Edit Commitee Member</Modal.Title>
+            <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("editCommiteeMember"); }}>
+              x
+            </Button>
+          </Modal.Header>
+          <Formik
+            enableReinitialize
+            initialValues={{
+              commiteeMemberId: singleCommiteeMemberData?.commiteeMemberId || "",
+              tower: { value: singleCommiteeMemberData?.towerIdentifier || "", label: singleCommiteeMemberData?.towerName || "" },
+              wing: { value: singleCommiteeMemberData?.wingIdentifier || "", label: singleCommiteeMemberData?.wingName || "" },
+              society: { value: identifier || "", label: currentSociety?.societyName || "" },
+              property: singleCommiteeMemberData ? { label: singleCommiteeMemberData.propertyName, value: singleCommiteeMemberData.propertyIdentifier } : { label: "", value: "" },
+              approverName: singleCommiteeMemberData?.fullName || "",
+              approverContact: singleCommiteeMemberData?.contactNumber || "",
+              designation: { value: singleCommiteeMemberData?.designation || "", label: singleCommiteeMemberData?.designation || "" },
+              // applicationType: { value: singleCommiteeMemberData?.applicationType || "", label: singleCommiteeMemberData?.applicationType || "" },
+              applicationType: Array.isArray(singleCommiteeMemberData?.applicationType)
+                ? singleCommiteeMemberData.applicationType.map((item: any) => ({ label: item, value: item }))
+                : [],
+            }}
+            onSubmit={handleCommiteeMemberUpdate}
+          >
+            {({ setFieldValue, values }) => {
+              return (
+                <FormikForm>
+                  <Modal.Body className='pt-1'>
+                    <Row>
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            name='society'
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                            onChange={(selected) => setFieldValue("society", selected)}
+                            value={values.society}
+                            isDisabled
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Tower </Form.Label>
+                          <Select
+                            options={towerOptions}
+                            placeholder="Select Tower"
+                            classNamePrefix="Select2"
+                            name='tower'
+                            onChange={(selected) => {
+                              fetchWingsForDropDown(selected);
+                              setFieldValue("wing", null);
+                              setFieldValue("property", null);
+                              setFieldValue("tower", selected);
+                            }}
+                            value={values.tower}
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Wing </Form.Label>
+                          <Select
+                            options={wingOptions}
+                            placeholder="Select Wing"
+                            classNamePrefix="Select2"
+                            name='wing'
+                            onChange={(selected) => {
+                              fetchPropertiesForDropDown(selected);
+                              setFieldValue("property", null);
+                              setFieldValue("wing", selected);
+                            }}
+                            value={values.wing}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            placeholder="Select property"
+                            options={propertiesForDropDown}
+                            classNamePrefix="Select2"
+                            name='property'
+                            onChange={(selected) => setFieldValue("property", selected)}
+                            value={values.property}
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      {/* <Col xl={6}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Flat </Form.Label>
+                              <Select
+                                placeholder="Select Flat"
+                                classNamePrefix="Select2"
+                                name='flat'
+                              />
+                            </Form.Group>
+                          </Col> */}
+
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Name</Form.Label>
+                          <Field
+                            type="text"
+                            name="approverName"
+                            placeholder="Approver Name"
+                            className="form-control"
+                            value={values.approverName}
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Contact</Form.Label>
+                          <Field
+                            type="text"
+                            name="approverContact"
+                            placeholder="Contact"
+                            className="form-control"
+                            value={values.approverContact}
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Designation </Form.Label>
+                          <Select
+                            options={designation}
+                            placeholder="Select Designation"
+                            classNamePrefix="Select2"
+                            name='designation'
+                            onChange={(selected) => setFieldValue("designation", selected)}
+                            value={values.designation}
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Application Type </Form.Label>
+                          <Select
+                            isMulti
+                            options={applicationtype}
+                            placeholder="Select Type"
+                            classNamePrefix="Select2"
+                            name='applicationType'
+                            onChange={(selected) => setFieldValue("applicationType", selected)}
+                            value={values.applicationType}
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+
+
+                    </Row>
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button variant="default" onClick={() => { viewDemoClose("editCommiteeMember"); }}>
+                      Close
+                    </Button>
+                    <Button variant="primary" type='submit' >
+                      Save
+                    </Button>
+
+                  </Modal.Footer>
+                </FormikForm>
+              )
+            }}
+          </Formik>
+
+
+        </Modal>
       </Row>
       <CustomToastContainer />
 
