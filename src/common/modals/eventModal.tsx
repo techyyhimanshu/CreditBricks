@@ -96,6 +96,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 setFieldValue("approverProperty", { value: matched.propertyIdentifier, label: matched.propertyName });
                 setFieldValue("approverName", matched.fullName);
                 setFieldValue("approverContact", matched.contactNumber);
+                setFieldValue("approverIdentifier", matched.committeeMemberIdentifier);
                 setFieldValue("designation", { value: matched.designation, label: matched.designation });
             }
             setCommiteeMemberData(matched)
@@ -155,7 +156,8 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 decorations: values?.Decorations === "Yes",
                 sound: values?.SoundSystem === "Yes",
                 guestParking: values?.GuestParking === "Yes",
-                createdBy: "admin_user"
+                createdBy: "admin_user",
+                committeeMemberId:values.approverIdentifier
             };
             if (editing) {
                 formattedData.eventId = initialVals?.eventId
@@ -203,6 +205,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                         organizerName: initialVals ? initialVals.organizer : "",
                         contactNo: initialVals ? initialVals.contact : "",
                         remarks: initialVals ? initialVals.remark : "",
+                        approverIdentifier:"",
                         CateringService: initialVals?.catering === true ? "Yes" : initialVals?.catering === false ? "No" : "",
                         Decorations: initialVals?.decorations === true ? "Yes" : initialVals?.decorations === false ? "No" : "",
                         SoundSystem: initialVals?.sound === true ? "Yes" : initialVals?.sound === false ? "No" : "",

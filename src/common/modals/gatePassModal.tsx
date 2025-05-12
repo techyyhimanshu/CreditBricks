@@ -6,7 +6,7 @@ import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } fro
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
-import { getMembersOfPropertyApi, getPropertyOutstandingAmountApi, getSinglePropertyDetailsApi, getTenantsOfPropertyApi } from "../../api/property-api";
+import { getMembersOfPropertyApi, getPropertyOutstandingAmountApi,  getTenantsOfPropertyApi } from "../../api/property-api";
 import { getVendorForDropDownApi } from "../../api/vendor-api";
 
 interface ProductModalProps {
