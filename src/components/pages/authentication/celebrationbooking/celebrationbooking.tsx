@@ -24,8 +24,13 @@ const CelebrationBooking = () => {
                   className="card justify-content-center mx-auto"
                 >
                   <div className="card-sigin p-3">
-                  <img src={imagesData('logo')} className="w-200px m-auto d-block"  />
-                  <h4 className="text-center mt-3 mb-0">Celebration</h4>
+                    <Row>
+                                 <Col xl={12}>
+             <h3 className="float-start">Credit Bricks PVt Ltd</h3>
+             <h5 className="float-end mt-2 text-primary">Celebration</h5>
+
+             </Col>
+             </Row>
                   <Row>
                     <Col xl={12}>
                           <Card className='box-shadow border mt-3 border-primary mb-2'>
@@ -189,7 +194,7 @@ const CelebrationBooking = () => {
                         </Card.Body>
                       </Card>
                     </Col>
-                    <p className='ps-3'>Powered by <strong>CreditBricks</strong></p>
+                    <p className='ps-3'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1"  /></p>
                   </Row>
                   </div>
                 </Col>

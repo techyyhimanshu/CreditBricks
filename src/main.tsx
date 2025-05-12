@@ -94,6 +94,8 @@ const Main = () => {
                 <Route path={`${import.meta.env.BASE_URL}pages/authentication/404error`} element={<Error404 />} />
                 <Route path={`${import.meta.env.BASE_URL}pages/authentication/500error`} element={<Error500 />} />
                 <Route path={`${import.meta.env.BASE_URL}pages/authentication/privacypolicy`} element={<PrivacyPolicy />} />
+                <Route path={`${import.meta.env.BASE_URL}gatepassapproval`} element={<GatePassApproval />} />
+                <Route path={`${import.meta.env.BASE_URL}celebrationbooking`} element={<CelebrationBooking />} />
                 <Route path="*" element={<Error404 />} />
               </Route>
               <Route></Route>

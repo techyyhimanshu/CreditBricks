@@ -24,7 +24,12 @@ const GatePassApproval = () => {
                   className="card justify-content-center mx-auto"
                 >
                   <div className="card-sigin p-3">
-                  <img src={imagesData('logo')} className="w-200px m-auto d-block"  />
+                    <Row>
+                    <Col xl={12}>
+<h3 className="float-start">Credit Bricks PVt Ltd</h3>
+<h5 className="float-end mt-2 text-primary">Gate Pass</h5>
+</Col>
+</Row>
                   <Row>
                     <Col xl={8}>
                           <Card className='box-shadow border mt-3 border-primary mb-2'>
@@ -83,6 +88,11 @@ const GatePassApproval = () => {
                                                     <p className='tx-14'>10/23/2023, 12:00 PM </p>
                                                   </Col>
 
+                                                  <Col xl={4} className='mb-0'>
+                                                    <Form.Label>Outstanding</Form.Label>
+                                                    <p className='tx-14 tx-bold'>0.00 </p>
+                                                  </Col>
+
                                                 </Row>
                                               </Card.Body>
                                             </Card>
@@ -132,6 +142,35 @@ const GatePassApproval = () => {
                     </Col>
                     <Col xl={12}>
 
+                    <Card className='box-shadow border border-primary mb-2'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Documents</h5>
+<Row>
+<Col xl={3} className='mb-0'>
+                                                    <Form.Label>Sale Agreement Copy</Form.Label>
+                                                    <p className='tx-14'>Yes </p>
+                                                  </Col>
+
+                                                  <Col xl={3} className='mb-0'>
+                                                    <Form.Label>Flat Registration Certificate</Form.Label>
+                                                    <p className='tx-14'>Yes </p>
+                                                  </Col>
+
+                                                  <Col xl={3} className='mb-0'>
+                                                    <Form.Label>Home Loan Sanction Letter</Form.Label>
+                                                    <p className='tx-14'>Yes </p>
+                                                  </Col>
+
+                                                  <Col xl={3} className='mb-0'>
+                                                    <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
+                                                    <p className='tx-14'>No </p>
+                                                  </Col>
+</Row>
+
+
+
+                        </Card.Body>
+                      </Card>
 
                     <Card className='box-shadow border border-primary mb-2'>
                         <Card.Body>
@@ -187,7 +226,7 @@ const GatePassApproval = () => {
                         </Card.Body>
                       </Card>
                     </Col>
-                    <p className='ps-3'>Powered by <strong>CreditBricks</strong></p>
+                    <p className='ps-3'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1"  /></p>
                   </Row>
                   </div>
                 </Col>
