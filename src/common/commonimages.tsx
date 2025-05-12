@@ -91,6 +91,8 @@ import cash from '../assets/img/cash.png';
 import cheque from '../assets/img/cheque.png';
 import online from '../assets/img/online.png';
 
+import pdfinvoice from '../assets/maintenanacebill.pdf';
+
 export const imagesData = (idx: any) => {
   const images :any = {
     evaluationfrm,applicationfrm, feedbackfrm,
@@ -100,7 +102,7 @@ export const imagesData = (idx: any) => {
     us, italy, spain, india, french, mexico, singapore, poland, austria, russia, germany, argentina, brazil, uae, china, uk,
     malaysia, canada, favicon,faviconwhite, logo, logowhite , mainlogo, bgimg, bgimg1, bgimg2, bgimg3, bgimg4, logibg, totalbalance, totalreceipt, totalinvoice,
     pdficon, gatepass, conatctupdate,changename, parking, flatresale, interiorwork, celebration, theater, banquethall,clubhouse, swimmingpool, playarea, turfarea, rentagreement, sharecertificate, nomination, badminton, foodcourt, others,
-    cash, cheque, online, excelicon
+    cash, cheque, online, excelicon, pdfinvoice
 
   };
   return images[idx];
