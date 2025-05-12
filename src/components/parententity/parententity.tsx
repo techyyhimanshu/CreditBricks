@@ -306,39 +306,39 @@ export default function ParentEntity() {
             <Row>
               <Col xl={8}>
                 {/* Basic Information */}
-                <Card className='box-shadow border mt-3 border-primary'>
+                <Card className='box-shadow border border-primary'>
                   <Card.Body>
                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Information</h5>
                     <Row>
-                      <Col xl={6} className='mb-2'>
+                      <Col xl={12} className='mb-2'>
                         <Form.Label>Society Name</Form.Label>
                         <p className='tx-14'>{viewData?.parentSocietyName || "-"}</p>
                       </Col>
-                      <Col xl={6} className='mb-2'>
+                      <Col xl={4} className='mb-2'>
                         <Form.Label>Manager Name</Form.Label>
                         <p className='tx-14'>{viewData?.managerName || "-"}</p>
                       </Col>
-                      <Col xl={6} className='mb-2'>
+                      <Col xl={4} className='mb-2'>
                         <Form.Label>Contact Number</Form.Label>
                         <p className='tx-14'>{viewData?.parentContactNumber || "-"}</p>
                       </Col>
-                      <Col xl={6} className='mb-2'>
+                      <Col xl={4} className='mb-2'>
                         <Form.Label>Email</Form.Label>
                         <p className='tx-14'>{viewData?.email || "-"}</p>
                       </Col>
-                      <Col xl={6} className='mb-2'>
+                      <Col xl={4} className='mb-2'>
                         <Form.Label>Address</Form.Label>
                         <p className='tx-14'>{viewData?.address || "-"}</p>
                       </Col>
-                      <Col xl={6} className='mb-2'>
+                      <Col xl={4} className='mb-2'>
                         <Form.Label>Billing Frequency</Form.Label>
                         <p className='tx-14'>{viewData?.billingFrequency || "-"}</p>
                       </Col>
-                      <Col xl={6} className='mb-2'>
+                      <Col xl={4} className='mb-2'>
                         <Form.Label>Interest Rate</Form.Label>
                         <p className='tx-14'>{viewData?.interestRate || "-"}%</p>
                       </Col>
-                      <Col xl={6} className='mb-2'>
+                      <Col xl={4} className='mb-2'>
                         <Form.Label>Calculation Type</Form.Label>
                         <p className='tx-14'>{viewData?.calculationType || "-"}</p>
                       </Col>
@@ -354,8 +354,48 @@ export default function ParentEntity() {
                   </Card.Body>
                 </Card>
 
-                {/* Committee Members Table */}
-                <Card className='box-shadow border border-primary mt-3'>
+
+              </Col>
+
+              <Col xl={4}>
+                {/* Banking Info */}
+                <Card className='box-shadow border border-primary'>
+                  <Card.Body>
+                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Bank Details</h5>
+                    <Row>
+                      <Col xl={6} className='mb-2'>Bank Name</Col>
+                      <Col xl={6} className='tx-semibold'>{viewData?.bankName || "-"}</Col>
+                      <Col xl={6} className='mb-2'>Branch</Col>
+                      <Col xl={6} className='tx-semibold'>{viewData?.branchName || "-"}</Col>
+                      <Col xl={6} className='mb-2'>Account No.</Col>
+                      <Col xl={6} className='tx-semibold'>{viewData?.accountNumber || "-"}</Col>
+                      <Col xl={6} className='mb-2'>IFSC Code</Col>
+                      <Col xl={6} className='tx-semibold'>{viewData?.ifscCode || "-"}</Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+
+                {/* GST and Tax Details */}
+                <Card className='box-shadow border mt-3 border-primary'>
+                  <Card.Body>
+                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Tax Details</h5>
+                    <Row>
+                      <Col xl={6} className='mb-2'>GSTIN</Col>
+                      <Col xl={6} className='tx-semibold'>{viewData?.gstin || "-"}</Col>
+                      <Col xl={6} className='mb-2'>PAN</Col>
+                      <Col xl={6} className='tx-semibold'>{viewData?.panNumber || "-"}</Col>
+                      <Col xl={6} className='mb-2'>TAN</Col>
+                      <Col xl={6} className='tx-semibold'>{viewData?.tanNumber || "-"}</Col>
+                      <Col xl={6} className='mb-0'></Col>
+                      <Col xl={6} className='tx-semibold'><br></br></Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
+
+              <Col xl={12}>
+                 {/* Committee Members Table */}
+                 <Card className='box-shadow border border-primary'>
                   <Card.Body>
                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Committee Members</h5>
                     <div className='table-responsive'>
@@ -386,40 +426,6 @@ export default function ParentEntity() {
                         </tbody>
                       </table>
                     </div>
-                  </Card.Body>
-                </Card>
-              </Col>
-
-              <Col xl={4}>
-                {/* Banking Info */}
-                <Card className='box-shadow border mt-3 border-primary'>
-                  <Card.Body>
-                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Bank Details</h5>
-                    <Row>
-                      <Col xl={6} className='mb-2'>Bank Name</Col>
-                      <Col xl={6} className='tx-semibold'>{viewData?.bankName || "-"}</Col>
-                      <Col xl={6} className='mb-2'>Branch</Col>
-                      <Col xl={6} className='tx-semibold'>{viewData?.branchName || "-"}</Col>
-                      <Col xl={6} className='mb-2'>Account No.</Col>
-                      <Col xl={6} className='tx-semibold'>{viewData?.accountNumber || "-"}</Col>
-                      <Col xl={6} className='mb-2'>IFSC Code</Col>
-                      <Col xl={6} className='tx-semibold'>{viewData?.ifscCode || "-"}</Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-
-                {/* GST and Tax Details */}
-                <Card className='box-shadow border mt-3 border-primary'>
-                  <Card.Body>
-                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Tax Details</h5>
-                    <Row>
-                      <Col xl={6} className='mb-2'>GSTIN</Col>
-                      <Col xl={6} className='tx-semibold'>{viewData?.gstin || "-"}</Col>
-                      <Col xl={6} className='mb-2'>PAN</Col>
-                      <Col xl={6} className='tx-semibold'>{viewData?.panNumber || "-"}</Col>
-                      <Col xl={6} className='mb-2'>TAN</Col>
-                      <Col xl={6} className='tx-semibold'>{viewData?.tanNumber || "-"}</Col>
-                    </Row>
                   </Card.Body>
                 </Card>
               </Col>

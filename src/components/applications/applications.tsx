@@ -1288,7 +1288,7 @@ export default function Applications() {
               <Tabs
                 defaultActiveKey="Tab 01"
                 id="uncontrolled-tab-example"
-                className="panel-tabs main-nav-line bd-b-1"
+                className="panel-tabs main-nav-line bd-b-"
                 transition={false}
               >
 
@@ -1350,7 +1350,7 @@ export default function Applications() {
                         </Card.Body>
                       </Card>
 
-                      <Card className='box-shadow border border-primary'>
+                      <Card className='box-shadow border border-primary mb-0'>
                         <Card.Body>
                           <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Approval Details</h5>
 
@@ -1471,7 +1471,7 @@ export default function Applications() {
 
 
               </Tabs>
-
+              Powered by <img src={imagesData('logo')} className="wd-100p ms-1"  />
 
             </Modal.Body>
           </Modal>
