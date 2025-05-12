@@ -161,6 +161,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
             };
             if (editing) {
                 formattedData.eventId = initialVals?.eventId
+                formattedData.eventIdentifier=initialVals?.applicationIdentifier
             }
             if (onSave) {
                 onSave(formattedData, modal, editing)

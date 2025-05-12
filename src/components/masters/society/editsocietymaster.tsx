@@ -88,53 +88,74 @@ export default function EditSocietyMaster() {
       name: "Society",
       selector: (row: any) => row.societyName,
     },
-    {
-      name: "Tower",
-      selector: (row: any) => row.towerName,
-    },
-    {
-      name: "Wing",
-      selector: (row: any) => row.wingName,
-    },
+    // {
+    //   name: "Tower",
+    //   selector: (row: any) => row.towerName,
+    // },
+    // {
+    //   name: "Wing",
+    //   selector: (row: any) => row.wingName,
+    // },
     {
       name: "Property",
       selector: (row: any) => row.propertyName,
     },
     {
       name: "Approver",
-      selector: (row: any) => row.fullName,
+      cell: (row: any) => (
+        <div>
+          <div>{row.fullName}</div>
+          <div style={{ fontSize: '12px', color: '#666' }}>{row.contactNumber}</div>
+        </div>
+      ),
     },
-    {
-      name: "Approver Contact",
-      selector: (row: any) => row.contactNumber,
-    },
+    // {
+    //   name: "Approver",
+    //   selector: (row: any) => row.fullName,
+    // },
+    // {
+    //   name: "Approver Contact",
+    //   selector: (row: any) => row.contactNumber,
+    // },
     {
       name: "Designation",
       selector: (row: any) => row.designation,
     },
+    // {
+    //   name: "Application Type",
+    //   selector: (row: any) =>
+    //     Array.isArray(row.applicationType)
+    //       ? row.applicationType.map((opt: any) => opt.label || opt).join(", ")
+    //       : row.applicationType,
+    // },
     {
       name: "Application Type",
-      selector: (row: any) =>
-        Array.isArray(row.applicationType)
-          ? row.applicationType.map((opt: any) => opt.label || opt).join(", ")
-          : row.applicationType,
+      cell: (row: any) => (
+        <div style={{ whiteSpace: 'normal', wordBreak: 'break-word' }}>
+          {Array.isArray(row.applicationType)
+            ? row.applicationType.map((opt: any) => opt.label || opt).join(", ")
+            : row.applicationType}
+        </div>
+      ),
+      wrap: true, 
     },
+
 
     {
       name: "Actions",
       cell: (row: any) => (
         <div>
-           <Dropdown >
-                    <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                      Action
-                    </Dropdown.Toggle>
+          <Dropdown >
+            <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+              Action
+            </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                      <Dropdown.Item  onClick={() => { setSingleCommiteeMemberData(row), viewDemoShow("editCommiteeMember") }}>Edit</Dropdown.Item>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => { setSingleCommiteeMemberData(row), viewDemoShow("editCommiteeMember") }}>Edit</Dropdown.Item>
 
-                      <Dropdown.Item className='text-danger'  onClick={() => handleDelete(row.committeeMemberIdentifier)}>Delete</Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
+              <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.committeeMemberIdentifier)}>Delete</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
 
         </div>
       ),
@@ -326,10 +347,10 @@ export default function EditSocietyMaster() {
     }
   };
 
-  const fetchMemberDetails = async (member: any,setFieldValue:any) => {
+  const fetchMemberDetails = async (member: any, setFieldValue: any) => {
     try {
       const response = await getMemberDetailApi(member.value);
-      setFieldValue("approverContact",response.data.data?.mobileNumber)
+      setFieldValue("approverContact", response.data.data?.mobileNumber)
     } catch (error) {
       const errorMessage = handleApiError(error);
       showToast("error", errorMessage);
@@ -1066,7 +1087,7 @@ export default function EditSocietyMaster() {
                                 classNamePrefix="Select2"
                                 name='approverName'
                                 onChange={(selected) => {
-                                  fetchMemberDetails(selected,setFieldValue)
+                                  fetchMemberDetails(selected, setFieldValue)
                                   setFieldValue("approverName", selected);
                                 }}
                                 value={values.approverName}
@@ -1169,10 +1190,10 @@ export default function EditSocietyMaster() {
                           </tbody>
                         </table> */}
                         <Col xl={12}>
-                        <div className='table-rasponsive'>
-                          <DataTableExtensions {...tableData}>
-                            <DataTable columns={columns} data={commiteeMemberData} pagination fixedHeader />
-                          </DataTableExtensions>
+                          <div className='table-rasponsive'>
+                            <DataTableExtensions {...tableData}>
+                              <DataTable columns={columns} data={commiteeMemberData} pagination fixedHeader />
+                            </DataTableExtensions>
                           </div>
                         </Col>
 

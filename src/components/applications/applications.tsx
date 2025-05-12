@@ -367,7 +367,7 @@ export default function Applications() {
     try {
       let response;
       if (editing) {
-        response = await updateEventApi(values, values?.eventId || "")
+        response = await updateEventApi(values, values?.eventIdentifier || "")
       } else {
         response = await createNewEventApi(values)
       }
