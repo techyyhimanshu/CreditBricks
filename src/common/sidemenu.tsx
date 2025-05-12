@@ -127,7 +127,7 @@ export const MENUITEMS = [
         icon: (
           <i className="side-menu__icon bi bi-diagram-2"></i>
         ),
-        path: `${import.meta.env.BASE_URL}parententity/parententity`,
+        path: `${import.meta.env.BASE_URL}parententity`,
         type: "link",
         active: false,
         selected: false,

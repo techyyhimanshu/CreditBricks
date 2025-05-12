@@ -8,7 +8,7 @@ export const createNewGatePassApi = async (gatePassData: any): Promise<any> => {
         throw error
     }
 }
-export const updateGatePassApi = async (gatePassData: any,id:string): Promise<any> => {
+export const updateGatePassApi = async (gatePassData: any, id: string): Promise<any> => {
     try {
         const response = await axiosInstance.patch(`gatepass/${id}`, gatePassData)
         return response
@@ -24,7 +24,7 @@ export const createNewEventApi = async (eventData: any): Promise<any> => {
         throw error
     }
 }
-export const updateEventApi = async (eventData: any,id:string): Promise<any> => {
+export const updateEventApi = async (eventData: any, id: string): Promise<any> => {
     try {
         const response = await axiosInstance.patch(`event/${id}`, eventData)
         return response
@@ -45,6 +45,19 @@ export const createNewEnquiryApi = async (data: any): Promise<any> => {
         throw error
     }
 }
+export const updateEnquiryApi = async (data: any, id: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`other-enquiry/update-other-enquiry/${id}`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const createNewDocumentSubmissionApi = async (data: any): Promise<any> => {
     try {
         const formData = new FormData();
@@ -58,6 +71,19 @@ export const createNewDocumentSubmissionApi = async (data: any): Promise<any> =>
         throw error
     }
 }
+export const updateDocumentSubmissionApi = async (data: any, id: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`other-document/update-other-document/${id}`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const createNewOtherApplicationApi = async (data: any): Promise<any> => {
     try {
         const formData = new FormData();
@@ -66,6 +92,19 @@ export const createNewOtherApplicationApi = async (data: any): Promise<any> => {
 
         }
         const response = await axiosInstance.post(`other-other/new-other-other`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const updateOtherApplicationApi = async (data: any, id: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`other-other/update-other-other/${id}`, formData)
         return response
     } catch (error) {
         throw error
@@ -95,7 +134,7 @@ export const getAllApplicationApi = async (): Promise<any> => {
         throw error
     }
 }
-export const getSocietyVenueApi = async (id:string): Promise<any> => {
+export const getSocietyVenueApi = async (id: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`venue/society/${id}`)
         return response
@@ -104,7 +143,7 @@ export const getSocietyVenueApi = async (id:string): Promise<any> => {
     }
 }
 
-export const getApplicationDetailsApi = async (id:string): Promise<any> => {
+export const getApplicationDetailsApi = async (id: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`event/applications/${id}`)
         return response
@@ -113,7 +152,7 @@ export const getApplicationDetailsApi = async (id:string): Promise<any> => {
     }
 }
 
-export const deleteApplicationApi = async (id:string): Promise<any> => {
+export const deleteApplicationApi = async (id: string): Promise<any> => {
     try {
         const response = await axiosInstance.delete(`event/applications/${id}`)
         return response

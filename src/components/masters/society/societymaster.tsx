@@ -15,6 +15,8 @@ import { handleApiError } from '../../../helpers/handle-api-error';
 import { Link } from "react-router-dom";
 import TestLoader from '../../../layout/layoutcomponent/testloader';
 import { imagesData } from '../../../common/commonimages';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../common/store/store';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
@@ -37,6 +39,7 @@ export default function SocietyMaster() {
 
 
   const [isEditing,] = useState(false);
+  const { society } = useSelector((state: RootState) => state.auth)
   type Row = {
     societyIdentifier: string;
     sno: number;
@@ -136,7 +139,7 @@ export default function SocietyMaster() {
 
   const fetchSocietyData = async () => {
     try {
-      const response = await getAllSocietyApi();
+      const response = await getAllSocietyApi(society.value);
       const formattedData = response.data.data.map((item: any, index: number) => ({
         societyIdentifier: item.societyIdentifier,
         sno: index + 1,
@@ -169,7 +172,7 @@ export default function SocietyMaster() {
 
   useEffect(() => {
     fetchSocietyData();
-  }, []);
+  }, [society]);
 
 
   const handleStateChange = (selected: { value: string; label: string }) => {

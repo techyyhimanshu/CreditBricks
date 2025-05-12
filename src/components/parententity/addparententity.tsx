@@ -7,7 +7,7 @@ import DataTableExtensions from "react-data-table-component-extensions";
 import Select from "react-select";
 import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import stateCities from "../masters/stateCity.json"
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 // import { Uploader } from 'uploader';
 // import { UploadButton } from 'react-uploader';
 import { getAllSocietyApi, getSocietyDetailsApi, updateSocietyApi } from '../../api/society-api';
@@ -17,8 +17,9 @@ import DataTable from 'react-data-table-component';
 import { getSinglePropertyDetailsApi, getWingPropertiesApi } from '../../api/property-api';
 import { getTowerWingsApi } from '../../api/wing-api';
 import { getSocietyTowersApi } from '../../api/tower-api';
-import { addNewCommiteeMemberApi, updateCommiteeMemberApi } from '../../api/commitee-api';
+import {  updateCommiteeMemberApi } from '../../api/commitee-api';
 import { getMemberDetailApi } from '../../api/member-api';
+import { createNewParentEntityApi, getAllUnassignedChildSocietiesApi } from '../../api/parentEntity-api';
 // Define the types for the stateCities object
 interface StateCities {
   [key: string]: string[]; // Index signature
@@ -75,8 +76,7 @@ export default function AddParentEntity() {
   const [societyDropDownData, setSocietyDropDownData] = useState<any[]>([]);
   const [wingOptions, setWingOptions] = useState<any[]>([]);
   const [memberOptions, setMemberOptions] = useState<any[]>([]);
-  const params = useParams()
-  const identifier = params.identifier as string
+  
 
   const columns = [
     {
@@ -102,11 +102,11 @@ export default function AddParentEntity() {
     },
     {
       name: "Approver Name",
-      selector: (row: any) => row.approverName,
+      selector: (row: any) => row.fullName,
     },
     {
       name: "Approver Contact",
-      selector: (row: any) => row.approverContact,
+      selector: (row: any) => row.contactNumber,
     },
     {
       name: "Designation",
@@ -135,18 +135,7 @@ export default function AddParentEntity() {
     columns,
     data: commiteeMemberData
   };
-  // useEffect(() => {
-  //   const fetchSocietyDetails = async () => {
-  //     try {
-  //       const response = await getSocietyDetailsApi(identifier)
-  //       setCurrentSociety(response.data.data)
-  //     } catch (error: any) {
-  //       const errorMessage = handleApiError(error)
-  //       showToast('error', errorMessage)
-  //     }
-  //   }
-  //   fetchSocietyDetails()
-  // }, [])
+  
 
   const countryOptions: any = [{ value: "India", label: "India" }]
   const calculationtype = [
@@ -223,11 +212,11 @@ export default function AddParentEntity() {
   };
 
   const handleSubmit = (values: any) => {
-    const societyDataToUpdate = {
-      societyName: values.societyName,
-      societyManager: values.societyManager,
+    const parentSocietyData:any = {
+      parentSocietyName: values.societyName,
+      managerName: values.societyManager,
       email: values.email,
-      contactNumber: values.contactNumber,
+      parentContactNumber: values.contactNumber,
       address: values.address,
       country: values.country.value,
       state: values.state.value,
@@ -243,34 +232,45 @@ export default function AddParentEntity() {
       signatory: values.signatory,
       hsnCode: values.hsnCode,
       gstin: values.gstin,
-      bankName: values.bankName,
+      sociertyBankName: values.bankName,
       accountNumber: values.accountNumber,
       branchName: values.branchName,
       ifscCode: values.ifscCode,
       chequeFavourable: values.chequeFavourable,
-      paymentQrFile: values.paymentQrFile
+      parentSocietyQRCode: values.paymentQrFile,
+      children: values.childSociety.map((child: any) => ({
+        societyIdentifier: child.value
+      })),
+      committeeMembers: commiteeMemberData
     }
 
-      ; (async () => {
-        try {
-          // const response = await updateSocietyApi(societyDataToUpdate, currentSociety.societyIdentifier)
-          // if (response.status === 200) {
-          //   showToast("success", response.data.message)
-          //   // window.location.href = "/society/societymaster"
-          //   // Update specific society in the list
-          //   // setSocietyData(prevData =>
-          //   //   prevData.map(society =>
-          //   //     society.societyIdentifier === currentSociety.societyIdentifier
-          //   //       ? { ...society, ...data }
-          //   //       : society
-          //   //   )
-          //   // );
-          // }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error);
-          showToast("error", errorMessage);
+    const formData = new FormData();
+
+    for (const key in parentSocietyData) {
+      const value = parentSocietyData[key];
+
+      if (key === "parentSocietyQRCode" && value instanceof File) {
+        formData.append(key, value);
+      } else if (key === "children" || key === "committeeMembers") {
+        formData.append(key, JSON.stringify(value));
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    }
+
+    ; (async () => {
+      try {
+        const response = await createNewParentEntityApi(formData)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          window.location.href = "/parententity"
+          
         }
-      })()
+      } catch (error: any) {
+        const errorMessage = handleApiError(error);
+        showToast("error", errorMessage);
+      }
+    })()
 
 
   }
@@ -280,7 +280,8 @@ export default function AddParentEntity() {
 
   const fetchSocietiesForDropDown = async () => {
     try {
-      const response = await getAllSocietyApi();
+      const response = await getAllUnassignedChildSocietiesApi();
+      // const response = await getAllSocietyApi();
       const formattedData = response.data.data.map((item: any) => ({
         value: item.societyIdentifier,
         label: item.societyName,
@@ -377,8 +378,9 @@ export default function AddParentEntity() {
 
   const handleAdd = async (values: any, setFieldValue: any) => {
     const newMember = {
+      parentCommitteeMemberIdentifier: values.approverName?.value,
       societyName: values.societyName,
-      societyIdentifier: identifier,
+      // societyIdentifier: identifier,
       towerIdentifier: values.tower?.value,
       towerName: values.tower?.label,
       wingIdentifier: values.wing?.value,
@@ -388,7 +390,6 @@ export default function AddParentEntity() {
       fullName: values.approverName?.label,
       contactNumber: values.approverContact,
       designation: values.designation?.value,
-      // applicationType: values.applicationType?.value,
       applicationType: values.applicationType.map((item: any) => item.value),
     };
     try {
@@ -401,19 +402,6 @@ export default function AddParentEntity() {
       setFieldValue("approverContact", "");
       setFieldValue("designation", { value: "", label: "" });
       setFieldValue("applicationType", []);
-
-      // const response = await addNewCommiteeMemberApi(newMember)
-
-      // if (response.status === 200) {
-      //   setFieldValue("tower", { value: "", label: "" });
-      //   setFieldValue("wing", { value: "", label: "" });
-      //   setFieldValue("society", { value: "", label: "" });
-      //   setFieldValue("property", { value: "", label: "" });
-      //   setFieldValue("approverName", "");
-      //   setFieldValue("approverContact", "");
-      //   setFieldValue("designation", { value: "", label: "" });
-      //   setFieldValue("applicationType", []);
-      // }
     } catch (error) {
       const errorMessage = handleApiError(error);
       showToast("error", errorMessage);
@@ -430,7 +418,7 @@ export default function AddParentEntity() {
     try {
       const newMember = {
         societyName: values.society?.label,
-        societyIdentifier: identifier,
+        // societyIdentifier: identifier,
         towerIdentifier: values.tower?.value,
         towerName: values.tower?.label,
         wingIdentifier: values.wing?.value,
@@ -443,10 +431,7 @@ export default function AddParentEntity() {
         applicationType: values.applicationType.map((item: any) => item.value),
       };
 
-      const response = await updateCommiteeMemberApi(newMember, singleCommiteeMemberData.committeeMemberIdentifier)
-      if (response.status === 201 || response.status === 200) {
-        showToast("success", response.data.message);
-      }
+     
       viewDemoClose("editCommiteeMember");
     } catch (error) {
       const errorMessage = handleApiError(error)
@@ -457,7 +442,7 @@ export default function AddParentEntity() {
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
         <div className="left-content">
-          <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}society/societymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Add Parent</span>
+          <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}parententity`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Add Parent</span>
         </div>
       </div>
 
@@ -494,7 +479,7 @@ export default function AddParentEntity() {
               fileName: currentSociety?.accountDetails[0]?.paymentQrPath || "",
               tower: { value: currentSociety?.towerIdentifier || "", label: currentSociety?.towerName || "" },
               wing: { value: currentSociety?.wingIdentifier || "", label: currentSociety?.wingName || "" },
-              society: { value: identifier || "", label: currentSociety?.societyName || "" },
+              society: { value:  "", label: currentSociety?.societyName || "" },
               property: currentSociety ? { label: currentSociety.propertyName, value: currentSociety.propertyIdentifier } : { label: "", value: "" },
               approverName: { label: "", value: "" },
               approverContact: "",
@@ -985,7 +970,8 @@ export default function AddParentEntity() {
                                     placeholder="Select Society"
                                     classNamePrefix="Select2"
                                     name='childSociety'
-                                    onChange={(selected) => {setFieldValue("childSociety", selected)
+                                    onChange={(selected) => {
+                                      setFieldValue("childSociety", selected)
                                       fetchTowersForDropDown(selected || []);
                                     }}
                                     value={values.childSociety}
@@ -1226,7 +1212,7 @@ export default function AddParentEntity() {
               commiteeMemberId: singleCommiteeMemberData?.commiteeMemberId || "",
               tower: { value: singleCommiteeMemberData?.towerIdentifier || "", label: singleCommiteeMemberData?.towerName || "" },
               wing: { value: singleCommiteeMemberData?.wingIdentifier || "", label: singleCommiteeMemberData?.wingName || "" },
-              society: { value: identifier || "", label: currentSociety?.societyName || "" },
+              society: { value:  "", label: currentSociety?.societyName || "" },
               property: singleCommiteeMemberData ? { label: singleCommiteeMemberData.propertyName, value: singleCommiteeMemberData.propertyIdentifier } : { label: "", value: "" },
               approverName: singleCommiteeMemberData?.fullName || "",
               approverContact: singleCommiteeMemberData?.contactNumber || "",

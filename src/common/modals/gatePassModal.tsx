@@ -6,12 +6,12 @@ import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } fro
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
-import { getMembersOfPropertyApi, getTenantsOfPropertyApi } from "../../api/property-api";
+import { getMembersOfPropertyApi, getPropertyOutstandingAmountApi, getSinglePropertyDetailsApi, getTenantsOfPropertyApi } from "../../api/property-api";
 import { getVendorForDropDownApi } from "../../api/vendor-api";
 
 interface ProductModalProps {
     show: boolean;
-    onSave: (values: any,editing:boolean) => void;
+    onSave: (values: any, editing: boolean) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -126,7 +126,6 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         { value: "Visitor Parking", label: "Visitor Parking" },
         { value: "Other", label: "Other" },
     ]
-    console.log(initialVals)
 
     const vehicletypegatepass = [
         { value: "Sedan", label: "Sedan" },
@@ -163,9 +162,20 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         }
     }
 
+    const fetchOutstandingAmount = async (property: any,setFieldValue:any) => {
+        try {
+            const response = await getPropertyOutstandingAmountApi(property.value);
+            setFieldValue("outstandingAmount",response.data.data)
+
+        } catch (error) {
+            const errorMessage = handleApiError(error);
+            showToast("error", errorMessage);
+        }
+    };
+
     const handleSubmit = async (values: any) => {
         try {
-            const formattedData:any = {
+            const formattedData: any = {
                 societyIdentifier: values.society.value,
                 propertyIdentifier: values.property.value,
                 gateType: values.gateType.value,
@@ -193,11 +203,11 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 approverContact: initialVals?.contactNumber || "",
                 designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
             }
-            if(editing){
-                formattedData.gatePassNumber=initialVals.gatePassNumber
+            if (editing) {
+                formattedData.gatePassNumber = initialVals.gatePassNumber
             }
             if (onSave) {
-                onSave(formattedData,editing)
+                onSave(formattedData, editing)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
@@ -229,7 +239,8 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                         subCategory: initialVals ? { label: initialVals.subCategory, value: initialVals.gateTypeSubCategoryIdentifier } : { label: "", value: "" },
                         entryDateTime: initialVals ? initialVals.entryDateTime : "",
                         exitDateTime: initialVals ? initialVals.exitDateTime : "",
-                        gatePassNumber:initialVals?initialVals.gatePassNumber:"",
+                        gatePassNumber: initialVals ? initialVals.gatePassNumber : "",
+                        outstandingAmount: initialVals ? initialVals.outstandingAmount : "",
                         member: initialVals ? { label: `${initialVals.user.firstName || ""} ${initialVals.user.middleName || ""} ${initialVals.user.lastName || ""}`.replace(/\s+/g, " ").trim(), value: initialVals.user?.identifier } : { label: "", value: "" },
                         tenant: initialVals ? { label: initialVals.tenantName, value: initialVals.tenantIdentifier } : { label: "", value: "" },
                         vendor: initialVals ? { label: initialVals.vendorName, value: initialVals.vendorIdentifier } : { label: "", value: "" },
@@ -291,6 +302,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                 value={values.property}
                                                                 onChange={(selected) => {
                                                                     setFieldValue("property", selected);
+                                                                    fetchOutstandingAmount(selected,setFieldValue)
                                                                 }}
                                                                 placeholder="Select property"
                                                                 classNamePrefix="Select2"
@@ -402,6 +414,20 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                 placeholder="Gate Pass Number"
                                                                 className="form-control"
                                                             ></Form.Control>
+                                                            {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                        </Form.Group>
+                                                    </Col>
+                                                    <Col xl={4}>
+                                                        <Form.Group className="form-group mb-1">
+                                                            <Form.Label>Outstanding Amount</Form.Label>
+                                                            <Field
+                                                                type="text"
+                                                                disabled
+                                                                name="outstandingAmount"
+                                                                
+                                                                placeholder="Outstanding Amount"
+                                                                className="form-control"
+                                                            />
                                                             {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                         </Form.Group>
                                                     </Col>

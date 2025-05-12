@@ -8,7 +8,7 @@ import { showToast, CustomToastContainer } from '../../common/services/toastServ
 import { imagesData } from "../../common/commonimages";
 import Accordion from 'react-bootstrap/Accordion';
 import EventModal from '../../common/modals/eventModal';
-import { createNewDocumentSubmissionApi, createNewEnquiryApi, createNewEventApi, createNewGatePassApi, createNewOtherApplicationApi, deleteApplicationApi, getAllApplicationApi, getApplicationDetailsApi, updateEventApi, updateGatePassApi } from '../../api/application-api';
+import { createNewDocumentSubmissionApi, createNewEnquiryApi, createNewEventApi, createNewGatePassApi, createNewOtherApplicationApi, deleteApplicationApi, getAllApplicationApi, getApplicationDetailsApi, updateDocumentSubmissionApi, updateEnquiryApi, updateEventApi, updateGatePassApi, updateOtherApplicationApi } from '../../api/application-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import TestLoader from '../../layout/layoutcomponent/testloader';
 import DataTable from 'react-data-table-component';
@@ -41,6 +41,8 @@ export default function Applications() {
   const [tenatview, settenatview] = useState(false);
   const [termsconditionsview, settermsconditionsview] = useState(false);
   const [gatepassview, setgatepassview] = useState(false);
+  const [celebrationview, setcelebrationview] = useState(false);
+  const [otherapplicationview, setotherapplicationview] = useState(false);
   const [addnomination, setaddnomination] = useState(false);
   const [addbadminton, setaddbadminton] = useState(false);
   const [addfoodcourt, setaddfoodcourt] = useState(false);
@@ -283,7 +285,7 @@ export default function Applications() {
 
           case "CB":
             setSingleCelebrationData(data);
-            viewDemoShow("viewEvent");
+            viewDemoShow("celebrationview");
             break;
 
           case "CH":
@@ -320,7 +322,7 @@ export default function Applications() {
           case "OE":
           case "OO":
             setSingleOthersData(data);
-            viewDemoShow("viewothers");
+            viewDemoShow("otherapplicationview");
             break;
 
           case "IN":
@@ -377,7 +379,7 @@ export default function Applications() {
       viewDemoClose(modal)
     }
   }
-  const handleGatePassSave = async (values: any,editing:boolean) => {
+  const handleGatePassSave = async (values: any, editing: boolean) => {
     try {
       let response;
       if (editing) {
@@ -397,16 +399,29 @@ export default function Applications() {
       viewDemoClose("addgatepass")
     }
   }
-  const handleOtherApplicationSave = async (values: any, tab: string) => {
+  const handleOtherApplicationSave = async (values: any, tab: string, editing: boolean) => {
     try {
       let response;
 
       if (tab === "documentSubmission") {
-        response = await createNewDocumentSubmissionApi(values);
+        if (editing) {
+          response = await updateDocumentSubmissionApi(values, values.id);
+        } else {
+          response = await createNewDocumentSubmissionApi(values);
+        }
       } else if (tab === "enquiry") {
-        response = await createNewEnquiryApi(values);
+        if (editing) {
+          response = await updateEnquiryApi(values, values.id);
+        } else {
+          response = await createNewEnquiryApi(values);
+        }
+
       } else if (tab === "other") {
-        response = await createNewOtherApplicationApi(values);
+        if (editing) {
+          response = await updateOtherApplicationApi(values, values.id);
+        } else {
+          response = await createNewOtherApplicationApi(values);
+        }
       } else {
         showToast("error", "Unknown tab selected");
       }
@@ -464,6 +479,25 @@ export default function Applications() {
 
       case "gatepassview":
         setgatepassview(true);
+        break;
+      case "celebrationview":
+        setcelebrationview(true);
+        break;
+      case "banquethallview":
+        setcelebrationview(true);
+        break;
+      case "foodcourtview":
+        setcelebrationview(true);
+        break;
+      case "playareaview":
+        setcelebrationview(true);
+        break;
+      case "clubhouseview":
+        setcelebrationview(true);
+        break;
+
+      case "otherapplicationview":
+        setotherapplicationview(true);
         break;
 
       case "termsconditionsview":
@@ -590,6 +624,31 @@ export default function Applications() {
       case "gatepassview":
         setgatepassview(false);
         setViewGatePassData(null)
+        break;
+
+      case "celebrationview":
+        setcelebrationview(false);
+        setSingleCelebrationData(null)
+        break;
+      case "banquethallview":
+        setcelebrationview(false);
+        setSingleCelebrationData(null)
+        break;
+      case "foodcourtview":
+        setcelebrationview(false);
+        setSingleCelebrationData(null)
+        break;
+      case "playareaview":
+        setcelebrationview(false);
+        setSingleCelebrationData(null)
+        break;
+      case "clubhouseview":
+        setcelebrationview(false);
+        setSingleCelebrationData(null)
+        break;
+      case "otherapplicationview":
+        setotherapplicationview(false);
+        setSingleOthersData(null)
         break;
 
       case "termsconditionsview":
@@ -832,12 +891,19 @@ export default function Applications() {
   }
   const handleOtherApplicationClose = () => {
     viewDemoClose("addothers");
+    setSingleOthersData(null)
   }
   const handlePlayAreaClose = () => {
     viewDemoClose("addplayarea");
   }
   const handleCelebrationClose = () => {
     viewDemoClose("addcelebration");
+  }
+  const handleCelebrationViewClose = () => {
+    viewDemoClose("celebrationview");
+  }
+  const handleOtherApplicationViewClose = () => {
+    viewDemoClose("otherapplicationview");
   }
 
 
@@ -1001,7 +1067,7 @@ export default function Applications() {
           </Modal>
 
           {
-            addgatepass && singleGatePassData ? <GatePassModal show={addgatepass} initialVals={singleGatePassData} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={true} /> : <GatePassModal show={addgatepass} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={false} />
+            addgatepass && (singleGatePassData ? <GatePassModal show={addgatepass} initialVals={singleGatePassData} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={true} /> : <GatePassModal show={addgatepass} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={false} />)
           }
 
           {/* gate pass view modal */}
@@ -2744,7 +2810,10 @@ export default function Applications() {
 
           {/* Add celebration */}
 
-          {addcelebration && <EventModal show={addcelebration} onSave={handleEventSave} onClose={handleCelebrationClose} editing={false} name="Celebration" modal="addcelebration" />}
+          {addcelebration && (singleCelebrationData ? <EventModal show={addcelebration} initialVals={singleCelebrationData} onSave={handleEventSave} onClose={handleCelebrationClose} editing={true} name="Celebration" modal="addcelebration" /> : <EventModal show={addcelebration} onSave={handleEventSave} onClose={handleCelebrationClose} editing={false} name="Celebration" modal="addcelebration" />)}
+          {
+            celebrationview && <EventModal show={celebrationview} initialVals={singleCelebrationData} onClose={handleCelebrationViewClose} editing={false} name="Celebration" modal="addcelebration" />
+          }
 
           {/* Add theater */}
           <Modal show={addtheater} centered>
@@ -2866,11 +2935,11 @@ export default function Applications() {
           </Modal>
 
 
-          {addbanquethall && banquetToView? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={banquetToView} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall"/>:<EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />}
+          {addbanquethall && (singleBanquetHallData ? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={singleBanquetHallData} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" /> : <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />)}
           {/* {addbanquethall && <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />} */}
           {/* Add Club House */}
 
-          {addclubhouse && <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" modal="addclubhouse" />}
+          {addclubhouse && (singleClubhouseData ? <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} initialVals={singleClubhouseData} editing={true} eventVenue="Club House" name="Club House" modal="addclubhouse" /> : <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" modal="addclubhouse" />)}
 
           {/* Add Swimming pool */}
           <Modal show={addswimmingpool} centered size='xl'>
@@ -3121,7 +3190,7 @@ export default function Applications() {
 
           {/* Add Play Area */}
 
-          {addplayarea && <EventModal show={addplayarea} modal="addplayarea" onSave={handleEventSave} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />}
+          {addplayarea && (singlePlayAreaData ? <EventModal show={addplayarea} modal="addplayarea" initialVals={singlePlayAreaData} onSave={handleEventSave} onClose={handlePlayAreaClose} editing={true} eventVenue="Play Area" name="Play Area" /> : <EventModal show={addplayarea} modal="addplayarea" onSave={handleEventSave} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />)}
 
 
           {/* Add Turf Area */}
@@ -4044,7 +4113,7 @@ export default function Applications() {
           {/* Add Food Court */}
 
 
-          {addfoodcourt && singleFoodCourtData ? <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} initialVals={singleFoodCourtData} onClose={handleFoodCourtClose} editing={true} eventVenue="Food Court" name="Food Court" /> : <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
+          {addfoodcourt && (singleFoodCourtData ? <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} initialVals={singleFoodCourtData} onClose={handleFoodCourtClose} editing={true} eventVenue="Food Court" name="Food Court" /> : <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />)}
 
 
           {/* Add Others */}
@@ -4283,7 +4352,10 @@ export default function Applications() {
 
             </Modal.Footer>
           </Modal> */}
-          {addothers && singleOthersData ? <OtherApplicationModal initialVals={singleOthersData} show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={false} /> : <OtherApplicationModal show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={false} />}
+          {addothers && (singleOthersData ? <OtherApplicationModal initialVals={singleOthersData} show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={true} /> : <OtherApplicationModal show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={false} />)}
+          {
+            otherapplicationview && <OtherApplicationModal show={otherapplicationview} initialVals={singleOthersData} onClose={handleOtherApplicationViewClose} editing={false} />
+          }
         </div>
       </div>
 
