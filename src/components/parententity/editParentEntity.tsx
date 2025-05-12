@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, CardHeader, Accordion, Modal } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, CardHeader, Accordion, Modal, Dropdown } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import DataTableExtensions from "react-data-table-component-extensions";
 import Select from "react-select";
@@ -50,6 +50,7 @@ export default function EditParentEntity() {
             name: "S.no.",
             cell: (_: any, index: number) => index + 1,
             sortable: true,
+            width: '80px'
         },
         {
             name: "Society",
@@ -68,7 +69,7 @@ export default function EditParentEntity() {
             selector: (row: any) => row.propertyName,
         },
         {
-            name: "Approver Name",
+            name: "Approver",
             selector: (row: any) => row.fullName,
         },
         {
@@ -88,12 +89,18 @@ export default function EditParentEntity() {
             name: "Actions",
             cell: (row: any, index: number) => (
                 <div>
-                    <button className="btn btn-light btn-sm"
-                        onClick={() => { setSingleCommiteeMemberData(row), viewDemoShow("editCommiteeMember") }}
-                    >Edit</button>
-                    <button className="btn bg-info-transparent ms-2 btn-sm"
-                        onClick={() => handleDelete(index)}
-                    >Delete</button>
+                       <Dropdown >
+                                        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                          Action
+                                        </Dropdown.Toggle>
+
+                                        <Dropdown.Menu>
+                                          <Dropdown.Item   onClick={() => { setSingleCommiteeMemberData(row), viewDemoShow("editCommiteeMember") }}>Edit</Dropdown.Item>
+
+                                          <Dropdown.Item className='text-danger'    onClick={() => handleDelete(index)}>Delete</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                      </Dropdown>
+
                 </div>
             ),
         },
@@ -434,6 +441,7 @@ export default function EditParentEntity() {
                 <div className="left-content">
                     <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}parententity`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Edit Parent</span>
                 </div>
+
             </div>
 
             <Row>

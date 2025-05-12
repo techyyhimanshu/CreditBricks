@@ -160,6 +160,9 @@ export default function ParentEntity() {
         <div className="left-content">
           <span className="main-content-title mg-b-0 mg-b-lg-1"> Parent Entity</span>
         </div>
+        <div className="right-content">
+        <Link to={`${import.meta.env.BASE_URL}parententity/addparententity`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Parent</Link>
+                </div>
       </div>
 
       <Row>
@@ -178,9 +181,7 @@ export default function ParentEntity() {
               <Card className='m-0'>
                 <CardHeader>
                   <h3 className='card-title'>Add Parent Entity</h3>
-                  <div className="right-content">
-                    <Link to={`${import.meta.env.BASE_URL}parententity/addparententity`} className="btn btn-primary p-1 pe-2 ps-2 me-1"><i className="bi bi-plus"></i> Add Parent</Link>
-                  </div>
+
                 </CardHeader>
                 <Card.Body className='pt-0 pb-1'>
                   <Row>

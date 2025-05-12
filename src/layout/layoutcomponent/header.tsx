@@ -45,7 +45,7 @@ export default function Header() {
 
   useEffect(() => {
     const localStorageKey = 'selectedSociety';
-  
+
     const checkAndSetSociety = () => {
       const storedSociety = localStorage.getItem(localStorageKey);
       if (storedSociety) {
@@ -58,16 +58,16 @@ export default function Header() {
         store.dispatch(setSociety(firstSociety))
       }
     };
-  
+
     checkAndSetSociety();
-  
+
     window.addEventListener('focus', checkAndSetSociety);
-  
+
     return () => {
       window.removeEventListener('focus', checkAndSetSociety);
     };
   }, [societyDropDownData]);
-  
+
 
   const handleChange = (selected: any) => {
     setSelectedSociety(selected);
@@ -559,8 +559,8 @@ export default function Header() {
                             <h6 className="dropdown-title w-100 mb-1 tx-15 font-weight-semibold text-black">
                               Society List
                               {/* <Form.Control className="form-control w-100 mt-2" placeholder="Search Society" type="text"></Form.Control> */}
-                              <Col xl={12}>
-                                <Form.Group className="form-group mb-1">
+
+                                <Form.Group className="form-group mt-3 mb-1">
                                   {/* <Form.Label>Society </Form.Label> */}
                                   <Select
                                     options={societyDropDownData}
@@ -571,7 +571,7 @@ export default function Header() {
                                     onChange={handleChange}
                                   />
                                 </Form.Group>
-                              </Col>
+
                             </h6>
 
 
