@@ -1,6 +1,6 @@
 
 import { Fragment, useEffect, useState } from 'react';
-import { Col, Row, Card, Tabs, Tab, FormLabel, Tooltip, Dropdown, OverlayTrigger } from "react-bootstrap";
+import { Col, Row, Card, Tabs, Tab, FormLabel, Tooltip, Dropdown, OverlayTrigger, Modal, Button } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getPropertComplaintsApi, getPropertLoansApi, getSinglePropertyDetailsApi } from '../../../api/property-api';
 import DataTable from 'react-data-table-component';
@@ -15,6 +15,7 @@ import { deleteComplaintApi, getAllPropertiesForDropdownApi, updateComplaintApi,
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { deleteLoanApi, updateLoanApi } from '../../../api/loan-api';
 import TestLoader from '../../../layout/layoutcomponent/testloader';
+import { imagesData } from '../../../common/commonimages';
 
 
 export default function PropertyView() {
@@ -37,6 +38,8 @@ export default function PropertyView() {
   // if (!propertyData) {
   //   return <p>No property data available.</p>;
   // }
+
+    const [documentview, setdocumentview] = useState(false);
 
   const complaintColumns = [
     {
@@ -269,6 +272,11 @@ export default function PropertyView() {
         setaddcomplaint(true);
         break;
 
+        case "documentview":
+          setdocumentview(true);
+          break;
+
+
       case "addloans":
         setaddloans(true);
         break;
@@ -288,6 +296,11 @@ export default function PropertyView() {
       case "addcomplaint":
         setaddcomplaint(false);
         break;
+
+        case "documentview":
+          setdocumentview(false);
+          break;
+
 
       case "addloans":
         setaddloans(false);
@@ -988,27 +1001,87 @@ export default function PropertyView() {
                     </Tab>
 
                     <Tab eventKey="Documents" title="Documents">
-                      <div className="tabs-menu-body main-content-body-right">
-
-                        <Card className='m-3 mb-5'>
-                          <Card.Body>
-                            <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Documents</h5>
-
-                            <div className="table-responsive ">
-                              <DataTableExtensions {...tableData}>
-                                <DataTable
-                                  columns={complaintColumns}
-                                  data={complaintData}
-                                  pagination
+                      <div className="tabs-menu-body main-content-body-right p-3">
 
 
-                                />
-                              </DataTableExtensions>
-                            </div>
-                            {/* N/A */}
 
-                          </Card.Body>
-                        </Card>
+<Row>
+  <Col xl={4}>
+<div className='documentbox'>
+ <img src={imagesData('pdficon')}  />
+
+           <div className='documentname'>
+            <strong>Agreement Copy</strong>
+
+              <div className='action-icon-circle' onClick={() => { viewDemoShow("documentview"); }}>
+            <i className='bi bi-eye' title='view'></i>
+            </div>
+            <div className='action-icon-circle'>
+            <i className='bi bi-download text-info' title='download'></i>
+            </div>
+
+           </div>
+
+</div>
+  </Col>
+
+  <Col xl={4}>
+<div className='documentbox'>
+ <img src={imagesData('pdficon')}  />
+
+           <div className='documentname'>
+            <strong>Index 2</strong>
+
+              <div className='action-icon-circle' onClick={() => { viewDemoShow("documentview"); }}>
+            <i className='bi bi-eye' title='view'></i>
+            </div>
+            <div className='action-icon-circle'>
+            <i className='bi bi-download text-info' title='download'></i>
+            </div>
+
+           </div>
+
+</div>
+  </Col>
+
+  <Col xl={4}>
+<div className='documentbox'>
+ <img src={imagesData('pdficon')}  />
+
+           <div className='documentname'>
+            <strong>Police Verification</strong>
+              <div className='action-icon-circle' onClick={() => { viewDemoShow("documentview"); }}>
+            <i className='bi bi-eye' title='view'></i>
+            </div>
+            <div className='action-icon-circle'>
+            <i className='bi bi-download text-info' title='download'></i>
+            </div>
+
+           </div>
+
+</div>
+  </Col>
+
+  <Col xl={4}>
+<div className='documentbox'>
+ <img src={imagesData('pdficon')}  />
+
+           <div className='documentname'>
+            <strong>Loan Sanction Letter</strong>
+              <div className='action-icon-circle' onClick={() => { viewDemoShow("documentview"); }}>
+            <i className='bi bi-eye' title='view'></i>
+            </div>
+            <div className='action-icon-circle'>
+            <i className='bi bi-download text-info' title='download'></i>
+            </div>
+
+           </div>
+
+</div>
+  </Col>
+</Row>
+
+
 
 
 
@@ -1035,6 +1108,24 @@ export default function PropertyView() {
             viewcomplaint && singleComplaintData && <ComplaintViewModal show={viewcomplaint} onClose={handleComplaintViewClose} initialVals={singleComplaintData} onSave={handleComplaintStatusUpdate} />
           }
           <CustomToastContainer />
+
+           {/* Document View */}
+                    <Modal show={documentview} size="xl" centered>
+                      <Modal.Header>
+                          <Modal.Title>Document</Modal.Title>
+                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("documentview"); }}>
+                          x
+                        </Button>
+                      </Modal.Header>
+
+                      <Modal.Body>
+
+                      <iframe className='iframeDocument'
+                        src={imagesData('pdfinvoice')}  >
+                </iframe>
+                      </Modal.Body>
+
+                    </Modal>
 
         </Fragment >
       }

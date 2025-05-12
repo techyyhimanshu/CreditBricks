@@ -85936,3 +85936,27 @@ width: 100%;
 
 .css-13cymwt-control{min-height: 41px;}
 .kfxOgr{min-height: 180px !important;}
+.documentbox{display: flex; margin-bottom:25px; box-shadow: 0 20px 27px 0 rgba(0, 0, 0, .23); padding:10px;
+        background-color: #fff;
+        /* border: 1px solid #ccc; */
+        border-radius: 15px;}
+
+.documentbox img{height: 70px;
+    background: #fff;
+    border-radius: 100%;
+    margin: 10px;
+    border: 1px solid #ccc;}
+.documentbox .documentname{padding:10px}
+.documentbox .documentname strong{width:100%; font-weight:500; display: block;}
+.action-icon-circle{display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    text-align: center;
+    margin-top: 10px;
+    background: #ededf5;
+    margin-right: 7px;
+    cursor: pointer;}
+    .iframeDocument{width:100%; height:600px; overflow: auto;}
