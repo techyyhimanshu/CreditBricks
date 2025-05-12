@@ -38,7 +38,7 @@ export default function Applications() {
   const [addturfarea, setaddturfarea] = useState(false);
   const [addrentagreement, setaddrentagreement] = useState(false);
   const [addsharecerificate, setaddsharecerificate] = useState(false);
-  const [tenatview, settenatview] = useState(false);
+
   const [termsconditionsview, settermsconditionsview] = useState(false);
   const [gatepassview, setgatepassview] = useState(false);
   const [celebrationview, setcelebrationview] = useState(false);
@@ -508,10 +508,6 @@ export default function Applications() {
         settermsconditionsview(true);
         break;
 
-      case "tenatview":
-        settenatview(true);
-        break;
-
       case "addapplication":
         setapplication(true);
         break;
@@ -657,10 +653,6 @@ export default function Applications() {
 
       case "termsconditionsview":
         settermsconditionsview(false);
-        break;
-
-      case "tenatview":
-        settenatview(false);
         break;
 
       case "addapplication":
@@ -1504,217 +1496,7 @@ export default function Applications() {
             </Modal.Body>
           </Modal>
 
-          {/* Tenant View */}
-          <Modal show={tenatview} size="xl" centered>
-            <Modal.Header>
-              <Modal.Title>Tenant Details</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("tenatview"); }}>
-                x
-              </Button>
-            </Modal.Header>
 
-            <Modal.Body className='bg-light'>
-              <Row>
-                <Col xl={8}>
-                  <Card>
-                    <Card.Body>
-                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Details</h5>
-                      <Row>
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Society Name</Form.Label>
-                          <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>N/A</Link>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Property Name</Form.Label>
-                          <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>N/A</Link>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Tenant Name</Form.Label>
-                          <p className='tx-15'>Rohit Sharma</p>
-                        </Col>
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Tenant Number</Form.Label>
-                          <p className='tx-15 col-sm-11 p-0'>1212621024</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Alternative Mobile</Form.Label>
-                          <p className='tx-15 col-sm-11 p-0'>-</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Tenant Email</Form.Label>
-                          <p className='tx-15'>orhit@gmail.com</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Date Of Birth</Form.Label>
-                          <p className='tx-15'>2025-02-27</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Address</Form.Label>
-                          <p className='tx-15 col-sm-11 p-0'>123st lauren</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>City</Form.Label>
-                          <p className='tx-15'>Delhi</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>State</Form.Label>
-                          <p className='tx-15'>Delhi</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Country</Form.Label>
-                          <p className='tx-15'>India</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Pincode</Form.Label>
-                          <p className='tx-15'>250007</p>
-                        </Col>
-
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Family Members</Form.Label>
-                          <p className='tx-15'>8</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Pets</Form.Label>
-                          <p className='tx-15'>false</p>
-                        </Col>
-
-                      </Row>
-                    </Card.Body>
-                  </Card>
-
-                </Col>
-
-                <Col xl={4}>
-
-                  <Card>
-                    <Card.Body className='pb-3'>
-                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Current Lease</h5>
-                      <Row>
-                        <Col xl={6}>
-                          <p className='mb-0 text-muted'>Agreement Start Date</p>
-                          <p className='tx-15 tx-semibold'>2025-02-28</p>
-                          <p className='mb-0 text-muted'>Agreement End Date</p>
-                          <p className='tx-15 tx-semibold mb-2'>2025-04-05</p>
-                        </Col>
-                        <Col xl={6} className='text-end'>
-                          <p className='mb-0 text-muted'>Monthly Rent</p>
-                          <p className='tx-15 tx-semibold text-primary'>₹ 5000</p>
-                          <p className='mb-0 pt-2 text-muted'></p>
-                          {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
-                        </Col>
-
-                        <Col xl={12}>
-
-                          <Row>
-                            <Col xl={6} className='text-muted text-bold'>
-                              180 days left
-                            </Col>
-                            <Col xl={6} className='text-end text-muted text-bold'>
-                              365 days left
-                            </Col>
-                          </Row>
-                        </Col>
-
-                        <Col xl={6}>
-                          <p className='mb-0 mt-2 text-muted'>Due Amount</p>
-                          <p className='tx-15 tx-semibold'>₹ 1000</p>
-                        </Col>
-                        <Col xl={6}>
-                          <p className='mb-0 mt-2 text-muted text-end'>Deposit Amount</p>
-                          <p className='tx-15 tx-semibold mb-0 text-end'>₹ 4000</p>
-                        </Col>
-
-                      </Row>
-
-                    </Card.Body>
-
-                  </Card>
-
-
-                  <Card>
-                    <Card.Body className='pb-1'>
-                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
-                      <Row>
-                        <Col xl={2} className='p-0'>
-                          <img
-                            alt="" className='w-100'
-                            src={imagesData('pdficon')}
-                          />
-                        </Col>
-                        <Col xl={9} className='p-0'>
-                          <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : 565675756</p>
-                          <Link to={``} className="text-info">Download</Link>
-                        </Col>
-                      </Row>
-
-
-                      <Row>
-                        <Col xl={2} className='p-0'>
-                          <img alt="" className='w-100'
-                            src={imagesData('pdficon')}
-                          />
-                        </Col>
-                        <Col xl={9} className='p-0'>
-                          <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
-                          <Link to={``}
-                            className="text-info">
-                            Download
-                          </Link>
-                        </Col>
-
-                      </Row>
-                    </Card.Body>
-                  </Card>
-
-
-                  <Card>
-                    <Card.Body className='pb-1'>
-                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
-                      <Row>
-
-
-
-                        <Row>
-                          <Col xl={2} className='p-0'>
-                            <img
-                              alt="Vehicle Icon"
-                              className='w-100'
-                              src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
-                            />
-                          </Col>
-                          <Col xl={9} className='p-0'>
-                            <p className='tx-14 mb-0 mt-2 tx-semibold'>
-                              Vehicle No. dl1ct1004  <span className='text-muted'>(4Wheeler)</span>
-                            </p>
-                            <Link to={``}
-                              className="text-info" >
-                              Download
-                            </Link>
-                          </Col>
-                        </Row>
-
-                      </Row>
-                    </Card.Body>
-                  </Card>
-
-
-                </Col>
-              </Row>
-            </Modal.Body>
-
-          </Modal>
 
           {/* Add Change In Name */}
           <Modal show={addchangeinname} centered size='lg'>
@@ -2117,10 +1899,10 @@ export default function Applications() {
             </Modal.Footer>
           </Modal>
 
-          {/* Add Flate Resale */}
+          {/* Add Flat Resale */}
           <Modal show={addflateresale} size="xl" centered>
             <Modal.Header>
-              <Modal.Title>Flate Resale</Modal.Title>
+              <Modal.Title>Flat Resale</Modal.Title>
               <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addflateresale"); }}>
                 x
               </Button>

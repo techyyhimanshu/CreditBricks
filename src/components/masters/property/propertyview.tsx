@@ -987,6 +987,34 @@ export default function PropertyView() {
 
                     </Tab>
 
+                    <Tab eventKey="Documents" title="Documents">
+                      <div className="tabs-menu-body main-content-body-right">
+
+                        <Card className='m-3 mb-5'>
+                          <Card.Body>
+                            <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Documents</h5>
+
+                            <div className="table-responsive ">
+                              <DataTableExtensions {...tableData}>
+                                <DataTable
+                                  columns={complaintColumns}
+                                  data={complaintData}
+                                  pagination
+
+
+                                />
+                              </DataTableExtensions>
+                            </div>
+                            {/* N/A */}
+
+                          </Card.Body>
+                        </Card>
+
+
+
+                      </div>
+                    </Tab>
+
                   </Tabs>
                 </div>
               </div>
