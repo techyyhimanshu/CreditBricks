@@ -42,6 +42,10 @@ export default function Applications() {
   const [termsconditionsview, settermsconditionsview] = useState(false);
   const [gatepassview, setgatepassview] = useState(false);
   const [celebrationview, setcelebrationview] = useState(false);
+  const [banquethallview, setbanquethallview] = useState(false);
+  const [clubhouseview, setclubhouseview] = useState(false);
+  const [playareaview, setplayareaview] = useState(false);
+  const [foodcourtview, setfoodcourtview] = useState(false);
   const [otherapplicationview, setotherapplicationview] = useState(false);
   const [addnomination, setaddnomination] = useState(false);
   const [addbadminton, setaddbadminton] = useState(false);
@@ -280,7 +284,7 @@ export default function Applications() {
         switch (prefix) {
           case "BH":
             setSingleBanquetHallData(data);
-            viewDemoShow("viewEvent");
+            viewDemoShow("banquethallview");
             break;
 
           case "CB":
@@ -290,17 +294,17 @@ export default function Applications() {
 
           case "CH":
             setSingleClubhouseData(data);
-            viewDemoShow("viewEvent");
+            viewDemoShow("clubhouseview");
             break;
 
           case "PA":
             setSinglePlayAreaData(data);
-            viewDemoShow("viewEvent");
+            viewDemoShow("playareaview");
             break;
 
           case "FC":
             setSingleFoodCourtData(data);
-            viewDemoShow("viewEvent");
+            viewDemoShow("foodcourtview");
             break;
 
           case "CP":
@@ -484,16 +488,16 @@ export default function Applications() {
         setcelebrationview(true);
         break;
       case "banquethallview":
-        setcelebrationview(true);
+        setbanquethallview(true);
         break;
       case "foodcourtview":
-        setcelebrationview(true);
+        setfoodcourtview(true);
         break;
       case "playareaview":
-        setcelebrationview(true);
+        setplayareaview(true);
         break;
       case "clubhouseview":
-        setcelebrationview(true);
+        setclubhouseview(true);
         break;
 
       case "otherapplicationview":
@@ -630,21 +634,21 @@ export default function Applications() {
         setcelebrationview(false);
         setSingleCelebrationData(null)
         break;
-      case "banquethallview":
-        setcelebrationview(false);
-        setSingleCelebrationData(null)
+      case "clubhouseview":
+        setclubhouseview(false);
+        setSingleClubhouseData(null)
         break;
-      case "foodcourtview":
-        setcelebrationview(false);
-        setSingleCelebrationData(null)
+      case "banquethallview":
+        setbanquethallview(false);
+        setSingleBanquetHallData(null)
         break;
       case "playareaview":
-        setcelebrationview(false);
-        setSingleCelebrationData(null)
+        setplayareaview(false);
+        setSinglePlayAreaData(null)
         break;
-      case "clubhouseview":
-        setcelebrationview(false);
-        setSingleCelebrationData(null)
+      case "foodcourtview":
+        setfoodcourtview(false);
+        setSingleFoodCourtData(null)
         break;
       case "otherapplicationview":
         setotherapplicationview(false);
@@ -901,6 +905,18 @@ export default function Applications() {
   }
   const handleCelebrationViewClose = () => {
     viewDemoClose("celebrationview");
+  }
+  const handleClubHouseViewClose = () => {
+    viewDemoClose("clubhouseview");
+  }
+  const handleBanquetHallViewClose = () => {
+    viewDemoClose("banquethallview");
+  }
+  const handleFoodCourtViewClose = () => {
+    viewDemoClose("foodcourtview");
+  }
+  const handlePlayAreaViewClose = () => {
+    viewDemoClose("playareaview");
   }
   const handleOtherApplicationViewClose = () => {
     viewDemoClose("otherapplicationview");
@@ -2929,11 +2945,18 @@ export default function Applications() {
 
 
           {addbanquethall && (singleBanquetHallData ? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={singleBanquetHallData} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" /> : <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />)}
+
+          {
+            banquethallview && <EventModal show={banquethallview} initialVals={singleBanquetHallData} onClose={handleBanquetHallViewClose} editing={false} name="Banquet hall" modal="addbanquethall" />
+          }
           {/* {addbanquethall && <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />} */}
           {/* Add Club House */}
 
           {addclubhouse && (singleClubhouseData ? <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} initialVals={singleClubhouseData} editing={true} eventVenue="Club House" name="Club House" modal="addclubhouse" /> : <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" modal="addclubhouse" />)}
 
+          {
+            clubhouseview && <EventModal show={clubhouseview} initialVals={singleClubhouseData} onClose={handleClubHouseViewClose} editing={false} name="Club House" modal="addclubhouse" />
+          }
           {/* Add Swimming pool */}
           <Modal show={addswimmingpool} centered size='xl'>
             <Modal.Header>
@@ -3185,6 +3208,9 @@ export default function Applications() {
 
           {addplayarea && (singlePlayAreaData ? <EventModal show={addplayarea} modal="addplayarea" initialVals={singlePlayAreaData} onSave={handleEventSave} onClose={handlePlayAreaClose} editing={true} eventVenue="Play Area" name="Play Area" /> : <EventModal show={addplayarea} modal="addplayarea" onSave={handleEventSave} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />)}
 
+          {
+            playareaview && <EventModal show={playareaview} initialVals={singlePlayAreaData} onClose={handlePlayAreaViewClose} editing={false} name="Play Area" modal="addplayarea" />
+          }
 
           {/* Add Turf Area */}
           <Modal show={addturfarea} centered>
@@ -4108,6 +4134,9 @@ export default function Applications() {
 
           {addfoodcourt && (singleFoodCourtData ? <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} initialVals={singleFoodCourtData} onClose={handleFoodCourtClose} editing={true} eventVenue="Food Court" name="Food Court" /> : <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />)}
 
+          {
+            foodcourtview && <EventModal show={foodcourtview} initialVals={singleFoodCourtData} onClose={handleFoodCourtViewClose} editing={false} name="Food Court" modal="addfoodcourt" />
+          }
 
           {/* Add Others */}
           {/* <Modal show={addothers} size='xl' centered>
