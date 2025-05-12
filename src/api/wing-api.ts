@@ -9,9 +9,13 @@ export const addWingApi = async (data: any): Promise<any> => {
         throw error
     }
 }
-export const getAllWingApi = async (): Promise<any> => {
+export const getAllWingApi = async (societyIdentifier?:string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`/wing/all`)
+        const params:any={}
+        if(societyIdentifier){
+            params.society_identifier=societyIdentifier
+        }
+        const response = await axiosInstance.get(`/wing/all`,{params})
         return response
     } catch (error) {
         throw error

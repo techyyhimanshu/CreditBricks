@@ -8,9 +8,13 @@ export const addSocietyApi = async (data: any): Promise<any> => {
         throw error
     }
 }
-export const getAllSocietyApi = async (): Promise<any> => {
+export const getAllSocietyApi = async (societyIdentifier?: string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`/society/all`)
+        const params: any = {};
+        if (societyIdentifier) {
+            params.society_identifier = societyIdentifier;
+        }
+        const response = await axiosInstance.get(`/society/all`,{params})
         return response
     } catch (error) {
         throw error

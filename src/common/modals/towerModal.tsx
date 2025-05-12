@@ -10,6 +10,8 @@ import { showToast } from '../services/toastServices';
 // import { getTowerWingsApi } from '../../api/wing-api';
 // import { getSocietyTowersApi } from '../../api/tower-api';
 import { getAllSocietyApi, getSocietyOwnerApi } from '../../api/society-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 interface ModalProps {
     show: boolean;
@@ -27,6 +29,7 @@ interface ModalProps {
 const TowerModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, editing }) => {
     const [societyData, setSocietyData] = useState<any[]>([]);
     const [, setSocietyOwner] = useState("");
+    const { society } = useSelector((state: RootState) => state.auth)
 
     const societyOptions = societyData?.map((society) => ({
         value: society.societyIdentifier,
@@ -51,7 +54,7 @@ const TowerModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, 
         }
     }
 
-    
+
     const fetchSocietyOwner = async (society: any) => {
         try {
             const response = await getSocietyOwnerApi(society.value);
@@ -75,12 +78,12 @@ const TowerModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, 
     }
 
     const validationSchema = Yup.object({
-            towerName: Yup.string().required('Tower name is required'),
-            society: Yup.object({
-                value: Yup.string().required('Society is required'),
-            }).required('Society is required'),
-            // zipcode: Yup.string().required('Zipcode is required'),
-        })
+        towerName: Yup.string().required('Tower name is required'),
+        society: Yup.object({
+            value: Yup.string().required('Society is required'),
+        }).required('Society is required'),
+        // zipcode: Yup.string().required('Zipcode is required'),
+    })
     return (
         <>
             <Modal show={show} centered>
@@ -95,34 +98,41 @@ const TowerModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, 
                     validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                    {({ setFieldValue, values, errors, touched }) => (
-                        <FormikForm>
-                            <Modal.Header>
-                                <Modal.Title>{editing ? "Edit Tower" : "Add Tower"}</Modal.Title>
-                                <Button variant="" className="btn-close" onClick={(event) => { event.preventDefault(), onClose() }}>
-                                    x
-                                </Button>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Form.Group className="form-group">
-                                    <Form.Label>Society<span className="text-danger">*</span></Form.Label>
-                                    <Select
-                                        options={societyOptions}
-                                        value={values.society}
-                                        onChange={(selected) => {
-                                            setFieldValue("society", selected)
-                                            fetchSocietyOwner(selected)
-                                        }}
-                                        placeholder="Select Society"
-                                        classNamePrefix="Select2"
-                                    />
-                                    {/* Custom Error Rendering for `society` */}
-                                    {touched.society?.value && errors.society?.value && (
-                                        <div className="text-danger">{errors.society.value as string}</div>
-                                    )}
+                    {({ setFieldValue, values, errors, touched }) => {
+                        useEffect(() => {
+                            if (society && !initialVals) {
+                                setFieldValue("society", society);
+                            }
+                        }, [society]);
+                        return (
+                            <FormikForm>
+                                <Modal.Header>
+                                    <Modal.Title>{editing ? "Edit Tower" : "Add Tower"}</Modal.Title>
+                                    <Button variant="" className="btn-close" onClick={(event) => { event.preventDefault(), onClose() }}>
+                                        x
+                                    </Button>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <Form.Group className="form-group">
+                                        <Form.Label>Society<span className="text-danger">*</span></Form.Label>
+                                        <Select
+                                            options={societyOptions}
+                                            value={values.society}
+                                            onChange={(selected) => {
+                                                setFieldValue("society", selected)
+                                                fetchSocietyOwner(selected)
+                                            }}
+                                            isDisabled
+                                            placeholder="Select Society"
+                                            classNamePrefix="Select2"
+                                        />
+                                        {/* Custom Error Rendering for `society` */}
+                                        {touched.society?.value && errors.society?.value && (
+                                            <div className="text-danger">{errors.society.value as string}</div>
+                                        )}
 
-                                </Form.Group>
-                                {/* <Form.Group className="form-group">
+                                    </Form.Group>
+                                    {/* <Form.Group className="form-group">
                                                         <Form.Label>Owner</Form.Label>
                                                         <Field
                                                             type="text"
@@ -133,29 +143,30 @@ const TowerModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, 
                                                         />
                                                         <ErrorMessage name="ownerName" component="div" className="text-danger" />
                                                     </Form.Group> */}
-                                <Form.Group className="form-group">
-                                    <Form.Label>Tower/Block Name <span className="text-danger">*</span></Form.Label>
-                                    <Field
-                                        type="text"
-                                        name="towerName"
-                                        placeholder="Tower/Block name"
-                                        className="form-control"
-                                    />
-                                    <ErrorMessage name="towerName" component="div" className="text-danger" />
-                                </Form.Group>
+                                    <Form.Group className="form-group">
+                                        <Form.Label>Tower/Block Name <span className="text-danger">*</span></Form.Label>
+                                        <Field
+                                            type="text"
+                                            name="towerName"
+                                            placeholder="Tower/Block name"
+                                            className="form-control"
+                                        />
+                                        <ErrorMessage name="towerName" component="div" className="text-danger" />
+                                    </Form.Group>
 
 
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="default" onClick={(event) => { event.preventDefault(), onClose() }}>
-                                    Close
-                                </Button>
-                                <button className="btn btn-primary" type="submit">
-                                    {editing ? "Save Changes" : "Add Tower"}
-                                </button>
-                            </Modal.Footer>
-                        </FormikForm>
-                    )}
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="default" onClick={(event) => { event.preventDefault(), onClose() }}>
+                                        Close
+                                    </Button>
+                                    <button className="btn btn-primary" type="submit">
+                                        {editing ? "Save Changes" : "Add Tower"}
+                                    </button>
+                                </Modal.Footer>
+                            </FormikForm>
+                        )
+                    }}
                 </Formik>
             </Modal>
         </>

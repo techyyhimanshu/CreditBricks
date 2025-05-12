@@ -10,6 +10,8 @@ import { deletePropertyApi, getAllPropertyApi } from '../../../api/property-api'
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 import TestLoader from '../../../layout/layoutcomponent/testloader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../common/store/store';
 
 export default function PropertyMaster() {
   const [bulkupload, setbulkupload] = useState(false);
@@ -17,6 +19,7 @@ export default function PropertyMaster() {
    const [isLoading, setIsLoading] = useState(true);
   const location = useLocation()
   const wingIdentifier = location.state ;
+  const { society } = useSelector((state: RootState) => state.auth)
 
   type Row = {
     sno: number;
@@ -165,7 +168,7 @@ export default function PropertyMaster() {
         if(wingIdentifier){
           response = await getAllPropertyApi(wingIdentifier)
         }else{
-          response = await getAllPropertyApi()
+          response = await getAllPropertyApi(undefined,society.value)
         }
         const data = response.data.data
         const formattedData = data.map((property: any, index: number) => (
@@ -209,7 +212,7 @@ export default function PropertyMaster() {
       }
     }
     fetchAllProperty();
-  }, [])
+  }, [society])
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
