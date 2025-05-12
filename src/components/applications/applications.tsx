@@ -16,6 +16,8 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import GatePassModal from '../../common/modals/gatePassModal';
 import OtherApplicationModal from '../../common/modals/otherApplicationModal';
 import { ViewGatePassData } from '../../common/services/database';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 
 
 export default function Applications() {
@@ -67,6 +69,7 @@ export default function Applications() {
   const [viewGatePassData, setViewGatePassData] = useState<ViewGatePassData | null>(null);
   const [singleChangeInNameData, setSingleChangeInNameData] = useState(null);
   const [singleFlatResaleData, setSingleFlatResaleData] = useState(null);
+  const { society } = useSelector((state: RootState) => state.auth)
 
   const columns = [
     {
@@ -152,11 +155,11 @@ export default function Applications() {
 
   useEffect(() => {
     fetchAllApplications();
-  }, []);
+  }, [society]);
 
   const fetchAllApplications = async () => {
     try {
-      const response = await getAllApplicationApi()
+      const response = await getAllApplicationApi(society.value)
       if (response.status === 200) {
         const formattedData = response.data.data.map((complaint: any, index: number) => {
           return {
@@ -812,7 +815,7 @@ export default function Applications() {
     { value: "20", label: "Others" },
   ]
 
-  const society = [
+  const societyOptions = [
     { value: "1", label: "Mohan Areca Co-Op Housing Society Limited" },
     { value: "2", label: "SKA MetroVilla Society Limited" },
   ]
