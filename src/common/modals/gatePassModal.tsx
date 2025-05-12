@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Accordion, Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import { Accordion, Button, Col, Form, InputGroup, Modal, Row, Card, FormLabel } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import Select from "react-select";
+import { imagesData } from "../../common/commonimages";
 import 'suneditor/dist/css/suneditor.min.css';
 import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } from "../../api/society-api";
 import { handleApiError } from "../../helpers/handle-api-error";
@@ -26,6 +28,43 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
     const [tenantsForDropDown, setTenantsForDropDown] = useState([]);
     const [membersForDropDown, setMembersForDropDown] = useState([]);
     const [vendorsForDropDown, setVendorsForDropDown] = useState([]);
+
+    const [tenatview, settenatview] = useState(false);
+
+    const [vendorview, setvendorview] = useState(false);
+
+    const viewDemoShow = (modal: any) => {
+        switch (modal) {
+
+
+          case "tenatview":
+            settenatview(true);
+            break;
+
+            case "vendorview":
+                setvendorview(true);
+                break;
+
+        }
+      };
+
+      const viewDemoClose = (modal: any) => {
+        switch (modal) {
+
+
+
+          case "tenatview":
+            settenatview(false);
+            break;
+
+            case "vendorview":
+                setvendorview(false);
+                break;
+
+
+        }
+      };
+
 
     useEffect(() => {
         fetchSocietiesForDropDown()
@@ -417,12 +456,14 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                     </Col>
                                                     <Col xl={4}>
                                                         <Form.Group className="form-group mb-1">
-                                                            <Form.Label>Outstanding Amount</Form.Label>
+                                                            <Form.Label>Outstanding Amount
+                                                                <Link to={``} className="float-end text-white rounded-1 bg-primary ps-1">Pay Now</Link>
+                                                            </Form.Label>
                                                             <Field
                                                                 type="text"
                                                                 disabled
                                                                 name="outstandingAmount"
-                                                                
+
                                                                 placeholder="Outstanding Amount"
                                                                 className="form-control"
                                                             />
@@ -452,7 +493,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                         ["Tenant"].includes(values?.category?.label || "") &&
                                                         <Col xl="4">
                                                             <Form.Group className="form-group mb-1">
-                                                                <Form.Label>Tenant <span className='text-info float-end cursor'
+                                                                <Form.Label>Tenant <span className='text-info float-end cursor' onClick={() => { viewDemoShow("tenatview"); }}
                                                                 >View Tenant Detail</span> </Form.Label>
                                                                 <Select
                                                                     options={tenantsForDropDown}
@@ -471,7 +512,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                         ["Material"].includes(values?.category?.label || "") &&
                                                         <Col xl="4">
                                                             <Form.Group className="form-group mb-1">
-                                                                <Form.Label>Vendor <span className='text-info float-end cursor'>View Vendor Detail</span> </Form.Label>
+                                                                <Form.Label>Vendor <span className='text-info float-end cursor' onClick={() => { viewDemoShow("vendorview"); }}>View Vendor Detail</span> </Form.Label>
                                                                 <Select
                                                                     options={vendorsForDropDown}
                                                                     placeholder="Select vendor"
@@ -489,6 +530,89 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                 </Row>
                                             </Accordion.Body>
                                         </Accordion.Item>
+
+                                        <Accordion.Item eventKey="Documentdetails">
+                                            <Accordion.Header>Document Details</Accordion.Header>
+                                            <Accordion.Body>
+                                            <Row>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Sale Agreement Copy</Form.Label>
+                          <Row>
+                            <Col lg={3}>
+
+                              <Form.Check type="radio" label="Yes" name="transferdocument" />
+                            </Col>
+                            <Col lg={3}>
+
+                              <Form.Check type="radio" label="No" name="transferdocument" />
+                            </Col>
+
+                          </Row>
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Flat Registration Certificate</Form.Label>
+                          <Row>
+                            <Col lg={3}>
+
+                              <Form.Check type="radio" label="Yes" name="transferdocument" />
+                            </Col>
+                            <Col lg={3}>
+
+                              <Form.Check type="radio" label="No" name="transferdocument" />
+                            </Col>
+
+                          </Row>
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Home Loan Sanction Letter</Form.Label>
+                          <Row>
+                            <Col lg={3}>
+
+                              <Form.Check type="radio" label="Yes" name="transferdocument" />
+                            </Col>
+                            <Col lg={3}>
+
+                              <Form.Check type="radio" label="No" name="transferdocument" />
+                            </Col>
+
+                          </Row>
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={6}>
+                        <Form.Group className="form-group mb-0">
+                          <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
+                          <Row>
+                            <Col lg={3}>
+
+                              <Form.Check type="radio" label="Yes" name="transferdocument" />
+                            </Col>
+                            <Col lg={3}>
+
+                              <Form.Check type="radio" label="No" name="transferdocument" />
+                            </Col>
+
+                          </Row>
+                        </Form.Group>
+                      </Col>
+
+
+
+
+
+                    </Row>
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+
                                         <Accordion.Item eventKey="ApplicationDescription">
                                             <Accordion.Header>Application Description</Accordion.Header>
                                             <Accordion.Body className='p-2'>
@@ -818,7 +942,343 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
 
             </Modal>
 
+      {/* Tenant View */}
+          <Modal show={tenatview} size="xl" centered>
+            <Modal.Header>
+              <Modal.Title>Tenant Details</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("tenatview"); }}>
+                x
+              </Button>
+            </Modal.Header>
 
+            <Modal.Body className='bg-light'>
+              <Row>
+                <Col xl={8}>
+                  <Card>
+                    <Card.Body>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Details</h5>
+                      <Row>
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Society Name</Form.Label>
+                          <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>N/A</Link>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Property Name</Form.Label>
+                          <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>N/A</Link>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Tenant Name</Form.Label>
+                          <p className='tx-15'>Rohit Sharma</p>
+                        </Col>
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Tenant Number</Form.Label>
+                          <p className='tx-15 col-sm-11 p-0'>1212621024</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Alternative Mobile</Form.Label>
+                          <p className='tx-15 col-sm-11 p-0'>-</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Tenant Email</Form.Label>
+                          <p className='tx-15'>orhit@gmail.com</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Date Of Birth</Form.Label>
+                          <p className='tx-15'>2025-02-27</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Address</Form.Label>
+                          <p className='tx-15 col-sm-11 p-0'>123st lauren</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>City</Form.Label>
+                          <p className='tx-15'>Delhi</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>State</Form.Label>
+                          <p className='tx-15'>Delhi</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Country</Form.Label>
+                          <p className='tx-15'>India</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Pincode</Form.Label>
+                          <p className='tx-15'>250007</p>
+                        </Col>
+
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Family Members</Form.Label>
+                          <p className='tx-15'>8</p>
+                        </Col>
+
+                        <Col xl={6} className='mb-2'>
+                          <Form.Label>Pets</Form.Label>
+                          <p className='tx-15'>false</p>
+                        </Col>
+
+                      </Row>
+                    </Card.Body>
+                  </Card>
+
+                </Col>
+
+                <Col xl={4}>
+
+                  <Card>
+                    <Card.Body className='pb-3'>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Current Lease</h5>
+                      <Row>
+                        <Col xl={6}>
+                          <p className='mb-0 text-muted'>Agreement Start Date</p>
+                          <p className='tx-15 tx-semibold'>2025-02-28</p>
+                          <p className='mb-0 text-muted'>Agreement End Date</p>
+                          <p className='tx-15 tx-semibold mb-2'>2025-04-05</p>
+                        </Col>
+                        <Col xl={6} className='text-end'>
+                          <p className='mb-0 text-muted'>Monthly Rent</p>
+                          <p className='tx-15 tx-semibold text-primary'>₹ 5000</p>
+                          <p className='mb-0 pt-2 text-muted'></p>
+                          {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
+                        </Col>
+
+                        <Col xl={12}>
+
+                          <Row>
+                            <Col xl={6} className='text-muted text-bold'>
+                              180 days left
+                            </Col>
+                            <Col xl={6} className='text-end text-muted text-bold'>
+                              365 days left
+                            </Col>
+                          </Row>
+                        </Col>
+
+                        <Col xl={6}>
+                          <p className='mb-0 mt-2 text-muted'>Due Amount</p>
+                          <p className='tx-15 tx-semibold'>₹ 1000</p>
+                        </Col>
+                        <Col xl={6}>
+                          <p className='mb-0 mt-2 text-muted text-end'>Deposit Amount</p>
+                          <p className='tx-15 tx-semibold mb-0 text-end'>₹ 4000</p>
+                        </Col>
+
+                      </Row>
+
+                    </Card.Body>
+
+                  </Card>
+
+
+                  <Card>
+                    <Card.Body className='pb-1'>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
+                      <Row>
+                        <Col xl={2} className='p-0'>
+                          <img
+                            alt="" className='w-100'
+                            src={imagesData('pdficon')}
+                          />
+                        </Col>
+                        <Col xl={9} className='p-0'>
+                          <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : 565675756</p>
+                          <Link to={``} className="text-info">Download</Link>
+                        </Col>
+                      </Row>
+
+
+                      <Row>
+                        <Col xl={2} className='p-0'>
+                          <img alt="" className='w-100'
+                            src={imagesData('pdficon')}
+                          />
+                        </Col>
+                        <Col xl={9} className='p-0'>
+                          <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
+                          <Link to={``}
+                            className="text-info">
+                            Download
+                          </Link>
+                        </Col>
+
+                      </Row>
+                    </Card.Body>
+                  </Card>
+
+
+                  <Card>
+                    <Card.Body className='pb-1'>
+                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
+                      <Row>
+
+
+
+                        <Row>
+                          <Col xl={2} className='p-0'>
+                            <img
+                              alt="Vehicle Icon"
+                              className='w-100'
+                              src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
+                            />
+                          </Col>
+                          <Col xl={9} className='p-0'>
+                            <p className='tx-14 mb-0 mt-2 tx-semibold'>
+                              Vehicle No. dl1ct1004  <span className='text-muted'>(4Wheeler)</span>
+                            </p>
+                            <Link to={``}
+                              className="text-info" >
+                              Download
+                            </Link>
+                          </Col>
+                        </Row>
+
+                      </Row>
+                    </Card.Body>
+                  </Card>
+
+
+                </Col>
+              </Row>
+            </Modal.Body>
+
+          </Modal>
+
+           {/* Vendor View */}
+           <Modal show={vendorview} size="xl" centered>
+            <Modal.Header>
+              <Modal.Title>Vendor Details</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("vendorview"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+            <Modal.Body className='bg-light'>
+            <Row>
+        <Col xl={8}>
+          <Card>
+            <Card.Body>
+              <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Basic Details</h5>
+              <Row>
+                <Col xl={6}>
+                  <FormLabel>Vendor Name</FormLabel>
+                  <p className='tx-15'>Siddhi solutions</p>
+                </Col>
+
+
+                <Col xl={6}>
+                  <FormLabel>Vendor Address</FormLabel>
+                  <p className='tx-15'>Ghaziabad</p>
+                </Col>
+
+                <Col xl={6}>
+                  <FormLabel>GST Number</FormLabel>
+                  <p className='tx-15'>GSTIN768JU</p>
+                </Col>
+
+                <Col xl={6}>
+                  <FormLabel>PAN Number</FormLabel>
+                  <p className='tx-15'>FUOPH8989N</p>
+                </Col>
+
+
+                <Col xl={6}>
+                  <FormLabel>Product</FormLabel>
+                  <p className='tx-15'>Security</p>
+                </Col>
+
+
+
+                <Col xl={6}>
+                  <FormLabel>Service Type</FormLabel>
+                  <p className='tx-15 col-sm-11 p-0'>On Request</p>
+                </Col>
+
+                <Col xl={6}>
+                  <FormLabel>Frequency</FormLabel>
+                  <p className='tx-1 p-0'>Yearly</p>
+                </Col>
+                <hr className='w-100' />
+                <Col xl={6}>
+                  <FormLabel>Contact Person Name</FormLabel>
+                  <p className='tx-15'>sudhir sharma</p>
+                </Col>
+
+                <Col xl={6}>
+                  <FormLabel>Contact Person Number</FormLabel>
+                  <p className='tx-15'>9528185696</p>
+                </Col>
+
+                <Col xl={6}>
+                  <FormLabel>Contact Value:</FormLabel>
+                  <p className='tx-15'>GST</p>
+                </Col>
+
+
+              </Row>
+            </Card.Body>
+          </Card>
+
+
+        </Col>
+        <Col xl={4} className='p-0 pe-3'>
+
+
+          <Card>
+            <Card.Body>
+              <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Contract Period Details</h5>
+              <Row>
+                <Col xl={5} className='mb-1 tx-12'>Start Date</Col>
+                <Col xl={7} className='tx-semibold tx-12'>2025-03-01</Col>
+                <Col xl={5} className='mb-1 tx-12'>End Date</Col>
+                <Col xl={7} className='tx-semibold tx-12'>2026-03-01</Col>
+                <Col xl={5} className='mb-1 tx-12'>Total Period Calculation</Col>
+                <Col xl={7} className='tx-semibold tx-12'>1</Col>
+                <Col xl={12} className='mb-1 tx-12'>Contact Terms & Conditions
+                </Col>
+                <Col xl={12} className='tx-semibold tx-12'>N/A</Col>
+
+              </Row>
+            </Card.Body>
+          </Card>
+
+
+
+          <Card>
+            <Card.Body>
+              <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Bank Details Details</h5>
+              <Row>
+
+                <Col xl={5} className='mb-1 tx-12'>Society Bank Name</Col>
+                <Col xl={7} className='tx-semibold tx-12'>Punjab natinal bank</Col>
+                <Col xl={5} className='mb-1 tx-12'>Account Number</Col>
+                <Col xl={7} className='tx-semibold tx-12'>5874963258</Col>
+                <Col xl={5} className='mb-1 tx-12'>Branch Name</Col>
+                <Col xl={7} className='tx-semibold tx-12'>Tigri</Col>
+                <Col xl={5} className='mb-1 tx-12 '>IFSC Code</Col>
+                <Col xl={7} className='tx-semibold tx-12'>PUNB789U</Col>
+
+              </Row>
+            </Card.Body>
+          </Card>
+
+
+
+        </Col>
+      </Row>
+            </Modal.Body>
+
+          </Modal>
 
         </>
     )

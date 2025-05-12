@@ -179,7 +179,7 @@ export default function AddVendorMaster() {
                                 {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                               </Form.Group>
                             </Col>
-                            
+
                             <Col xl={4}>
                               <Form.Group className="form-group">
                                 <Form.Label>Product</Form.Label>

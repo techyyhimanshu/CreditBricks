@@ -49,6 +49,14 @@ const PrivacyPolicy = React.lazy(() =>
   import("./components/pages/authentication/privacypolicy/privacypolicy")
 )
 
+const GatePassApproval = React.lazy(() =>
+  import("./components/pages/authentication/gatepassapproval/gatepassapproval")
+)
+
+const CelebrationBooking = React.lazy(() =>
+  import("./components/pages/authentication/celebrationbooking/celebrationbooking")
+)
+
 //Form
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
