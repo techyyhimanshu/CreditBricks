@@ -6,6 +6,7 @@ import store from '../store/store';
 // Define action types
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS' as const;
 const LOGOUT = 'LOGOUT' as const;
+const SET_SOCIETY = 'SET_SOCIETY' as const;
 
 // const encryptionKey="test"
 
@@ -27,9 +28,18 @@ export const logout = () => {
   localStorage.removeItem('refreshToken')
   localStorage.removeItem("allowedRoute")
   localStorage.removeItem("userType")
+  localStorage.removeItem("selectedSociety")
   clearTokenRefresh();
   return {
     type: LOGOUT,
+  };
+};
+
+export const setSociety = (society: any) => {
+  localStorage.setItem('selectedSociety', JSON.stringify(society));
+  return {
+    type: SET_SOCIETY,
+    payload: society,
   };
 };
 

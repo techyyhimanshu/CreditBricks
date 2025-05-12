@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Accordion, Button, Col, Form, InputGroup, Modal, Nav, Row, Tab } from "react-bootstrap";
 import Select from "react-select";
 import 'suneditor/dist/css/suneditor.min.css';
@@ -10,7 +10,7 @@ import { getSocietyVenueApi } from "../../api/application-api";
 
 interface ProductModalProps {
     show: boolean;
-    onSave?: (values: any,tab:string) => void;
+    onSave?: (values: any, tab: string,editing:boolean) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -51,11 +51,46 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [, setCommiteeMemberData] = useState<any>(null);
-    const [activeTab, setActiveTab] = useState("documentSubmission");
+    const [activeTab, setActiveTab] = useState(() => {
+        if (initialVals) {
+            const identifierPrefix = initialVals.applicationIdentifier.split('-')[0];
+            if (identifierPrefix === 'OE') {
+                return 'enquiry';
+            } else if (identifierPrefix === 'OO') {
+                return 'other';
+            } else if (identifierPrefix === 'OD') {
+                return 'documentSubmission';
+            }
+        }
+        return 'documentSubmission';
+    });
+    const [visibleTabs, setVisibleTabs] = useState<string[]>([]);
+    const isFirstRender = useRef(true);
+    console.log(activeTab, visibleTabs)
 
     useEffect(() => {
         fetchSocietiesForDropDown()
     }, [])
+
+    useEffect(() => {
+        if (initialVals?.applicationIdentifier) {
+            const prefix = initialVals.applicationIdentifier.split("-")[0];
+            switch (prefix) {
+                case "OE":
+                    setVisibleTabs(["enquiry"]);
+                    break;
+                case "OO":
+                    setVisibleTabs(["other"]);
+                    break;
+                case "OD":
+                    setVisibleTabs(["documentSubmission"]);
+                    break;
+
+            }
+        } else if (!initialVals) {
+            setVisibleTabs(["documentSubmission", "enquiry", "other"]);
+        }
+    }, [initialVals]);
 
     const fetchSocietiesForDropDown = async () => {
         try {
@@ -122,6 +157,11 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
     //     { value: "Pool Area", label: "Pool Area" },
     //     { value: "Food Court", label: "Food Court" },
     // ]
+    useEffect(() => {
+        return () => {
+            isFirstRender.current = true;
+        };
+    }, [])
 
 
     const handleSubmit = async (values: any) => {
@@ -152,8 +192,11 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                     otherComment: values.otherComments,
                 };
             }
+            if(editing){
+                formattedData.id=initialVals?.applicationIdentifier
+            }
             if (onSave) {
-                onSave(formattedData,activeTab)
+                onSave(formattedData, activeTab, editing)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
@@ -170,7 +213,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
             <Modal show={show} size="xl" centered>
                 <Modal.Header>
                     <Modal.Title>Others</Modal.Title>
-                    <Button variant="" className="btn btn-close" onClick={(event) => { event.preventDefault(), onClose() }}>
+                    <Button variant="" className="btn btn-close" onClick={(event) => { event.preventDefault(), isFirstRender.current = true, onClose() }}>
                         x
                     </Button>
                 </Modal.Header>
@@ -180,15 +223,18 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                     {{
                         society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
                         property: initialVals ? { label: initialVals.property?.propertyName, value: initialVals.property?.propertyIdentifier } : { label: "", value: "" },
-                        documentSubmission: null,
+                        documentSubmission: initialVals ? { label: initialVals?.documentType, value: initialVals?.documentType } : { label: "", value: "" },
                         documentFile: null,
-                        documentComments: "",
-                        enquiry: null,
+                        documentSubmissionFileName: initialVals?.documentSubmissionFile,
+                        documentComments: initialVals?.descriptionComment||"",
+                        enquiry: initialVals ? { label: initialVals?.enquiryType, value: initialVals?.enquiryType } : { label: "", value: "" },
                         enquiryFile: null,
-                        enquiryComments: "",
-                        otherType: null,
+                        enquiryFileName: initialVals?.enquiryFile,
+                        enquiryComments: initialVals?.descriptionComment || "",
+                        otherType: initialVals ? { label: initialVals?.otherType, value: initialVals?.otherType } : { label: "", value: "" },
                         otherFile: null,
-                        otherComments: "",
+                        otherFileName: initialVals?.otherFile,
+                        otherComments: initialVals?.otherComment || "",
                         tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
                         wing: { value: initialVals?.wingIdentifier || "", label: initialVals?.wingName || "" },
                         approverSociety: { value: initialVals?.socityIdentifier || "", label: initialVals?.societyName || "" },
@@ -201,7 +247,24 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                     onSubmit={handleSubmit}>
                     {({ values, handleChange, setFieldValue }) => {
 
+                        const getFileExtension = (fileName: string) => {
+                            if (!fileName) {
+                                return '';
+                            }
+                            return fileName.split(".").pop()?.toLowerCase() || '';
+                        };
+                        const getFileName = (fileName: string) => {
+                            if (!fileName) {
+                                return '';
+                            }
+                            return fileName?.split("/").pop() || '';
+                        };
+
                         useEffect(() => {
+                            if (isFirstRender.current) {
+                                isFirstRender.current = false;
+                                return;
+                            }
                             setFieldValue("society", { label: "", value: "" });
                             setFieldValue("property", { label: "", value: "" });
 
@@ -227,30 +290,30 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
 
                                             <Tab.Container
                                                 id="left-tabs-example"
-                                                defaultActiveKey="documentSubmission"
+                                                defaultActiveKey={activeTab}
                                                 onSelect={(k: any) => setActiveTab(k)}
                                             >
                                                 <Row>
                                                     <Col sm={3} className='p-0'>
                                                         <Nav variant="pills" className="flex-column">
-                                                            <Nav.Item>
+                                                            {visibleTabs.includes("documentSubmission") && (<Nav.Item>
                                                                 <Nav.Link eventKey="documentSubmission" className='rounded-0'>
                                                                     {" "}
                                                                     Document Submission
                                                                 </Nav.Link>
-                                                            </Nav.Item>
-                                                            <Nav.Item>
+                                                            </Nav.Item>)}
+                                                            {visibleTabs.includes("enquiry") && (<Nav.Item>
                                                                 <Nav.Link eventKey="enquiry" className='rounded-0'>
                                                                     {" "}
                                                                     Enquiry
                                                                 </Nav.Link>
-                                                            </Nav.Item>
-                                                            <Nav.Item>
+                                                            </Nav.Item>)}
+                                                            {visibleTabs.includes("other") && (<Nav.Item>
                                                                 <Nav.Link eventKey="other" className='rounded-0'>
                                                                     {" "}
                                                                     Others
                                                                 </Nav.Link>
-                                                            </Nav.Item>
+                                                            </Nav.Item>)}
 
                                                         </Nav>
                                                     </Col>
@@ -273,6 +336,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                         setFieldValue("society", opt)
                                                                                         fetchPropertiesForDropDown(opt)
                                                                                     }}
+                                                                                    isDisabled={initialVals&&!editing}
                                                                                 />
 
                                                                             </Form.Group>
@@ -286,6 +350,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                     value={values.property}
                                                                                     options={propertiesForDropDown}
                                                                                     onChange={(opt) => setFieldValue("property", opt)}
+                                                                                    isDisabled={initialVals&&!editing}
                                                                                 />
                                                                             </Form.Group>
                                                                         </Col>
@@ -299,6 +364,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             value={values.documentSubmission}
                                                                             options={documentsubmission}
                                                                             onChange={(opt) => setFieldValue("documentSubmission", opt)}
+                                                                            isDisabled={initialVals&&!editing}
                                                                         />
                                                                     </Form.Group>
 
@@ -307,8 +373,32 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                         <Form.Control className="form-control"
                                                                             type="file"
                                                                             onChange={(e: any) => setFieldValue("documentFile", e.currentTarget.files[0])}
+                                                                            disabled={initialVals&&!editing}
                                                                         />
                                                                     </Form.Group>
+                                                                    {values.documentSubmissionFileName && (
+                                                                        <p
+                                                                            className="text-center pt-2"
+                                                                            style={{ cursor: "pointer", color: "blue" }}
+                                                                            onClick={() => {
+                                                                                const fileExtension = getFileExtension(values.documentSubmissionFileName);
+
+
+                                                                                // If it's a PDF, image, or Excel file, open in new tab
+                                                                                if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                                    window.open(import.meta.env.VITE_STATIC_PATH + values.documentSubmissionFileName, "_blank");
+                                                                                } else {
+                                                                                    // For other files, trigger download
+                                                                                    const link = document.createElement("a");
+                                                                                    link.href = import.meta.env.VITE_STATIC_PATH + values.documentSubmissionFileName;
+                                                                                    link.download = values.documentSubmissionFileName;
+                                                                                    link.click();
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            {getFileName(values.documentSubmissionFileName)}
+                                                                        </p>
+                                                                    )}
 
                                                                     <Form.Group className="form-group">
                                                                         <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
@@ -317,6 +407,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             name="documentComments"
                                                                             value={values.documentComments}
                                                                             onChange={handleChange}
+                                                                            disabled={initialVals&&!editing}
                                                                         ></Form.Control>
                                                                     </Form.Group>
 
@@ -340,6 +431,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                         setFieldValue("society", opt)
                                                                                         fetchPropertiesForDropDown(opt)
                                                                                     }}
+                                                                                    isDisabled={initialVals&&!editing}
                                                                                 />
 
                                                                             </Form.Group>
@@ -353,6 +445,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                     value={values.property}
                                                                                     options={propertiesForDropDown}
                                                                                     onChange={(opt) => setFieldValue("property", opt)}
+                                                                                    isDisabled={initialVals&&!editing}
                                                                                 />
                                                                             </Form.Group>
                                                                         </Col>
@@ -366,6 +459,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             value={values.enquiry}
                                                                             options={enquiry}
                                                                             onChange={(opt) => setFieldValue("enquiry", opt)}
+                                                                            isDisabled={initialVals&&!editing}
                                                                         />
 
 
@@ -375,12 +469,36 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                         <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
                                                                         <Form.Control className="form-control"
                                                                             onChange={(e: any) => setFieldValue("enquiryFile", e.currentTarget.files[0])}
+                                                                            disabled={initialVals&&!editing}
                                                                             type="file" />
                                                                     </Form.Group>
+                                                                    {values.enquiryFileName && (
+                                                                        <p
+                                                                            className="text-center pt-2"
+                                                                            style={{ cursor: "pointer", color: "blue" }}
+                                                                            onClick={() => {
+                                                                                const fileExtension = getFileExtension(values.enquiryFileName);
+
+
+                                                                                // If it's a PDF, image, or Excel file, open in new tab
+                                                                                if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                                    window.open(import.meta.env.VITE_STATIC_PATH + values.enquiryFileName, "_blank");
+                                                                                } else {
+                                                                                    // For other files, trigger download
+                                                                                    const link = document.createElement("a");
+                                                                                    link.href = import.meta.env.VITE_STATIC_PATH + values.enquiryFileName;
+                                                                                    link.download = values.enquiryFileName;
+                                                                                    link.click();
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            {getFileName(values.enquiryFileName)}
+                                                                        </p>
+                                                                    )}
 
                                                                     <Form.Group className="form-group">
                                                                         <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                                                        <Form.Control as="textarea" className="form-control" name="enquiryComments" value={values.enquiryComments} onChange={handleChange} placeholder="Textarea" rows={3}></Form.Control>
+                                                                        <Form.Control as="textarea" className="form-control" name="enquiryComments" value={values.enquiryComments} onChange={handleChange} disabled={initialVals&&!editing} placeholder="Textarea" rows={3}></Form.Control>
                                                                     </Form.Group>
 
                                                                 </div>
@@ -402,6 +520,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                         setFieldValue("society", opt)
                                                                                         fetchPropertiesForDropDown(opt)
                                                                                     }}
+                                                                                    isDisabled={initialVals&&!editing}
                                                                                 />
 
                                                                             </Form.Group>
@@ -415,6 +534,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                     value={values.property}
                                                                                     options={propertiesForDropDown}
                                                                                     onChange={(opt) => setFieldValue("property", opt)}
+                                                                                    isDisabled={initialVals&&!editing}
                                                                                 />
                                                                             </Form.Group>
                                                                         </Col>
@@ -432,6 +552,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                     onChange={(opt) => {
                                                                                         setFieldValue("otherType", opt)
                                                                                     }}
+                                                                                    isDisabled={initialVals&&!editing}
                                                                                 />
                                                                             </Col>
 
@@ -439,15 +560,38 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             <Col xl={12}>
                                                                                 <Form.Group className='mt-4'>
                                                                                     <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-                                                                                    <Form.Control className="form-control" type="file" onChange={(e:any) => setFieldValue("otherFile", e.currentTarget.files[0])}/>
+                                                                                    <Form.Control className="form-control" disabled={initialVals&&!editing} type="file" onChange={(e: any) => setFieldValue("otherFile", e.currentTarget.files[0])} />
                                                                                 </Form.Group>
+                                                                                {values.otherFileName && (
+                                                                                    <p
+                                                                                        className="text-center pt-2"
+                                                                                        style={{ cursor: "pointer", color: "blue" }}
+                                                                                        onClick={() => {
+                                                                                            const fileExtension = getFileExtension(values.otherFileName);
+
+
+                                                                                            // If it's a PDF, image, or Excel file, open in new tab
+                                                                                            if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                                                window.open(import.meta.env.VITE_STATIC_PATH + values.otherFileName, "_blank");
+                                                                                            } else {
+                                                                                                // For other files, trigger download
+                                                                                                const link = document.createElement("a");
+                                                                                                link.href = import.meta.env.VITE_STATIC_PATH + values.otherFileName;
+                                                                                                link.download = values.otherFileName;
+                                                                                                link.click();
+                                                                                            }
+                                                                                        }}
+                                                                                    >
+                                                                                        {getFileName(values.otherFileName)}
+                                                                                    </p>
+                                                                                )}
                                                                             </Col>
 
 
                                                                             <Col xl={12}>
                                                                                 <Form.Group className='mt-4'>
                                                                                     <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                                                                    <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3} name="otherComments" value={values.otherComments} onChange={handleChange}></Form.Control>
+                                                                                    <Form.Control as="textarea" disabled={initialVals&&!editing} className="form-control" placeholder="Textarea" rows={3} name="otherComments" value={values.otherComments} onChange={handleChange}></Form.Control>
                                                                                 </Form.Group>
                                                                             </Col>
                                                                         </Row>
@@ -466,7 +610,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
 
                                 </Modal.Body>
                                 <Modal.Footer>
-                                    <Button variant="default" onClick={(event) => { event.preventDefault(), onClose() }}>
+                                    <Button variant="default" onClick={(event) => { event.preventDefault(), isFirstRender.current = true, onClose() }}>
                                         Close
                                     </Button>
                                     <Button variant="primary" type='submit'>

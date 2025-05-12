@@ -13,13 +13,16 @@ import { handleApiError } from '../../helpers/handle-api-error';
 import { getAllSocietyApi } from '../../api/society-api';
 import TowerModal from '../../common/modals/towerModal';
 import TestLoader from '../../layout/layoutcomponent/testloader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 // Define the types for the stateCities object
 export default function TowerMaster() {
     const [showModal, setShowModal] = useState(false);
     const [towerData, setTowerData] = useState<any[]>([]);
     const [societyData, setSocietyData] = useState<any[]>([]);
-     const [isLoading, setIsLoading] = useState(true);
-    const [societyOwner, ] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [societyOwner,] = useState("");
+    const { society } = useSelector((state: RootState) => state.auth)
 
     // const [currentTower, setCurrentTower] = useState({
     //     towerIdentifier: null,
@@ -34,7 +37,7 @@ export default function TowerMaster() {
 
         const fetchTowerData = async () => {
             try {
-                const response = await getAllTowerApi();
+                const response = await getAllTowerApi(society.value);
                 const formattedData = response.data.data.map((item: any, index: number) => ({
                     towerIdentifier: item.towerIdentifier,
                     sno: index + 1,
@@ -47,16 +50,16 @@ export default function TowerMaster() {
             } catch (error) {
                 const errorMessage = handleApiError(error)
                 showToast("error", errorMessage)
-            } finally{
+            } finally {
                 setIsLoading(false)
             }
         };
         // console.log(towerData.length)
-        if (towerData.length === 0) {
-            fetchTowerData();
-        }
+        // if (towerData.length === 0) {
+        fetchTowerData();
+        // }
         // fetchTowerData();
-    }, []);
+    }, [society]);
     type Row = {
         towerIdentifier: string;
         sno: number;
@@ -152,10 +155,10 @@ export default function TowerMaster() {
     // }
     const openAddModal = async () => {
         setIsEditing(false);
-        currentTower.towerName = "";
-        currentTower.societyIdentifier = null;
-        currentTower.societyName = "";
-        currentTower.ownerName = "";
+        // currentTower.towerName = "";
+        // currentTower.societyIdentifier = null;
+        // currentTower.societyName = "";
+        // currentTower.ownerName = "";
         setShowModal(true);
         await fetchSocietiesForDropDown()
     };
@@ -217,6 +220,8 @@ export default function TowerMaster() {
                 } catch (error: any) {
                     const errorMessage = handleApiError(error);
                     showToast("error", errorMessage);
+                } finally {
+                    setCurrentTower(null)
                 }
             })()
         }
@@ -239,10 +244,10 @@ export default function TowerMaster() {
         })()
     }
 
-    const handleClose=()=>{
+    const handleClose = () => {
         setShowModal(false)
         setCurrentTower(null)
-      }
+    }
     return (
         <Fragment>
             <div className="breadcrumb-header justify-content-between">
@@ -253,7 +258,7 @@ export default function TowerMaster() {
                 <div className="right-content">
 
                     <button type="button" className="btn btn-primary p-1 pe-2 ps-2 me-1" onClick={() => openAddModal()}><i className="bi bi-plus"></i> Add Tower/Block</button>
-                    
+
                     {
                         currentTower && showModal ? <TowerModal show={showModal} onClose={handleClose} editing={isEditing} initialVals={currentTower} onSave={handleSubmit} /> : <TowerModal show={showModal} onClose={handleClose} editing={isEditing} onSave={handleSubmit} />
                     }

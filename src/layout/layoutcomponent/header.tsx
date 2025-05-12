@@ -1,14 +1,18 @@
 import { Fragment, useState, useEffect } from "react";
-import { Navbar, Dropdown, OverlayTrigger, Tooltip } from "react-bootstrap";
-// import PerfectScrollbar from 'react-perfect-scrollbar';
+import { Navbar, Dropdown, OverlayTrigger, Tooltip, Form, Col } from "react-bootstrap";
+import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Link } from "react-router-dom";
 import { imagesData } from "../../common/commonimages";
 import * as Switcherdata from '../../common/switcherdata';
 // import i18n from '../../common/i18n/i18n';
 import store from "../../common/store/store";
-import { logout } from "../../common/actions/authActions";
+import { logout, setSociety } from "../../common/actions/authActions";
 import { jwtDecode } from "jwt-decode";
+import Select from "react-select";
 import { adminLogoutApi } from "../../api/authentication-api";
+import { getAllSocietyApi } from "../../api/society-api";
+import { handleApiError } from "../../helpers/handle-api-error";
+import { showToast } from "../../common/services/toastServices";
 // interface UseLang {
 //   lang: boolean;
 //   lng: string;
@@ -22,6 +26,54 @@ interface User {
 export default function Header() {
   const [userinfo, setUserinfo] = useState<User | null>(null)
   const [userType, setUserType] = useState<string>("")
+  const [societyDropDownData, setSocietyDropDownData] = useState<any[]>([]);
+  const [selectedSociety, setSelectedSociety] = useState<any>(null);
+
+  // useEffect(() => {
+  //   const localStorageKey = 'selectedSociety';
+
+  //   const storedSociety = localStorage.getItem(localStorageKey);
+  //   if (storedSociety) {
+  //     const parsedSociety = JSON.parse(storedSociety);
+  //     setSelectedSociety(parsedSociety);
+  //   } else if (societyDropDownData.length > 0) {
+  //     const firstSociety = societyDropDownData[0];
+  //     setSelectedSociety(firstSociety);
+  //     localStorage.setItem(localStorageKey, JSON.stringify(firstSociety));
+  //   }
+  // }, [societyDropDownData]);
+
+  useEffect(() => {
+    const localStorageKey = 'selectedSociety';
+  
+    const checkAndSetSociety = () => {
+      const storedSociety = localStorage.getItem(localStorageKey);
+      if (storedSociety) {
+        const parsedSociety = JSON.parse(storedSociety);
+        setSelectedSociety(parsedSociety);
+      } else if (societyDropDownData.length > 0) {
+        const firstSociety = societyDropDownData[0];
+        setSelectedSociety(firstSociety);
+        localStorage.setItem(localStorageKey, JSON.stringify(firstSociety));
+        store.dispatch(setSociety(firstSociety))
+      }
+    };
+  
+    checkAndSetSociety();
+  
+    window.addEventListener('focus', checkAndSetSociety);
+  
+    return () => {
+      window.removeEventListener('focus', checkAndSetSociety);
+    };
+  }, [societyDropDownData]);
+  
+
+  const handleChange = (selected: any) => {
+    setSelectedSociety(selected);
+    localStorage.setItem('selectedSociety', JSON.stringify(selected));
+    store.dispatch(setSociety(selected))
+  };
 
   // useEffect(() => {
   //   Switcherdata.localStorageBackUp();
@@ -40,12 +92,30 @@ export default function Header() {
     }
   }, [localStorage])
 
+  useEffect(() => {
+    fetchSocietiesForDropDown()
+  }, [])
+
   // const [Lang, setLang] = useState<UseLang>({
   //   lang:false,
   //   lng:i18n.language
   // });
 
   const [fullscreens, setFullscreen] = useState(true);
+
+  const fetchSocietiesForDropDown = async () => {
+    try {
+      const response = await getAllSocietyApi();
+      const formattedData = response.data.data.map((item: any) => ({
+        value: item.societyIdentifier,
+        label: item.societyName,
+      }));
+      setSocietyDropDownData(formattedData);
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
 
 
   // FullScreen
@@ -63,7 +133,7 @@ export default function Header() {
     }
   };
 
-  const handleLogOut =async () => {
+  const handleLogOut = async () => {
     await adminLogoutApi()
     store.dispatch(logout())
   }
@@ -477,7 +547,63 @@ export default function Header() {
         </> */}
                   </li>
                   <li className="dropdown nav-item w-auto headericon me-3">
-                      <Dropdown>
+                    <Dropdown className=" nav-item main-header-notification d-flex">
+                      <Dropdown.Toggle className="new nav-link" variant="">
+                        <i className="bi bi-building"></i>
+                        <i className="bi bi-chevron-down ms-2"></i>
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu className="slid1 society_select">
+                        <div className="p-2 ps-3 text-start border-bottom">
+                          <div className="d-flex">
+
+                            <h6 className="dropdown-title w-100 mb-1 tx-15 font-weight-semibold text-black">
+                              Society List
+                              {/* <Form.Control className="form-control w-100 mt-2" placeholder="Search Society" type="text"></Form.Control> */}
+                              <Col xl={12}>
+                                <Form.Group className="form-group mb-1">
+                                  {/* <Form.Label>Society </Form.Label> */}
+                                  <Select
+                                    options={societyDropDownData}
+                                    name='society'
+                                    placeholder="Select Society"
+                                    classNamePrefix="Select2"
+                                    value={selectedSociety}
+                                    onChange={handleChange}
+                                  />
+                                </Form.Group>
+                              </Col>
+                            </h6>
+
+
+                          </div>
+                        </div>
+
+                        {/* <PerfectScrollbar options={{ suppressScrollX: true, useBothWheelAxes: false }} style={{ height: 300 }}>
+                      <div className="main-notification-list Notification-scroll ">
+
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Mohan Areca Co-Op Housing Society Limited </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">SKA MetroVilla Society Limited </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Testname </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom active">Credit Bricks Pvt. Ltd. </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Signature Global City </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Supertech Limited </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Unitech Group </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Ansal Group </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Mohan Areca Co-Op Housing Society Limited </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">SKA MetroVilla Society Limited </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Testname </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Credit Bricks Pvt. Ltd. </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Signature Global City </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Supertech Limited </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Unitech Group </Dropdown.Item>
+                        <Dropdown.Item className="d-flex p-2 ps-3 border-bottom">Ansal Group </Dropdown.Item>
+                      </div>
+
+                    </PerfectScrollbar> */}
+
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    {/* <Dropdown>
                         <OverlayTrigger
                           placement="bottom"
                           overlay={<Tooltip>Switch Your Society</Tooltip>}>
@@ -491,6 +617,7 @@ export default function Header() {
                         </OverlayTrigger>
                         <Dropdown.Menu className="society_select">
 
+
                           <Dropdown.Item className="dropdown-item" href="/">
                             <i className="bi bi-building me-2"></i>Mohan Areca Co-Op Housing Society Limited
                           </Dropdown.Item>
@@ -499,8 +626,8 @@ export default function Header() {
                             <i className="bi bi-building me-2"></i> SKA MetroVilla Society Limited
                           </Dropdown.Item>
                         </Dropdown.Menu>
-                      </Dropdown>
-                    </li>
+                      </Dropdown> */}
+                  </li>
                   {
                     userType === "admin" && <li className="dropdown nav-item w-auto headericon me-3">
                       <Dropdown>

@@ -85912,9 +85912,10 @@ width: 100%;
 .transactionbtn #dropdownMenuButton{  text-align: left !important;}
 .profile-tab{padding: 0px 15px 15px 15px !important;}
 .usertab .tab-content{min-height:400px}
-.society_select{max-width: 360px;
-    width: 360px;
+.society_select{max-width: 400px !important;
+    width: 400px !important;
     margin-inline-start: -280px;}
+    .society_select a:hover,   .society_select a.active{color:#2196F3 !important}
     .property_select{max-width: 260px;
         width: 260px;
      }

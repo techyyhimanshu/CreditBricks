@@ -14,6 +14,8 @@ import { addWingApi, deleteWingApi, getAllWingApi, updateWingApi } from '../../a
 import { Link } from 'react-router-dom';
 import WingModal from '../../common/modals/wingModal';
 import TestLoader from '../../layout/layoutcomponent/testloader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 // Define the types for the stateCities object
 export default function WingMaster() {
     const [showModal, setShowModal] = useState(false);
@@ -21,6 +23,7 @@ export default function WingMaster() {
     const [wingData, setWingData] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [societyOwner, ] = useState("");
+    const { society } = useSelector((state: RootState) => state.auth)
     // const [currentWing, setCurrentWing] = useState({
     //     wingIdentifier: null,
     //     wingName: '',
@@ -36,7 +39,7 @@ export default function WingMaster() {
     useEffect(() => {
         const fetchWingData = async () => {
             try {
-                const response = await getAllWingApi();
+                const response = await getAllWingApi(society.value);
                 const formattedData = response.data.data.map((item: any, index: number) => ({
                     sno: index + 1,
                     wingIdentifier: item.wingIdentifier,
@@ -57,7 +60,7 @@ export default function WingMaster() {
         };
 
         fetchWingData();
-    }, []);
+    }, [society]);
     type Row = {
         sno: number;
         wingIdentifier: number;
