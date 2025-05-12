@@ -179,7 +179,30 @@ export default function AddVendorMaster() {
                                 {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                               </Form.Group>
                             </Col>
-                            
+                            {/* <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Total Quantity</Form.Label>
+                                <Field
+                                  type="number"
+                                  name="totalQuantity"
+                                  placeholder="Total quantity"
+                                  className="form-control"
+                                />
+                              </Form.Group>
+                            </Col>
+                            <Col xl={4}>
+                              <Form.Group className="form-group">
+                                <Form.Label>Used Quantity</Form.Label>
+                                <Field
+                                  type="number"
+                                  name="usedQuantity"
+                                  placeholder="Used quantity"
+                                  className="form-control"
+                                />
+                              </Form.Group>
+                            </Col> */}
+
+
                             <Col xl={4}>
                               <Form.Group className="form-group">
                                 <Form.Label>Product</Form.Label>

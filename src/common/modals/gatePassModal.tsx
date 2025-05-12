@@ -162,20 +162,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         }
     }
 
-    const fetchOutstandingAmount = async (property: any,setFieldValue:any) => {
-        try {
-            const response = await getPropertyOutstandingAmountApi(property.value);
-            setFieldValue("outstandingAmount",response.data.data)
-
-        } catch (error) {
-            const errorMessage = handleApiError(error);
-            showToast("error", errorMessage);
-        }
-    };
-
     const handleSubmit = async (values: any) => {
         try {
-            const formattedData: any = {
+            const formattedData = {
                 societyIdentifier: values.society.value,
                 propertyIdentifier: values.property.value,
                 gateType: values.gateType.value,
@@ -203,11 +192,8 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 approverContact: initialVals?.contactNumber || "",
                 designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
             }
-            if (editing) {
-                formattedData.gatePassNumber = initialVals.gatePassNumber
-            }
             if (onSave) {
-                onSave(formattedData, editing)
+                onSave(formattedData)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
@@ -232,16 +218,14 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 <Formik
                     initialValues=
                     {{
-                        society: initialVals ? { label: initialVals.society?.societyName, value: initialVals.society?.societyIdentifier } : { label: "", value: "" },
-                        property: initialVals ? { label: initialVals.property?.propertyName, value: initialVals.property?.propertyIdentifier } : { label: "", value: "" },
+                        society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
+                        property: initialVals ? { label: initialVals.propertyName, value: initialVals.propertyIdentifier } : { label: "", value: "" },
                         gateType: initialVals ? { label: initialVals.gateType, value: initialVals.gateTypeIdentifier } : { label: "", value: "" },
                         category: initialVals ? { label: initialVals.category, value: initialVals.gateTypeCategoryIdentifier } : { label: "", value: "" },
                         subCategory: initialVals ? { label: initialVals.subCategory, value: initialVals.gateTypeSubCategoryIdentifier } : { label: "", value: "" },
                         entryDateTime: initialVals ? initialVals.entryDateTime : "",
                         exitDateTime: initialVals ? initialVals.exitDateTime : "",
-                        gatePassNumber: initialVals ? initialVals.gatePassNumber : "",
-                        outstandingAmount: initialVals ? initialVals.outstandingAmount : "",
-                        member: initialVals ? { label: `${initialVals.user.firstName || ""} ${initialVals.user.middleName || ""} ${initialVals.user.lastName || ""}`.replace(/\s+/g, " ").trim(), value: initialVals.user?.identifier } : { label: "", value: "" },
+                        member: initialVals ? { label: initialVals.memberName, value: initialVals.memberIdentifier } : { label: "", value: "" },
                         tenant: initialVals ? { label: initialVals.tenantName, value: initialVals.tenantIdentifier } : { label: "", value: "" },
                         vendor: initialVals ? { label: initialVals.vendorName, value: initialVals.vendorIdentifier } : { label: "", value: "" },
                         vehicleNature: initialVals ? { label: initialVals.vehicleNature, value: initialVals.vehicleNatureIdentifier } : { label: "", value: "" },
@@ -302,7 +286,6 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                 value={values.property}
                                                                 onChange={(selected) => {
                                                                     setFieldValue("property", selected);
-                                                                    fetchOutstandingAmount(selected,setFieldValue)
                                                                 }}
                                                                 placeholder="Select property"
                                                                 classNamePrefix="Select2"
@@ -377,6 +360,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                     className="form-control"
                                                                     id="datetime-local"
                                                                     type="datetime-local"
+                                                                    defaultValue="2020-01-16T14:22"
                                                                     name="entryDateTime"
                                                                     value={values.entryDateTime}
                                                                 />
@@ -394,6 +378,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                     className="form-control"
                                                                     id="datetime-local"
                                                                     type="datetime-local"
+                                                                    defaultValue="2020-01-16T14:22"
                                                                     name="exitDateTime"
                                                                     value={values.exitDateTime}
 
@@ -409,25 +394,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                             <Form.Control
                                                                 type="text"
                                                                 disabled
-                                                                name="gatePassNumber"
-                                                                value={values.gatePassNumber}
                                                                 placeholder="Gate Pass Number"
                                                                 className="form-control"
                                                             ></Form.Control>
-                                                            {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                                                        </Form.Group>
-                                                    </Col>
-                                                    <Col xl={4}>
-                                                        <Form.Group className="form-group mb-1">
-                                                            <Form.Label>Outstanding Amount</Form.Label>
-                                                            <Field
-                                                                type="text"
-                                                                disabled
-                                                                name="outstandingAmount"
-                                                                
-                                                                placeholder="Outstanding Amount"
-                                                                className="form-control"
-                                                            />
                                                             {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                         </Form.Group>
                                                     </Col>

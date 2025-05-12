@@ -10,6 +10,9 @@ import { getAllAccountsApi, getAllPaymentLogsApi, getAllReceiptsApi } from '../.
 import { handleApiError } from '../../helpers/handle-api-error';
 import { freeze } from '@reduxjs/toolkit';
 import TestLoader from '../../layout/layoutcomponent/testloader';
+import { createCashPaymentApi, createChequePaymentApi, getInvoicePaymentOutstandingApi, verifyPaymentApi } from '../../api/payment-api';
+import { showToast, CustomToastContainer } from '../../common/services/toastServices';
+import { ErrorMessage, Field, Formik, Form as FormikForm } from 'formik';
 export default function Accounts() {
   const [accountdata, setAccountdata] = useState<any>([]);
   const [paynow, setpaynow] = useState(false);
@@ -17,9 +20,8 @@ export default function Accounts() {
   const [cheque, setcheque] = useState(false);
   const [otpverify, setotpverify] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [amountToPay, setAmountToPay] = useState(0)
+  const [invoiceToPay, setInvoiceToPay] = useState<any>({})
   const [denominations, setDenominations] = useState([
-    { value: 1000, count: 0, total: 0 },
     { value: 500, count: 0, total: 0 },
     { value: 200, count: 0, total: 0 },
     { value: 100, count: 0, total: 0 },
@@ -54,6 +56,8 @@ export default function Accounts() {
   const [cashViewData, setCashViewData] = useState<any>({});
   const [chequeViewData, setChequeViewData] = useState<any>({});
   const [paymentLogData, setPaymentLogData] = useState<any>([]);
+  const [transactionData, setTransactionData] = useState<any>([]);
+  const [invoicePaymentOutstanding, setInvoicePaymentOutstanding] = useState<any>([]);
 
   const columns = [
     {
@@ -140,7 +144,12 @@ export default function Accounts() {
 
         <Dropdown.Menu>
           <Dropdown.Item>Edit</Dropdown.Item>
-          {row.status === 'Unpaid' || row.status === 'Partially Paid' ? <Dropdown.Item onClick={() => { setAmountToPay(row.totalOutstanding); viewDemoShow("paynow") }}>Pay Now</Dropdown.Item> : ""}
+          {row.status === 'Unpaid' || row.status === 'Partially Paid' ? <Dropdown.Item onClick={() => {
+
+            setInvoiceToPay(row); // this updates the state
+            fetchInvoicePaymentOutstanding(row.invoiceNumber); // use row directly
+            viewDemoShow("paynow");
+          }}>Pay Now</Dropdown.Item> : ""}
           <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>,
@@ -149,8 +158,10 @@ export default function Accounts() {
 
   const handleCountChange = (index: number, value: number) => {
     const updatedDenominations = [...denominations];
+
     updatedDenominations[index].count = value;
     updatedDenominations[index].total = updatedDenominations[index].value * value;
+    console.log(updatedDenominations);
 
     setDenominations(updatedDenominations);
   };
@@ -171,6 +182,18 @@ export default function Accounts() {
     data: accountdata
   };
 
+  const fetchInvoicePaymentOutstanding = async (invoiceNumber: string) => {
+    try {
+      const response = await getInvoicePaymentOutstandingApi(invoiceNumber)
+      if (response.status === 200) {
+        setInvoicePaymentOutstanding(response.data.data[0])
+      }
+    }
+    catch (error) {
+      console.log(error)
+      handleApiError(error)
+    }
+  }
   const fetchAllAccounts = async () => {
     try {
       const response = await getAllAccountsApi()
@@ -243,6 +266,8 @@ export default function Accounts() {
           chequeNumber: paymentLog?.cheque?.chequeNumber,
           paymentMethod: paymentLog?.paymentMethod,
           status: paymentLog?.paymentStatus,
+          invoiceNumber: paymentLog?.invoiceNumber,
+          txnId: paymentLog?.txnId,
         }
       ));
       setPaymentLogData(formattedData)
@@ -252,6 +277,72 @@ export default function Accounts() {
       handleApiError(error)
     } finally {
       setIsLoading(false)
+    }
+  }
+  const handleCashSubmit = async (amount: any) => {
+    try {
+      if (amount > invoicePaymentOutstanding?.totalDueNow * 1) {
+        return alert("Amount cannot be greater than outstanding amount")
+      }
+      const notesDetails = denominations.reduce((acc: Record<number, number>, curr) => {
+        if (curr.count > 0) {
+          acc[curr.value] = curr.count;
+        }
+        return acc;
+      }, {} as Record<number, number>);
+
+
+      const response = await createCashPaymentApi(amount, invoiceToPay.invoiceNumber, invoiceToPay.propertyIdentifier, notesDetails)
+      if (response.status === 200) {
+        setTransactionData(response.data.data)
+        viewDemoShow("otpverify");
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+  const handleChequeSubmit = async (values: any) => {
+    try {
+      console.log(values);
+
+      if (values.amountInFigures * 1 > invoicePaymentOutstanding?.totalDueNow * 1) {
+        return alert("Amount cannot be greater than outstanding amount")
+      }
+      const response = await createChequePaymentApi(invoiceToPay.invoiceNumber,
+        values.bankName,
+        values.chequeDate,
+        values.chequeIssuedDate,
+        values.chequeReceivedDate,
+        values.branchName,
+        values.amountInFigures,
+        values.amountInWords,
+        invoiceToPay.propertyIdentifier,
+        values.chequeNumber)
+      if (response.status === 200) {
+        setTransactionData(response.data.data)
+        viewDemoShow("otpverify");
+      }
+
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+
+  const handleVerifyPayment = async () => {
+    try {
+      console.log(transactionData);
+
+      const response = await verifyPaymentApi(transactionData.invoiceNumber, transactionData.amount, transactionData.createdAt, transactionData.propertyIdentifier, transactionData.txnId)
+      if (response.status === 200) {
+        console.log("Success", response.data.data)
+        viewDemoClose("otpverify");
+        showToast("success", "Payment verified successfully")
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
     }
   }
 
@@ -901,7 +992,19 @@ export default function Accounts() {
                               <td>{item.paymentMethod}</td>
                               <td>{"-"}</td>
                               <td>{item.status}</td>
-                              <td><Button type="button" className='btn btn-sm btn-success'><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
+                              {
+                                item.status === "Pending" ? (
+                                  <td><Button type="button" className='btn btn-sm btn-success' onClick={
+                                    () => {
+                                      setTransactionData(item)
+                                      viewDemoShow("otpverify")
+                                    }
+                                  }><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
+
+                                ) : (
+                                  <td>-</td>
+                                )
+                              }
                             </tr>
 
                           )
@@ -928,7 +1031,21 @@ export default function Accounts() {
             </Modal.Header>
 
             <Modal.Body className='bg-light pt-4'>
-              <Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> {amountToPay}</Col>
+              {invoicePaymentOutstanding && (
+                <>
+                  <Col xl={12} className='w-100 tx-20 text-center tx-bold'>
+                    Interest Outstanding: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.interestOutstanding}
+                  </Col>
+                  <Col xl={12} className='w-100 tx-20 text-center tx-bold'>
+                    Interest Till Now: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.currentInterest}
+                  </Col>
+                  <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
+                    Total: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
+                  </Col>
+                </>
+              )}
+
+
               <Card className='m-3 p-4'>
                 <h5>Choose your payment method</h5>
                 <ul className='list-unstyled paymentmode mb-2'>
@@ -1095,7 +1212,9 @@ export default function Accounts() {
                     </FormGroup>
 
                     <FormGroup className='mt-5'>
-                      <Button className='btn btn-primary w-100' type='button' onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
+                      <Button className='btn btn-primary w-100' type='button' onClick={() =>
+                        handleCashSubmit(calculateGrandTotal())
+                      }>Send OTP</Button>
                     </FormGroup>
 
                   </Col>
@@ -1114,71 +1233,112 @@ export default function Accounts() {
               </Button>
             </Modal.Header>
 
-            <Modal.Body className='bg-light pt-2'>
-              <Col xl={12} className='w-100 tx-26 text-center tx-bold'><i className="fa fa-rupee"></i> {amountToPay}</Col>
-              <Card className='m-2 p-3'>
-                <Row>
-                  <Col xl={6}>
-                    <FormGroup>
-                      <FormLabel>Cheque Issued Date</FormLabel>
-                      <Form.Control className='form-control' type="date" />
-                    </FormGroup>
-                  </Col>
-                  <Col xl={6}>
-                    <FormGroup>
-                      <FormLabel>Cheque Receipt Date</FormLabel>
-                      <Form.Control className='form-control' value={'3/31/2024'} type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col xl={6}>
-                    <FormGroup>
-                      <FormLabel>Cheque Clearing Date</FormLabel>
-                      <Form.Control className='form-control' value={'3/31/2024'} type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col xl={6}>
-                    <FormGroup>
-                      <FormLabel>Cheque Number</FormLabel>
-                      <Form.Control className='form-control' type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col xl={12}>
-                    <FormGroup>
-                      <FormLabel>Bank Name</FormLabel>
-                      <Form.Control className='form-control' type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col xl={12}>
-                    <FormGroup>
-                      <FormLabel>Branch</FormLabel>
-                      <Form.Control className='form-control' type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col xl={12}>
-                    <FormGroup>
-                      <FormLabel>Amount (in figures)</FormLabel>
-                      <Form.Control className='form-control' type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col xl={12}>
-                    <FormGroup>
-                      <FormLabel>Amount (in words)</FormLabel>
-                      <Form.Control className='form-control' type="text" />
-                    </FormGroup>
-                  </Col>
-                  <Col xl={12}>
-                    <FormGroup>
-                      <FormLabel>Mobile Number</FormLabel>
-                      <Form.Control className='form-control' placeholder='Enter mobile number for verification' type="text" />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <FormGroup>
-                  <Button className='btn btn-primary w-100 mt-3' type="button" onClick={() => viewDemoShow("otpverify")}>Send OTP</Button>
-                </FormGroup>
 
-              </Card>
-            </Modal.Body>
+            <Formik
+              initialValues={{
+                chequeDate: '',
+                chequeIssuedDate: '',
+                chequeReceivedDate: '',
+                chequeNumber: '',
+                bankName: '',
+                branch: '',
+                amountInFigures: '',
+                amountInWords: '',
+                mobile: ''
+              }}
+              // validationSchema={validationSchema}
+              onSubmit={handleChequeSubmit}
+            >
+              {(values) => (
+                <FormikForm>
+                  <Modal.Body className='bg-light pt-2'>
+                    <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
+                      <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
+                    </Col>
+                    <Card className='m-2 p-3'>
+                      <Row>
+                        <Col xl={6}>
+                          <FormGroup>
+                            <FormLabel>Cheque Date</FormLabel>
+                            <Field name="chequeDate" type="date" className="form-control" />
+                            <ErrorMessage name="chequeDate" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                        <Col xl={6}>
+                          <FormGroup>
+                            <FormLabel>Cheque Issued Date</FormLabel>
+                            <Field name="chequeIssuedDate" type="date" className="form-control" />
+                            <ErrorMessage name="chequeIssuedDate" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                        <Col xl={6}>
+                          <FormGroup>
+                            <FormLabel>Cheque Recived Date</FormLabel>
+                            <Field name="chequeReceivedDate" type="date" className="form-control" />
+                            <ErrorMessage name="chequeReceivedDate" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                        <Col xl={6}>
+                          <FormGroup>
+                            <FormLabel>Cheque Number</FormLabel>
+                            <Field name="chequeNumber" type="text" className="form-control" />
+                            <ErrorMessage name="chequeNumber" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                        <Col xl={12}>
+                          <FormGroup>
+                            <FormLabel>Bank Name</FormLabel>
+                            <Field name="bankName" type="text" className="form-control" />
+                            <ErrorMessage name="bankName" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                        <Col xl={12}>
+                          <FormGroup>
+                            <FormLabel>Branch</FormLabel>
+                            <Field name="branchName" type="text" className="form-control" />
+                            <ErrorMessage name="branchName" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                        <Col xl={12}>
+                          <FormGroup>
+                            <FormLabel>Amount (in figures)</FormLabel>
+                            <Field name="amountInFigures" type="text" className="form-control" />
+                            <ErrorMessage name="amountInFigures" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                        <Col xl={12}>
+                          <FormGroup>
+                            <FormLabel>Amount (in words)</FormLabel>
+                            <Field name="amountInWords" type="text" className="form-control" />
+                            <ErrorMessage name="amountInWords" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                        <Col xl={12}>
+                          <FormGroup>
+                            <FormLabel>Mobile Number</FormLabel>
+                            <Field
+                              name="mobile"
+                              type="text"
+                              className="form-control"
+                              placeholder="Enter mobile number for verification"
+                            />
+                            <ErrorMessage name="mobile" component="div" className="text-danger" />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <FormGroup>
+                        <Button className='btn btn-primary w-100 mt-3' type="submit">
+                          Send OTP
+                        </Button>
+                      </FormGroup>
+                    </Card>
+                  </Modal.Body>
+                </FormikForm>
+              )}
+            </Formik>
+
+
+
 
           </Modal>
 
@@ -1218,7 +1378,7 @@ export default function Accounts() {
 
               <FormGroup>
                 <Col xl={8} className='m-auto'>
-                  <Button className='btn btn-primary w-100 mt-4' type="button">Verify</Button>
+                  <Button className='btn btn-primary w-100 mt-4' type="button" onClick={handleVerifyPayment}>Verify</Button>
                 </Col>
               </FormGroup>
               <p className='text-info w-100 text-center mt-4'>Resend OTP</p>
@@ -1435,7 +1595,7 @@ export default function Accounts() {
 
         </Col>
       </Row>
-
+      <CustomToastContainer />
 
     </Fragment >
   );
