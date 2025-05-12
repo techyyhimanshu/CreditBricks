@@ -18,8 +18,6 @@ interface ProductModalProps {
     isShow?: boolean;
     editing: boolean;
     initialVals?: any;
-
-
 }
 
 const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, onSave }) => {

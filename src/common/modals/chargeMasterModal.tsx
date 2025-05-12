@@ -350,7 +350,7 @@ const ChargeMasterModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                                                 name="chargeNumber"
                                                 value={values.chargeNumber}
                                                 onChange={handleChange}
-                                                placeholder="charge Name"
+                                                placeholder="charge Number"
                                                 disabled
                                             />
                                         </Form.Group>

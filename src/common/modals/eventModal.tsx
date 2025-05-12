@@ -229,7 +229,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                             }
                         }, [forcedVenue, setFieldValue, venuesForDropDown]);
                         useEffect(() => {
-                            if (society&&!initialVals) {
+                            if (society && !initialVals) {
                                 setFieldValue("society", society);
                                 fetchPropertiesForDropDown(society);
                                 fetchVenuesForSociety(society)
@@ -685,9 +685,11 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                     <Button variant="default" onClick={(event) => { event.preventDefault(), onClose() }}>
                                         Close
                                     </Button>
-                                    <Button variant="primary" type='submit'>
-                                        {editing ? "Update" : "Save"}
-                                    </Button>
+                                    {!(initialVals && !editing) && (
+                                        <Button variant="primary" type="submit">
+                                            {editing ? "Update" : "Save"}
+                                        </Button>
+                                    )}
 
 
                                 </Modal.Footer>
