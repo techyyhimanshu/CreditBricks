@@ -126,9 +126,14 @@ export const getAllVenueApi = async (): Promise<any> => {
         throw error
     }
 }
-export const getAllApplicationApi = async (): Promise<any> => {
+export const getAllApplicationApi = async (societyIdentifier?:string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`event/applications/all`)
+        const params: any = {};
+
+        if (societyIdentifier) {
+            params.society_identifier = societyIdentifier;
+        }
+        const response = await axiosInstance.get(`event/applications/all`,{params})
         return response
     } catch (error) {
         throw error

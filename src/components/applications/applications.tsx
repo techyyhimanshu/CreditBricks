@@ -16,6 +16,8 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import GatePassModal from '../../common/modals/gatePassModal';
 import OtherApplicationModal from '../../common/modals/otherApplicationModal';
 import { ViewGatePassData } from '../../common/services/database';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 
 
 export default function Applications() {
@@ -67,6 +69,7 @@ export default function Applications() {
   const [viewGatePassData, setViewGatePassData] = useState<ViewGatePassData | null>(null);
   const [singleChangeInNameData, setSingleChangeInNameData] = useState(null);
   const [singleFlatResaleData, setSingleFlatResaleData] = useState(null);
+  const { society } = useSelector((state: RootState) => state.auth)
 
   const columns = [
     {
@@ -152,11 +155,11 @@ export default function Applications() {
 
   useEffect(() => {
     fetchAllApplications();
-  }, []);
+  }, [society]);
 
   const fetchAllApplications = async () => {
     try {
-      const response = await getAllApplicationApi()
+      const response = await getAllApplicationApi(society.value)
       if (response.status === 200) {
         const formattedData = response.data.data.map((complaint: any, index: number) => {
           return {
@@ -366,10 +369,16 @@ export default function Applications() {
   const handleEventSave = async (values: any, modal: string, editing: boolean) => {
     try {
       let response;
+      const payload = { ...values };
+
+      const eventIdentifier = payload.eventIdentifier;
+      if (eventIdentifier) {
+        delete payload.eventIdentifier;
+      }
       if (editing) {
-        response = await updateEventApi(values, values?.eventIdentifier || "")
+        response = await updateEventApi(payload, eventIdentifier || "")
       } else {
-        response = await createNewEventApi(values)
+        response = await createNewEventApi(payload)
       }
       if (response.status === 200 || response.status === 201) {
         showToast("success", response.data.message)
@@ -806,7 +815,7 @@ export default function Applications() {
     { value: "20", label: "Others" },
   ]
 
-  const society = [
+  const societyOptions = [
     { value: "1", label: "Mohan Areca Co-Op Housing Society Limited" },
     { value: "2", label: "SKA MetroVilla Society Limited" },
   ]
@@ -1288,7 +1297,7 @@ export default function Applications() {
               <Tabs
                 defaultActiveKey="Tab 01"
                 id="uncontrolled-tab-example"
-                className="panel-tabs main-nav-line bd-b-1"
+                className="panel-tabs main-nav-line bd-b-"
                 transition={false}
               >
 
@@ -1350,7 +1359,7 @@ export default function Applications() {
                         </Card.Body>
                       </Card>
 
-                      <Card className='box-shadow border border-primary'>
+                      <Card className='box-shadow border border-primary mb-0'>
                         <Card.Body>
                           <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Approval Details</h5>
 
@@ -1471,7 +1480,7 @@ export default function Applications() {
 
 
               </Tabs>
-
+              Powered by <img src={imagesData('logo')} className="wd-100p ms-1"  />
 
             </Modal.Body>
           </Modal>
