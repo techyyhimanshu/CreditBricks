@@ -96,7 +96,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 setFieldValue("approverProperty", { value: matched.propertyIdentifier, label: matched.propertyName });
                 setFieldValue("approverName", matched.fullName);
                 setFieldValue("approverContact", matched.contactNumber);
-                setFieldValue("approverIdentifier", matched.committeeMemberIdentifier);
+                setFieldValue("approverIdentifier", matched.committeeMemberId);
                 setFieldValue("designation", { value: matched.designation, label: matched.designation });
             }
             setCommiteeMemberData(matched)
@@ -143,6 +143,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
         try {
             const formattedData: any = {
                 propertyIdentifier: values?.property?.value,
+                societyIdentifier: values?.society?.value,
                 applicationType: name,
                 occasionId: values?.occasion?.value,
                 shift: values?.day?.value,
@@ -150,6 +151,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 endDate: values?.exitDateTime,
                 venueId: values?.venue?.value,
                 organizer: values?.organizerName,
+                guestCount:values?.guestNo,
                 contact: `${values?.contactNo}`,
                 remark: values?.remarks,
                 catering: values?.CateringService === "Yes",
@@ -233,7 +235,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                             }
                         }, [forcedVenue, setFieldValue, venuesForDropDown]);
                         useEffect(() => {
-                            if (society && !initialVals) {
+                            if (society ) {
                                 setFieldValue("society", society);
                                 fetchPropertiesForDropDown(society);
                                 fetchVenuesForSociety(society)

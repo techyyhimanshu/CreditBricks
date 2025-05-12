@@ -7,10 +7,12 @@ import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
 import { getSocietyVenueApi } from "../../api/application-api";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 interface ProductModalProps {
     show: boolean;
-    onSave?: (values: any, tab: string,editing:boolean) => void;
+    onSave?: (values: any, tab: string, editing: boolean) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -66,7 +68,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
     });
     const [visibleTabs, setVisibleTabs] = useState<string[]>([]);
     const isFirstRender = useRef(true);
-    console.log(activeTab, visibleTabs)
+    const { society } = useSelector((state: RootState) => state.auth)
 
     useEffect(() => {
         fetchSocietiesForDropDown()
@@ -192,8 +194,8 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                     otherComment: values.otherComments,
                 };
             }
-            if(editing){
-                formattedData.id=initialVals?.applicationIdentifier
+            if (editing) {
+                formattedData.id = initialVals?.applicationIdentifier
             }
             if (onSave) {
                 onSave(formattedData, activeTab, editing)
@@ -226,7 +228,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                         documentSubmission: initialVals ? { label: initialVals?.documentType, value: initialVals?.documentType } : { label: "", value: "" },
                         documentFile: null,
                         documentSubmissionFileName: initialVals?.documentSubmissionFile,
-                        documentComments: initialVals?.descriptionComment||"",
+                        documentComments: initialVals?.descriptionComment || "",
                         enquiry: initialVals ? { label: initialVals?.enquiryType, value: initialVals?.enquiryType } : { label: "", value: "" },
                         enquiryFile: null,
                         enquiryFileName: initialVals?.enquiryFile,
@@ -261,11 +263,18 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                         };
 
                         useEffect(() => {
+                            if (society) {
+                                setFieldValue("society", society);
+                                fetchPropertiesForDropDown(society);
+                            }
+                        }, [society]);
+
+                        useEffect(() => {
                             if (isFirstRender.current) {
                                 isFirstRender.current = false;
                                 return;
                             }
-                            setFieldValue("society", { label: "", value: "" });
+                            // setFieldValue("society", { label: "", value: "" });
                             setFieldValue("property", { label: "", value: "" });
 
                             if (activeTab === "documentSubmission") {
@@ -336,7 +345,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                         setFieldValue("society", opt)
                                                                                         fetchPropertiesForDropDown(opt)
                                                                                     }}
-                                                                                    isDisabled={initialVals&&!editing}
+                                                                                    isDisabled={initialVals && !editing}
                                                                                 />
 
                                                                             </Form.Group>
@@ -350,7 +359,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                     value={values.property}
                                                                                     options={propertiesForDropDown}
                                                                                     onChange={(opt) => setFieldValue("property", opt)}
-                                                                                    isDisabled={initialVals&&!editing}
+                                                                                    isDisabled={initialVals && !editing}
                                                                                 />
                                                                             </Form.Group>
                                                                         </Col>
@@ -364,7 +373,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             value={values.documentSubmission}
                                                                             options={documentsubmission}
                                                                             onChange={(opt) => setFieldValue("documentSubmission", opt)}
-                                                                            isDisabled={initialVals&&!editing}
+                                                                            isDisabled={initialVals && !editing}
                                                                         />
                                                                     </Form.Group>
 
@@ -373,7 +382,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                         <Form.Control className="form-control"
                                                                             type="file"
                                                                             onChange={(e: any) => setFieldValue("documentFile", e.currentTarget.files[0])}
-                                                                            disabled={initialVals&&!editing}
+                                                                            disabled={initialVals && !editing}
                                                                         />
                                                                     </Form.Group>
                                                                     {values.documentSubmissionFileName && (
@@ -407,7 +416,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             name="documentComments"
                                                                             value={values.documentComments}
                                                                             onChange={handleChange}
-                                                                            disabled={initialVals&&!editing}
+                                                                            disabled={initialVals && !editing}
                                                                         ></Form.Control>
                                                                     </Form.Group>
 
@@ -431,7 +440,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                         setFieldValue("society", opt)
                                                                                         fetchPropertiesForDropDown(opt)
                                                                                     }}
-                                                                                    isDisabled={initialVals&&!editing}
+                                                                                    isDisabled={initialVals && !editing}
                                                                                 />
 
                                                                             </Form.Group>
@@ -445,7 +454,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                     value={values.property}
                                                                                     options={propertiesForDropDown}
                                                                                     onChange={(opt) => setFieldValue("property", opt)}
-                                                                                    isDisabled={initialVals&&!editing}
+                                                                                    isDisabled={initialVals && !editing}
                                                                                 />
                                                                             </Form.Group>
                                                                         </Col>
@@ -459,7 +468,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             value={values.enquiry}
                                                                             options={enquiry}
                                                                             onChange={(opt) => setFieldValue("enquiry", opt)}
-                                                                            isDisabled={initialVals&&!editing}
+                                                                            isDisabled={initialVals && !editing}
                                                                         />
 
 
@@ -469,7 +478,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                         <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
                                                                         <Form.Control className="form-control"
                                                                             onChange={(e: any) => setFieldValue("enquiryFile", e.currentTarget.files[0])}
-                                                                            disabled={initialVals&&!editing}
+                                                                            disabled={initialVals && !editing}
                                                                             type="file" />
                                                                     </Form.Group>
                                                                     {values.enquiryFileName && (
@@ -498,7 +507,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
 
                                                                     <Form.Group className="form-group">
                                                                         <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                                                        <Form.Control as="textarea" className="form-control" name="enquiryComments" value={values.enquiryComments} onChange={handleChange} disabled={initialVals&&!editing} placeholder="Textarea" rows={3}></Form.Control>
+                                                                        <Form.Control as="textarea" className="form-control" name="enquiryComments" value={values.enquiryComments} onChange={handleChange} disabled={initialVals && !editing} placeholder="Textarea" rows={3}></Form.Control>
                                                                     </Form.Group>
 
                                                                 </div>
@@ -520,7 +529,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                         setFieldValue("society", opt)
                                                                                         fetchPropertiesForDropDown(opt)
                                                                                     }}
-                                                                                    isDisabled={initialVals&&!editing}
+                                                                                    isDisabled={initialVals && !editing}
                                                                                 />
 
                                                                             </Form.Group>
@@ -534,7 +543,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                     value={values.property}
                                                                                     options={propertiesForDropDown}
                                                                                     onChange={(opt) => setFieldValue("property", opt)}
-                                                                                    isDisabled={initialVals&&!editing}
+                                                                                    isDisabled={initialVals && !editing}
                                                                                 />
                                                                             </Form.Group>
                                                                         </Col>
@@ -552,7 +561,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                                     onChange={(opt) => {
                                                                                         setFieldValue("otherType", opt)
                                                                                     }}
-                                                                                    isDisabled={initialVals&&!editing}
+                                                                                    isDisabled={initialVals && !editing}
                                                                                 />
                                                                             </Col>
 
@@ -560,7 +569,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             <Col xl={12}>
                                                                                 <Form.Group className='mt-4'>
                                                                                     <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-                                                                                    <Form.Control className="form-control" disabled={initialVals&&!editing} type="file" onChange={(e: any) => setFieldValue("otherFile", e.currentTarget.files[0])} />
+                                                                                    <Form.Control className="form-control" disabled={initialVals && !editing} type="file" onChange={(e: any) => setFieldValue("otherFile", e.currentTarget.files[0])} />
                                                                                 </Form.Group>
                                                                                 {values.otherFileName && (
                                                                                     <p
@@ -591,7 +600,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                                                                             <Col xl={12}>
                                                                                 <Form.Group className='mt-4'>
                                                                                     <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                                                                    <Form.Control as="textarea" disabled={initialVals&&!editing} className="form-control" placeholder="Textarea" rows={3} name="otherComments" value={values.otherComments} onChange={handleChange}></Form.Control>
+                                                                                    <Form.Control as="textarea" disabled={initialVals && !editing} className="form-control" placeholder="Textarea" rows={3} name="otherComments" value={values.otherComments} onChange={handleChange}></Form.Control>
                                                                                 </Form.Group>
                                                                             </Col>
                                                                         </Row>

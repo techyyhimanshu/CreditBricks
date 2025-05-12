@@ -366,10 +366,16 @@ export default function Applications() {
   const handleEventSave = async (values: any, modal: string, editing: boolean) => {
     try {
       let response;
+      const payload = { ...values };
+
+      const eventIdentifier = payload.eventIdentifier;
+      if (eventIdentifier) {
+        delete payload.eventIdentifier;
+      }
       if (editing) {
-        response = await updateEventApi(values, values?.eventIdentifier || "")
+        response = await updateEventApi(payload, eventIdentifier || "")
       } else {
-        response = await createNewEventApi(values)
+        response = await createNewEventApi(payload)
       }
       if (response.status === 200 || response.status === 201) {
         showToast("success", response.data.message)
