@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Accordion, Button, Col, Form, InputGroup, Modal, Nav, Row, Tab } from "react-bootstrap";
+import { Button, Col, Form,  Modal, Nav, Row, Tab } from "react-bootstrap";
 import Select from "react-select";
 import 'suneditor/dist/css/suneditor.min.css';
 import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } from "../../api/society-api";
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
-import { Field, Formik, Form as FormikForm } from "formik";
-import { getSocietyVenueApi } from "../../api/application-api";
+import {  Formik, Form as FormikForm } from "formik";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 
@@ -123,30 +122,30 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
     }
 
 
-    const fetchApproverDetails = async (society: any, setFieldValue: any) => {
-        try {
-            const response = await getSocietyDetailsApi(society.value)
-            const members = response.data.data?.committeeMembers || [];
+    // const fetchApproverDetails = async (society: any, setFieldValue: any) => {
+    //     try {
+    //         const response = await getSocietyDetailsApi(society.value)
+    //         const members = response.data.data?.committeeMembers || [];
 
-            const matched = members.find((member: any) =>
-                Array.isArray(member.applicationType) &&
-                member.applicationType.includes(name)
-            );
-            if (matched) {
-                setFieldValue("tower", { value: matched.towerIdentifier, label: matched.towerName });
-                setFieldValue("wing", { value: matched.wingIdentifier, label: matched.wingName });
-                setFieldValue("approverSociety", { value: matched.societyIdentifier, label: matched.societyName });
-                setFieldValue("approverProperty", { value: matched.propertyIdentifier, label: matched.propertyName });
-                setFieldValue("approverName", matched.fullName);
-                setFieldValue("approverContact", matched.contactNumber);
-                setFieldValue("designation", { value: matched.designation, label: matched.designation });
-            }
-            setCommiteeMemberData(matched)
-        } catch (error: any) {
-            const errorMessage = handleApiError(error)
-            showToast('error', errorMessage)
-        }
-    }
+    //         const matched = members.find((member: any) =>
+    //             Array.isArray(member.applicationType) &&
+    //             member.applicationType.includes(name)
+    //         );
+    //         if (matched) {
+    //             setFieldValue("tower", { value: matched.towerIdentifier, label: matched.towerName });
+    //             setFieldValue("wing", { value: matched.wingIdentifier, label: matched.wingName });
+    //             setFieldValue("approverSociety", { value: matched.societyIdentifier, label: matched.societyName });
+    //             setFieldValue("approverProperty", { value: matched.propertyIdentifier, label: matched.propertyName });
+    //             setFieldValue("approverName", matched.fullName);
+    //             setFieldValue("approverContact", matched.contactNumber);
+    //             setFieldValue("designation", { value: matched.designation, label: matched.designation });
+    //         }
+    //         setCommiteeMemberData(matched)
+    //     } catch (error: any) {
+    //         const errorMessage = handleApiError(error)
+    //         showToast('error', errorMessage)
+    //     }
+    // }
 
 
 
@@ -171,7 +170,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
             let formattedData: any = {}
             if (activeTab === "documentSubmission") {
                 formattedData = {
-                    society: values.society?.value,
+                    societyIdentifier: values.society?.value,
                     propertyIdentifier: values.property?.value,
                     documentType: values.documentSubmission?.value,
                     documentFile: values.documentFile,
@@ -179,7 +178,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                 };
             } else if (activeTab === "enquiry") {
                 formattedData = {
-                    society: values.society?.value,
+                    societyIdentifier: values.society?.value,
                     propertyIdentifier: values.property?.value,
                     enquiryType: values.enquiry?.value,
                     enquiryFile: values.enquiryFile,
@@ -187,7 +186,7 @@ const OtherApplicationModal: React.FC<ProductModalProps> = ({ show, initialVals,
                 };
             } else if (activeTab === "other") {
                 formattedData = {
-                    society: values.society?.value,
+                    societyIdentifier: values.society?.value,
                     propertyIdentifier: values.property?.value,
                     otherType: values.otherType?.value,
                     otherFile: values.otherFile,

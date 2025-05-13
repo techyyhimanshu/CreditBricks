@@ -182,8 +182,15 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         try {
             const response = await getSocietyDetailsApi(society.value)
             const members = response.data.data?.committeeMembers || [];
+            const parentMembers = response.data.data?.parentSociety?.parentSociety?.committeeMembers || [];
+
 
             const matched = members.find((member: any) =>
+                Array.isArray(member.applicationType) &&
+                member.applicationType.includes(name)
+            );
+
+            const parentMatched = parentMembers.find((member: any) =>
                 Array.isArray(member.applicationType) &&
                 member.applicationType.includes(name)
             );
@@ -194,7 +201,21 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 setFieldValue("approverProperty", { value: matched.propertyIdentifier, label: matched.propertyName });
                 setFieldValue("approverName", matched.fullName);
                 setFieldValue("approverContact", matched.contactNumber);
+                setFieldValue("committeeMemberId", matched.committeeMemberId);
                 setFieldValue("designation", { value: matched.designation, label: matched.designation });
+            }
+            if (parentMatched) {
+                setFieldValue("hasParentApprover", true);
+                setFieldValue("parentApproverName", parentMatched.fullName);
+                setFieldValue("parentApproverContact", parentMatched.contactNumber);
+                setFieldValue("parentCommitteeMemberId", matched.parentCommitteeMemberId);
+                setFieldValue("parentDesignation", {
+                    value: parentMatched.designation,
+                    label: parentMatched.designation
+                });
+                setFieldValue("parentSocietyName", { label: response.data.data.parentSociety?.parentSociety?.parentSocietyName || "", value: response.data.data.parentSociety?.parentSocietyIdentifier || "" });
+            } else if (!parentMatched) {
+                setFieldValue("hasParentApprover", "true");
             }
         } catch (error: any) {
             const errorMessage = handleApiError(error)
@@ -242,6 +263,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 approverName: initialVals?.fullName || "",
                 approverContact: initialVals?.contactNumber || "",
                 designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
+                committeeMemberId:values.committeeMemberId||"",
+                parentCommitteeMemberId:values.parentCommitteeMemberId||""
+
             }
             if (editing) {
                 formattedData.gatePassNumber = initialVals.gatePassNumber
@@ -302,10 +326,17 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                         approverName: initialVals?.fullName || "",
                         approverContact: initialVals?.contactNumber || "",
                         designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
-
+                        hasParentApprover: "true",
+                        parentApproverName: initialVals?.fullName || "",
+                        parentApproverContact: initialVals?.contactNumber || "",
+                        parentDesignation: { value: initialVals?.parentDesignation || "", label: initialVals?.parentDesignation || "" },
+                        parentSocietyName: { value: "", label: "" },
+                        committeeMemberId: "",
+                        parentCommitteeMemberId: ""
                     }}
                     onSubmit={handleSubmit}>
                     {({ values, setFieldValue }) => {
+                        console.log(values)
                         useEffect(() => {
                             if (society) {
                                 setFieldValue("society", society);
@@ -920,7 +951,77 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
 
 
 
+
+
+
+
                                                 </Row>
+
+                                                {values.hasParentApprover === "true" && (
+                                                    <>
+                                                        <hr />
+                                                        <h6>Parent Approver Details</h6>
+                                                        <Row>
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Approver Name</Form.Label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="parentApproverName"
+                                                                        placeholder="Parent Approver Name"
+                                                                        className="form-control"
+                                                                        value={values.parentApproverName}
+                                                                        disabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Approver Contact</Form.Label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="parentApproverContact"
+                                                                        placeholder="Parent Contact"
+                                                                        className="form-control"
+                                                                        value={values.parentApproverContact}
+                                                                        disabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Designation</Form.Label>
+                                                                    <Select
+                                                                        placeholder="Parent Designation"
+                                                                        classNamePrefix="Select2"
+                                                                        name="parentDesignation"
+                                                                        onChange={(selected) => setFieldValue("parentDesignation", selected)}
+                                                                        value={values.parentDesignation}
+                                                                        isDisabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Society Name</Form.Label>
+                                                                    <Select
+                                                                        name='parentSocietyName'
+                                                                        placeholder="Select Society"
+                                                                        classNamePrefix="Select2"
+                                                                        onChange={(selected) => setFieldValue("parentSocietyName", selected)}
+                                                                        value={values.parentSocietyName}
+                                                                        isDisabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+                                                        </Row>
+
+                                                    </>
+                                                )}
+
                                             </Accordion.Body>
                                         </Accordion.Item>
 

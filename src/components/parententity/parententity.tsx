@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { Col, Row, Card, Button, Form, Dropdown, CardHeader, Modal } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-import { Formik, Form as FormikForm, ErrorMessage } from 'formik';
+import { Formik, Form as FormikForm } from 'formik';
 import { Link } from "react-router-dom";
 import { deleteParentEntityApi, getAllParentEntityApi } from '../../api/parentEntity-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
@@ -346,7 +346,7 @@ export default function ParentEntity() {
                         <Form.Label>Children Societies</Form.Label>
                         <p className='tx-14'>
                           {(viewData?.children || [])
-                            .map((child: any) => child.societyIdentifier)
+                            .map((child: any) => child.society?.societyName||"")
                             .join(", ") || "-"}
                         </p>
                       </Col>
@@ -417,9 +417,9 @@ export default function ParentEntity() {
                               <td>{member.fullName}</td>
                               <td>{member.contactNumber}</td>
                               <td>{member.designation}</td>
-                              <td>{member.towerIdentifier}</td>
-                              <td>{member.wingIdentifier}</td>
-                              <td>{member.propertyIdentifier}</td>
+                              <td>{member.tower?.towerName}</td>
+                              <td>{member.wing?.wingName}</td>
+                              <td>{member.property?.propertyName||"-"}</td>
                               <td>{(member.applicationType || []).join(", ")}</td>
                             </tr>
                           ))}
