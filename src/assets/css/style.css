@@ -85886,6 +85886,7 @@ width: 100%;
     .w-200{width:200px}
 .h-200{height:200px}
 .headericon .dropdown-toggle::after{    margin-top: 15px;margin-inline-start: 0.455em;    border-block-start: 0.3em solid;}
+.propertydocument .dropdown-toggle::after{ margin-top: 15px; float:right}
 .headericon .dropdown-toggle::after {
     content: "";
     border-inline-end: 0.3em solid transparent !important;

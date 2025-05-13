@@ -1480,7 +1480,7 @@ export default function Applications() {
 
 
               </Tabs>
-              Powered by <img src={imagesData('logo')} className="wd-100p ms-1"  />
+              Powered by <img src={imagesData('logo')} className="wd-100p ms-1" />
 
             </Modal.Body>
           </Modal>
@@ -1918,18 +1918,49 @@ export default function Applications() {
             </Modal.Header>
 
             <Modal.Body className='bg-light'>
-              <Row>
-                <Col xl={5}>
-                  <Col xl={12} className='bg-white p-3 border rounded-3'>
+              <Accordion defaultActiveKey="basicinfo">
+                <Accordion.Item eventKey="basicinfo">
+                  <Accordion.Header>Basic Information</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            options={societyOptions}
+                            placeholder="Select society"
+                            classNamePrefix="Select2"
+                            isDisabled
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl="4">
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            options={property}
+                            name="property"
+                            placeholder="Select property"
+                            classNamePrefix="Select2"
+                          />
+                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                        </Form.Group>
+                      </Col>
+
+
+
+                    </Row>
                     <Row>
                       <Col xl={12}>
-                        <p className='mb-2 tx-bold'>To share your payment receipt, kindly click on the "Yes" option</p>
+                        <p className='mb-2 mt-3 tx-bold'>To share your payment receipt, kindly click on the "Yes" option</p>
                         <hr className='w-100 m-0' />
                       </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Share Transfer Documents Submitted</Form.Label>
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Share Transfer Documents<br/>Submitted</Form.Label>
                           <Row>
                             <Col lg={3}>
 
@@ -1947,9 +1978,9 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Do you currently process the original share certificate?</Form.Label>
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
+                          <Form.Label>Do you currently process the original share<br/>certificate?</Form.Label>
                           <Row>
                             <Col lg={3}>
 
@@ -1967,9 +1998,9 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Is there an existing home loan on your property?</Form.Label>
+                      <Col xl={4}>
+                        <Form.Group className="form-group ">
+                          <Form.Label>Is there an existing home loan on your<br/>property?</Form.Label>
                           <Row>
                             <Col lg={3} >
 
@@ -1987,8 +2018,8 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Have you fully settled your home loan?</Form.Label>
                           <Row>
                             <Col lg={3} >
@@ -2008,8 +2039,8 @@ export default function Applications() {
                       </Col>
 
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Share Transfer Premium Paid</Form.Label>
                           <Row>
                             <Col lg={3} >
@@ -2029,8 +2060,8 @@ export default function Applications() {
                       </Col>
 
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Share Transfer Fees Paid</Form.Label>
                           <Row>
                             <Col lg={3} >
@@ -2050,8 +2081,8 @@ export default function Applications() {
                       </Col>
 
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Membership Fee Paid</Form.Label>
                           <Row>
                             <Col lg={3} >
@@ -2070,8 +2101,8 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Entrance Fee Paid</Form.Label>
                           <Row>
                             <Col lg={3}>
@@ -2091,8 +2122,8 @@ export default function Applications() {
                       </Col>
 
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Other Charges Paid</Form.Label>
                           <Row>
                             <Col lg={3}>
@@ -2121,19 +2152,19 @@ export default function Applications() {
 
 
                     </Row>
-                  </Col>
-                </Col>
+                  </Accordion.Body>
+                </Accordion.Item>
 
-                <Col xl={7}>
-                  <Col xl={12} className='bg-white p-3 border rounded-3'>
+
+
+                <Accordion.Item eventKey="ApplicationDescription">
+                  <Accordion.Header>Documents</Accordion.Header>
+                  <Accordion.Body className='p-2'>
                     <Row>
-                      <Col xl={12}>
-                        <p className='mb-2 tx-bold'>Documents</p>
-                        <hr className='w-100 m-0' />
-                      </Col>
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Sale Agreement Copy</Form.Label>
                           <Row>
                             <Col lg={3}>
@@ -2159,8 +2190,8 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Flat Registration Certificate</Form.Label>
                           <Row>
                             <Col lg={3}>
@@ -2187,8 +2218,8 @@ export default function Applications() {
                       </Col>
 
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Home Loan Sanction Letter</Form.Label>
                           <Row>
                             <Col lg={3}>
@@ -2214,8 +2245,8 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
                           <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
                           <Row>
                             <Col lg={3}>
@@ -2241,13 +2272,13 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Upload Reciept
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
+                          <Form.Label className='mb-2'>Upload Reciept
                             <small className='text-muted float-end'>Size : Max 2MB</small>
                           </Form.Label>
                           <Row>
-                            <Col xl={12} className='mt-1'>
+                            <Col xl={12} className='mt-4'>
                               <Form.Control
                                 type="file"
                                 placeholder=""
@@ -2260,13 +2291,13 @@ export default function Applications() {
                       </Col>
 
 
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Upload loan Closure Letter
+                      <Col xl={4}>
+                        <Form.Group className="form-group">
+                          <Form.Label  className='mb-2'>Upload loan Closure Letter
                             <small className='text-muted float-end'>Size : Max 2MB</small>
                           </Form.Label>
                           <Row>
-                            <Col xl={12} className='mt-1'>
+                            <Col xl={12} className='mt-4'>
                               <Form.Control
                                 type="file"
                                 placeholder=""
@@ -2280,12 +2311,15 @@ export default function Applications() {
 
 
                     </Row>
-                  </Col>
+                  </Accordion.Body>
+                </Accordion.Item>
 
-                  <Col xl={12} className='bg-white p-3 border rounded-3 mt-3'>
+                <Accordion.Item eventKey="vehicledetails">
+                  <Accordion.Header>Joint Holder</Accordion.Header>
+                  <Accordion.Body className='p-2'>
                     <Row>
                       <Col xl={12}>
-                        <p className='mb-2 tx-bold'>Joint Holder</p>
+                        <p className='mb-2 tx-bold'></p>
                         <hr className='w-100 m-0' />
                       </Col>
 
@@ -2307,7 +2341,7 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={6}>
+                      <Col xl={4}>
                         <Form.Group className="form-group mb-0 mt-0">
                           <Form.Label>Owner Name <small className='text-muted tx-bold'>(As per Agreement)</small></Form.Label>
                           <Form.Control
@@ -2318,7 +2352,7 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={6}>
+                      <Col xl={4}>
                         <Form.Group className="form-group mb-0">
                           <Form.Label>Co-owner Name <small className='text-muted tx-bold'>(As per Agreement)</small>
 
@@ -2331,7 +2365,7 @@ export default function Applications() {
                           <small className='float-end text-black tx-bold cursor mt-1'>+ Add</small>
                         </Form.Group>
                       </Col>
-                      <Col xl={6}>
+                      <Col xl={4}>
                         <Form.Group className="form-group mb-0">
                           <Form.Label>Flat Registration ID </Form.Label>
                           <Form.Control
@@ -2342,7 +2376,7 @@ export default function Applications() {
                         </Form.Group>
                       </Col>
 
-                      <Col xl={6}>
+                      <Col xl={4}>
                         <Form.Group className="form-group mb-0">
                           <Form.Label>Flat Registration Copy </Form.Label>
                           <Form.Control
@@ -2356,10 +2390,118 @@ export default function Applications() {
 
 
                     </Row>
-                  </Col>
-                </Col>
+                  </Accordion.Body>
+                </Accordion.Item>
 
-              </Row>
+
+                <Accordion.Item eventKey="approvaldetails">
+                  <Accordion.Header>Approval Details</Accordion.Header>
+                  <Accordion.Body className='p-2'>
+                    <Row>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Society </Form.Label>
+                          <Select
+                            name='approverSociety'
+                            placeholder="Select Society"
+                            classNamePrefix="Select2"
+                         isDisabled
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Tower </Form.Label>
+                          <Select
+                            // options={towerOptions}
+                            placeholder="Select Tower"
+                            classNamePrefix="Select2"
+                            name='tower'
+
+                            isDisabled
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Wing </Form.Label>
+                          <Select
+                            placeholder="Select Wing"
+                            classNamePrefix="Select2"
+                            name='wing'
+
+                            isDisabled
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Property </Form.Label>
+                          <Select
+                            placeholder="Select property"
+                            options={property}
+                            classNamePrefix="Select2"
+                            name='approverProperty'
+
+                            isDisabled
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Name</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="approverName"
+                            placeholder="Approver Name"
+                            className="form-control"
+
+                            disabled
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Approver Contact</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="approverContact"
+                            placeholder="Contact"
+                            className="form-control"
+                            disabled
+                          />
+                        </Form.Group>
+                      </Col>
+
+                      <Col xl={4}>
+                        <Form.Group className="form-group mb-1">
+                          <Form.Label>Designation </Form.Label>
+                          <Select
+                            // options={designation}
+                            placeholder="Select Designation"
+                            classNamePrefix="Select2"
+                            name='designation'
+                            isDisabled
+                          />
+                        </Form.Group>
+                      </Col>
+
+
+
+                    </Row>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+              </Accordion>
+
+
             </Modal.Body>
             <Modal.Footer>
               <Button variant="default" onClick={() => { viewDemoClose("addflateresale"); }}>

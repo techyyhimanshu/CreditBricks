@@ -1,6 +1,6 @@
 
 import { Fragment, useEffect, useState } from 'react';
-import { Col, Row, Card, Tabs, Tab, FormLabel, Tooltip, Dropdown, OverlayTrigger, Modal, Button } from "react-bootstrap";
+import { Col, Row, Card, Tabs, Tab, FormLabel, Tooltip, Dropdown, OverlayTrigger, Modal, Button, Form } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getPropertComplaintsApi, getPropertLoansApi, getSinglePropertyDetailsApi } from '../../../api/property-api';
 import DataTable from 'react-data-table-component';
@@ -1001,9 +1001,27 @@ export default function PropertyView() {
                     </Tab>
 
                     <Tab eventKey="Documents" title="Documents">
-                      <div className="tabs-menu-body main-content-body-right p-3">
+                      <div className="tabs-menu-body main-content-body-right ps-3">
+                        <Col sm={6} className='propertydocument mt-2 mb-3'>
+                        <Row>
+<Col sm={3}>
+<Form.Label className='text-black'>Select Owner</Form.Label>
+</Col>
+<Col sm={8}>
+<Dropdown>
+     <Dropdown.Toggle variant="light" className='w-100 text-start tx-semibold tx-17'>
+     <i className="bi bi-person"></i>&nbsp;Kunalpal
+        </Dropdown.Toggle>
 
-
+        <Dropdown.Menu>
+          <Dropdown.Item><small>Current Owner</small><p className='mb-0'>Kunalpal</p></Dropdown.Item>
+          <Dropdown.Item><small>Last Owner</small><p className='mb-0'>Rahul Kumar Singh</p></Dropdown.Item>
+          <Dropdown.Item><small>Fourth Owner</small><p className='mb-0'>Namrata Sharma</p></Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+      </Col>
+</Row>
+</Col>
 
 <Row>
   <Col xl={4}>
