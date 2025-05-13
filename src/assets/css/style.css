@@ -85937,8 +85937,8 @@ width: 100%;
 
 .css-13cymwt-control{min-height: 41px;}
 .kfxOgr{min-height: 180px !important;}
-.documentbox{display: flex; margin-bottom:25px; box-shadow: 0 20px 27px 0 rgba(0, 0, 0, .23); padding:10px;
-        background-color: #fff;
+.documentbox{display: flex; margin-bottom:25px; padding:10px;
+        background-color: #f3f3f3;
         /* border: 1px solid #ccc; */
         border-radius: 15px;}
 
@@ -85947,8 +85947,13 @@ width: 100%;
     border-radius: 100%;
     margin: 10px;
     border: 1px solid #ccc;}
+    .document_img{height: 30px;
+        background: #fff;
+        border-radius: 100%;
+        margin: 10px;
+        border: 1px solid #ccc;}
 .documentbox .documentname{padding:10px}
-.documentbox .documentname strong{width:100%; font-weight:500; display: block;}
+.documentbox .documentname strong{width:100%; font-weight:500; display: block;font-size: 14px;}
 .action-icon-circle{display: inline-block;
     width: 30px;
     height: 30px;
@@ -85957,7 +85962,8 @@ width: 100%;
     border: 1px solid #ccc;
     text-align: center;
     margin-top: 10px;
-    background: #ededf5;
+    background: #fff;
     margin-right: 7px;
     cursor: pointer;}
     .iframeDocument{width:100%; height:600px; overflow: auto;}
+    .document_property_table td{padding:0.0rem 0.75rem !important}
