@@ -477,15 +477,19 @@ export default function Accounts() {
           <span className="main-content-title mg-b-0 mg-b-lg-1">Accounts</span>
         </div>
 
-        {/* <div className="right-content">
+     <div className="right-content">
+     <Dropdown>
+     <Dropdown.Toggle variant="primary" className=''>
+     <i className="bi bi-arrow-clockwise"></i>&nbsp;Invoice Processing
+        </Dropdown.Toggle>
 
-          <OverlayTrigger
-            placement="bottom"
-            overlay={<Tooltip>Filter</Tooltip>}>
-            <button type="button" className="btn btn-dark p-1 pe-2 ps-2 me-1" data-bs-placement="bottom"
-              data-bs-toggle="tooltip" title="Filter"><i className="bi bi-funnel"></i></button>
-          </OverlayTrigger>
-        </div> */}
+        <Dropdown.Menu>
+          <Dropdown.Item>Process Invoice</Dropdown.Item>
+          <Dropdown.Item>Unprocess Invoice</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+
+        </div>
       </div>
 
       <Row>
@@ -1356,23 +1360,23 @@ export default function Accounts() {
               <h4 className='text-black'>OTP Verification</h4>
               <p>Enter the 4 digit verification code</p>
               <Row>
-                <Col xl={2}></Col>
-                <Col xl={2}>
+                <Col sm={2}></Col>
+                <Col sm={2}>
                   <Form.Control className='form-control' type="text" />
                 </Col>
 
-                <Col xl={2}>
+                <Col sm={2}>
                   <Form.Control className='form-control' type="text" />
                 </Col>
 
-                <Col xl={2}>
+                <Col sm={2}>
                   <Form.Control className='form-control' type="text" />
                 </Col>
 
-                <Col xl={2}>
+                <Col sm={2}>
                   <Form.Control className='form-control' type="text" />
                 </Col>
-                <Col xl={2}></Col>
+                <Col sm={2}></Col>
               </Row>
 
 
