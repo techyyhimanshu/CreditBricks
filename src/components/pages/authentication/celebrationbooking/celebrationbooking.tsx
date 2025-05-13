@@ -24,178 +24,225 @@ const CelebrationBooking = () => {
                   className="card justify-content-center mx-auto"
                 >
                   <div className="card-sigin p-3">
+
+
+                  <table className="w-100">
+                      <tr>
+                        <td className="text-center" colSpan={2}>
+                          <h3 className="mb-0">Credit Bricks PVt Ltd</h3>
+                          <strong>Registration Number : BSE/01/02/45  </strong>
+                          <h5>Celebration</h5>
+                        </td>
+                      </tr>
+
+                    </table>
                     <Row>
-                                 <Col xl={12}>
-             <h3 className="float-start">Credit Bricks PVt Ltd</h3>
-             <h5 className="float-end mt-2 text-primary">Celebration</h5>
+                      <Col sm={12}>
+                        <Card className='box-shadow border border-primary'>
+                          <Card.Body className="pb-0">
+                            <h5 className="card-title main-content-label tx-14 tx-dark tx-medium mg-b-10">Basic Information</h5>
+                            <Row>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Society</Form.Label>
+                                <p>Credit Bricks PVt Ltd</p>
+                              </Col>
 
-             </Col>
-             </Row>
-                  <Row>
-                    <Col xl={12}>
-                          <Card className='box-shadow border mt-3 border-primary mb-2'>
-                                              <Card.Body>
-                                                <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Information</h5>
-                                                <Row>
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Society</Form.Label>
-                                                    <p>Credit Bricks PVt Ltd</p>
-                                                  </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Property</Form.Label>
+                                <p>A101</p>
+                              </Col>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Property</Form.Label>
-                                                    <p>A101</p>
-                                                  </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Occassion</Form.Label>
+                                <p className='tx-14'>Celebration</p>
+                              </Col>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Occassion</Form.Label>
-                                                    <p className='tx-14'>Celebration</p>
-                                                  </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Day</Form.Label>
+                                <p className='tx-14'>Second Half</p>
+                              </Col>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Day</Form.Label>
-                                                    <p className='tx-14'>Second Half</p>
-                                                  </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>No. of Guest</Form.Label>
+                                <p className='tx-14 col-sm-11 p-0'>80</p>
+                              </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Start Date & Time</Form.Label>
+                                <p className='tx-14 col-sm-11 p-0'>12/04/2025. 6:00 Pm</p>
+                              </Col>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>No. of Guest</Form.Label>
-                                                    <p className='tx-14 col-sm-11 p-0'>80</p>
-                                                  </Col>
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Start Date & Time</Form.Label>
-                                                    <p className='tx-14 col-sm-11 p-0'>12/04/2025. 6:00 Pm</p>
-                                                  </Col>
-
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>End Date & Time</Form.Label>
-                                                    <p className='tx-14 col-sm-11 p-0'>12/04/2025. 10:00 Pm</p>
-                                                  </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>End Date & Time</Form.Label>
+                                <p className='tx-14 col-sm-11 p-0'>12/04/2025. 10:00 Pm</p>
+                              </Col>
 
 
 
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Venue</Form.Label>
-                                                    <p className='tx-14'>Banquet Hall</p>
-                                                  </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Venue</Form.Label>
+                                <p className='tx-14'>Banquet Hall</p>
+                              </Col>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Name of the Organizer</Form.Label>
-                                                    <p className='tx-14 col-sm-11 p-0'>Vishal Jain</p>
-                                                  </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Name of the Organizer</Form.Label>
+                                <p className='tx-14 col-sm-11 p-0'>Vishal Jain</p>
+                              </Col>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Contact Details</Form.Label>
-                                                    <p className='tx-14'>9876543212</p>
-                                                  </Col>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Contact Details</Form.Label>
+                                <p className='tx-14'>9876543212</p>
+                              </Col>
 
-                                                </Row>
-                                              </Card.Body>
-                                            </Card>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Outstanding</Form.Label>
+                                <p className='tx-14 tx-bold'>0.00 </p>
+                              </Col>
 
+                            </Row>
+                          </Card.Body>
+                        </Card>
 
+                        <Card className='box-shadow border border-primary'>
+                          <Card.Body>
+                            <h5 className="card-title  main-content-label tx-14 tx-dark tx-medium mg-b-10">Does this celebration include any of the following?</h5>
+                            <Row>
+                            <Col sm={3} className='mb-0'>
+                                <Form.Label>Catering Service</Form.Label>
+                                <p className='tx-14'>Yes</p>
+                              </Col>
 
-                                            <Card className='box-shadow border border-primary mb-2'>
-                                              <Card.Body>
-                                                <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Does this celebration include any of the following?</h5>
-                                                <Row>
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Catering Service</Form.Label>
-                                                    <p className='tx-14 mb-1'>Yes</p>
-                                                  </Col>
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Decorations</Form.Label>
+                                <p className='tx-14'>Yes </p>
+                              </Col>
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Sound System</Form.Label>
+                                <p className='tx-14'>Yes</p>
+                              </Col>
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Guest Parking</Form.Label>
+                                <p className='tx-14'>Yes </p>
+                              </Col>
+                              <Col sm={12} className='mb-0'>
+                                <Form.Label>Remarks</Form.Label>
+                                <p className='tx-14'>-</p>
+                              </Col>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Decorations</Form.Label>
-                                                    <p className='tx-14 mb-1'>Yes</p>
-                                                  </Col>
+                            </Row>
+                          </Card.Body>
+                        </Card>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Sound System</Form.Label>
-                                                    <p className='tx-14 mb-1'>Yes</p>
-                                                  </Col>
+                        <Card className='box-shadow border border-primary'>
+                          <Card.Body>
+                            <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Documents</h5>
+                            <Row>
 
-                                                  <Col xl={3} className='mb-0'>
-                                                    <Form.Label>Guest Parking</Form.Label>
-                                                    <p className='tx-14 mb-1'>Yes</p>
-                                                  </Col>
+                            <Col sm={3} className='mb-0'>
+                                <Form.Label>Sale Agreement Copy</Form.Label>
+                                <p className='tx-14'>Yes</p>
+                              </Col>
 
-                                                  <Col xl={12} className='mb-0'>
-                                                    <Form.Label>Remarks</Form.Label>
-                                                    <p className='tx-14 mb-0'>-</p>
-                                                  </Col>
-
-
-                                                </Row>
-                                              </Card.Body>
-                                            </Card>
-
-
-
-
-
-
-                    </Col>
-
-
-                    <Col xl={12}>
-
-                    <Card className='box-shadow border border-primary mb-2'>
-                        <Card.Body>
-                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Approval Details and Status</h5>
-<div className="table-responsive">
-                          <table className='table mt-3'>
-                            <thead>
-                              <tr>
-                                <th>Society</th>
-                                <th>Tower</th>
-                                <th>Wing</th>
-                                <th>Flat </th>
-                                <th>Approver</th>
-                                <th>Designation</th>
-                                <th>Application Type</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td className='align-top'>-</td>
-                                <td className='align-top'>Tower A</td>
-                                <td className='align-top'>A</td>
-                                <td className='align-top'>123</td>
-                                <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
-                                <td className='align-top'>Secretary</td>
-                                <td className='align-top'>Flat Resale</td>
-                              </tr>
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Flat Registration Certificate</Form.Label>
+                                <p className='tx-14'>Yes </p>
+                              </Col>
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Home Loan Sanction Letter</Form.Label>
+                                <p className='tx-14'>Yes</p>
+                              </Col>
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
+                                <p className='tx-14'>Yes </p>
+                              </Col>
 
 
-                            </tbody>
-                          </table>
-                          </div>
-                          <Col xl={12}>
-                <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
-                  <Dropdown className='profile-user border-0'>
-                       <Dropdown.Toggle variant="">
-                            <strong>In Process</strong>
-                          </Dropdown.Toggle>
-                        <Dropdown.Menu>
-<Dropdown.Item className="dropdown-item" href="/">In-Process </Dropdown.Item>
-<Dropdown.Item className="dropdown-item" href="/">Pending </Dropdown.Item>
-<Dropdown.Item className="dropdown-item" href="/">Verified </Dropdown.Item>
-<Dropdown.Item className="dropdown-item" href="/">Closed </Dropdown.Item>
+                            </Row>
+                          </Card.Body>
+                        </Card>
+                        <Card className='box-shadow border border-primary'>
+                          <Card.Body>
+                            <h5 className="card-title main-content-label tx-15 tx-dark tx-medium mg-b-10">Approval Details and Status</h5>
 
-                        </Dropdown.Menu>
-                      </Dropdown>
-                      <p className="mb-0 mt-2">Remarks</p>
-<textarea className='form-control' placeholder='Remarks'></textarea>
-                </Col>
-                <Col xl={12} className="p-0 text-end pt-3">
+                            <Row>
+                              <Col sm ={3} className='mb-0'>
+                                <Form.Label>Society</Form.Label>
+                                <p className='tx-14'>-</p>
+                              </Col>
 
-              <Button type='button' className='btn btn-primary'>Verify</Button>
-              </Col>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                    <p className='ps-3'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1"  /></p>
-                  </Row>
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Tower</Form.Label>
+                                <p className='tx-14'>Tower A </p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Wing</Form.Label>
+                                <p className='tx-14'>Wing A </p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Property</Form.Label>
+                                <p className='tx-14'>A101 </p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Approver Name</Form.Label>
+                                <p className='tx-14'>Sandeep Singh </p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Approver Number</Form.Label>
+                                <p className='tx-14'>9876543212 </p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Designation</Form.Label>
+                                <p className='tx-14'>Secretary </p>
+                              </Col>
+
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Application Type</Form.Label>
+                                <p className='tx-14'>Gate Pass </p>
+                              </Col>
+                              <Col sm={12}>
+<hr className="w-100"/>
+</Col>
+                              <Col xl={12}>
+                              <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
+                              <Dropdown className='profile-user border-0'>
+                                <Dropdown.Toggle variant="">
+                                  <strong className="text-success">Approve</strong>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item className="dropdown-item text-success" href="/">Approve </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item text-danger" href="/">Reject </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item" href="/">On Hold </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                              <p className="mb-0 mt-2">Remarks</p>
+                              <textarea className='form-control' placeholder='Remarks'></textarea>
+                            </Col>
+                            <Col sm={12} className="text-end pt-3">
+                              <Button type='button' className='btn btn-primary'>Save</Button>
+                            </Col>
+                            </Row>
+
+
+
+                          </Card.Body>
+                        </Card>
+
+
+                      </Col>
+
+                      <Col xl={12}>
+
+
+                      </Col>
+                      <p className='ps-3'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1" /></p>
+                    </Row>
+
                   </div>
                 </Col>
               </Row>
