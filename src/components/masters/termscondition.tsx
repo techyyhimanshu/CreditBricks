@@ -54,7 +54,7 @@ export default function TermsCondition() {
       //   formattedData.eventId = initialVals?.eventId
       //   formattedData.eventIdentifier = initialVals?.applicationIdentifier
       // }
-      
+
       // const response = await createNewGatePassApi(formattedData)
       // if (response.status === 200) {
       //     showToast("success", "Gate pass created successfully")
@@ -162,7 +162,7 @@ export default function TermsCondition() {
                   </Card>
 
                   <div className='float-end mb-4'>
-                    <Button type='submit' className='btn btn-primary me-2'>Save Permissions</Button>
+                    <Button type='submit' className='btn btn-primary me-2'>Save</Button>
                     <Button type='button' className='btn btn-default'>Cancel</Button>
                   </div>
                 </Col>

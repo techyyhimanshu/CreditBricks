@@ -47,6 +47,15 @@ export default function Accounts() {
     { value: "2", label: "Cheque" }
   ];
 
+  const invoicetype = [
+    { value: "1", label: "Maintenance" },
+    { value: "2", label: "Additional" }
+  ];
+
+  const society = [
+    { value: "1", label: "testname" },
+    { value: "2", label: "CreditBricks Pvt Ltd" }
+  ];
 
   const [select, setSelect] = useState(false);
   const [exportshow, setExport] = useState(false);
@@ -508,7 +517,7 @@ export default function Accounts() {
         </div>
       </div>
       {/* Process invoice */}
-      <Modal show={processinvoice} centered>
+      <Modal show={processinvoice} size='lg' centered>
 
 <Modal.Header>
   <Modal.Title>Process Invoice</Modal.Title>
@@ -518,35 +527,133 @@ export default function Accounts() {
 </Modal.Header>
 <Modal.Body>
   <Row>
+  <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>Invoice Type</Form.Label>
+        <Select
+                      options={invoicetype}
+                      placeholder="Select type"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
 
-  <Col xl={12}>
-                        <Form.Group className="form-control mb-3 bg-light process_invoice_radio">
+                    />
+      </Form.Group>
+    </Col>
+
+  <Col xl={6}>
+                        <Form.Group>
+                        <Form.Label>Choose</Form.Label>
+                        <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
                         <Row>
-                            <Col sm={3}>
+                            <Col sm={2}>
 
-                              <Form.Check type="radio" checked label="All" name="invoiceprocess" />
+                              <Form.Check type="radio" label="All" name="invoiceprocess" />
                             </Col>
                             <Col sm={3}>
 
-                              <Form.Check type="radio" label="Wing" name="invoiceprocess" />
+                              <Form.Check type="radio" label="Tower" name="invoiceprocess" />
                             </Col>
                             <Col sm={3}>
-<Form.Check type="radio" label="Individual" name="invoiceprocess" />
+
+<Form.Check type="radio" label="Wing" name="invoiceprocess" />
+</Col>
+                            <Col sm={3}>
+<Form.Check type="radio" checked label="Individual" name="invoiceprocess" />
                             </Col>
                           </Row>
+                          </div>
                         </Form.Group>
                       </Col>
 
+
+                      <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>Society</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
+    <Col xl={3}>
+      <Form.Group className="form-group">
+        <Form.Label>Tower</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
+    <Col xl={3}>
+      <Form.Group className="form-group">
+        <Form.Label>Wing</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
     <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>Property</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
+    <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>Member</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
+    <Col xl={4}>
       <Form.Group className="form-group">
         <Form.Label>From Date</Form.Label>
         <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
       </Form.Group>
     </Col>
 
-    <Col xl={6}>
+    <Col xl={4}>
       <Form.Group className="form-group">
         <Form.Label>To Date</Form.Label>
+        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+      </Form.Group>
+    </Col>
+
+    <Col xl={4}>
+      <Form.Group className="form-group">
+        <Form.Label>Due Date</Form.Label>
         <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
       </Form.Group>
     </Col>
@@ -575,7 +682,7 @@ export default function Accounts() {
 </Modal>
 
     {/* Unprocess invoice */}
-    <Modal show={unprocessinvoice} centered>
+    <Modal show={unprocessinvoice} size='lg' centered>
 
 <Modal.Header>
   <Modal.Title>Unprocess Invoice</Modal.Title>
@@ -584,46 +691,144 @@ export default function Accounts() {
   </Button>
 </Modal.Header>
 <Modal.Body>
-  <Row>
+<Row>
+  <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>Invoice Type</Form.Label>
+        <Select
+                      options={invoicetype}
+                      placeholder="Select type"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
 
-  <Col xl={12}>
-                        <Form.Group className="form-control mb-3 bg-light process_invoice_radio">
+                    />
+      </Form.Group>
+    </Col>
+
+  <Col xl={6}>
+                        <Form.Group>
+                        <Form.Label>Choose</Form.Label>
+                        <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
                         <Row>
-                            <Col sm={3}>
+                            <Col sm={2}>
 
-                              <Form.Check type="radio" label="All" name="invoiceunprocess" />
+                              <Form.Check type="radio" label="All" name="invoiceprocess" />
                             </Col>
                             <Col sm={3}>
 
-                              <Form.Check type="radio" label="Wing" name="invoiceunprocess" />
+                              <Form.Check type="radio" label="Tower" name="invoiceprocess" />
                             </Col>
                             <Col sm={3}>
-<Form.Check type="radio" label="Individual" checked name="invoiceunprocess" />
+
+<Form.Check type="radio" label="Wing" name="invoiceprocess" />
+</Col>
+                            <Col sm={3}>
+<Form.Check type="radio" checked label="Individual" name="invoiceprocess" />
                             </Col>
                           </Row>
+                          </div>
                         </Form.Group>
                       </Col>
 
+
+                      <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>Society</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
+    <Col xl={3}>
+      <Form.Group className="form-group">
+        <Form.Label>Tower</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
+    <Col xl={3}>
+      <Form.Group className="form-group">
+        <Form.Label>Wing</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
     <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>Property</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
+    <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>Member</Form.Label>
+        <Select
+                      options={society}
+                      placeholder="Select"
+                      name=""
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+      </Form.Group>
+    </Col>
+
+    <Col xl={4}>
       <Form.Group className="form-group">
         <Form.Label>From Date</Form.Label>
         <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
       </Form.Group>
     </Col>
 
-    <Col xl={6}>
+    <Col xl={4}>
       <Form.Group className="form-group">
         <Form.Label>To Date</Form.Label>
         <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
       </Form.Group>
     </Col>
+
+    <Col xl={4}>
+      <Form.Group className="form-group">
+        <Form.Label>Due Date</Form.Label>
+        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+      </Form.Group>
+    </Col>
     <Col xl={12}>
-    <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unprocessing of Invoices (1)</p>
+    <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unprocessing of Invoices (2)</p>
     <div className="progress mg-b-20">
                     <ProgressBar
                       variant="success"
                       role="progressbar"
-                      now={80}
+                      now={87}
                       animated
                     ></ProgressBar>
                   </div>
