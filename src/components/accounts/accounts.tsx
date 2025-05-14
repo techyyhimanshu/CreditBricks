@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState, useRef } from 'react';
 import { Link } from "react-router-dom";
 import { Col, Row, Card, Modal, Button, Form, Tabs, Tab, Dropdown, ButtonGroup, FormLabel, FormGroup, ProgressBar } from "react-bootstrap";
 import DataTable, { Alignment } from 'react-data-table-component';
@@ -6,13 +6,16 @@ import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
-import { getAllAccountsApi, getAllPaymentLogsApi, getAllReceiptsApi } from '../../api/account-api';
+import { getAllInvoicesApi, getAllPaymentLogsApi, getAllReceiptsApi } from '../../api/account-api';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { freeze } from '@reduxjs/toolkit';
 import TestLoader from '../../layout/layoutcomponent/testloader';
-import { createCashPaymentApi, createChequePaymentApi, getInvoicePaymentOutstandingApi, verifyPaymentApi } from '../../api/payment-api';
+import { createCashPaymentApi, createChequePaymentApi, getInvoicePaymentOutstandingApi, sendOTPApi, verifyPaymentApi } from '../../api/payment-api';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { ErrorMessage, Field, Formik, Form as FormikForm } from 'formik';
+import { numberToWords } from "amount-to-words";
+import { getAllPropertiesForDropdownApi } from '../../api/complaint-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 export default function Accounts() {
   const [accountdata, setAccountdata] = useState<any>([]);
   const [paynow, setpaynow] = useState(false);
@@ -35,6 +38,9 @@ export default function Accounts() {
   const [cashview, setcashview] = useState(false);
   const [chequeview, setchequeview] = useState(false);
   const [receiptData, setReceiptData] = useState([]);
+  const [mobile, setMobile] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const inputsRef = useRef([]);
 
   const propertyoption = [
     { value: "1", label: "A101" },
@@ -52,15 +58,15 @@ export default function Accounts() {
     { value: "2", label: "Additional" }
   ];
 
-  const society = [
+  const societyoption = [
     { value: "1", label: "testname" },
     { value: "2", label: "CreditBricks Pvt Ltd" }
   ];
 
   const [select, setSelect] = useState(false);
   const [exportshow, setExport] = useState(false);
-  const [processinvoice, setprocessinvoice] =  useState(false);
-  const [unprocessinvoice, setunprocessinvoice] =  useState(false);
+  const [processinvoice, setprocessinvoice] = useState(false);
+  const [unprocessinvoice, setunprocessinvoice] = useState(false);
 
   const [receiptadd, setReceiptadd] = useState(false);
   const [receiptexportshow, setExportreceipt] = useState(false);
@@ -70,6 +76,15 @@ export default function Accounts() {
   const [transactionData, setTransactionData] = useState<any>([]);
 
   const [invoicePaymentOutstanding, setInvoicePaymentOutstanding] = useState<any>([]);
+  const [propertyData, setPropertyData] = useState<any>([]);
+  const [filtersss, setFilters] = useState({
+    propertyIdentifier: "",
+    fromDate: "",
+    toDate: "",
+    invoiceNumber: "",
+    amountInFigures: "",
+  });
+  const { society } = useSelector((state: RootState) => state.auth)
 
   const columns = [
     {
@@ -167,13 +182,151 @@ export default function Accounts() {
       </Dropdown>,
     },
   ];
+  const columnsReceipt = [
+    {
+      name: 'S.no',
+      selector: (row: any) => row.sno,
+      sortable: true,
+      width: '50px'
+    },
+    {
+      name: 'Receipt No',
+      selector: (row: any) => row.receiptNumber,
+      sortable: true,
+    },
+
+    {
+      name: 'Property',
+      cell: (row: any) => (
+        <Link to={`${import.meta.env.BASE_URL}property/propertyview/${row.propertyIdentifier}`} className='text-info'>{row.propertyName || ""}</Link>
+      ),
+      sortable: true,
+    },
+
+    {
+      name: 'Receipt Type',
+      selector: (row: any) => row.receiptType,
+      sortable: true,
+
+    },
+
+    {
+      name: 'Total Amount Paid',
+      selector: (row: any) => row.totalAmountPaid,
+      sortable: true,
+    },
+
+    {
+      name: 'On Account Balance',
+      selector: (row: any) => row.onAccountBalance,
+      sortable: true,
+    },
+
+    {
+      name: 'Payment Mode',
+      cell: (row: any) => (
+        row.paymentMode === "Cash" ?
+          <Link to={"#"} onClick={() => {
+            setCashViewData(row.cashData);
+            viewDemoShow("cashview");
+          }} className='text-info'>{row.paymentMode}</Link> :
+          <Link to={"#"} onClick={() => {
+            setChequeViewData(row.chequeData);
+            viewDemoShow("chequeview");
+          }} className='text-info'>{row.paymentMode}</Link>
+      ),
+    },
+    {
+      name: 'Date',
+      selector: (row: any) => row.date,
+      sortable: true,
+    },
+    {
+      name: 'Created Date',
+      selector: (row: any) => row.createdDate,
+      sortable: true,
+    },
+  ]
+  const columnsPaymentLog = [
+    {
+      name: 'S.no',
+      selector: (row: any) => row.sno,
+      sortable: true,
+      width: '50px'
+    },
+    {
+      name: 'Date',
+      selector: (row: any) => row.date,
+      sortable: true,
+    },
+    {
+      name: 'Amount',
+      selector: (row: any) => row.amount,
+      sortable: true,
+    },
+
+    {
+      name: 'Cheque No',
+      selector: (row: any) => row.chequeNumber ? row.chequeNumber : "-",
+      sortable: true,
+
+    },
+
+    {
+      name: 'Payment Method',
+      selector: (row: any) => row.paymentMethod,
+      sortable: true,
+    },
+
+    {
+      name: 'Payee Description',
+      selector: (row: any) => "-",
+      sortable: true,
+    },
+    {
+      name: 'Status',
+      selector: (row: any) => row.status,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      cell: (row: any) => (
+        row.status === "Pending" ? <Button type="button" className='btn btn-sm btn-success' onClick={
+          () => {
+            setTransactionData(row)
+            viewDemoShow("otpverify")
+          }
+        }><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> : "-"
+      ),
+      sortable: true,
+    }
+  ]
+  const propertyOptions = [
+    { value: "", label: "All" },
+    ...propertyData.map((property: any) => ({
+      value: property.propertyIdentifier,
+      label: property.propertyName
+    }))
+  ];
+  const tableData = {
+    columns,
+    data: accountdata
+  };
+
+  const receiptTableData = {
+    columns: columnsReceipt,
+    data: receiptData
+  };
+  const paymentLogTableData = {
+    columns: columnsPaymentLog,
+    data: paymentLogData
+  };
 
   const handleCountChange = (index: number, value: number) => {
     const updatedDenominations = [...denominations];
 
     updatedDenominations[index].count = value;
     updatedDenominations[index].total = updatedDenominations[index].value * value;
-    console.log(updatedDenominations);
 
     setDenominations(updatedDenominations);
   };
@@ -182,6 +335,36 @@ export default function Accounts() {
     return denominations.reduce((total, denomination) => total + denomination.total, 0);
   };
 
+  const handleChange = (element: any, index: number) => {
+    const value = element.value.replace(/\D/, ''); // Only digits
+    if (!value) return;
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Move to next input
+    if (index < 5 && inputsRef.current[index + 1]) {
+      inputsRef.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+    if (e.key === 'Backspace') {
+      if (otp[index] === '' && index > 0) {
+        const newOtp = [...otp];
+        newOtp[index - 1] = '';
+        setOtp(newOtp);
+        inputsRef.current[index - 1].focus();
+      } else {
+        const newOtp = [...otp];
+        newOtp[index] = '';
+        setOtp(newOtp);
+      }
+    }
+  };
+
+
 
   // const tableData = {
   //   columns,
@@ -189,10 +372,6 @@ export default function Accounts() {
   //   receiptcolumns,
   //   receiptdata
   // };
-  const tableData = {
-    columns,
-    data: accountdata
-  };
 
   const fetchInvoicePaymentOutstanding = async (invoiceNumber: string) => {
     try {
@@ -208,7 +387,7 @@ export default function Accounts() {
   }
   const fetchAllAccounts = async () => {
     try {
-      const response = await getAllAccountsApi()
+      const response = await getAllInvoicesApi({}, society.value)
       const data = response.data.data
       const formattedData = data.map((account: any, index: number) => (
         {
@@ -238,7 +417,8 @@ export default function Accounts() {
 
   const fetchAllReceipts = async () => {
     try {
-      const response = await getAllReceiptsApi()
+
+      const response = await getAllReceiptsApi(society.value, {})
       const data = response.data.data
       const formattedData = data.map((reciept: any, index: number) => (
         {
@@ -266,9 +446,22 @@ export default function Accounts() {
     }
   }
 
+  const fetchAllPropertiesForDropDown = async () => {
+    try {
+      const response = await getAllPropertiesForDropdownApi(society.value)
+      const data = response.data.data
+      setPropertyData(data)
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const fetchAllPaymentLogs = async () => {
     try {
-      const response = await getAllPaymentLogsApi()
+      const response = await getAllPaymentLogsApi(society.value)
       const data = response.data.data
       const formattedData = data.map((paymentLog: any, index: number) => (
         {
@@ -294,7 +487,13 @@ export default function Accounts() {
   const handleCashSubmit = async (amount: any) => {
     try {
       if (amount > invoicePaymentOutstanding?.totalDueNow * 1) {
-        return alert("Amount cannot be greater than outstanding amount")
+        return showToast("error", "Amount cannot be greater than outstanding amount")
+      }
+      if (amount <= 0) {
+        return showToast("error", "Amount cannot be less than or equal to zero")
+      }
+      if (!mobile || mobile.length < 10) {
+        return showToast("error", "Please enter a valid mobile number")
       }
       const notesDetails = denominations.reduce((acc: Record<number, number>, curr) => {
         if (curr.count > 0) {
@@ -304,11 +503,13 @@ export default function Accounts() {
       }, {} as Record<number, number>);
 
 
-      const response = await createCashPaymentApi(amount, invoiceToPay.invoiceNumber, invoiceToPay.propertyIdentifier, notesDetails)
+      const response = await createCashPaymentApi(amount, invoiceToPay.invoiceNumber, invoiceToPay.propertyIdentifier, notesDetails, mobile)
       if (response.status === 200) {
         setTransactionData(response.data.data)
         viewDemoShow("otpverify");
       }
+      viewDemoShow("otpverify");
+
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
@@ -316,11 +517,14 @@ export default function Accounts() {
   }
   const handleChequeSubmit = async (values: any) => {
     try {
-      console.log(values);
 
       if (values.amountInFigures * 1 > invoicePaymentOutstanding?.totalDueNow * 1) {
         return alert("Amount cannot be greater than outstanding amount")
       }
+      if (values.amountInFigures <= 0) {
+        return alert("Amount cannot be less than or equal to zero")
+      }
+      setMobile(values.mobile)
       const response = await createChequePaymentApi(invoiceToPay.invoiceNumber,
         values.bankName,
         values.chequeDate,
@@ -330,7 +534,8 @@ export default function Accounts() {
         values.amountInFigures,
         values.amountInWords,
         invoiceToPay.propertyIdentifier,
-        values.chequeNumber)
+        values.chequeNumber,
+        values.mobile)
       if (response.status === 200) {
         setTransactionData(response.data.data)
         viewDemoShow("otpverify");
@@ -344,13 +549,13 @@ export default function Accounts() {
 
   const handleVerifyPayment = async () => {
     try {
-      console.log(transactionData);
-
-      const response = await verifyPaymentApi(transactionData.invoiceNumber, transactionData.amount, transactionData.createdAt, transactionData.propertyIdentifier, transactionData.txnId)
-      if (response.status === 200) {
-        console.log("Success", response.data.data)
-        viewDemoClose("otpverify");
-        showToast("success", "Payment verified successfully")
+      const joinedOtp = otp.join('');
+      if (joinedOtp.length === 6) {
+        const response = await verifyPaymentApi(transactionData.invoiceNumber, transactionData.amount, transactionData.createdAt, transactionData.propertyIdentifier, transactionData.txnId, mobile, joinedOtp)
+        if (response.status === 200) {
+          viewDemoClose("otpverify");
+          showToast("success", "Payment verified successfully")
+        }
       }
     } catch (error) {
       const errorMessage = handleApiError(error)
@@ -358,9 +563,24 @@ export default function Accounts() {
     }
   }
 
+  const handleResendOTP = async () => {
+    try {
+      const param = "CSH"
+      const response = await sendOTPApi(mobile, invoiceToPay.propertyIdentifier, invoiceToPay.amountInFigures, param)
+      if (response.status === 200) {
+        setTransactionData(response.data.data)
+        showToast("success", "OTP sent successfully")
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+
+  }
 
   useEffect(() => {
     fetchAllAccounts();
+    fetchAllPropertiesForDropDown();
     fetchAllReceipts();
     fetchAllPaymentLogs();
   }, [])
@@ -415,13 +635,13 @@ export default function Accounts() {
         setExportreceipt(true);
         break;
 
-        case "processinvoice":
-          setprocessinvoice(true);
-          break;
+      case "processinvoice":
+        setprocessinvoice(true);
+        break;
 
-          case "unprocessinvoice":
-            setunprocessinvoice(true);
-          break;
+      case "unprocessinvoice":
+        setunprocessinvoice(true);
+        break;
 
     }
   };
@@ -482,18 +702,110 @@ export default function Accounts() {
         setchequeview(false);
         break;
 
-        case "processinvoice":
-          setprocessinvoice(false);
-          break;
+      case "processinvoice":
+        setprocessinvoice(false);
+        break;
 
-          case "unprocessinvoice":
-            setunprocessinvoice(false);
-            break;
+      case "unprocessinvoice":
+        setunprocessinvoice(false);
+        break;
 
 
     }
   };
-  const [startDate, setStartDate] = useState(new Date());
+
+  const handleFilterChange = async (name: string, value: any) => {
+    setFilters((prevState) => ({
+      ...prevState,
+      [name]: value
+    }));
+
+    const updatedFilters = { ...filtersss, [name]: value };
+
+    try {
+      const response = await getAllInvoicesApi({ ...updatedFilters }, society.value)
+
+      const data = response.data.data
+      const formattedData = data.map((account: any, index: number) => (
+        {
+          sno: index + 1,
+          name: account?.name,
+          invoiceNumber: account?.invoiceNumber,
+          propertyName: account?.property?.propertyName,
+          status: account?.status,
+          type: account?.type,
+          dueDate: account?.dueDate,
+          invoiceCreatedDate: account?.invoiceCreatedDate,
+          totalAmount: account?.totalAmount,
+          totalPaidAmount: account?.totalPaidAmount,
+          propertyIdentifier: account.propertyIdentifier,
+          totalOutstanding: account?.invoicePaymentOutstanding?.principleOutstanding * 1 + account?.invoicePaymentOutstanding?.interestOutstanding * 1,
+        }
+
+      ));
+      setAccountdata(formattedData)
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  };
+  const handleReceiptSearch = async (values: any) => {
+    try {
+      const filters = {
+        ...values, propertyIdentifier: values.property.value
+      }
+      delete filters.property
+      const response = await getAllReceiptsApi(society.value, filters)
+      const data = response.data.data
+      const formattedData = data.map((reciept: any, index: number) => (
+        {
+          sno: index + 1,
+          receiptNumber: reciept?.receiptNumber,
+          propertyIdentifier: reciept?.property?.propertyIdentifier,
+          propertyName: reciept?.property?.propertyName,
+          receiptType: reciept?.invoice?.type,
+          totalAmountPaid: reciept?.paidAmount,
+          onAccountBalance: reciept?.currentRemainingAmount,
+          paymentMode: reciept?.paymentMode,
+          date: reciept?.invoice?.billStartDate,
+          createdDate: reciept?.loggedAt,
+          cashData: reciept?.cash,
+          chequeData: reciept?.cheque,
+        }
+
+      ));
+      setReceiptData(formattedData)
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  }
+  const handlePaymentLogSearch = async (values: any) => {
+    try {
+      const filters = {
+        ...values, propertyIdentifier: values.property.value
+      }
+      delete filters.property
+      const response = await getAllPaymentLogsApi(society.value, filters)
+      const data = response.data.data
+      const formattedData = data.map((paymentLog: any, index: number) => (
+        {
+          sno: index + 1,
+          date: paymentLog?.createdAt,
+          amount: paymentLog?.amount,
+          chequeNumber: paymentLog?.cheque?.chequeNumber,
+          paymentMethod: paymentLog?.paymentMethod,
+          status: paymentLog?.paymentStatus,
+          invoiceNumber: paymentLog?.invoiceNumber,
+          txnId: paymentLog?.txnId,
+        }
+      ));
+      setPaymentLogData(formattedData)
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  }
 
   return (
     <Fragment>
@@ -502,17 +814,17 @@ export default function Accounts() {
           <span className="main-content-title mg-b-0 mg-b-lg-1">Accounts</span>
         </div>
 
-     <div className="right-content">
-     <Dropdown>
-     <Dropdown.Toggle variant="primary" className=''>
-     <i className="bi bi-arrow-clockwise"></i>&nbsp;Invoice Processing
-        </Dropdown.Toggle>
+        <div className="right-content">
+          <Dropdown>
+            <Dropdown.Toggle variant="primary" className=''>
+              <i className="bi bi-arrow-clockwise"></i>&nbsp;Invoice Processing
+            </Dropdown.Toggle>
 
-        <Dropdown.Menu>
-          <Dropdown.Item onClick={() => { viewDemoShow("processinvoice"); }}>Process Invoice</Dropdown.Item>
-          <Dropdown.Item onClick={() => { viewDemoShow("unprocessinvoice"); }}>Unprocess Invoice</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => { viewDemoShow("processinvoice"); }}>Process Invoice</Dropdown.Item>
+              <Dropdown.Item onClick={() => { viewDemoShow("unprocessinvoice"); }}>Unprocess Invoice</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
 
         </div>
       </div>
@@ -571,7 +883,7 @@ export default function Accounts() {
       <Form.Group className="form-group">
         <Form.Label>Society</Form.Label>
         <Select
-                      options={society}
+                      options={societyoption}
                       placeholder="Select"
                       name=""
                       classNamePrefix='Select2'
@@ -669,17 +981,17 @@ export default function Accounts() {
                   </div>
     </Col>
 
-  </Row>
+          </Row>
 
-</Modal.Body>
-<Modal.Footer>
-  <Button variant="default" onClick={() => viewDemoClose("processinvoice")}>
-    Cancel
-  </Button>
-  <button className="btn btn-primary" type="submit">Process</button>
-</Modal.Footer>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="default" onClick={() => viewDemoClose("processinvoice")}>
+            Cancel
+          </Button>
+          <button className="btn btn-primary" type="submit">Process</button>
+        </Modal.Footer>
 
-</Modal>
+      </Modal>
 
     {/* Unprocess invoice */}
     <Modal show={unprocessinvoice} size='lg' centered>
@@ -736,7 +1048,7 @@ export default function Accounts() {
       <Form.Group className="form-group">
         <Form.Label>Society</Form.Label>
         <Select
-                      options={society}
+                      options={societyoption}
                       placeholder="Select"
                       name=""
                       classNamePrefix='Select2'
@@ -834,17 +1146,17 @@ export default function Accounts() {
                   </div>
     </Col>
 
-  </Row>
+          </Row>
 
-</Modal.Body>
-<Modal.Footer>
-  <Button variant="default" onClick={() => viewDemoClose("unprocessinvoice")}>
-    Cancel
-  </Button>
-  <button className="btn btn-primary" type="submit">Unprocess</button>
-</Modal.Footer>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="default" onClick={() => viewDemoClose("unprocessinvoice")}>
+            Cancel
+          </Button>
+          <button className="btn btn-primary" type="submit">Unprocess</button>
+        </Modal.Footer>
 
-</Modal>
+      </Modal>
 
       <Row>
         <Col xl={12}>
@@ -861,21 +1173,36 @@ export default function Accounts() {
                   <Row className='bg-light p-2'>
                     <Col xl={2}>
                       <Form.Group className="form-group mb-0">
-                        <Form.Label>Date <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                        <Form.Label>From <span className="text-danger">*</span></Form.Label>
+                        <input type='date'
+                          placeholder='dd/mm/yyyy'
+                          className='form-control'
+                          onChange={(selected) => { handleFilterChange("fromDate", selected.target.value) }}
+                        ></input>
                       </Form.Group>
                     </Col>
 
-                    <Col xl={4}>
+                    <Col xl={2}>
+                      <Form.Group className="form-group mb-0">
+                        <Form.Label>To <span className="text-danger">*</span></Form.Label>
+                        <input type='date' placeholder='dd/mm/yyyy'
+                          className='form-control'
+                          onChange={(selected) => { handleFilterChange("toDate", selected.target.value) }}
+                        ></input>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={2}>
                       <Form.Group className="form-group mb-0">
                         <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
 
                         <div className="SlectBox">
                           <Select
-                            options={propertyoption}
+                            options={propertyOptions}
                             placeholder="Select Property"
                             // classNamePrefix="selectform"
                             classNamePrefix='Select2' className="multi-select"
+                            onChange={(selected: any) => { handleFilterChange("propertyIdentifier", selected.value) }}
                           />
                         </div>
 
@@ -885,8 +1212,10 @@ export default function Accounts() {
 
                     <Col xl={2}>
                       <Form.Group className="form-group mb-0">
-                        <Form.Label>Invoice ID <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
+                        <Form.Label>Invoice Number <span className="text-danger">*</span></Form.Label>
+                        <input type='text' placeholder='Invoice Number' className='form-control'
+                          onChange={(e) => { handleFilterChange("invoiceNumber", e.target.value) }}
+                        ></input>
                       </Form.Group>
                     </Col>
 
@@ -894,7 +1223,9 @@ export default function Accounts() {
                     <Col xl={2}>
                       <Form.Group className="form-group mb-0">
                         <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
+                        <input type='text' placeholder='enter amount' className='form-control'
+                          onChange={(e) => { handleFilterChange("amountInFigures", e.target.value) }}
+                        ></input>
                       </Form.Group>
                     </Col>
 
@@ -958,145 +1289,147 @@ export default function Accounts() {
                   </div>
                 </Tab>
                 <Tab eventKey="Receipt" title="Receipt">
-                  <Row className='bg-light p-2'>
-                    <Col xl={2}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>Date <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-                      </Form.Group>
-                    </Col>
+                  <Formik initialValues={{
+                    fromDate: "",
+                    toDate: "",
+                    property: { value: "", label: "" },
+                    invoiceNumber: "",
+                    amountInFigures: "",
+                  }}
+                    onSubmit={handleReceiptSearch}>
+                    {({ setFieldValue, values }) => (
+                      <FormikForm>
+                        <Row className='bg-light p-2'>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>From <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type='date'
+                                name="fromDate"
+                                className='form-control'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                    <Col xl={4}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>To <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type='date'
+                                name="toDate"
+                                className='form-control'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                        <div className="SlectBox">
-                          <Select
-                            options={propertyoption}
-                            placeholder="Select Property"
-                            // classNamePrefix="selectform"
-                            classNamePrefix='Select2' className="multi-select"
-                          />
-                        </div>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
 
-
-                      </Form.Group>
-                    </Col>
-
-                    <Col xl={2}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>Receipt ID <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type='text' placeholder='enter id' className='form-control'></Form.Control>
-                      </Form.Group>
-                    </Col>
-
-
-                    <Col xl={2}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
-                      </Form.Group>
-                    </Col>
-
-                    <Col xl={2}>
-                      <Form.Label className='mb-4'></Form.Label>
-                      <button type="button" className="btn btn-primary mt-1 me-1" onClick={() => viewDemoShow("select")}>Search</button>
-                      <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
-                      <Modal centered show={exportshow}>
-                        <Modal.Header>
-                          <Modal.Title>Import</Modal.Title>
-                          <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
-                            x
-                          </Button>
-                        </Modal.Header>
-                        <Modal.Body>
-
-                          <p>Browse or Drop the file</p>
-                          <Form.Group className="form-group">
-                            <div className='textnone'>
-                              <input type='file' className='fileupload' />
-                              <p>Drag & Drop your file here or click</p>
-                            </div>
-
-                            <div className='upload-data'>
-                              <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
-                              <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
-                            </div>
+                              <div className="SlectBox">
+                                <Select
+                                  options={propertyOptions}
+                                  name="property"
+                                  placeholder="Select Property"
+                                  value={values.property}
+                                  // classNamePrefix="selectform"
+                                  classNamePrefix='Select2' className="multi-select"
+                                  onChange={(selected) => {
+                                    setFieldValue("property", selected)
+                                  }}
+                                />
+                              </div>
 
 
+                            </Form.Group>
+                          </Col>
 
-                          </Form.Group>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>Invoice Number <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type='text'
+                                name="invoiceNumber"
+                                placeholder='Invoice Number'
+                                className='form-control'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
 
-                        </Modal.Body>
-                        <Modal.Footer>
-                          <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
-                            Close
-                          </Button>
-                          <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
-                            Save
-                          </Button>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type='text'
+                                name="amountInFigures"
+                                placeholder='enter amount'
+                                className='form-control'
 
-                        </Modal.Footer>
-                      </Modal>
-                    </Col>
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                  </Row>
+                          <Col xl={2}>
+                            <Form.Label className='mb-4'></Form.Label>
+                            <button type="submit" className="btn btn-primary mt-1 me-1" >Search</button>
+                            <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
+                            <Modal centered show={exportshow}>
+                              <Modal.Header>
+                                <Modal.Title>Import</Modal.Title>
+                                <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
+                                  x
+                                </Button>
+                              </Modal.Header>
+                              <Modal.Body>
+
+                                <p>Browse or Drop the file</p>
+                                <Form.Group className="form-group">
+                                  <div className='textnone'>
+                                    <input type='file' className='fileupload' />
+                                    <p>Drag & Drop your file here or click</p>
+                                  </div>
+
+                                  <div className='upload-data'>
+                                    <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
+                                    <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
+                                  </div>
+
+
+
+                                </Form.Group>
+
+
+                              </Modal.Body>
+                              <Modal.Footer>
+                                <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
+                                  Close
+                                </Button>
+                                <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
+                                  Save
+                                </Button>
+
+                              </Modal.Footer>
+                            </Modal>
+                          </Col>
+
+                        </Row>
+                      </FormikForm>
+                    )}
+
+                  </Formik>
                   <div className="table-responsive ">
-                    <table className='table table-bordered'>
-                      <thead>
-                        <tr>
-                          <th>S.No</th>
-                          <th>Receipt No.</th>
-                          <th>Property</th>
-                          {/* <th>Memeber Name</th> */}
-                          <th>Receipt Type</th>
-                          <th>Total Paid Amount</th>
-                          <th>On Account Balance</th>
-                          <th>Payment Mode</th>
-                          <th>Date</th>
-                          <th>Created DT</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {receiptData.map((item: any, index: any) => {
-                          return (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{item.receiptNumber}</td>
-                              <td>{<Link to={`/property/propertyview/${item.propertyIdentifier}`} className='text-info'>{item.propertyName}</Link>}</td>
-                              {/* <td>{item.membername}</td> */}
-                              <td>{item.receiptType}</td>
-                              <td>{item.totalAmountPaid}</td>
-                              <td>{item.onAccountBalance}</td>
-                              {item.paymentMode === "Cash" ?
-                                <td className='text-info cursor' onClick={() => {
-                                  setCashViewData(item.cashData);
-                                  viewDemoShow("cashview");
-                                }}>{item.paymentMode}</td>
-                                : <td className='text-info cursor' onClick={() => {
-                                  setChequeViewData(item.chequeData);
-                                  viewDemoShow("chequeview");
-                                }}>{item.paymentMode}</td>}
-                              <td>{item.date}</td>
-                              <td>{item.createdDate}</td>
-                              <td>
-                                <Dropdown >
-                                  <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                    Action
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item>Edit </Dropdown.Item>
-                                    <Dropdown.Item className='text-danger'>Delete</Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown></td>
-                            </tr>
-                          )
-                        })}
+                    <DataTableExtensions {...receiptTableData}>
+                      <DataTable
+                        columns={columnsReceipt}
+                        data={receiptData}
+                        pagination
+                        progressPending={isLoading}
+                        progressComponent={<TestLoader />}
 
-                      </tbody>
-                    </table>
+
+                      />
+                    </DataTableExtensions>
                   </div>
                 </Tab>
 
@@ -1273,103 +1606,150 @@ export default function Accounts() {
 
                 <Tab eventKey="CashChequeLog" title="Cash & Cheque Log">
                   <Row className='bg-light p-2'>
-                    <Col xl={2}>
-                      <Form.Group className="form-group">
-                        <Form.Label>Date <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-                      </Form.Group>
-                    </Col>
+                    <Formik initialValues={{
+                      fromDate: "",
+                      toDate: "",
+                      property: { value: "", label: "" },
+                      invoiceNumber: "",
+                      amountInFigures: "",
+                    }}
+                      onSubmit={handlePaymentLogSearch}>
+                      {({ setFieldValue, values }) => (
+                        <FormikForm>
+                          <Row className='bg-light p-2'>
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>From <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='date'
+                                  name="fromDate"
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
 
-                    <Col xl={4}>
-                      <Form.Group className="form-group">
-                        <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>To <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='date'
+                                  name="toDate"
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
 
-                        <div className="SlectBox">
-                          <Select
-                            options={propertyoption}
-                            placeholder="Select Property"
-                            // classNamePrefix="selectform"
-                            classNamePrefix='Select2' className="multi-select"
-                          />
-                        </div>
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+
+                                <div className="SlectBox">
+                                  <Select
+                                    options={propertyOptions}
+                                    name="property"
+                                    placeholder="Select Property"
+                                    value={values.property}
+                                    // classNamePrefix="selectform"
+                                    classNamePrefix='Select2' className="multi-select"
+                                    onChange={(selected) => {
+                                      setFieldValue("property", selected)
+                                    }}
+                                  />
+                                </div>
 
 
-                      </Form.Group>
-                    </Col>
+                              </Form.Group>
+                            </Col>
 
-                    <Col xl={2}>
-                      <Form.Group className="form-group">
-                        <Form.Label>Payment Type <span className="text-danger">*</span></Form.Label>
-                        <Select
-                          options={paymenttype}
-                          placeholder="Select type"
-                          // classNamePrefix="selectform"
-                          classNamePrefix='Select2' className="multi-select"
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Invoice Number <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='text'
+                                  name="invoiceNumber"
+                                  placeholder='Invoice Number'
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='text'
+                                  name="amountInFigures"
+                                  placeholder='enter amount'
+                                  className='form-control'
+
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Label className='mb-4'></Form.Label>
+                              <button type="submit" className="btn btn-primary mt-1 me-1" >Search</button>
+                              <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
+                              <Modal centered show={exportshow}>
+                                <Modal.Header>
+                                  <Modal.Title>Import</Modal.Title>
+                                  <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    x
+                                  </Button>
+                                </Modal.Header>
+                                <Modal.Body>
+
+                                  <p>Browse or Drop the file</p>
+                                  <Form.Group className="form-group">
+                                    <div className='textnone'>
+                                      <input type='file' className='fileupload' />
+                                      <p>Drag & Drop your file here or click</p>
+                                    </div>
+
+                                    <div className='upload-data'>
+                                      <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
+                                      <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
+                                    </div>
+
+
+
+                                  </Form.Group>
+
+
+                                </Modal.Body>
+                                <Modal.Footer>
+                                  <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    Close
+                                  </Button>
+                                  <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    Save
+                                  </Button>
+
+                                </Modal.Footer>
+                              </Modal>
+                            </Col>
+
+                          </Row>
+                        </FormikForm>
+                      )}
+
+                    </Formik>
+                    <div className="table-responsive ">
+                      <DataTableExtensions {...paymentLogTableData}>
+                        <DataTable
+                          columns={columnsPaymentLog}
+                          data={paymentLogData}
+                          pagination
+                          progressPending={isLoading}
+                          progressComponent={<TestLoader />}
+
+
                         />
-                      </Form.Group>
-                    </Col>
-
-
-                    <Col xl={2}>
-                      <Form.Group className="form-group">
-                        <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
-                        <Form.Control type='text' placeholder='enter amount' className='form-control'></Form.Control>
-                      </Form.Group>
-                    </Col>
-
-                    <Col xl={2}>
-                      <Form.Label className='mb-4'></Form.Label>
-                      <button type="button" className="btn btn-primary mt-1 me-1" onClick={() => viewDemoShow("select")}>Search</button>
-
-                    </Col>
-
+                      </DataTableExtensions>
+                    </div>
                   </Row>
-                  <div className="table-responsive ">
-                    <table className='table table-bordered'>
-                      <thead>
-                        <tr>
-                          <th>S.No.</th>
-                          <th>Date</th>
-                          <th>Amount</th>
-                          <th>Check Number</th>
-                          <th>Payment Mode</th>
-                          <th>Payee/Description</th>
-                          <th>Status</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
 
-                        {paymentLogData.map((item: any, index: any) => {
-                          return (
-                            <tr>
-                              <td>{index + 1}</td>
-                              <td>{item.date.split('T')[0]}</td>
-                              <td>{item.amount}</td>
-                              <td>{item.chequeNumber ? item.chequeNumber : '-'}</td>
-                              <td>{item.paymentMethod}</td>
-                              <td>{"-"}</td>
-                              <td>{item.status}</td>
-                              {
-                                item.status === "Pending" ? (
-                                  <td><Button type="button" className='btn btn-sm btn-success' onClick={
-                                    () => {
-                                      setTransactionData(item)
-                                      viewDemoShow("otpverify")
-                                    }
-                                  }><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> </td>
-
-                                ) : (
-                                  <td>-</td>
-                                )
-                              }
-                            </tr>
-
-                          )
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
                 </Tab>
 
               </Tabs>
@@ -1561,12 +1941,12 @@ export default function Accounts() {
                     <Col xl={12} className='w-100 tx-26 text-center tx-bold mb-5'><i className="fa fa-rupee"></i> {calculateGrandTotal().toLocaleString()}</Col>
                     <FormGroup>
                       <FormLabel className='text-black'>Total Amount (in words)</FormLabel>
-                      <Form.Control className='form-control' placeholder='Enter amount in words' type="text"></Form.Control>
+                      <Form.Control className='form-control' disabled value={numberToWords(calculateGrandTotal())} placeholder='Enter amount in words' type="text"></Form.Control>
                     </FormGroup>
                     <hr />
                     <FormGroup className='mt-3'>
                       <FormLabel className='text-black'>Mobile Number</FormLabel>
-                      <Form.Control className='form-control' placeholder='Enter Number' type="text"></Form.Control>
+                      <Form.Control onChange={(e) => setMobile(e.target.value)} className='form-control' placeholder='Enter Number' type="text"></Form.Control>
                     </FormGroup>
 
                     <FormGroup className='mt-5'>
@@ -1607,92 +1987,106 @@ export default function Accounts() {
               // validationSchema={validationSchema}
               onSubmit={handleChequeSubmit}
             >
-              {(values) => (
-                <FormikForm>
-                  <Modal.Body className='bg-light pt-2'>
-                    <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
-                      <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
-                    </Col>
-                    <Card className='m-2 p-3'>
-                      <Row>
-                        <Col xl={6}>
-                          <FormGroup>
-                            <FormLabel>Cheque Date</FormLabel>
-                            <Field name="chequeDate" type="date" className="form-control" />
-                            <ErrorMessage name="chequeDate" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                        <Col xl={6}>
-                          <FormGroup>
-                            <FormLabel>Cheque Issued Date</FormLabel>
-                            <Field name="chequeIssuedDate" type="date" className="form-control" />
-                            <ErrorMessage name="chequeIssuedDate" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                        <Col xl={6}>
-                          <FormGroup>
-                            <FormLabel>Cheque Recived Date</FormLabel>
-                            <Field name="chequeReceivedDate" type="date" className="form-control" />
-                            <ErrorMessage name="chequeReceivedDate" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                        <Col xl={6}>
-                          <FormGroup>
-                            <FormLabel>Cheque Number</FormLabel>
-                            <Field name="chequeNumber" type="text" className="form-control" />
-                            <ErrorMessage name="chequeNumber" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                        <Col xl={12}>
-                          <FormGroup>
-                            <FormLabel>Bank Name</FormLabel>
-                            <Field name="bankName" type="text" className="form-control" />
-                            <ErrorMessage name="bankName" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                        <Col xl={12}>
-                          <FormGroup>
-                            <FormLabel>Branch</FormLabel>
-                            <Field name="branchName" type="text" className="form-control" />
-                            <ErrorMessage name="branchName" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                        <Col xl={12}>
-                          <FormGroup>
-                            <FormLabel>Amount (in figures)</FormLabel>
-                            <Field name="amountInFigures" type="text" className="form-control" />
-                            <ErrorMessage name="amountInFigures" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                        <Col xl={12}>
-                          <FormGroup>
-                            <FormLabel>Amount (in words)</FormLabel>
-                            <Field name="amountInWords" type="text" className="form-control" />
-                            <ErrorMessage name="amountInWords" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                        <Col xl={12}>
-                          <FormGroup>
-                            <FormLabel>Mobile Number</FormLabel>
-                            <Field
-                              name="mobile"
-                              type="text"
-                              className="form-control"
-                              placeholder="Enter mobile number for verification"
-                            />
-                            <ErrorMessage name="mobile" component="div" className="text-danger" />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <FormGroup>
-                        <Button className='btn btn-primary w-100 mt-3' type="submit">
-                          Send OTP
-                        </Button>
-                      </FormGroup>
-                    </Card>
-                  </Modal.Body>
-                </FormikForm>
-              )}
+              {({ values, setFieldValue }) => {
+                useEffect(() => {
+                  if (values.amountInFigures && !isNaN(Number(values.amountInFigures))) {
+                    const amount = parseInt(values.amountInFigures, 10);
+                    if (!isNaN(amount)) {
+                      const words = numberToWords(amount); // converts 123 -> "One Hundred Twenty Three"
+                      setFieldValue('amountInWords', words);
+                    }
+                  } else {
+                    setFieldValue('amountInWords', '');
+                  }
+                }, [values.amountInFigures, setFieldValue]);
+                return (
+                  <FormikForm>
+                    <Modal.Body className='bg-light pt-2'>
+                      <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
+                        <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
+                      </Col>
+                      <Card className='m-2 p-3'>
+                        <Row>
+                          <Col xl={6}>
+                            <FormGroup>
+                              <FormLabel>Cheque Date</FormLabel>
+                              <Field name="chequeDate" type="date" className="form-control" />
+                              <ErrorMessage name="chequeDate" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                          <Col xl={6}>
+                            <FormGroup>
+                              <FormLabel>Cheque Issued Date</FormLabel>
+                              <Field name="chequeIssuedDate" type="date" className="form-control" />
+                              <ErrorMessage name="chequeIssuedDate" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                          <Col xl={6}>
+                            <FormGroup>
+                              <FormLabel>Cheque Recived Date</FormLabel>
+                              <Field name="chequeReceivedDate" type="date" className="form-control" />
+                              <ErrorMessage name="chequeReceivedDate" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                          <Col xl={6}>
+                            <FormGroup>
+                              <FormLabel>Cheque Number</FormLabel>
+                              <Field name="chequeNumber" type="text" className="form-control" />
+                              <ErrorMessage name="chequeNumber" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                          <Col xl={12}>
+                            <FormGroup>
+                              <FormLabel>Bank Name</FormLabel>
+                              <Field name="bankName" type="text" className="form-control" />
+                              <ErrorMessage name="bankName" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                          <Col xl={12}>
+                            <FormGroup>
+                              <FormLabel>Branch</FormLabel>
+                              <Field name="branchName" type="text" className="form-control" />
+                              <ErrorMessage name="branchName" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                          <Col xl={12}>
+                            <FormGroup>
+                              <FormLabel>Amount (in figures)</FormLabel>
+                              <Field name="amountInFigures" type="text" className="form-control" />
+                              <ErrorMessage name="amountInFigures" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                          <Col xl={12}>
+                            <FormGroup>
+                              <FormLabel>Amount (in words)</FormLabel>
+                              <Field name="amountInWords" type="text" disabled className="form-control" />
+                              <ErrorMessage name="amountInWords" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                          <Col xl={12}>
+                            <FormGroup>
+                              <FormLabel>Mobile Number</FormLabel>
+                              <Field
+                                name="mobile"
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter mobile number for verification"
+                              />
+                              <ErrorMessage name="mobile" component="div" className="text-danger" />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <FormGroup>
+                          <Button className='btn btn-primary w-100 mt-3' type="submit">
+                            Send OTP
+                          </Button>
+                        </FormGroup>
+                      </Card>
+                    </Modal.Body>
+                  </FormikForm>
+                )
+              }
+              }
             </Formik>
 
 
@@ -1704,45 +2098,44 @@ export default function Accounts() {
           <Modal show={otpverify} centered>
             <Modal.Header>
               <Modal.Title>OTP Verification</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("otpverify"); }}>
-                x
-              </Button>
+              <Button variant="" className="btn btn-close" onClick={() => viewDemoClose("otpverify")}>x</Button>
             </Modal.Header>
 
             <Modal.Body className='p-5 text-center'>
-
               <h4 className='text-black'>OTP Verification</h4>
-              <p>Enter the 4 digit verification code</p>
-              <Row>
-                <Col sm={2}></Col>
-                <Col sm={2}>
-                  <Form.Control className='form-control' type="text" />
-                </Col>
-
-                <Col sm={2}>
-                  <Form.Control className='form-control' type="text" />
-                </Col>
-
-                <Col sm={2}>
-                  <Form.Control className='form-control' type="text" />
-                </Col>
-
-                <Col sm={2}>
-                  <Form.Control className='form-control' type="text" />
-                </Col>
-                <Col sm={2}></Col>
+              <p>Enter the 6 digit verification code</p>
+              <Row className='justify-content-center'>
+                {otp.map((digit, index) => (
+                  <Col key={index} xs={2} className='px-1'>
+                    <Form.Control
+                      type="text"
+                      maxLength={1}
+                      value={digit}
+                      className='text-center'
+                      ref={(el) => inputsRef.current[index] = el}
+                      onChange={(e) => handleChange(e.target, index)}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                    />
+                  </Col>
+                ))}
               </Row>
 
 
               <FormGroup>
                 <Col xl={8} className='m-auto'>
-                  <Button className='btn btn-primary w-100 mt-4' type="button" onClick={handleVerifyPayment}>Verify</Button>
+                  <Button className='btn btn-primary w-100 mt-4' type="button" onClick={handleVerifyPayment}>
+                    Verify
+                  </Button>
                 </Col>
               </FormGroup>
-              <p className='text-info w-100 text-center mt-4'>Resend OTP</p>
+              <p className='text-info w-100 text-center mt-4' onClick={handleResendOTP} style={{ cursor: 'pointer' }}>
+                Resend OTP
+              </p>
 
+              <p className='text-info w-100 text-center mt-4' style={{ cursor: 'pointer' }}>
+                {/* Resend OTP */}
+              </p>
             </Modal.Body>
-
           </Modal>
 
           <Modal show={cashview} size='xl' centered>

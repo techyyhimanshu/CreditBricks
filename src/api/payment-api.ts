@@ -1,14 +1,15 @@
 import axiosInstance from "./axiosInstance"
 
 export const createCashPaymentApi =
-    async (amountInFigures: number, invoiceNumber: string, propertyIdentifier: string, notesDetails: any): Promise<any> => {
+    async (amountInFigures: number, invoiceNumber: string, propertyIdentifier: string, notesDetails: any, mobile: string): Promise<any> => {
         try {
             const response = await axiosInstance.post(`payment/cash`, {
                 amountInFigures,
                 invoiceNumber,
                 propertyIdentifier,
                 notesDetails,
-                paidDate: new Date()
+                paidDate: new Date(),
+                mobile
             })
             return response
         } catch (error) {
@@ -18,7 +19,7 @@ export const createCashPaymentApi =
 
 export const createChequePaymentApi =
     async (invoiceNumber: string, bankName: string, chequeDate: Date, chequeIssuedDate: Date, chequeReceivedDate: Date, branchName: string, amountInFigures: number, amountInWords: string,
-        propertyIdentifier: string, chequeNumber: string): Promise<any> => {
+        propertyIdentifier: string, chequeNumber: string, mobile: string): Promise<any> => {
         try {
             const response = await axiosInstance.post(`payment/cheque`, {
                 invoiceNumber,
@@ -30,7 +31,8 @@ export const createChequePaymentApi =
                 amountInFigures,
                 amountInWords,
                 propertyIdentifier,
-                chequeNumber
+                chequeNumber,
+                mobile
             })
             return response
         } catch (error) {
@@ -39,14 +41,17 @@ export const createChequePaymentApi =
     }
 
 export const verifyPaymentApi =
-    async (invoiceNumber: string, amountInFigures: number, paidDate: Date, propertyIdentifier: string, transactionId: string): Promise<any> => {
+    async (invoiceNumber: string, amountInFigures: number,
+        paidDate: Date, propertyIdentifier: string, transactionId: string, mobileNumber: string, otp: string): Promise<any> => {
         try {
             const response = await axiosInstance.patch(`payment/verify`, {
                 invoiceNumber,
                 amountInFigures,
                 paidDate,
                 propertyIdentifier,
-                transactionId
+                transactionId,
+                mobileNumber,
+                otp
             })
             return response
         } catch (error) {
@@ -63,3 +68,17 @@ export const getInvoicePaymentOutstandingApi =
             throw error
         }
     }
+
+export const sendOTPApi = async (mobileNumber: string, propertyIdentifier: string, amountInFigures: number, param: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.post(`payment/resend-otp`, {
+            mobileNumber,
+            param,
+            propertyIdentifier,
+            amountInFigures
+        })
+        return response
+    } catch (error) {
+        throw error
+    }
+}
