@@ -242,7 +242,7 @@ export default function AddParentEntity() {
       branchName: values.branchName,
       ifscCode: values.ifscCode,
       chequeFavourable: values.chequeFavourable,
-      parentSocietyQRCode: values.paymentQrFile,
+      societyPaymentQrCode: values.paymentQrFile,
       children: values.childSociety.map((child: any) => ({
         societyIdentifier: child.value
       })),
