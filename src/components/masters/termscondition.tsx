@@ -12,7 +12,7 @@ import { CustomToastContainer, showToast } from '../../common/services/toastServ
 import { createNewTermsConditionApi, getTermsConditionBySocietyAndTypeApi, updateTermsConditionApi } from '../../api/termsCondition-api';
 
 export default function TermsCondition() {
-  const [editing,setEditing]=useState<boolean>(false)
+  const [editing, setEditing] = useState<boolean>(false)
   const { society } = useSelector((state: RootState) => state.auth)
   const applications = [
     { value: "Society", label: "Society" },
@@ -51,16 +51,16 @@ export default function TermsCondition() {
         termCondition: values.terms,
       };
       let response;
-      
-      if(editing){
-        response = await updateTermsConditionApi(formattedData,values.termsIdentifier)
-      }else{
+
+      if (editing) {
+        response = await updateTermsConditionApi(formattedData, values.termsIdentifier)
+      } else {
         response = await createNewTermsConditionApi(formattedData)
       }
-      
+
       // const response = await createNewGatePassApi(formattedData)
       if (response.status === 200) {
-          showToast("success",response.data.message)
+        showToast("success", response.data.message)
       }
     } catch (error) {
       const errorMessage = handleApiError(error)
@@ -68,20 +68,20 @@ export default function TermsCondition() {
     }
   }
 
-  const fetchTermsData=async(societyIdentifier:string,type:string,setFieldValue:any)=>{
+  const fetchTermsData = async (societyIdentifier: string, type: string, setFieldValue: any) => {
     try {
-      const response = await getTermsConditionBySocietyAndTypeApi(societyIdentifier,type)
-      if(response.status===200){
+      const response = await getTermsConditionBySocietyAndTypeApi(societyIdentifier, type)
+      if (response.status === 200) {
         setEditing(true)
-        setFieldValue("terms",response.data.data?.termCondition)
-        setFieldValue("termsIdentifier",response.data.data?.termConditionId)
+        setFieldValue("terms", response.data.data?.termCondition)
+        setFieldValue("termsIdentifier", response.data.data?.termConditionId)
       }
-    } catch (error:any) {
-      console.log("kartik",error.response)
-      if(error.response.status===400){
+    } catch (error: any) {
+      console.log("kartik", error.response)
+      if (error.response.status === 400) {
         setEditing(false)
-        setFieldValue("terms","")
-        setFieldValue("termsIdentifier","")
+        setFieldValue("terms", "")
+        setFieldValue("termsIdentifier", "")
       }
       // const errorMessage = handleApiError(error)
       // showToast("error", errorMessage)
@@ -101,7 +101,7 @@ export default function TermsCondition() {
           application: { value: "", label: "" },
           terms: '',
           society: { value: "", label: "" },
-          termsIdentifier:""
+          termsIdentifier: ""
         }}
         // validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -113,10 +113,10 @@ export default function TermsCondition() {
             }
           }, [society]);
           useEffect(() => {
-            if (society&&values?.application.value) {
-              fetchTermsData(society.value,values?.application.value,setFieldValue)
+            if (society && values?.application.value) {
+              fetchTermsData(society.value, values?.application.value, setFieldValue)
             }
-          }, [society,values.application]);
+          }, [society, values.application]);
           return (
             <FormikForm>
               <Row>
@@ -180,7 +180,7 @@ export default function TermsCondition() {
                   </Card>
 
                   <div className='float-end mb-4'>
-                    <Button type='submit' className='btn btn-primary me-2'>Save Permissions</Button>
+                    <Button type='submit' className='btn btn-primary me-2'>Save</Button>
                     <Button type='button' className='btn btn-default'>Cancel</Button>
                   </div>
                 </Col>

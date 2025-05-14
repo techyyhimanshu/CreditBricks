@@ -163,8 +163,8 @@ export default function EditParentEntity() {
         { value: " Vice Chairman", label: " Vice Chairman" },
         { value: "Secretary", label: "Secretary " },
         { value: " Joint Secretary", label: " Joint Secretary" },
-        { value: "Trader", label: "Trader " },
-        { value: " Joint Trader", label: " Joint Trader" },
+        { value: "Treasurer", label: "Treasurer " },
+        { value: " Joint Treasurer", label: " Joint Treasurer" },
         { value: "Committee Member", label: "Committee Member " },
         { value: "Director", label: "Director" },
         { value: "Joint Director", label: "Joint Director " },
@@ -187,7 +187,7 @@ export default function EditParentEntity() {
         { value: "Play Area", label: "Play Area" },
         { value: "Food Court", label: "Food Court" },
         { value: "Banquet hall", label: "Banquet hall" },
-    
+
       ]
 
     const billingfrequency = [
