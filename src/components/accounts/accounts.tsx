@@ -713,42 +713,6 @@ export default function Accounts() {
 
     }
   };
-
-  const handleFilterChange = async (name: string, value: any) => {
-    setFilters((prevState) => ({
-      ...prevState,
-      [name]: value
-    }));
-
-    const updatedFilters = { ...filtersss, [name]: value };
-
-    try {
-      const response = await getAllInvoicesApi({ ...updatedFilters }, society.value)
-
-      const data = response.data.data
-      const formattedData = data.map((account: any, index: number) => (
-        {
-          sno: index + 1,
-          name: account?.name,
-          invoiceNumber: account?.invoiceNumber,
-          propertyName: account?.property?.propertyName,
-          status: account?.status,
-          type: account?.type,
-          dueDate: account?.dueDate,
-          invoiceCreatedDate: account?.invoiceCreatedDate,
-          totalAmount: account?.totalAmount,
-          totalPaidAmount: account?.totalPaidAmount,
-          propertyIdentifier: account.propertyIdentifier,
-          totalOutstanding: account?.invoicePaymentOutstanding?.principleOutstanding * 1 + account?.invoicePaymentOutstanding?.interestOutstanding * 1,
-        }
-
-      ));
-      setAccountdata(formattedData)
-    } catch (error) {
-      const errorMessage = handleApiError(error);
-      showToast("error", errorMessage);
-    }
-  };
   const handleReceiptSearch = async (values: any) => {
     try {
       const filters = {
@@ -806,6 +770,37 @@ export default function Accounts() {
       showToast("error", errorMessage);
     }
   }
+  const handleInvoiceSearch = async (values: any) => {
+    try {
+      const filters = {
+        ...values, propertyIdentifier: values.property.value
+      }
+      delete filters.property
+      const response = await getAllInvoicesApi(filters, society.value)
+      const data = response.data.data
+      const formattedData = data.map((account: any, index: number) => (
+        {
+          sno: index + 1,
+          name: account?.name,
+          invoiceNumber: account?.invoiceNumber,
+          propertyName: account?.property?.propertyName,
+          status: account?.status,
+          type: account?.type,
+          dueDate: account?.dueDate,
+          invoiceCreatedDate: account?.invoiceCreatedDate,
+          totalAmount: account?.totalAmount,
+          totalPaidAmount: account?.totalPaidAmount,
+          propertyIdentifier: account.propertyIdentifier,
+          totalOutstanding: account?.invoicePaymentOutstanding?.principleOutstanding * 1 + account?.invoicePaymentOutstanding?.interestOutstanding * 1,
+        }
+
+      ));
+      setAccountdata(formattedData)
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+  }
 
   return (
     <Fragment>
@@ -831,155 +826,155 @@ export default function Accounts() {
       {/* Process invoice */}
       <Modal show={processinvoice} size='lg' centered>
 
-<Modal.Header>
-  <Modal.Title>Process Invoice</Modal.Title>
-  <Button variant="" className="btn-close" onClick={() => viewDemoClose("processinvoice")}>
-    x
-  </Button>
-</Modal.Header>
-<Modal.Body>
-  <Row>
-  <Col xl={6}>
-      <Form.Group className="form-group">
-        <Form.Label>Invoice Type</Form.Label>
-        <Select
-                      options={invoicetype}
-                      placeholder="Select type"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+        <Modal.Header>
+          <Modal.Title>Process Invoice</Modal.Title>
+          <Button variant="" className="btn-close" onClick={() => viewDemoClose("processinvoice")}>
+            x
+          </Button>
+        </Modal.Header>
+        <Modal.Body>
+          <Row>
+            <Col xl={6}>
+              <Form.Group className="form-group">
+                <Form.Label>Invoice Type</Form.Label>
+                <Select
+                  options={invoicetype}
+                  placeholder="Select type"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-  <Col xl={6}>
-                        <Form.Group>
-                        <Form.Label>Choose</Form.Label>
-                        <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
-                        <Row>
-                            <Col sm={2}>
+            <Col xl={6}>
+              <Form.Group>
+                <Form.Label>Choose</Form.Label>
+                <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
+                  <Row>
+                    <Col sm={2}>
 
-                              <Form.Check type="radio" label="All" name="invoiceprocess" />
-                            </Col>
-                            <Col sm={3}>
+                      <Form.Check type="radio" label="All" name="invoiceprocess" />
+                    </Col>
+                    <Col sm={3}>
 
-                              <Form.Check type="radio" label="Tower" name="invoiceprocess" />
-                            </Col>
-                            <Col sm={3}>
+                      <Form.Check type="radio" label="Tower" name="invoiceprocess" />
+                    </Col>
+                    <Col sm={3}>
 
-<Form.Check type="radio" label="Wing" name="invoiceprocess" />
-</Col>
-                            <Col sm={3}>
-<Form.Check type="radio" checked label="Individual" name="invoiceprocess" />
-                            </Col>
-                          </Row>
-                          </div>
-                        </Form.Group>
-                      </Col>
+                      <Form.Check type="radio" label="Wing" name="invoiceprocess" />
+                    </Col>
+                    <Col sm={3}>
+                      <Form.Check type="radio" checked label="Individual" name="invoiceprocess" />
+                    </Col>
+                  </Row>
+                </div>
+              </Form.Group>
+            </Col>
 
 
-                      <Col xl={6}>
-      <Form.Group className="form-group">
-        <Form.Label>Society</Form.Label>
-        <Select
-                      options={societyoption}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={6}>
+              <Form.Group className="form-group">
+                <Form.Label>Society</Form.Label>
+                <Select
+                  options={societyoption}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={3}>
-      <Form.Group className="form-group">
-        <Form.Label>Tower</Form.Label>
-        <Select
-                      options={society}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={3}>
+              <Form.Group className="form-group">
+                <Form.Label>Tower</Form.Label>
+                <Select
+                  options={society}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={3}>
-      <Form.Group className="form-group">
-        <Form.Label>Wing</Form.Label>
-        <Select
-                      options={society}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={3}>
+              <Form.Group className="form-group">
+                <Form.Label>Wing</Form.Label>
+                <Select
+                  options={society}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={6}>
-      <Form.Group className="form-group">
-        <Form.Label>Property</Form.Label>
-        <Select
-                      options={society}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={6}>
+              <Form.Group className="form-group">
+                <Form.Label>Property</Form.Label>
+                <Select
+                  options={society}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={6}>
-      <Form.Group className="form-group">
-        <Form.Label>Member</Form.Label>
-        <Select
-                      options={society}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={6}>
+              <Form.Group className="form-group">
+                <Form.Label>Member</Form.Label>
+                <Select
+                  options={society}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>From Date</Form.Label>
-        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-      </Form.Group>
-    </Col>
+            <Col xl={4}>
+              <Form.Group className="form-group">
+                <Form.Label>From Date</Form.Label>
+                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+              </Form.Group>
+            </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>To Date</Form.Label>
-        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-      </Form.Group>
-    </Col>
+            <Col xl={4}>
+              <Form.Group className="form-group">
+                <Form.Label>To Date</Form.Label>
+                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+              </Form.Group>
+            </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Due Date</Form.Label>
-        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-      </Form.Group>
-    </Col>
-    <Col xl={12}>
-    <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Processing of Invoices (23)</p>
-    <div className="progress mg-b-20">
-                    <ProgressBar
-                      variant="success"
-                      role="progressbar"
-                      now={35}
-                      animated
-                    ></ProgressBar>
-                  </div>
-    </Col>
+            <Col xl={4}>
+              <Form.Group className="form-group">
+                <Form.Label>Due Date</Form.Label>
+                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col xl={12}>
+              <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Processing of Invoices (23)</p>
+              <div className="progress mg-b-20">
+                <ProgressBar
+                  variant="success"
+                  role="progressbar"
+                  now={35}
+                  animated
+                ></ProgressBar>
+              </div>
+            </Col>
 
           </Row>
 
@@ -993,158 +988,158 @@ export default function Accounts() {
 
       </Modal>
 
-    {/* Unprocess invoice */}
-    <Modal show={unprocessinvoice} size='lg' centered>
+      {/* Unprocess invoice */}
+      <Modal show={unprocessinvoice} size='lg' centered>
 
-<Modal.Header>
-  <Modal.Title>Unprocess Invoice</Modal.Title>
-  <Button variant="" className="btn-close" onClick={() => viewDemoClose("unprocessinvoice")}>
-    x
-  </Button>
-</Modal.Header>
-<Modal.Body>
-<Row>
-  <Col xl={6}>
-      <Form.Group className="form-group">
-        <Form.Label>Invoice Type</Form.Label>
-        <Select
-                      options={invoicetype}
-                      placeholder="Select type"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+        <Modal.Header>
+          <Modal.Title>Unprocess Invoice</Modal.Title>
+          <Button variant="" className="btn-close" onClick={() => viewDemoClose("unprocessinvoice")}>
+            x
+          </Button>
+        </Modal.Header>
+        <Modal.Body>
+          <Row>
+            <Col xl={6}>
+              <Form.Group className="form-group">
+                <Form.Label>Invoice Type</Form.Label>
+                <Select
+                  options={invoicetype}
+                  placeholder="Select type"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-  <Col xl={6}>
-                        <Form.Group>
-                        <Form.Label>Choose</Form.Label>
-                        <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
-                        <Row>
-                            <Col sm={2}>
+            <Col xl={6}>
+              <Form.Group>
+                <Form.Label>Choose</Form.Label>
+                <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
+                  <Row>
+                    <Col sm={2}>
 
-                              <Form.Check type="radio" label="All" name="invoiceprocess" />
-                            </Col>
-                            <Col sm={3}>
+                      <Form.Check type="radio" label="All" name="invoiceprocess" />
+                    </Col>
+                    <Col sm={3}>
 
-                              <Form.Check type="radio" label="Tower" name="invoiceprocess" />
-                            </Col>
-                            <Col sm={3}>
+                      <Form.Check type="radio" label="Tower" name="invoiceprocess" />
+                    </Col>
+                    <Col sm={3}>
 
-<Form.Check type="radio" label="Wing" name="invoiceprocess" />
-</Col>
-                            <Col sm={3}>
-<Form.Check type="radio" checked label="Individual" name="invoiceprocess" />
-                            </Col>
-                          </Row>
-                          </div>
-                        </Form.Group>
-                      </Col>
+                      <Form.Check type="radio" label="Wing" name="invoiceprocess" />
+                    </Col>
+                    <Col sm={3}>
+                      <Form.Check type="radio" checked label="Individual" name="invoiceprocess" />
+                    </Col>
+                  </Row>
+                </div>
+              </Form.Group>
+            </Col>
 
 
-                      <Col xl={6}>
-      <Form.Group className="form-group">
-        <Form.Label>Society</Form.Label>
-        <Select
-                      options={societyoption}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={6}>
+              <Form.Group className="form-group">
+                <Form.Label>Society</Form.Label>
+                <Select
+                  options={societyoption}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={3}>
-      <Form.Group className="form-group">
-        <Form.Label>Tower</Form.Label>
-        <Select
-                      options={society}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={3}>
+              <Form.Group className="form-group">
+                <Form.Label>Tower</Form.Label>
+                <Select
+                  options={society}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={3}>
-      <Form.Group className="form-group">
-        <Form.Label>Wing</Form.Label>
-        <Select
-                      options={society}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={3}>
+              <Form.Group className="form-group">
+                <Form.Label>Wing</Form.Label>
+                <Select
+                  options={society}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={6}>
-      <Form.Group className="form-group">
-        <Form.Label>Property</Form.Label>
-        <Select
-                      options={society}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={6}>
+              <Form.Group className="form-group">
+                <Form.Label>Property</Form.Label>
+                <Select
+                  options={society}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={6}>
-      <Form.Group className="form-group">
-        <Form.Label>Member</Form.Label>
-        <Select
-                      options={society}
-                      placeholder="Select"
-                      name=""
-                      classNamePrefix='Select2'
-                      className="multi-select"
+            <Col xl={6}>
+              <Form.Group className="form-group">
+                <Form.Label>Member</Form.Label>
+                <Select
+                  options={society}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
 
-                    />
-      </Form.Group>
-    </Col>
+                />
+              </Form.Group>
+            </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>From Date</Form.Label>
-        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-      </Form.Group>
-    </Col>
+            <Col xl={4}>
+              <Form.Group className="form-group">
+                <Form.Label>From Date</Form.Label>
+                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+              </Form.Group>
+            </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>To Date</Form.Label>
-        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-      </Form.Group>
-    </Col>
+            <Col xl={4}>
+              <Form.Group className="form-group">
+                <Form.Label>To Date</Form.Label>
+                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+              </Form.Group>
+            </Col>
 
-    <Col xl={4}>
-      <Form.Group className="form-group">
-        <Form.Label>Due Date</Form.Label>
-        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-      </Form.Group>
-    </Col>
-    <Col xl={12}>
-    <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unprocessing of Invoices (2)</p>
-    <div className="progress mg-b-20">
-                    <ProgressBar
-                      variant="success"
-                      role="progressbar"
-                      now={87}
-                      animated
-                    ></ProgressBar>
-                  </div>
-    </Col>
+            <Col xl={4}>
+              <Form.Group className="form-group">
+                <Form.Label>Due Date</Form.Label>
+                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+              </Form.Group>
+            </Col>
+            <Col xl={12}>
+              <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unprocessing of Invoices (2)</p>
+              <div className="progress mg-b-20">
+                <ProgressBar
+                  variant="success"
+                  role="progressbar"
+                  now={87}
+                  animated
+                ></ProgressBar>
+              </div>
+            </Col>
 
           </Row>
 
@@ -1170,110 +1165,135 @@ export default function Accounts() {
               >
 
                 <Tab eventKey="Tab 01" title="Invoice">
-                  <Row className='bg-light p-2'>
-                    <Col xl={2}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>From <span className="text-danger">*</span></Form.Label>
-                        <input type='date'
-                          placeholder='dd/mm/yyyy'
-                          className='form-control'
-                          onChange={(selected) => { handleFilterChange("fromDate", selected.target.value) }}
-                        ></input>
-                      </Form.Group>
-                    </Col>
+                  <Formik initialValues={{
+                    fromDate: "",
+                    toDate: "",
+                    property: { value: "", label: "" },
+                    invoiceNumber: "",
+                    amountInFigures: "",
+                  }}
+                    onSubmit={handleInvoiceSearch}>
+                    {({ setFieldValue, values }) => (
+                      <FormikForm>
+                        <Row className='bg-light p-2'>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>From <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type='date'
+                                name="fromDate"
+                                className='form-control'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                    <Col xl={2}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>To <span className="text-danger">*</span></Form.Label>
-                        <input type='date' placeholder='dd/mm/yyyy'
-                          className='form-control'
-                          onChange={(selected) => { handleFilterChange("toDate", selected.target.value) }}
-                        ></input>
-                      </Form.Group>
-                    </Col>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>To <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type='date'
+                                name="toDate"
+                                className='form-control'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                    <Col xl={2}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>Property Name<span className="text-danger">*</span></Form.Label>
 
-                        <div className="SlectBox">
-                          <Select
-                            options={propertyOptions}
-                            placeholder="Select Property"
-                            // classNamePrefix="selectform"
-                            classNamePrefix='Select2' className="multi-select"
-                            onChange={(selected: any) => { handleFilterChange("propertyIdentifier", selected.value) }}
-                          />
-                        </div>
-
-
-                      </Form.Group>
-                    </Col>
-
-                    <Col xl={2}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>Invoice Number <span className="text-danger">*</span></Form.Label>
-                        <input type='text' placeholder='Invoice Number' className='form-control'
-                          onChange={(e) => { handleFilterChange("invoiceNumber", e.target.value) }}
-                        ></input>
-                      </Form.Group>
-                    </Col>
-
-
-                    <Col xl={2}>
-                      <Form.Group className="form-group mb-0">
-                        <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
-                        <input type='text' placeholder='enter amount' className='form-control'
-                          onChange={(e) => { handleFilterChange("amountInFigures", e.target.value) }}
-                        ></input>
-                      </Form.Group>
-                    </Col>
-
-                    <Col xl={2}>
-                      <Form.Label className='mb-4'></Form.Label>
-                      <button type="button" className="btn btn-primary mt-1 me-1" onClick={() => viewDemoShow("select")}>Search</button>
-                      <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
-                      <Modal centered show={exportshow}>
-                        <Modal.Header>
-                          <Modal.Title>Import</Modal.Title>
-                          <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
-                            x
-                          </Button>
-                        </Modal.Header>
-                        <Modal.Body>
-
-                          <p>Browse or Drop the file</p>
-                          <Form.Group className="form-group">
-                            <div className='textnone'>
-                              <input type='file' className='fileupload' />
-                              <p>Drag & Drop your file here or click</p>
-                            </div>
-
-                            <div className='upload-data'>
-                              <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
-                              <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
-                            </div>
+                              <div className="SlectBox">
+                                <Select
+                                  options={propertyOptions}
+                                  name="property"
+                                  placeholder="Select Property"
+                                  value={values.property}
+                                  // classNamePrefix="selectform"
+                                  classNamePrefix='Select2' className="multi-select"
+                                  onChange={(selected) => {
+                                    setFieldValue("property", selected)
+                                  }}
+                                />
+                              </div>
 
 
+                            </Form.Group>
+                          </Col>
 
-                          </Form.Group>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>Invoice Number <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type='text'
+                                name="invoiceNumber"
+                                placeholder='Invoice Number'
+                                className='form-control'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
 
-                        </Modal.Body>
-                        <Modal.Footer>
-                          <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
-                            Close
-                          </Button>
-                          <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
-                            Save
-                          </Button>
+                          <Col xl={2}>
+                            <Form.Group className="form-group mb-0">
+                              <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type='text'
+                                name="amountInFigures"
+                                placeholder='enter amount'
+                                className='form-control'
 
-                        </Modal.Footer>
-                      </Modal>
-                    </Col>
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                  </Row>
+                          <Col xl={2}>
+                            <Form.Label className='mb-4'></Form.Label>
+                            <button type="submit" className="btn btn-primary mt-1 me-1" >Search</button>
+                            <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button>
+                            <Modal centered show={exportshow}>
+                              <Modal.Header>
+                                <Modal.Title>Import</Modal.Title>
+                                <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
+                                  x
+                                </Button>
+                              </Modal.Header>
+                              <Modal.Body>
 
+                                <p>Browse or Drop the file</p>
+                                <Form.Group className="form-group">
+                                  <div className='textnone'>
+                                    <input type='file' className='fileupload' />
+                                    <p>Drag & Drop your file here or click</p>
+                                  </div>
+
+                                  <div className='upload-data'>
+                                    <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
+                                    <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
+                                  </div>
+
+
+
+                                </Form.Group>
+
+
+                              </Modal.Body>
+                              <Modal.Footer>
+                                <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
+                                  Close
+                                </Button>
+                                <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
+                                  Save
+                                </Button>
+
+                              </Modal.Footer>
+                            </Modal>
+                          </Col>
+
+                        </Row>
+                      </FormikForm>
+                    )}
+
+                  </Formik>
                   <div className="table-responsive ">
                     <DataTableExtensions {...tableData}>
                       <DataTable
