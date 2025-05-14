@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Modal, Button, Form, Tabs, Tab, Dropdown, ButtonGroup, FormLabel, FormGroup } from "react-bootstrap";
+import { Col, Row, Card, Modal, Button, Form, Tabs, Tab, Dropdown, ButtonGroup, FormLabel, FormGroup, ProgressBar } from "react-bootstrap";
 import DataTable, { Alignment } from 'react-data-table-component';
-import DataTableExtensions from "react-data-table-component-extensions"
+import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
@@ -50,6 +50,8 @@ export default function Accounts() {
 
   const [select, setSelect] = useState(false);
   const [exportshow, setExport] = useState(false);
+  const [processinvoice, setprocessinvoice] =  useState(false);
+  const [unprocessinvoice, setunprocessinvoice] =  useState(false);
 
   const [receiptadd, setReceiptadd] = useState(false);
   const [receiptexportshow, setExportreceipt] = useState(false);
@@ -57,6 +59,7 @@ export default function Accounts() {
   const [chequeViewData, setChequeViewData] = useState<any>({});
   const [paymentLogData, setPaymentLogData] = useState<any>([]);
   const [transactionData, setTransactionData] = useState<any>([]);
+
   const [invoicePaymentOutstanding, setInvoicePaymentOutstanding] = useState<any>([]);
 
   const columns = [
@@ -403,7 +406,13 @@ export default function Accounts() {
         setExportreceipt(true);
         break;
 
+        case "processinvoice":
+          setprocessinvoice(true);
+          break;
 
+          case "unprocessinvoice":
+            setunprocessinvoice(true);
+          break;
 
     }
   };
@@ -464,11 +473,18 @@ export default function Accounts() {
         setchequeview(false);
         break;
 
+        case "processinvoice":
+          setprocessinvoice(false);
+          break;
+
+          case "unprocessinvoice":
+            setunprocessinvoice(false);
+            break;
 
 
     }
   };
-
+  const [startDate, setStartDate] = useState(new Date());
 
   return (
     <Fragment>
@@ -484,13 +500,146 @@ export default function Accounts() {
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
-          <Dropdown.Item>Process Invoice</Dropdown.Item>
-          <Dropdown.Item>Unprocess Invoice</Dropdown.Item>
+          <Dropdown.Item onClick={() => { viewDemoShow("processinvoice"); }}>Process Invoice</Dropdown.Item>
+          <Dropdown.Item onClick={() => { viewDemoShow("unprocessinvoice"); }}>Unprocess Invoice</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
 
         </div>
       </div>
+      {/* Process invoice */}
+      <Modal show={processinvoice} centered>
+
+<Modal.Header>
+  <Modal.Title>Process Invoice</Modal.Title>
+  <Button variant="" className="btn-close" onClick={() => viewDemoClose("processinvoice")}>
+    x
+  </Button>
+</Modal.Header>
+<Modal.Body>
+  <Row>
+
+  <Col xl={12}>
+                        <Form.Group className="form-control mb-3 bg-light process_invoice_radio">
+                        <Row>
+                            <Col sm={3}>
+
+                              <Form.Check type="radio" checked label="All" name="invoiceprocess" />
+                            </Col>
+                            <Col sm={3}>
+
+                              <Form.Check type="radio" label="Wing" name="invoiceprocess" />
+                            </Col>
+                            <Col sm={3}>
+<Form.Check type="radio" label="Individual" name="invoiceprocess" />
+                            </Col>
+                          </Row>
+                        </Form.Group>
+                      </Col>
+
+    <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>From Date</Form.Label>
+        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+      </Form.Group>
+    </Col>
+
+    <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>To Date</Form.Label>
+        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+      </Form.Group>
+    </Col>
+    <Col xl={12}>
+    <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Processing of Invoices (23)</p>
+    <div className="progress mg-b-20">
+                    <ProgressBar
+                      variant="success"
+                      role="progressbar"
+                      now={35}
+                      animated
+                    ></ProgressBar>
+                  </div>
+    </Col>
+
+  </Row>
+
+</Modal.Body>
+<Modal.Footer>
+  <Button variant="default" onClick={() => viewDemoClose("processinvoice")}>
+    Cancel
+  </Button>
+  <button className="btn btn-primary" type="submit">Process</button>
+</Modal.Footer>
+
+</Modal>
+
+    {/* Unprocess invoice */}
+    <Modal show={unprocessinvoice} centered>
+
+<Modal.Header>
+  <Modal.Title>Unprocess Invoice</Modal.Title>
+  <Button variant="" className="btn-close" onClick={() => viewDemoClose("unprocessinvoice")}>
+    x
+  </Button>
+</Modal.Header>
+<Modal.Body>
+  <Row>
+
+  <Col xl={12}>
+                        <Form.Group className="form-control mb-3 bg-light process_invoice_radio">
+                        <Row>
+                            <Col sm={3}>
+
+                              <Form.Check type="radio" label="All" name="invoiceunprocess" />
+                            </Col>
+                            <Col sm={3}>
+
+                              <Form.Check type="radio" label="Wing" name="invoiceunprocess" />
+                            </Col>
+                            <Col sm={3}>
+<Form.Check type="radio" label="Individual" checked name="invoiceunprocess" />
+                            </Col>
+                          </Row>
+                        </Form.Group>
+                      </Col>
+
+    <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>From Date</Form.Label>
+        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+      </Form.Group>
+    </Col>
+
+    <Col xl={6}>
+      <Form.Group className="form-group">
+        <Form.Label>To Date</Form.Label>
+        <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+      </Form.Group>
+    </Col>
+    <Col xl={12}>
+    <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unprocessing of Invoices (1)</p>
+    <div className="progress mg-b-20">
+                    <ProgressBar
+                      variant="success"
+                      role="progressbar"
+                      now={80}
+                      animated
+                    ></ProgressBar>
+                  </div>
+    </Col>
+
+  </Row>
+
+</Modal.Body>
+<Modal.Footer>
+  <Button variant="default" onClick={() => viewDemoClose("unprocessinvoice")}>
+    Cancel
+  </Button>
+  <button className="btn btn-primary" type="submit">Unprocess</button>
+</Modal.Footer>
+
+</Modal>
 
       <Row>
         <Col xl={12}>

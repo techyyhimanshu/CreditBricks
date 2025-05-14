@@ -30,6 +30,7 @@ export default function PropertyView() {
   const [singleLoandata, setSingleLoanData] = useState<any>(null);
   const [addloans, setaddloans] = useState(false);
   const [viewloan, setviewloan] = useState(false);
+  const [documentstatus, setdocumentstatus] = useState(false);
   const navigate = useNavigate();
   const params = useParams()
   const identifier = params.identifier as string
@@ -39,7 +40,7 @@ export default function PropertyView() {
   //   return <p>No property data available.</p>;
   // }
 
-    const [documentview, setdocumentview] = useState(false);
+  const [documentview, setdocumentview] = useState(false);
 
   const complaintColumns = [
     {
@@ -268,13 +269,18 @@ export default function PropertyView() {
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
+
+      case "documentstatus":
+        setdocumentstatus(true);
+        break;
+
       case "addcomplaint":
         setaddcomplaint(true);
         break;
 
-        case "documentview":
-          setdocumentview(true);
-          break;
+      case "documentview":
+        setdocumentview(true);
+        break;
 
 
       case "addloans":
@@ -293,13 +299,18 @@ export default function PropertyView() {
 
   const viewDemoClose = (modal: any) => {
     switch (modal) {
+
+      case "documentstatus":
+        setdocumentstatus(false);
+        break;
+
       case "addcomplaint":
         setaddcomplaint(false);
         break;
 
-        case "documentview":
-          setdocumentview(false);
-          break;
+      case "documentview":
+        setdocumentview(false);
+        break;
 
 
       case "addloans":
@@ -494,7 +505,7 @@ export default function PropertyView() {
                       </Dropdown.Item>
                     </Dropdown.Menu> */}
                     <Dropdown.Menu className="property_select" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                      {propertyOptions?.map((property:any) => (
+                      {propertyOptions?.map((property: any) => (
                         <Dropdown.Item
                           key={property.identifier}
                           className="dropdown-item"
@@ -1001,108 +1012,611 @@ export default function PropertyView() {
                     </Tab>
 
                     <Tab eventKey="Documents" title="Documents">
-                      <div className="tabs-menu-body main-content-body-right ps-3">
-                        <Col sm={6} className='propertydocument mt-2 mb-3'>
-                        <Row>
-<Col sm={3}>
-<Form.Label className='text-black'>Select Owner</Form.Label>
-</Col>
-<Col sm={8}>
-<Dropdown>
-     <Dropdown.Toggle variant="light" className='w-100 text-start tx-semibold tx-17'>
-     <i className="bi bi-person"></i>&nbsp;Kunalpal
-        </Dropdown.Toggle>
+                      <div className="tabs-menu-body main-content-body-right">
+                        <Card className='m-3'>
+                          <Card.Body className='p-3'>
+                            <Col sm={12} className='propertydocument mt-2 mb-3 p-0'>
+                              <Row>
 
-        <Dropdown.Menu>
-          <Dropdown.Item><small>Current Owner</small><p className='mb-0'>Kunalpal</p></Dropdown.Item>
-          <Dropdown.Item><small>Last Owner</small><p className='mb-0'>Rahul Kumar Singh</p></Dropdown.Item>
-          <Dropdown.Item><small>Fourth Owner</small><p className='mb-0'>Namrata Sharma</p></Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-      </Col>
-</Row>
-</Col>
+                                <Col sm={4} className='pt-1'>Owner : <strong>Kunalpal</strong>
+                                </Col>
+                                <Col sm={8}>
+                                  <button type="button" className="btn btn-primary float-end" onClick={() => viewDemoShow("documentstatus")}>Document Status</button>
+                                </Col>
+                                <Modal show={documentstatus} centered>
 
-<Row>
-  <Col xl={4}>
-<div className='documentbox'>
- <img src={imagesData('pdficon')}  />
+                                  <Modal.Header>
+                                    <Modal.Title>Document Status</Modal.Title>
+                                    <Button variant="" className="btn-close" onClick={() => viewDemoClose("documentstatus")}>
+                                      x
+                                    </Button>
+                                  </Modal.Header>
+                                  <Modal.Body className='p-4'>
+                                    <Row>
 
-           <div className='documentname'>
-            <strong>Agreement Copy</strong>
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Flat Agreement Copy Submitted </Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
 
-              <div className='action-icon-circle' onClick={() => { viewDemoShow("documentview"); }}>
-            <i className='bi bi-eye' title='view'></i>
-            </div>
-            <div className='action-icon-circle'>
-            <i className='bi bi-download text-info' title='download'></i>
-            </div>
+                                              <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                            </Col>
+                                            <Col lg={3}>
 
-           </div>
+                                              <Form.Check type="radio" label="No" name="transferdocument" />
+                                            </Col>
 
-</div>
-  </Col>
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
 
-  <Col xl={4}>
-<div className='documentbox'>
- <img src={imagesData('pdficon')}  />
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Index 2/Flat Registration Certificate Submitted</Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
 
-           <div className='documentname'>
-            <strong>Index 2</strong>
+                                              <Form.Check type="radio" label="Yes" name="flatregistration" />
+                                            </Col>
+                                            <Col lg={3}>
 
-              <div className='action-icon-circle' onClick={() => { viewDemoShow("documentview"); }}>
-            <i className='bi bi-eye' title='view'></i>
-            </div>
-            <div className='action-icon-circle'>
-            <i className='bi bi-download text-info' title='download'></i>
-            </div>
+                                              <Form.Check type="radio" label="No" name="flatregistration" />
+                                            </Col>
 
-           </div>
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
 
-</div>
-  </Col>
 
-  <Col xl={4}>
-<div className='documentbox'>
- <img src={imagesData('pdficon')}  />
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Home Loan Sanction Letter Submitted</Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
 
-           <div className='documentname'>
-            <strong>Police Verification</strong>
-              <div className='action-icon-circle' onClick={() => { viewDemoShow("documentview"); }}>
-            <i className='bi bi-eye' title='view'></i>
-            </div>
-            <div className='action-icon-circle'>
-            <i className='bi bi-download text-info' title='download'></i>
-            </div>
+                                              <Form.Check type="radio" label="Yes" name="homeloansanction" />
+                                            </Col>
+                                            <Col lg={3}>
 
-           </div>
+                                              <Form.Check type="radio" label="No" name="homeloansanction" />
+                                            </Col>
 
-</div>
-  </Col>
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
 
-  <Col xl={4}>
-<div className='documentbox'>
- <img src={imagesData('pdficon')}  />
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Home Loan Closure Letter Submitted </Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
 
-           <div className='documentname'>
-            <strong>Loan Sanction Letter</strong>
-              <div className='action-icon-circle' onClick={() => { viewDemoShow("documentview"); }}>
-            <i className='bi bi-eye' title='view'></i>
-            </div>
-            <div className='action-icon-circle'>
-            <i className='bi bi-download text-info' title='download'></i>
-            </div>
+                                              <Form.Check type="radio" label="Yes" name="homeloanclosure" />
+                                            </Col>
+                                            <Col lg={3}>
 
-           </div>
+                                              <Form.Check type="radio" label="No" name="homeloanclosure" />
+                                            </Col>
 
-</div>
-  </Col>
-</Row>
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
 
 
 
 
 
+                                    </Row>
+
+                                  </Modal.Body>
+                                  <Modal.Footer>
+                                    <Button variant="default" onClick={() => viewDemoClose("documentstatus")}>
+                                      Close
+                                    </Button>
+                                    <button className="btn btn-primary" type="submit">Save</button>
+                                  </Modal.Footer>
+
+                                </Modal>
+                              </Row>
+                            </Col>
+
+                            <Row>
+                              <Col xl={12}>
+                                <table className='table table-border table-striped border document_property_table'>
+                                  <thead>
+                                    <tr>
+                                      <th>S.No</th>
+                                      <th>Document Name</th>
+                                      <th>File Name</th>
+                                      <th>File Type</th>
+                                      <th>Action</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>1</td>
+                                      <td>Flat Agreement Copy</td>
+                                      <td>PropertyA_Flatagreement.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>2</td>
+                                      <td>Index 2/Flat Registration Certificate</td>
+                                      <td>PropertyA_index.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>3</td>
+                                      <td>Home Loan Sanction Letter</td>
+                                      <td>PropertyA_HomeLoan.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>4</td>
+                                      <td>Home Loan Closure Letter</td>
+                                      <td>PropertyA_HomeLoanClosure.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </table>
+
+                              </Col>
+
+                            </Row>
+                          </Card.Body></Card>
+
+                          <Card className='m-3'>
+                          <Card.Body className='p-3'>
+                            <Col sm={12} className='propertydocument mt-2 mb-3 p-0'>
+                              <Row>
+
+                                <Col sm={4} className='pt-1'>Last Owner : <strong>Rajiv Kumar Singh</strong>
+                                </Col>
+
+                                <Modal show={documentstatus} centered>
+
+                                  <Modal.Header>
+                                    <Modal.Title>Document Status</Modal.Title>
+                                    <Button variant="" className="btn-close" onClick={() => viewDemoClose("documentstatus")}>
+                                      x
+                                    </Button>
+                                  </Modal.Header>
+                                  <Modal.Body className='p-4'>
+                                    <Row>
+
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Flat Agreement Copy Submitted </Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                            </Col>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="No" name="transferdocument" />
+                                            </Col>
+
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
+
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Index 2/Flat Registration Certificate Submitted</Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="Yes" name="flatregistration" />
+                                            </Col>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="No" name="flatregistration" />
+                                            </Col>
+
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
+
+
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Home Loan Sanction Letter Submitted</Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="Yes" name="homeloansanction" />
+                                            </Col>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="No" name="homeloansanction" />
+                                            </Col>
+
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
+
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Home Loan Closure Letter Submitted </Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="Yes" name="homeloanclosure" />
+                                            </Col>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="No" name="homeloanclosure" />
+                                            </Col>
+
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
+
+
+
+
+
+                                    </Row>
+
+                                  </Modal.Body>
+                                  <Modal.Footer>
+                                    <Button variant="default" onClick={() => viewDemoClose("documentstatus")}>
+                                      Close
+                                    </Button>
+                                    <button className="btn btn-primary" type="submit">Save</button>
+                                  </Modal.Footer>
+
+                                </Modal>
+                              </Row>
+                            </Col>
+
+                            <Row>
+                              <Col xl={12}>
+                                <table className='table table-border table-striped border document_property_table'>
+                                  <thead>
+                                    <tr>
+                                      <th>S.No</th>
+                                      <th>Document Name</th>
+                                      <th>File Name</th>
+                                      <th>File Type</th>
+                                      <th>Action</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>1</td>
+                                      <td>Flat Agreement Copy</td>
+                                      <td>PropertyA_Flatagreement.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>2</td>
+                                      <td>Index 2/Flat Registration Certificate</td>
+                                      <td>PropertyA_index.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>3</td>
+                                      <td>Home Loan Sanction Letter</td>
+                                      <td>PropertyA_HomeLoan.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>4</td>
+                                      <td>Home Loan Closure Letter</td>
+                                      <td>PropertyA_HomeLoanClosure.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </table>
+
+                              </Col>
+
+                            </Row>
+                          </Card.Body></Card>
+
+                          <Card className='m-3'>
+                          <Card.Body className='p-3'>
+                            <Col sm={12} className='propertydocument mt-2 mb-3 p-0'>
+                              <Row>
+
+                                <Col sm={4} className='pt-1'>Third Owner : <strong>Prateek Sharma</strong>
+                                </Col>
+
+                                <Modal show={documentstatus} centered>
+
+                                  <Modal.Header>
+                                    <Modal.Title>Document Status</Modal.Title>
+                                    <Button variant="" className="btn-close" onClick={() => viewDemoClose("documentstatus")}>
+                                      x
+                                    </Button>
+                                  </Modal.Header>
+                                  <Modal.Body className='p-4'>
+                                    <Row>
+
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Flat Agreement Copy Submitted </Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                            </Col>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="No" name="transferdocument" />
+                                            </Col>
+
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
+
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Index 2/Flat Registration Certificate Submitted</Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="Yes" name="flatregistration" />
+                                            </Col>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="No" name="flatregistration" />
+                                            </Col>
+
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
+
+
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Home Loan Sanction Letter Submitted</Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="Yes" name="homeloansanction" />
+                                            </Col>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="No" name="homeloansanction" />
+                                            </Col>
+
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
+
+                                      <Col xl={12}>
+                                        <Form.Group className="form-group">
+                                          <Form.Label>Home Loan Closure Letter Submitted </Form.Label>
+                                          <Row>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="Yes" name="homeloanclosure" />
+                                            </Col>
+                                            <Col lg={3}>
+
+                                              <Form.Check type="radio" label="No" name="homeloanclosure" />
+                                            </Col>
+
+                                          </Row>
+                                        </Form.Group>
+                                      </Col>
+
+
+
+
+
+                                    </Row>
+
+                                  </Modal.Body>
+                                  <Modal.Footer>
+                                    <Button variant="default" onClick={() => viewDemoClose("documentstatus")}>
+                                      Close
+                                    </Button>
+                                    <button className="btn btn-primary" type="submit">Save</button>
+                                  </Modal.Footer>
+
+                                </Modal>
+                              </Row>
+                            </Col>
+
+                            <Row>
+                              <Col xl={12}>
+                                <table className='table table-border table-striped border document_property_table'>
+                                  <thead>
+                                    <tr>
+                                      <th>S.No</th>
+                                      <th>Document Name</th>
+                                      <th>File Name</th>
+                                      <th>File Type</th>
+                                      <th>Action</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr>
+                                      <td>1</td>
+                                      <td>Flat Agreement Copy</td>
+                                      <td>PropertyA_Flatagreement.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>2</td>
+                                      <td>Index 2/Flat Registration Certificate</td>
+                                      <td>PropertyA_index.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td>3</td>
+                                      <td>Home Loan Sanction Letter</td>
+                                      <td>PropertyA_HomeLoan.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>4</td>
+                                      <td>Home Loan Closure Letter</td>
+                                      <td>PropertyA_HomeLoanClosure.pdf</td>
+                                      <td><img src={imagesData('pdficon')} className='document_img' /> </td>
+                                      <td>
+                                        <Dropdown >
+                                          <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                                            Action
+                                          </Dropdown.Toggle>
+
+                                          <Dropdown.Menu>
+                                            <Dropdown.Item onClick={() => { viewDemoShow("documentview"); }}>View </Dropdown.Item>
+                                            <Dropdown.Item>Download</Dropdown.Item>
+                                          </Dropdown.Menu>
+                                        </Dropdown>
+                                      </td>
+                                    </tr>
+
+                                  </tbody>
+                                </table>
+
+                              </Col>
+
+                            </Row>
+                          </Card.Body></Card>
                       </div>
                     </Tab>
 
@@ -1127,23 +1641,23 @@ export default function PropertyView() {
           }
           <CustomToastContainer />
 
-           {/* Document View */}
-                    <Modal show={documentview} size="xl" centered>
-                      <Modal.Header>
-                          <Modal.Title>Document</Modal.Title>
-                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("documentview"); }}>
-                          x
-                        </Button>
-                      </Modal.Header>
+          {/* Document View */}
+          <Modal show={documentview} size="xl" centered>
+            <Modal.Header>
+              <Modal.Title>Document</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("documentview"); }}>
+                x
+              </Button>
+            </Modal.Header>
 
-                      <Modal.Body>
+            <Modal.Body>
 
-                      <iframe className='iframeDocument'
-                        src={imagesData('pdfinvoice')}  >
-                </iframe>
-                      </Modal.Body>
+              <iframe className='iframeDocument'
+                src={imagesData('pdfinvoice')}  >
+              </iframe>
+            </Modal.Body>
 
-                    </Modal>
+          </Modal>
 
         </Fragment >
       }

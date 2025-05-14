@@ -39,64 +39,64 @@ const CelebrationBooking = () => {
                     <Row>
                       <Col sm={12}>
                         <Card className='box-shadow border border-primary'>
-                          <Card.Body className="pb-0">
+                          <Card.Body>
                             <h5 className="card-title main-content-label tx-14 tx-dark tx-medium mg-b-10">Basic Information</h5>
                             <Row>
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Society</Form.Label>
-                                <p>Credit Bricks PVt Ltd</p>
+                                <p className="mb-0">Credit Bricks PVt Ltd</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Property</Form.Label>
-                                <p>A101</p>
+                                <p className="mb-0">A101</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Occassion</Form.Label>
-                                <p className='tx-14'>Celebration</p>
+                                <p className='tx-14 mb-0'>Celebration</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Day</Form.Label>
-                                <p className='tx-14'>Second Half</p>
+                                <p className='tx-14 mb-0'>Second Half</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>No. of Guest</Form.Label>
-                                <p className='tx-14 col-sm-11 p-0'>80</p>
+                                <p className='tx-14 mb-0'>80</p>
                               </Col>
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Start Date & Time</Form.Label>
-                                <p className='tx-14 col-sm-11 p-0'>12/04/2025. 6:00 Pm</p>
+                                <p className='tx-14 mb-0'>12/04/2025. 6:00 Pm</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>End Date & Time</Form.Label>
-                                <p className='tx-14 col-sm-11 p-0'>12/04/2025. 10:00 Pm</p>
+                                <p className='tx-14 mb-0'>12/04/2025. 10:00 Pm</p>
                               </Col>
 
 
 
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Venue</Form.Label>
-                                <p className='tx-14'>Banquet Hall</p>
+                                <p className='tx-14 mb-0'>Banquet Hall</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Name of the Organizer</Form.Label>
-                                <p className='tx-14 col-sm-11 p-0'>Vishal Jain</p>
+                                <p className='tx-14 mb-0 '>Vishal Jain</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Contact Details</Form.Label>
-                                <p className='tx-14'>9876543212</p>
+                                <p className='tx-14  mb-0'>9876543212</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Outstanding</Form.Label>
-                                <p className='tx-14 tx-bold'>0.00 </p>
+                                <p className='tx-14 tx-bold mb-0'>0.00 </p>
                               </Col>
 
                             </Row>
@@ -109,24 +109,24 @@ const CelebrationBooking = () => {
                             <Row>
                             <Col sm={3} className='mb-0'>
                                 <Form.Label>Catering Service</Form.Label>
-                                <p className='tx-14'>Yes</p>
+                                <p className='tx-14  mb-0'>Yes</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Decorations</Form.Label>
-                                <p className='tx-14'>Yes </p>
+                                <p className='tx-14  mb-0'>Yes </p>
                               </Col>
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Sound System</Form.Label>
-                                <p className='tx-14'>Yes</p>
+                                <p className='tx-14  mb-0'>Yes</p>
                               </Col>
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Guest Parking</Form.Label>
-                                <p className='tx-14'>Yes </p>
+                                <p className='tx-14  mb-0'>Yes </p>
                               </Col>
                               <Col sm={12} className='mb-0'>
                                 <Form.Label>Remarks</Form.Label>
-                                <p className='tx-14'>-</p>
+                                <p className='tx-14 mb-0'>-</p>
                               </Col>
 
                             </Row>
@@ -140,20 +140,20 @@ const CelebrationBooking = () => {
 
                             <Col sm={3} className='mb-0'>
                                 <Form.Label>Sale Agreement Copy</Form.Label>
-                                <p className='tx-14'>Yes</p>
+                                <p className='tx-14 mb-0'>Yes</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Flat Registration Certificate</Form.Label>
-                                <p className='tx-14'>Yes </p>
+                                <p className='tx-14 mb-0'>Yes </p>
                               </Col>
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Home Loan Sanction Letter</Form.Label>
-                                <p className='tx-14'>Yes</p>
+                                <p className='tx-14 mb-0'>Yes</p>
                               </Col>
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
-                                <p className='tx-14'>Yes </p>
+                                <p className='tx-14 mb-0'>Yes </p>
                               </Col>
 
 
@@ -167,48 +167,46 @@ const CelebrationBooking = () => {
                             <Row>
                               <Col sm ={3} className='mb-0'>
                                 <Form.Label>Society</Form.Label>
-                                <p className='tx-14'>-</p>
+                                <p className='tx-14 mb-0'>-</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Tower</Form.Label>
-                                <p className='tx-14'>Tower A </p>
+                                <p className='tx-14 mb-0'>Tower A </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Wing</Form.Label>
-                                <p className='tx-14'>Wing A </p>
+                                <p className='tx-14 mb-0'>Wing A </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Property</Form.Label>
-                                <p className='tx-14'>A101 </p>
+                                <p className='tx-14 mb-0'>A101 </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Approver Name</Form.Label>
-                                <p className='tx-14'>Sandeep Singh </p>
+                                <p className='tx-14 mb-0'>Sandeep Singh </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Approver Number</Form.Label>
-                                <p className='tx-14'>9876543212 </p>
+                                <p className='tx-14 mb-0'>9876543212 </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Designation</Form.Label>
-                                <p className='tx-14'>Secretary </p>
+                                <p className='tx-14 mb-0'>Secretary </p>
                               </Col>
 
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Application Type</Form.Label>
-                                <p className='tx-14'>Gate Pass </p>
+                                <p className='tx-14 mb-0'>Gate Pass </p>
                               </Col>
-                              <Col sm={12}>
-<hr className="w-100"/>
-</Col>
-                              <Col xl={12}>
+
+                              <Col xl={12} className="pt-2">
                               <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
                               <Dropdown className='profile-user border-0'>
                                 <Dropdown.Toggle variant="">
@@ -233,14 +231,30 @@ const CelebrationBooking = () => {
                           </Card.Body>
                         </Card>
 
+                        <Card className='box-shadow border border-primary'>
+                          <Card.Body>
+                            <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Terms & Conditions</h5>
+                            <Row>
 
+                            <Col sm={12} className='mb-0'>
+                                 <p className='tx-12 mb-0 text-justify'>Interest will be charged at 1.75% p.m. after the due date.
+The cheque should be drawn in favor of CreditBricks Society.
+No claim in respect of this bill will be entertained unless notified in writing within 10 days from the date of this bill.
+If the dues are not cleared within 90 days, then the member shall be termed as a defaulter, and appropriate action will be taken by the society against the defaulters as per the Bylaws
+In case of no response on the payment for a prolonged period the membership from the society can be terminated and expulsion procedure can be initiated.
+The penalty charges do not create any right in your favor.
+Society reserves the right to enhance the penalty in case of continuing default and misuse.</p>
+                              </Col>
+</Row>
+                          </Card.Body>
+                        </Card>
                       </Col>
 
                       <Col xl={12}>
 
 
                       </Col>
-                      <p className='ps-3'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1" /></p>
+                      <p className='ps-3 text-end w-100'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1" /></p>
                     </Row>
 
                   </div>
