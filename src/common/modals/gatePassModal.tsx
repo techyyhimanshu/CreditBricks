@@ -187,12 +187,13 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
 
             const matched = members.find((member: any) =>
                 Array.isArray(member.applicationType) &&
-                member.applicationType.includes(name)
+                member.applicationType.includes("Gate Pass")
             );
+            
 
             const parentMatched = parentMembers.find((member: any) =>
                 Array.isArray(member.applicationType) &&
-                member.applicationType.includes(name)
+                member.applicationType.includes("Gate Pass")
             );
             if (matched) {
                 setFieldValue("tower", { value: matched.towerIdentifier, label: matched.towerName });
@@ -205,17 +206,17 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 setFieldValue("designation", { value: matched.designation, label: matched.designation });
             }
             if (parentMatched) {
-                setFieldValue("hasParentApprover", true);
+                setFieldValue("hasParentApprover", "true");
                 setFieldValue("parentApproverName", parentMatched.fullName);
                 setFieldValue("parentApproverContact", parentMatched.contactNumber);
-                setFieldValue("parentCommitteeMemberId", matched.parentCommitteeMemberId);
+                setFieldValue("parentCommitteeMemberId", parentMatched.parentCommitteeMemberId);
                 setFieldValue("parentDesignation", {
                     value: parentMatched.designation,
                     label: parentMatched.designation
                 });
                 setFieldValue("parentSocietyName", { label: response.data.data.parentSociety?.parentSociety?.parentSocietyName || "", value: response.data.data.parentSociety?.parentSocietyIdentifier || "" });
             } else if (!parentMatched) {
-                setFieldValue("hasParentApprover", "true");
+                setFieldValue("hasParentApprover", "false");
             }
         } catch (error: any) {
             const errorMessage = handleApiError(error)
@@ -326,7 +327,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                         approverName: initialVals?.fullName || "",
                         approverContact: initialVals?.contactNumber || "",
                         designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
-                        hasParentApprover: "true",
+                        hasParentApprover: "false",
                         parentApproverName: initialVals?.fullName || "",
                         parentApproverContact: initialVals?.contactNumber || "",
                         parentDesignation: { value: initialVals?.parentDesignation || "", label: initialVals?.parentDesignation || "" },
@@ -336,7 +337,6 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                     }}
                     onSubmit={handleSubmit}>
                     {({ values, setFieldValue }) => {
-                        console.log(values)
                         useEffect(() => {
                             if (society) {
                                 setFieldValue("society", society);

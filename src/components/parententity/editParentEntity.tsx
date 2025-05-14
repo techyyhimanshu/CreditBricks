@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from 'react';
 // import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, CardHeader, Accordion, Modal, Dropdown } from "react-bootstrap";
+import { Col, Row, Card, Button, Form,  Accordion, Modal, Dropdown } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import DataTableExtensions from "react-data-table-component-extensions";
 import Select from "react-select";
@@ -11,16 +11,14 @@ import stateCities from "../masters/stateCity.json"
 import { Link, useParams } from "react-router-dom";
 // import { Uploader } from 'uploader';
 // import { UploadButton } from 'react-uploader';
-import { getAllSocietyApi, getSocietyDetailsApi, updateSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import { handleApiError } from '../../helpers/handle-api-error';
 import DataTable from 'react-data-table-component';
 import { getSinglePropertyDetailsApi, getWingPropertiesApi } from '../../api/property-api';
 import { getTowerWingsApi } from '../../api/wing-api';
 import { getSocietyTowersApi } from '../../api/tower-api';
-import { updateCommiteeMemberApi } from '../../api/commitee-api';
 import { getMemberDetailApi } from '../../api/member-api';
-import { createNewParentEntityApi, getAllUnassignedChildSocietiesApi, getParentEntityDetailsApi, updateParentEntityApi } from '../../api/parentEntity-api';
+import {  getAllUnassignedChildSocietiesApi, getParentEntityDetailsApi, updateParentEntityApi } from '../../api/parentEntity-api';
 // Define the types for the stateCities object
 interface StateCities {
     [key: string]: string[]; // Index signature
@@ -89,17 +87,17 @@ export default function EditParentEntity() {
             name: "Actions",
             cell: (row: any, index: number) => (
                 <div>
-                       <Dropdown >
-                                        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
-                                          Action
-                                        </Dropdown.Toggle>
+                    <Dropdown >
+                        <Dropdown.Toggle variant="light" className='btn-sm' id="dropdown-basic">
+                            Action
+                        </Dropdown.Toggle>
 
-                                        <Dropdown.Menu>
-                                          <Dropdown.Item   onClick={() => { setSingleCommiteeMemberData(row), viewDemoShow("editCommiteeMember") }}>Edit</Dropdown.Item>
+                        <Dropdown.Menu>
+                            <Dropdown.Item onClick={() => { setSingleCommiteeMemberData(row), viewDemoShow("editCommiteeMember") }}>Edit</Dropdown.Item>
 
-                                          <Dropdown.Item className='text-danger'    onClick={() => handleDelete(index)}>Delete</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                      </Dropdown>
+                            <Dropdown.Item className='text-danger' onClick={() => handleDelete(index)}>Delete</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
 
                 </div>
             ),
@@ -117,8 +115,9 @@ export default function EditParentEntity() {
         try {
             const response = await getParentEntityDetailsApi(identifier)
             const data = response.data.data;
+            const parentCommitteeMembers = response.data.data?.committeeMembers || [];
             const childSocieties = data?.children?.map((child: any) => ({
-                label: child.societyIdentifier,
+                label: child.society?.societyName,
                 value: child.societyIdentifier,
             })) || [];
 
@@ -127,7 +126,26 @@ export default function EditParentEntity() {
                 childrenData: childSocieties,
             });
 
-            setCommiteeMemberData(data?.committeeMembers);
+            const mappedParentMembers = parentCommitteeMembers.map((member: any) => ({
+                societyName: response.data.data?.parentSocietyName || "",
+                parentCommitteeMemberIdentifier: member?.parentCommitteeMemberIdentifier || "",
+                parentCommitteeMemberId: member?.parentCommitteeMemberId || "",
+                towerIdentifier: member?.towerIdentifier || "",
+                towerName: member.tower?.towerName || "",
+                wingIdentifier: member?.wingIdentifier || "",
+                wingName: member.wing?.wingName || "",
+                propertyIdentifier: member?.propertyIdentifier || "",
+                propertyName: member?.property?.propertyName || "",
+                fullName: member?.fullName || "",
+                memberIdentifier: member?.parentCommitteeMemberIdentifier,
+                contactNumber: member?.contactNumber || "",
+                designation: member?.designation || "",
+                applicationType: Array.isArray(member.applicationType)
+                    ? member.applicationType
+                    : [],
+            }));
+
+            setCommiteeMemberData(mappedParentMembers);
         } catch (error: any) {
             const errorMessage = handleApiError(error)
             showToast('error', errorMessage)
@@ -165,8 +183,12 @@ export default function EditParentEntity() {
         { value: "Gate Pass", label: "Gate Pass" },
         { value: "Flat Resale", label: "Flat Resale" },
         { value: "Celebration", label: "Celebration" },
-
-    ]
+        { value: "Club House", label: "Club House" },
+        { value: "Play Area", label: "Play Area" },
+        { value: "Food Court", label: "Food Court" },
+        { value: "Banquet hall", label: "Banquet hall" },
+    
+      ]
 
     const billingfrequency = [
         { value: "Monthly", label: "Monthly " },
@@ -229,7 +251,7 @@ export default function EditParentEntity() {
             signatory: values.signatory,
             hsnCode: values.hsnCode,
             gstin: values.gstin,
-            sociertyBankName: values.bankName,
+            societyBankName: values.bankName,
             accountNumber: values.accountNumber,
             branchName: values.branchName,
             ifscCode: values.ifscCode,
@@ -257,8 +279,8 @@ export default function EditParentEntity() {
 
         ; (async () => {
             try {
-                const response = await updateParentEntityApi(formData,identifier)
-                if (response.status === 200||response.status === 201) {
+                const response = await updateParentEntityApi(formData, identifier)
+                if (response.status === 200 || response.status === 201) {
                     showToast("success", response.data.message)
                     window.location.href = "/parententity"
 
@@ -412,9 +434,11 @@ export default function EditParentEntity() {
     };
 
     const handleCommiteeMemberUpdate = async (values: any) => {
+        console.log("kartik",values,commiteeMemberData)
         try {
-            const newMember = {
+            const updatedMember = {
                 societyName: values.society?.label,
+                parentCommitteeMemberIdentifier: values.approverName?.value,
                 // societyIdentifier: identifier,
                 towerIdentifier: values.tower?.value,
                 towerName: values.tower?.label,
@@ -422,12 +446,20 @@ export default function EditParentEntity() {
                 wingName: values.wing?.label,
                 propertyIdentifier: values.property?.value,
                 propertyName: values.property?.label,
-                fullName: values.approverName,
+                fullName: values.approverName?.label,
+                memberIdentifier: values.approverName?.value,
                 contactNumber: values.approverContact,
                 designation: values.designation?.value,
                 applicationType: values.applicationType.map((item: any) => item.value),
             };
 
+            setCommiteeMemberData((prevData) => {
+                return prevData.map((member:any) =>
+                    member.parentCommitteeMemberId === values.commiteeMemberId ? updatedMember : member
+                );
+            });
+
+            setSingleCommiteeMemberData(null);
 
             viewDemoClose("editCommiteeMember");
         } catch (error) {
@@ -468,7 +500,7 @@ export default function EditParentEntity() {
                             signatory: currentSociety?.signatory || "",
                             hsnCode: currentSociety?.hsnCode || "",
                             gstin: currentSociety?.gstin || "",
-                            bankName: currentSociety?.bankName || "",
+                            bankName: currentSociety?.sociertyBankName || "",
                             accountNumber: currentSociety?.accountNumber || "",
                             branchName: currentSociety?.branchName || "",
                             ifscCode: currentSociety?.ifscCode || "",
@@ -490,6 +522,11 @@ export default function EditParentEntity() {
                         onSubmit={handleSubmit}
                     >
                         {({ setFieldValue, values, resetForm }) => {
+                            useEffect(() => {
+                                if (values.childSociety.length > 0) {
+                                    fetchTowersForDropDown(values.childSociety)
+                                }
+                            }, [values.childSociety])
                             const getFileExtension = (fileName: string) => {
                                 if (!fileName) {
                                     return '';
@@ -1207,12 +1244,12 @@ export default function EditParentEntity() {
                     <Formik
                         enableReinitialize
                         initialValues={{
-                            commiteeMemberId: singleCommiteeMemberData?.commiteeMemberId || "",
+                            commiteeMemberId: singleCommiteeMemberData?.parentCommitteeMemberId || "",
                             tower: { value: singleCommiteeMemberData?.towerIdentifier || "", label: singleCommiteeMemberData?.towerName || "" },
                             wing: { value: singleCommiteeMemberData?.wingIdentifier || "", label: singleCommiteeMemberData?.wingName || "" },
-                            society: { value: "", label: currentSociety?.societyName || "" },
+                            society: { value: "", label: singleCommiteeMemberData?.societyName || "" },
                             property: singleCommiteeMemberData ? { label: singleCommiteeMemberData.propertyName, value: singleCommiteeMemberData.propertyIdentifier } : { label: "", value: "" },
-                            approverName: singleCommiteeMemberData?.fullName || "",
+                            approverName: { value: singleCommiteeMemberData?.memberIdentifier || "", label: singleCommiteeMemberData?.fullName || "" },
                             approverContact: singleCommiteeMemberData?.contactNumber || "",
                             designation: { value: singleCommiteeMemberData?.designation || "", label: singleCommiteeMemberData?.designation || "" },
                             // applicationType: { value: singleCommiteeMemberData?.applicationType || "", label: singleCommiteeMemberData?.applicationType || "" },
@@ -1223,6 +1260,11 @@ export default function EditParentEntity() {
                         onSubmit={handleCommiteeMemberUpdate}
                     >
                         {({ setFieldValue, values }) => {
+                            useEffect(() => {
+                                if (values.property.value) {
+                                    fetchPropertyDetails(values.property)
+                                }
+                            }, [values.property])
                             return (
                                 <FormikForm>
                                     <Modal.Body className='pt-1'>
@@ -1255,6 +1297,8 @@ export default function EditParentEntity() {
                                                             fetchWingsForDropDown(selected);
                                                             setFieldValue("wing", null);
                                                             setFieldValue("property", null);
+                                                            setFieldValue("approverName", null)
+                                                            setFieldValue("approverContact", "")
                                                             setFieldValue("tower", selected);
                                                         }}
                                                         value={values.tower}
@@ -1274,6 +1318,8 @@ export default function EditParentEntity() {
                                                         onChange={(selected) => {
                                                             fetchPropertiesForDropDown(selected);
                                                             setFieldValue("property", null);
+                                                            setFieldValue("approverName", null)
+                                                            setFieldValue("approverContact", "")
                                                             setFieldValue("wing", selected);
                                                         }}
                                                         value={values.wing}
@@ -1288,33 +1334,30 @@ export default function EditParentEntity() {
                                                         options={propertiesForDropDown}
                                                         classNamePrefix="Select2"
                                                         name='property'
-                                                        onChange={(selected) => setFieldValue("property", selected)}
+                                                        onChange={(selected) => {
+                                                            setFieldValue("property", selected)
+                                                            setFieldValue("approverName", null)
+                                                            setFieldValue("approverContact", "")
+                                                            fetchPropertyDetails(selected)
+                                                        }}
                                                         value={values.property}
                                                     />
                                                 </Form.Group>
                                             </Col>
 
-                                            {/* <Col xl={6}>
-                            <Form.Group className="form-group mb-1">
-                              <Form.Label>Flat </Form.Label>
-                              <Select
-                                placeholder="Select Flat"
-                                classNamePrefix="Select2"
-                                name='flat'
-                              />
-                            </Form.Group>
-                          </Col> */}
-
-
-
                                             <Col xl={6}>
                                                 <Form.Group className="form-group mb-1">
-                                                    <Form.Label>Approver Name</Form.Label>
-                                                    <Field
-                                                        type="text"
-                                                        name="approverName"
-                                                        placeholder="Approver Name"
-                                                        className="form-control"
+                                                    <Form.Label>Approver Name </Form.Label>
+                                                    <Select
+                                                        options={memberOptions}
+                                                        placeholder="Select Approver"
+                                                        classNamePrefix="Select2"
+                                                        name='approverName'
+                                                        onChange={(selected) => {
+                                                            fetchMemberDetails(selected, setFieldValue)
+                                                            setFieldValue("approverName", selected);
+                                                            setFieldValue("approverContact", "")
+                                                        }}
                                                         value={values.approverName}
                                                     />
                                                 </Form.Group>

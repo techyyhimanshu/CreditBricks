@@ -84,8 +84,13 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
         try {
             const response = await getSocietyDetailsApi(society.value)
             const members = response.data.data?.committeeMembers || [];
+            const parentMembers = response.data.data?.parentSociety?.parentSociety?.committeeMembers || [];
 
             const matched = members.find((member: any) =>
+                Array.isArray(member.applicationType) &&
+                member.applicationType.includes(name)
+            );
+            const parentMatched = parentMembers.find((member: any) =>
                 Array.isArray(member.applicationType) &&
                 member.applicationType.includes(name)
             );
@@ -98,6 +103,19 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 setFieldValue("approverContact", matched.contactNumber);
                 setFieldValue("approverIdentifier", matched.committeeMemberId);
                 setFieldValue("designation", { value: matched.designation, label: matched.designation });
+            }
+            if (parentMatched) {
+                setFieldValue("hasParentApprover", "true");
+                setFieldValue("parentApproverName", parentMatched.fullName);
+                setFieldValue("parentApproverContact", parentMatched.contactNumber);
+                setFieldValue("parentCommitteeMemberId", parentMatched.parentCommitteeMemberId);
+                setFieldValue("parentDesignation", {
+                    value: parentMatched.designation,
+                    label: parentMatched.designation
+                });
+                setFieldValue("parentSocietyName", { label: response.data.data.parentSociety?.parentSociety?.parentSocietyName || "", value: response.data.data.parentSociety?.parentSocietyIdentifier || "" });
+            } else if (!parentMatched) {
+                setFieldValue("hasParentApprover", "false");
             }
             setCommiteeMemberData(matched)
         } catch (error: any) {
@@ -151,7 +169,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 endDate: values?.exitDateTime,
                 venueId: values?.venue?.value,
                 organizer: values?.organizerName,
-                guestCount:values?.guestNo,
+                guestCount: values?.guestNo,
                 contact: `${values?.contactNo}`,
                 remark: values?.remarks,
                 catering: values?.CateringService === "Yes",
@@ -159,11 +177,12 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 sound: values?.SoundSystem === "Yes",
                 guestParking: values?.GuestParking === "Yes",
                 createdBy: "admin_user",
-                committeeMemberId:values.approverIdentifier
+                committeeMemberId: values.approverIdentifier||"",
+                parentCommitteeMemberId: values.parentCommitteeMemberId || ""
             };
             if (editing) {
                 formattedData.eventId = initialVals?.eventId
-                formattedData.eventIdentifier=initialVals?.applicationIdentifier
+                formattedData.eventIdentifier = initialVals?.applicationIdentifier
             }
             if (onSave) {
                 onSave(formattedData, modal, editing)
@@ -208,7 +227,8 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                         organizerName: initialVals ? initialVals.organizer : "",
                         contactNo: initialVals ? initialVals.contact : "",
                         remarks: initialVals ? initialVals.remark : "",
-                        approverIdentifier:"",
+                        approverIdentifier: "",
+                        parentCommitteeMemberId: "",
                         CateringService: initialVals?.catering === true ? "Yes" : initialVals?.catering === false ? "No" : "",
                         Decorations: initialVals?.decorations === true ? "Yes" : initialVals?.decorations === false ? "No" : "",
                         SoundSystem: initialVals?.sound === true ? "Yes" : initialVals?.sound === false ? "No" : "",
@@ -220,6 +240,11 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                         approverName: initialVals?.fullName || "",
                         approverContact: initialVals?.contactNumber || "",
                         designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
+                        hasParentApprover: "false",
+                        parentApproverName: initialVals?.fullName || "",
+                        parentApproverContact: initialVals?.contactNumber || "",
+                        parentDesignation: { value: initialVals?.parentDesignation || "", label: initialVals?.parentDesignation || "" },
+                        parentSocietyName: { value: "", label: "" },
 
                     }}
                     onSubmit={handleSubmit}>
@@ -235,7 +260,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                             }
                         }, [forcedVenue, setFieldValue, venuesForDropDown]);
                         useEffect(() => {
-                            if (society ) {
+                            if (society) {
                                 setFieldValue("society", society);
                                 fetchPropertiesForDropDown(society);
                                 fetchVenuesForSociety(society)
@@ -675,6 +700,71 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
 
                                                 </Row>
+                                                {values.hasParentApprover === "true" && (
+                                                    <>
+                                                        <hr />
+                                                        <h6>Parent Approver Details</h6>
+                                                        <Row>
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Approver Name</Form.Label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="parentApproverName"
+                                                                        placeholder="Parent Approver Name"
+                                                                        className="form-control"
+                                                                        value={values.parentApproverName}
+                                                                        disabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Approver Contact</Form.Label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="parentApproverContact"
+                                                                        placeholder="Parent Contact"
+                                                                        className="form-control"
+                                                                        value={values.parentApproverContact}
+                                                                        disabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Designation</Form.Label>
+                                                                    <Select
+                                                                        placeholder="Parent Designation"
+                                                                        classNamePrefix="Select2"
+                                                                        name="parentDesignation"
+                                                                        onChange={(selected) => setFieldValue("parentDesignation", selected)}
+                                                                        value={values.parentDesignation}
+                                                                        isDisabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Society Name</Form.Label>
+                                                                    <Select
+                                                                        name='parentSocietyName'
+                                                                        placeholder="Select Society"
+                                                                        classNamePrefix="Select2"
+                                                                        onChange={(selected) => setFieldValue("parentSocietyName", selected)}
+                                                                        value={values.parentSocietyName}
+                                                                        isDisabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+                                                        </Row>
+
+                                                    </>
+                                                )}
+
                                             </Accordion.Body>
                                         </Accordion.Item>
 
