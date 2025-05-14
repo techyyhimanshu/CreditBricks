@@ -85967,3 +85967,5 @@ width: 100%;
     cursor: pointer;}
     .iframeDocument{width:100%; height:600px; overflow: auto;}
     .document_property_table td{padding:0.0rem 0.75rem !important}
+    .process_invoice_radio .form-check-label{    float: left;
+        margin-top: -4px;}

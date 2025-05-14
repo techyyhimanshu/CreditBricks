@@ -38,71 +38,163 @@ const GatePassApproval = () => {
                     </table>
 
                     <Row>
-                      <Col sm={8}>
+                      <Col sm={12}>
                         <Card className='box-shadow border border-primary'>
-                          <Card.Body className="pb-0">
+                          <Card.Body>
                             <h5 className="card-title main-content-label tx-14 tx-dark tx-medium mg-b-10">Basic Information</h5>
                             <Row>
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Society</Form.Label>
-                                <p>Credit Bricks PVt Ltd</p>
+                                <p className='mb-0'>Credit Bricks PVt Ltd</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Property</Form.Label>
-                                <p>A101</p>
+                                <p className='mb-0'>A101</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Gate Type</Form.Label>
-                                <p className='tx-14'>Inward</p>
+                                <p className='tx-14 mb-0'>Inward</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Member</Form.Label>
-                                <p className='tx-14'>Test Member 1</p>
+                                <p className='tx-14 mb-0'>Test Member 1</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Category</Form.Label>
-                                <p className='tx-14 col-sm-11 p-0'>Tenant</p>
+                                <p className='tx-14  mb-0'>Tenant</p>
                               </Col>
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Sub Category</Form.Label>
-                                <p className='tx-14 col-sm-11 p-0'>Tenant Shifting In</p>
+                                <p className='tx-14  mb-0'>Tenant Shifting In</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Tenant Name</Form.Label>
-                                <p className='tx-14 col-sm-11 p-0'>Ajay Sharma</p>
+                                <p className='tx-14  mb-0'>Ajay Sharma</p>
                               </Col>
 
 
 
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Gate Pass Number</Form.Label>
-                                <p className='tx-14'>-</p>
+                                <p className='tx-14  mb-0'>-</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Entry Date & Time</Form.Label>
-                                <p className='tx-14 col-sm-11 p-0'>10/21/2023, 12:00 PM</p>
+                                <p className='tx-14 mb-0'>10/21/2023, 12:00 PM</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Exit Date & Time</Form.Label>
-                                <p className='tx-14'>10/23/2023, 12:00 PM </p>
+                                <p className='tx-14 mb-0'>10/23/2023, 12:00 PM </p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Outstanding</Form.Label>
-                                <p className='tx-14 tx-bold'>0.00 </p>
+                                <p className='tx-14 tx-bold mb-0'>0.00 </p>
                               </Col>
 
                             </Row>
                           </Card.Body>
                         </Card>
+
+
+                        <Card className='box-shadow border border-primary'>
+                          <Card.Body>
+                            <h5 className="card-title  main-content-label tx-14 tx-dark tx-medium mg-b-10">Vehicle and Driver Details</h5>
+                            <Row>
+
+                            <Col sm={3} className='mb-0'>
+                                <Form.Label>Driver Name</Form.Label>
+                                <p className='tx-14 mb-0'>Rakesh Kumar</p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Driver Number</Form.Label>
+                                <p className='tx-14 mb-0'>9876543212</p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Vehicle Number</Form.Label>
+                                <p className='tx-14 mb-0'>HR4A7986</p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Vehicle Model</Form.Label>
+                                <p className='tx-14 mb-0'>-</p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Vehicle Nature</Form.Label>
+                                <p className='tx-14 mb-0'>Visitor Parking</p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Vehicle Type</Form.Label>
+                                <p className='tx-14 mb-0'>SUV</p>
+                              </Col>
+                            </Row>
+                          </Card.Body>
+                        </Card>
+
+
+                        <Card className='box-shadow border border-primary'>
+                          <Card.Body>
+                            <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Contact Person Details</h5>
+                            <Row>
+
+                            <Col sm={3} className='mb-0'>
+                                <Form.Label>Contact Person Name</Form.Label>
+                                <p className='tx-14 mb-0'>Anisha Kumari Bansal</p>
+                              </Col>
+
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Contact Person Number</Form.Label>
+                                <p className='tx-14 mb-0'>8800654786</p>
+                              </Col>
+
+                              <Col sm={6} className='mb-0'>
+                                <Form.Label>Remarks</Form.Label>
+                                <p className='tx-14 mb-0'>-</p>
+                              </Col>
+
+                            </Row>
+                          </Card.Body>
+                        </Card>
+
+                        <Card className='box-shadow border border-primary'>
+                                                  <Card.Body>
+                                                    <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Documents</h5>
+                                                    <Row>
+
+                                                    <Col sm={3} className='mb-0'>
+                                                        <Form.Label>Sale Agreement Copy</Form.Label>
+                                                        <p className='tx-14 mb-0'>Yes</p>
+                                                      </Col>
+
+                                                      <Col sm={3} className='mb-0'>
+                                                        <Form.Label>Flat Registration Certificate</Form.Label>
+                                                        <p className='tx-14 mb-0'>Yes </p>
+                                                      </Col>
+                                                      <Col sm={3} className='mb-0'>
+                                                        <Form.Label>Home Loan Sanction Letter</Form.Label>
+                                                        <p className='tx-14 mb-0'>Yes</p>
+                                                      </Col>
+                                                      <Col sm={3} className='mb-0'>
+                                                        <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
+                                                        <p className='tx-14 mb-0'>Yes </p>
+                                                      </Col>
+
+
+                                                    </Row>
+                                                  </Card.Body>
+                                                </Card>
 
 
 
@@ -113,48 +205,46 @@ const GatePassApproval = () => {
                             <Row>
                               <Col sm ={3} className='mb-0'>
                                 <Form.Label>Society</Form.Label>
-                                <p className='tx-14'>-</p>
+                                <p className='tx-14 mb-0'>-</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Tower</Form.Label>
-                                <p className='tx-14'>Tower A </p>
+                                <p className='tx-14 mb-0'>Tower A </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Wing</Form.Label>
-                                <p className='tx-14'>Wing A </p>
+                                <p className='tx-14 mb-0'>Wing A </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Property</Form.Label>
-                                <p className='tx-14'>A101 </p>
+                                <p className='tx-14 mb-0'>A101 </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Approver Name</Form.Label>
-                                <p className='tx-14'>Sandeep Singh </p>
+                                <p className='tx-14 mb-0'>Sandeep Singh </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Approver Number</Form.Label>
-                                <p className='tx-14'>9876543212 </p>
+                                <p className='tx-14 mb-0'>9876543212 </p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Designation</Form.Label>
-                                <p className='tx-14'>Secretary </p>
+                                <p className='tx-14 mb-0'>Secretary </p>
                               </Col>
 
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Application Type</Form.Label>
-                                <p className='tx-14'>Gate Pass </p>
+                                <p className='tx-14 mb-0'>Gate Pass </p>
                               </Col>
-                              <Col sm={12}>
-<hr className="w-100"/>
-</Col>
-                              <Col xl={12}>
+
+                              <Col xl={12} className="pt-2">
                               <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
                               <Dropdown className='profile-user border-0'>
                                 <Dropdown.Toggle variant="">
@@ -179,63 +269,26 @@ const GatePassApproval = () => {
                           </Card.Body>
                         </Card>
 
-
-                      </Col>
-
-                      <Col sm={4}>
-                        <Card className='box-shadow border border-primary'>
+  <Card className='box-shadow border border-primary'>
                           <Card.Body>
-                            <h5 className="card-title  main-content-label tx-14 tx-dark tx-medium mg-b-10">Vehicle and Driver Details</h5>
+                            <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Terms & Conditions</h5>
                             <Row>
-                              <Col sm={12} className='tx-12'>Driver Name</Col>
-                              <Col sm={12} className='tx-14 tx-semibold'>Rakesh Kumar</Col>
-                              <Col sm={12} className='tx-12 mb-1'>9876543212</Col>
-                              <Col sm={12} className='tx-12'>Vehicle Number</Col>
-                              <Col sm={12} className='tx-12 mb-1 tx-semibold'>HR4A7986</Col>
-                              <Col sm={12} className='tx-12'>Vehicle Model</Col>
-                              <Col sm={12} className='tx-12 mb-1 tx-semibold'>-</Col>
-                              <Col sm={12} className='tx-12'>Vehicle Nature</Col>
-                              <Col sm={12} className='tx-12 mb-1 tx-semibold'>Visitor Parking</Col>
-                              <Col sm={12} className='tx-12'>Vehicle Type</Col>
-                              <Col sm={12} className='tx-12 tx-semibold'>SUV</Col>
-                            </Row>
-                          </Card.Body>
-                        </Card>
 
-                        <Card className='box-shadow border border-primary'>
-                          <Card.Body>
-                            <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Contact Person Details</h5>
-                            <Row>
-                               <Col sm={12} className='tx-14 tx-semibold'>Anisha Kumari Bansal</Col>
-                              <Col sm={12} className='tx-12'>8800654786</Col>
-                              <Col sm={7} className='mb-1 tx-12 mt-1'>Remarks</Col>
-                              <Col sm={12} className='tx-12'>-</Col>
-
-                            </Row>
-                          </Card.Body>
-                        </Card>
-
-                        <Card className='box-shadow border border-primary'>
-                          <Card.Body>
-                            <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Documents</h5>
-                            <Row>
-                              <Col sm={12} className='tx-12'>Sale Agreement Copy</Col>
-                              <Col sm={12} className='tx-12 mb-2 tx-semibold'>Yes</Col>
-                              <Col sm={12} className='tx-12'>Flat Registration Certificate </Col>
-                              <Col sm={12} className='tx-12 mb-2 tx-semibold'>Yes</Col>
-                              <Col sm={12} className='tx-12'>Home Loan Sanction Letter</Col>
-                              <Col sm={12} className='tx-12 mb-2 tx-semibold'>Yes</Col>
-                              <Col sm={12} className='tx-12'>Old Owner Home Loan Closure Letter</Col>
-                              <Col sm={12} className='tx-12 tx-semibold'>No</Col>
-                            </Row>
+                            <Col sm={12} className='mb-0'>
+                                 <p className='tx-12 mb-0 text-justify'>Interest will be charged at 1.75% p.m. after the due date.
+The cheque should be drawn in favor of CreditBricks Society.
+No claim in respect of this bill will be entertained unless notified in writing within 10 days from the date of this bill.
+If the dues are not cleared within 90 days, then the member shall be termed as a defaulter, and appropriate action will be taken by the society against the defaulters as per the Bylaws
+In case of no response on the payment for a prolonged period the membership from the society can be terminated and expulsion procedure can be initiated.
+The penalty charges do not create any right in your favor.
+Society reserves the right to enhance the penalty in case of continuing default and misuse.</p>
+                              </Col>
+</Row>
                           </Card.Body>
                         </Card>
                       </Col>
-                      <Col xl={12}>
 
-
-                      </Col>
-                      <p className='ps-3'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1" /></p>
+                      <p className='ps-3 text-end w-100'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1" /></p>
                     </Row>
                   </div>
                 </Col>

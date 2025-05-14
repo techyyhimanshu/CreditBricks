@@ -254,7 +254,7 @@ Society reserves the right to enhance the penalty in case of continuing default 
 
 
                       </Col>
-                      <p className='ps-3'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1" /></p>
+                      <p className='ps-3 text-end w-100'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1" /></p>
                     </Row>
 
                   </div>
