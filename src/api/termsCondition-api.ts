@@ -9,7 +9,7 @@ export const createNewTermsConditionApi = async (data: any): Promise<any> => {
         throw error
     }
 }
-export const updateParentEntityApi = async (data: any, id: string): Promise<any> => {
+export const updateTermsConditionApi = async (data: any, id: string): Promise<any> => {
     try {
         const response = await axiosInstance.patch(`term-condition/${id}`, data)
         return response

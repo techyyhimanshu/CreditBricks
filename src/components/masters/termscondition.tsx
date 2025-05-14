@@ -9,9 +9,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../common/store/store';
 import { handleApiError } from '../../helpers/handle-api-error';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
-import { getTermsConditionBySocietyAndTypeApi } from '../../api/termsCondition-api';
+import { createNewTermsConditionApi, getTermsConditionBySocietyAndTypeApi, updateTermsConditionApi } from '../../api/termsCondition-api';
 
 export default function TermsCondition() {
+  const [editing,setEditing]=useState<boolean>(false)
   const { society } = useSelector((state: RootState) => state.auth)
   const applications = [
     { value: "Society", label: "Society" },
@@ -49,16 +50,18 @@ export default function TermsCondition() {
         societyIdentifier: values?.society?.value,
         termCondition: values.terms,
       };
-      console.log(formattedData)
-      // if (editing) {
-      //   formattedData.eventId = initialVals?.eventId
-      //   formattedData.eventIdentifier = initialVals?.applicationIdentifier
-      // }
+      let response;
+      
+      if(editing){
+        response = await updateTermsConditionApi(formattedData,values.termsIdentifier)
+      }else{
+        response = await createNewTermsConditionApi(formattedData)
+      }
       
       // const response = await createNewGatePassApi(formattedData)
-      // if (response.status === 200) {
-      //     showToast("success", "Gate pass created successfully")
-      // }
+      if (response.status === 200) {
+          showToast("success",response.data.message)
+      }
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
@@ -69,11 +72,19 @@ export default function TermsCondition() {
     try {
       const response = await getTermsConditionBySocietyAndTypeApi(societyIdentifier,type)
       if(response.status===200){
+        setEditing(true)
         setFieldValue("terms",response.data.data?.termCondition)
+        setFieldValue("termsIdentifier",response.data.data?.termConditionId)
       }
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
+    } catch (error:any) {
+      console.log("kartik",error.response)
+      if(error.response.status===400){
+        setEditing(false)
+        setFieldValue("terms","")
+        setFieldValue("termsIdentifier","")
+      }
+      // const errorMessage = handleApiError(error)
+      // showToast("error", errorMessage)
     }
   }
 
@@ -90,6 +101,7 @@ export default function TermsCondition() {
           application: { value: "", label: "" },
           terms: '',
           society: { value: "", label: "" },
+          termsIdentifier:""
         }}
         // validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -136,7 +148,13 @@ export default function TermsCondition() {
                       classNamePrefix='Select2'
                       className="multi-select"
                       value={values.application}
-                      onChange={(selected) => setFieldValue("application", selected)}
+                      onChange={(selected) => {
+                        setFieldValue("application", selected)
+                        // setFieldValue("terms", "")
+                        // setFieldValue("termsIdentifier", "")
+                        // fetchTermsData(society.value,selected.value,setFieldValue)
+
+                      }}
                     />
                     {/* {errors.application && touched.application && (
                     <div className="text-danger mt-1">{errors.application.label || errors.application}</div>
