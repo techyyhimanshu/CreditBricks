@@ -192,15 +192,15 @@ export const MENUITEMS = [
       },
 
 
-      // {
-      //   title: "Parking",
-      //   icon: (<i className="side-menu__icon bi bi-list-task"></i>
-      //   ),
-      //   path: `${import.meta.env.BASE_URL}parking/parking`,
-      //   type: "link",
-      //   selected: false,
-      //   active: false,
-      // },
+      {
+        title: "Parking",
+        icon: (<i className="side-menu__icon bi bi-list-task"></i>
+        ),
+        path: `${import.meta.env.BASE_URL}parking/parking`,
+        type: "link",
+        selected: false,
+        active: false,
+      },
       {
         title: "Loans",
         icon: (<i className="side-menu__icon bi bi-cash-stack"></i>

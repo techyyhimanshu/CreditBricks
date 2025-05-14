@@ -18,6 +18,7 @@ import OtherApplicationModal from '../../common/modals/otherApplicationModal';
 import { ViewGatePassData } from '../../common/services/database';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../common/store/store';
+import FlatResaleModal from '../../common/modals/flatResaleModal';
 
 
 export default function Applications() {
@@ -451,6 +452,30 @@ export default function Applications() {
     }
   }
 
+  const handleFlatResaleSave = async (values: any, editing: boolean) => {
+    try {
+      console.log(values)
+      // let response;
+
+      // if (editing) {
+      //   response = await updateOtherApplicationApi(values, values.id);
+      // } else {
+      //   response = await createNewOtherApplicationApi(values);
+      // }
+
+      // if (response.status === 200 || response.status === 201) {
+      //   showToast("success", response.data.message)
+      //   fetchAllApplications()
+      // }
+
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      // viewDemoClose("addflateresale")
+    }
+  }
+
   const handleDelete = (id: string) => {
     ; (async () => {
       try {
@@ -514,6 +539,9 @@ export default function Applications() {
         break;
 
       case "termsconditionsview":
+        settermsconditionsview(true);
+        break;
+      case "flatresaleview":
         settermsconditionsview(true);
         break;
 
@@ -659,6 +687,10 @@ export default function Applications() {
         setotherapplicationview(false);
         setSingleOthersData(null)
         break;
+      case "flatresaleview":
+        setotherapplicationview(false);
+        setSingleFlatResaleData(null)
+        break;
 
       case "termsconditionsview":
         settermsconditionsview(false);
@@ -688,6 +720,7 @@ export default function Applications() {
 
       case "addflateresale":
         setaddflateresale(false);
+        setSingleFlatResaleData(null)
         break;
 
       case "flateresaleuploadreciept":
@@ -904,6 +937,9 @@ export default function Applications() {
   const handleCelebrationClose = () => {
     viewDemoClose("addcelebration");
   }
+  const handleFlatResaleClose = () => {
+    viewDemoClose("addflateresale");
+  }
   const handleCelebrationViewClose = () => {
     viewDemoClose("celebrationview");
   }
@@ -921,6 +957,9 @@ export default function Applications() {
   }
   const handleOtherApplicationViewClose = () => {
     viewDemoClose("otherapplicationview");
+  }
+  const handleFlatResaleViewClose = () => {
+    viewDemoClose("flatresaleview");
   }
 
 
@@ -1909,610 +1948,9 @@ export default function Applications() {
           </Modal>
 
           {/* Add Flat Resale */}
-          <Modal show={addflateresale} size="xl" centered>
-            <Modal.Header>
-              <Modal.Title>Flat Resale</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addflateresale"); }}>
-                x
-              </Button>
-            </Modal.Header>
+          
 
-            <Modal.Body className='bg-light'>
-              <Accordion defaultActiveKey="basicinfo">
-                <Accordion.Item eventKey="basicinfo">
-                  <Accordion.Header>Basic Information</Accordion.Header>
-                  <Accordion.Body className='p-2'>
-                    <Row>
-                      <Col xl="4">
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society </Form.Label>
-                          <Select
-                            options={societyOptions}
-                            placeholder="Select society"
-                            classNamePrefix="Select2"
-                            isDisabled
-                          />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl="4">
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property </Form.Label>
-                          <Select
-                            options={property}
-                            name="property"
-                            placeholder="Select property"
-                            classNamePrefix="Select2"
-                          />
-                          {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                        </Form.Group>
-                      </Col>
-
-
-
-                    </Row>
-                    <Row>
-                      <Col xl={12}>
-                        <p className='mb-2 mt-3 tx-bold'>To share your payment receipt, kindly click on the "Yes" option</p>
-                        <hr className='w-100 m-0' />
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Share Transfer Documents<br/>Submitted</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="transferdocument" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Do you currently process the original share<br/>certificate?</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="proccesscertificate" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="proccesscertificate" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="proccesscertificate" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group ">
-                          <Form.Label>Is there an existing home loan on your<br/>property?</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="existinghomeloanproperty" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="existinghomeloanproperty" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="existinghomeloanproperty" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Have you fully settled your home loan?</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="fullysettledhomeloan" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="fullysettledhomeloan" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="fullysettledhomeloan" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Share Transfer Premium Paid</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="transferpremiumpaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferpremiumpaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="transferpremiumpaid" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Share Transfer Fees Paid</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="transferfeespaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferfeespaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="transferfeespaid" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Membership Fee Paid</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="membershipfeepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="membershipfeepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="membershipfeepaid" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Entrance Fee Paid</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="entrancefeepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="entrancefeepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="entrancefeepaid" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Other Charges Paid</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="otherchargepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="otherchargepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="otherchargepaid" />
-                            </Col>
-                            <Col xl={12} className='pt-2'>
-                              <Form.Control
-                                type="text"
-                                placeholder="Other Charges"
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-                          </Row>
-
-                        </Form.Group>
-                      </Col>
-
-
-                    </Row>
-                  </Accordion.Body>
-                </Accordion.Item>
-
-
-
-                <Accordion.Item eventKey="ApplicationDescription">
-                  <Accordion.Header>Documents</Accordion.Header>
-                  <Accordion.Body className='p-2'>
-                    <Row>
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Sale Agreement Copy</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={6}>
-                              <small className='text-muted float-end'>Size : Max 2MB</small>
-                            </Col>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Flat Registration Certificate</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={6}>
-                              <small className='text-muted float-end'>Size : Max 2MB</small>
-                            </Col>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Home Loan Sanction Letter</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={6}>
-                              <small className='text-muted float-end'>Size : Max 2MB</small>
-                            </Col>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={6}>
-                              <small className='text-muted float-end'>Size : Max 2MB</small>
-                            </Col>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label className='mb-2'>Upload Reciept
-                            <small className='text-muted float-end'>Size : Max 2MB</small>
-                          </Form.Label>
-                          <Row>
-                            <Col xl={12} className='mt-4'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label  className='mb-2'>Upload loan Closure Letter
-                            <small className='text-muted float-end'>Size : Max 2MB</small>
-                          </Form.Label>
-                          <Row>
-                            <Col xl={12} className='mt-4'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                    </Row>
-                  </Accordion.Body>
-                </Accordion.Item>
-
-                <Accordion.Item eventKey="vehicledetails">
-                  <Accordion.Header>Joint Holder</Accordion.Header>
-                  <Accordion.Body className='p-2'>
-                    <Row>
-                      <Col xl={12}>
-                        <p className='mb-2 tx-bold'></p>
-                        <hr className='w-100 m-0' />
-                      </Col>
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Joint Holder</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="jointholder" checked />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="jointholder" />
-                            </Col>
-
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-0 mt-0">
-                          <Form.Label>Owner Name <small className='text-muted tx-bold'>(As per Agreement)</small></Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Name"
-                            className="form-control"
-                          ></Form.Control>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Co-owner Name <small className='text-muted tx-bold'>(As per Agreement)</small>
-
-                          </Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Name"
-                            className="form-control"
-                          ></Form.Control>
-                          <small className='float-end text-black tx-bold cursor mt-1'>+ Add</small>
-                        </Form.Group>
-                      </Col>
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Flat Registration ID </Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="ID"
-                            className="form-control"
-                          ></Form.Control>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Flat Registration Copy </Form.Label>
-                          <Form.Control
-                            type="file"
-                            placeholder=""
-                            className="form-control"
-                          ></Form.Control>
-                        </Form.Group>
-                      </Col>
-
-
-
-                    </Row>
-                  </Accordion.Body>
-                </Accordion.Item>
-
-
-                <Accordion.Item eventKey="approvaldetails">
-                  <Accordion.Header>Approval Details</Accordion.Header>
-                  <Accordion.Body className='p-2'>
-                    <Row>
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Society </Form.Label>
-                          <Select
-                            name='approverSociety'
-                            placeholder="Select Society"
-                            classNamePrefix="Select2"
-                         isDisabled
-                          />
-                        </Form.Group>
-                      </Col>
-
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Tower </Form.Label>
-                          <Select
-                            // options={towerOptions}
-                            placeholder="Select Tower"
-                            classNamePrefix="Select2"
-                            name='tower'
-
-                            isDisabled
-                          />
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Wing </Form.Label>
-                          <Select
-                            placeholder="Select Wing"
-                            classNamePrefix="Select2"
-                            name='wing'
-
-                            isDisabled
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Property </Form.Label>
-                          <Select
-                            placeholder="Select property"
-                            options={property}
-                            classNamePrefix="Select2"
-                            name='approverProperty'
-
-                            isDisabled
-                          />
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Approver Name</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="approverName"
-                            placeholder="Approver Name"
-                            className="form-control"
-
-                            disabled
-                          />
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Approver Contact</Form.Label>
-                          <Form.Control
-                            type="text"
-                            name="approverContact"
-                            placeholder="Contact"
-                            className="form-control"
-                            disabled
-                          />
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={4}>
-                        <Form.Group className="form-group mb-1">
-                          <Form.Label>Designation </Form.Label>
-                          <Select
-                            // options={designation}
-                            placeholder="Select Designation"
-                            classNamePrefix="Select2"
-                            name='designation'
-                            isDisabled
-                          />
-                        </Form.Group>
-                      </Col>
-
-
-
-                    </Row>
-                  </Accordion.Body>
-                </Accordion.Item>
-
-              </Accordion>
-
-
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("addflateresale"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("addflateresale"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
-          </Modal>
+          {addflateresale && (singleCelebrationData ? <FlatResaleModal show={addflateresale} initialVals={singleCelebrationData} onSave={handleFlatResaleSave} onClose={handleFlatResaleClose} editing={true} /> : <FlatResaleModal show={addflateresale} onSave={handleFlatResaleSave} onClose={handleFlatResaleClose} editing={false} />)}
 
 
           {/* Flate Resale upload reciept */}
