@@ -16,15 +16,18 @@ import { numberToWords } from "amount-to-words";
 import { getAllPropertiesForDropdownApi } from '../../api/complaint-api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../common/store/store';
+import * as Yup from 'yup';
 export default function Accounts() {
   const [accountdata, setAccountdata] = useState<any>([]);
   const [paynow, setpaynow] = useState(false);
   const [cash, setcash] = useState(false);
   const [cheque, setcheque] = useState(false);
   const [otpverify, setotpverify] = useState(false);
+  const [sendOTP, setSendOTP] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInvoicePayment, setIsInvoicePayment] = useState(true);
   const [invoiceToPay, setInvoiceToPay] = useState<any>({})
-  const [denominations, setDenominations] = useState([
+  const denominationsList = [
     { value: 500, count: 0, total: 0 },
     { value: 200, count: 0, total: 0 },
     { value: 100, count: 0, total: 0 },
@@ -34,7 +37,8 @@ export default function Accounts() {
     { value: 5, count: 0, total: 0 },
     { value: 2, count: 0, total: 0 },
     { value: 1, count: 0, total: 0 },
-  ]);
+  ]
+  const [denominations, setDenominations] = useState(denominationsList);
   const [cashview, setcashview] = useState(false);
   const [chequeview, setchequeview] = useState(false);
   const [receiptData, setReceiptData] = useState([]);
@@ -180,7 +184,7 @@ export default function Accounts() {
         <Dropdown.Menu>
           <Dropdown.Item>Edit</Dropdown.Item>
           {row.status === 'Unpaid' || row.status === 'Partially Paid' ? <Dropdown.Item onClick={() => {
-
+            setIsInvoicePayment(true);
             setInvoiceToPay(row); // this updates the state
             fetchInvoicePaymentOutstanding(row.invoiceNumber); // use row directly
             viewDemoShow("paynow");
@@ -301,8 +305,9 @@ export default function Accounts() {
       cell: (row: any) => (
         row.status === "Pending" ? <Button type="button" className='btn btn-sm btn-success' onClick={
           () => {
+            setIsInvoicePayment(false);
             setTransactionData(row)
-            viewDemoShow("otpverify")
+            viewDemoShow("sendOTP");
           }
         }><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> : "-"
       ),
@@ -373,7 +378,25 @@ export default function Accounts() {
   };
 
 
+  const handleSendOTP = async () => {
+    try {
+      if (!mobile || mobile.length < 10) {
+        return alert("Please enter a valid mobile number")
+      }
+      console.log(transactionData);
 
+      const response = await sendOTPApi(mobile, transactionData.invoiceNumber, "", transactionData.chequeNumber, transactionData.amount, transactionData.paymentMethod)
+      if (response.status === 200) {
+        // setTransactionData(response.data.data)
+        showToast("success", "OTP sent successfully")
+        viewDemoShow("otpverify");
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+
+    }
+  }
   // const tableData = {
   //   columns,
   //   data,
@@ -497,6 +520,8 @@ export default function Accounts() {
       if (amount > invoicePaymentOutstanding?.totalDueNow * 1) {
         return showToast("error", "Amount cannot be greater than outstanding amount")
       }
+      console.log(mobile);
+
       if (amount <= 0) {
         return showToast("error", "Amount cannot be less than or equal to zero")
       }
@@ -558,6 +583,8 @@ export default function Accounts() {
   const handleVerifyPayment = async () => {
     try {
       const joinedOtp = otp.join('');
+      console.log(transactionData);
+
       if (joinedOtp.length === 6) {
         const response = await verifyPaymentApi(transactionData.invoiceNumber, transactionData.amount, transactionData.createdAt, transactionData.propertyIdentifier, transactionData.txnId, mobile, joinedOtp)
         if (response.status === 200) {
@@ -573,12 +600,15 @@ export default function Accounts() {
 
   const handleResendOTP = async () => {
     try {
-      const param = "CSH"
-      const response = await sendOTPApi(mobile, invoiceToPay.propertyIdentifier, invoiceToPay.amountInFigures, param)
+      console.log(transactionData);
+
+      const response = await sendOTPApi(mobile, transactionData.invoiceNumber, "", transactionData.chequeNumber, transactionData.amount, transactionData.paymentMethod)
       if (response.status === 200) {
-        setTransactionData(response.data.data)
+        // setTransactionData(response.data.data)
         showToast("success", "OTP sent successfully")
       }
+
+
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
@@ -622,6 +652,15 @@ export default function Accounts() {
 
       case "otpverify":
         setotpverify(true);
+        setSendOTP(false);
+        setcheque(false);
+        setpaynow(false);
+        setcash(false);
+        break;
+
+      case "sendOTP":
+        setSendOTP(true);
+        setotpverify(false);
         setcheque(false);
         setpaynow(false);
         setcash(false);
@@ -704,6 +743,10 @@ export default function Accounts() {
 
       case "otpverify":
         setotpverify(false);
+        break;
+
+      case "sendOTP":
+        setSendOTP(false);
         break;
 
       case "chequeview":
@@ -2008,7 +2051,7 @@ export default function Accounts() {
                     <hr />
                     <FormGroup className='mt-3'>
                       <FormLabel className='text-black'>Mobile Number</FormLabel>
-                      <Form.Control onChange={(e) => setMobile(e.target.value)} className='form-control' placeholder='Enter Number' type="text"></Form.Control>
+                      <input onChange={(e) => setMobile(e.target.value)} className='form-control' required placeholder='Enter Number' type="text"></input>
                     </FormGroup>
 
                     <FormGroup className='mt-5'>
@@ -2041,15 +2084,32 @@ export default function Accounts() {
                 chequeReceivedDate: '',
                 chequeNumber: '',
                 bankName: '',
-                branch: '',
+                branchName: '',
                 amountInFigures: '',
                 amountInWords: '',
                 mobile: ''
               }}
-              // validationSchema={validationSchema}
-              onSubmit={handleChequeSubmit}
+              validationSchema={Yup.object({
+                chequeDate: Yup.string().required('Cheque Date is required'),
+                chequeIssuedDate: Yup.string().required('Cheque Issued Date is required'),
+                chequeReceivedDate: Yup.string().required('Cheque Received Date is required'),
+                chequeNumber: Yup.string().required('Cheque Number is required'),
+                bankName: Yup.string().required('Bank Name is required'),
+                branchName: Yup.string().required('Branch is required'),
+                amountInFigures: Yup.string().required('Amount in Figures is required'),
+                mobile: Yup.string()
+                  .required('Mobile Number is required')
+                  .matches(/^[0-9]{10}$/, 'Mobile Number must be 10 digits'),
+              })}
+              validateOnChange={true}
+              validateOnBlur={true}
+              validateOnMount={false}
+              onSubmit={(values, { setSubmitting }) => {
+                handleChequeSubmit(values);
+                setSubmitting(false);
+              }}
             >
-              {({ values, setFieldValue }) => {
+              {({ values, setFieldValue, errors, touched, isSubmitting }) => {
                 useEffect(() => {
                   if (values.amountInFigures && !isNaN(Number(values.amountInFigures))) {
                     const amount = parseInt(values.amountInFigures, 10);
@@ -2061,8 +2121,9 @@ export default function Accounts() {
                     setFieldValue('amountInWords', '');
                   }
                 }, [values.amountInFigures, setFieldValue]);
+
                 return (
-                  <FormikForm>
+                  <FormikForm noValidate>
                     <Modal.Body className='bg-light pt-2'>
                       <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
                         <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
@@ -2072,49 +2133,49 @@ export default function Accounts() {
                           <Col xl={6}>
                             <FormGroup>
                               <FormLabel>Cheque Date</FormLabel>
-                              <Field name="chequeDate" type="date" className="form-control" />
+                              <Field name="chequeDate" type="date" className={`form-control ${errors.chequeDate && touched.chequeDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeDate" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
                               <FormLabel>Cheque Issued Date</FormLabel>
-                              <Field name="chequeIssuedDate" type="date" className="form-control" />
+                              <Field name="chequeIssuedDate" type="date" className={`form-control ${errors.chequeIssuedDate && touched.chequeIssuedDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeIssuedDate" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
-                              <FormLabel>Cheque Recived Date</FormLabel>
-                              <Field name="chequeReceivedDate" type="date" className="form-control" />
+                              <FormLabel>Cheque Received Date</FormLabel>
+                              <Field name="chequeReceivedDate" type="date" className={`form-control ${errors.chequeReceivedDate && touched.chequeReceivedDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeReceivedDate" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
                               <FormLabel>Cheque Number</FormLabel>
-                              <Field name="chequeNumber" type="text" className="form-control" />
+                              <Field name="chequeNumber" type="text" className={`form-control ${errors.chequeNumber && touched.chequeNumber ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeNumber" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={12}>
                             <FormGroup>
                               <FormLabel>Bank Name</FormLabel>
-                              <Field name="bankName" type="text" className="form-control" />
+                              <Field name="bankName" type="text" className={`form-control ${errors.bankName && touched.bankName ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="bankName" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={12}>
                             <FormGroup>
                               <FormLabel>Branch</FormLabel>
-                              <Field name="branchName" type="text" className="form-control" />
+                              <Field name="branchName" type="text" className={`form-control ${errors.branchName && touched.branchName ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="branchName" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={12}>
                             <FormGroup>
                               <FormLabel>Amount (in figures)</FormLabel>
-                              <Field name="amountInFigures" type="text" className="form-control" />
+                              <Field name="amountInFigures" type="text" className={`form-control ${errors.amountInFigures && touched.amountInFigures ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="amountInFigures" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
@@ -2131,7 +2192,7 @@ export default function Accounts() {
                               <Field
                                 name="mobile"
                                 type="text"
-                                className="form-control"
+                                className={`form-control ${errors.mobile && touched.mobile ? 'is-invalid' : ''}`}
                                 placeholder="Enter mobile number for verification"
                               />
                               <ErrorMessage name="mobile" component="div" className="text-danger" />
@@ -2139,7 +2200,11 @@ export default function Accounts() {
                           </Col>
                         </Row>
                         <FormGroup>
-                          <Button className='btn btn-primary w-100 mt-3' type="submit">
+                          <Button
+                            className='btn btn-primary w-100 mt-3'
+                            type="submit"
+                            disabled={isSubmitting}
+                          >
                             Send OTP
                           </Button>
                         </FormGroup>
@@ -2147,8 +2212,7 @@ export default function Accounts() {
                     </Modal.Body>
                   </FormikForm>
                 )
-              }
-              }
+              }}
             </Formik>
 
 
@@ -2160,7 +2224,13 @@ export default function Accounts() {
           <Modal show={otpverify} centered>
             <Modal.Header>
               <Modal.Title>OTP Verification</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => viewDemoClose("otpverify")}>x</Button>
+              <Button variant="" className="btn btn-close" onClick={() => {
+                setMobile("");
+                setDenominations(denominationsList);
+                setOtp(["", "", "", "", "", ""]);
+                viewDemoClose("otpverify")
+              }
+              }>x</Button>
             </Modal.Header>
 
             <Modal.Body className='p-5 text-center'>
@@ -2194,6 +2264,43 @@ export default function Accounts() {
                 Resend OTP
               </p>
 
+              <p className='text-info w-100 text-center mt-4' style={{ cursor: 'pointer' }}>
+                {/* Resend OTP */}
+              </p>
+            </Modal.Body>
+          </Modal>
+          <Modal show={sendOTP} centered>
+            <Modal.Header>
+              <Modal.Title>Send OTP</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => {
+                setMobile("");
+                viewDemoClose("sendOTP")
+              }}>x</Button>
+            </Modal.Header>
+
+            <Modal.Body className='p-5 text-center'>
+              <h4 className='text-black'>Send Verification OTP</h4>
+              <p>Enter Mobile Number</p>
+              <Row className='justify-content-center'>
+                <Col xs={8} className='px-1'>
+                  <Form.Control
+                    type="text"
+                    maxLength={10}
+                    value={mobile}
+                    className='text-center'
+                    onChange={(e) => setMobile(e.target.value)}
+                  />
+                </Col>
+              </Row>
+
+
+              <FormGroup>
+                <Col xl={8} className='m-auto'>
+                  <Button className='btn btn-primary w-100 mt-4' type="button" onClick={handleSendOTP}>
+                    Send
+                  </Button>
+                </Col>
+              </FormGroup>
               <p className='text-info w-100 text-center mt-4' style={{ cursor: 'pointer' }}>
                 {/* Resend OTP */}
               </p>
