@@ -981,7 +981,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Property</Form.Label>
                 <Select
                   options={society}
@@ -1007,40 +1007,55 @@ export default function Accounts() {
                 />
               </Form.Group>
             </Col>
-            <Col xl={12}>
-<Row>
-            <Col xl={4}>
+
+            <Col xl={3}>
             <Form.Group className="form-group mb-1">
                 <Form.Label>From Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
-            <Col xl={4}>
+            <Col xl={3}>
             <Form.Group className="form-group mb-1">
                 <Form.Label>To Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
-            <Col xl={4}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>Due Date</Form.Label>
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1 tx-semibold">
+                <Form.Label className='mb-2'>Due Date</Form.Label>
+
+                  <Row>
+                    <Col sm={5}>
+
+                      <Form.Check type="radio" label="Society Wise" name="duedt" />
+                    </Col>
+                    <Col sm={5}>
+
+                      <Form.Check type="radio" label="Custom" name="duedt" />
+                    </Col>
+
+                  </Row>
+
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
-            </Row>
-            </Col>
-            <Col xl={12}>
-              <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Processing of Invoices (23)</p>
-              <div className="progress mg-b-20">
+
+            <Col xl={6}>
+              <p className='tx-semibold tx-16 mb-2 mt-3'> Processing of Invoices (23)</p>
+              {/* <div className="progress mg-b-20">
                 <ProgressBar
                   variant="success"
                   role="progressbar"
                   now={35}
                   animated
                 ></ProgressBar>
-              </div>
+              </div> */}
+              <button className="btn btn-light tx-semibold" type="button" disabled>
+            <span className="spinner-border text-info spinner-border-sm align-middle" style={{ width: "2rem", height: "2rem" }} role="status"
+                aria-hidden="true"></span> <span className='ms-2'>Loading...</span>
+        </button>
             </Col>
 
           </Row>
