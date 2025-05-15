@@ -54,8 +54,16 @@ export default function Accounts() {
   ];
 
   const invoicetype = [
-    { value: "1", label: "Maintenance" },
+     { value: "1", label: "Maintenance" },
     { value: "2", label: "Additional" }
+  ];
+
+  const propertytype = [
+    { value: "1", label: "All" },
+    { value: "2", label: "Sold" },
+    { value: "3", label: "Unsold" },
+    { value: "4", label: "Blocked by Management" },
+    { value: "5", label: "Refuge" }
   ];
 
   const societyoption = [
@@ -835,7 +843,7 @@ export default function Accounts() {
         <Modal.Body>
           <Row>
             <Col xl={6}>
-              <Form.Group className="form-group">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Invoice Type</Form.Label>
                 <Select
                   options={invoicetype}
@@ -847,11 +855,24 @@ export default function Accounts() {
                 />
               </Form.Group>
             </Col>
-
             <Col xl={6}>
-              <Form.Group>
+              <Form.Group className="form-group mb-1">
+                <Form.Label>Property Status</Form.Label>
+                <Select
+                  options={propertytype}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
+
+                />
+              </Form.Group>
+            </Col>
+
+            <Col xl={12}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Choose</Form.Label>
-                <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
+                <div className="form-control bg-light process_invoice_radio pt-2">
                   <Row>
                     <Col sm={2}>
 
@@ -875,7 +896,7 @@ export default function Accounts() {
 
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Society</Form.Label>
                 <Select
                   options={societyoption}
@@ -888,8 +909,8 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={3}>
-              <Form.Group className="form-group">
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Tower</Form.Label>
                 <Select
                   options={society}
@@ -902,8 +923,8 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={3}>
-              <Form.Group className="form-group">
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Wing</Form.Label>
                 <Select
                   options={society}
@@ -931,7 +952,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Member</Form.Label>
                 <Select
                   options={society}
@@ -943,26 +964,29 @@ export default function Accounts() {
                 />
               </Form.Group>
             </Col>
-
+            <Col xl={12}>
+<Row>
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>From Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>To Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Due Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
+            </Col>
+            </Row>
             </Col>
             <Col xl={12}>
               <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Processing of Invoices (23)</p>
@@ -1000,7 +1024,7 @@ export default function Accounts() {
         <Modal.Body>
           <Row>
             <Col xl={6}>
-              <Form.Group className="form-group">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Invoice Type</Form.Label>
                 <Select
                   options={invoicetype}
@@ -1012,11 +1036,24 @@ export default function Accounts() {
                 />
               </Form.Group>
             </Col>
-
             <Col xl={6}>
-              <Form.Group>
+              <Form.Group className="form-group mb-1">
+                <Form.Label>Property Status</Form.Label>
+                <Select
+                  options={propertytype}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
+
+                />
+              </Form.Group>
+            </Col>
+
+            <Col xl={12}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Choose</Form.Label>
-                <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
+                <div className="form-control bg-light process_invoice_radio pt-2">
                   <Row>
                     <Col sm={2}>
 
@@ -1040,7 +1077,7 @@ export default function Accounts() {
 
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Society</Form.Label>
                 <Select
                   options={societyoption}
@@ -1053,8 +1090,8 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={3}>
-              <Form.Group className="form-group">
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Tower</Form.Label>
                 <Select
                   options={society}
@@ -1067,8 +1104,8 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={3}>
-              <Form.Group className="form-group">
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Wing</Form.Label>
                 <Select
                   options={society}
@@ -1096,7 +1133,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Member</Form.Label>
                 <Select
                   options={society}
@@ -1108,29 +1145,32 @@ export default function Accounts() {
                 />
               </Form.Group>
             </Col>
-
+            <Col xl={12}>
+<Row>
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>From Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>To Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Due Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
+            </Row>
+            </Col>
             <Col xl={12}>
-              <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unprocessing of Invoices (2)</p>
+              <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unrocessing of Invoices (23)</p>
               <div className="progress mg-b-20">
                 <ProgressBar
                   variant="success"
