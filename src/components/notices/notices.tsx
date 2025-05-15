@@ -10,27 +10,23 @@ import "react-data-table-component-extensions/dist/index.css";
 import 'suneditor/dist/css/suneditor.min.css';
 import { createNoticeApi, deleteNoticeApi, getAllNoticeApi, updateNoticeApi } from '../../api/notice-api';
 import { handleApiError } from '../../helpers/handle-api-error';
-import { getAllSocietyApi } from '../../api/society-api';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 // import { Formik, Form as FormikForm } from 'formik';
-// import { getSocietyTowersApi } from '../../api/tower-api';
-// import { getTowerWingsApi } from '../../api/wing-api';
-// import { getWingPropertiesApi } from '../../api/property-api';
+
 import NoticeModal from '../../common/modals/noticeModal';
 import NoticeViewModal from '../../common/modals/noticeViewModal';
 import TestLoader from '../../layout/layoutcomponent/testloader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 
 export default function Notices() {
-  const [, setSocietyData] = useState<any[]>([]);
-  // const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
-  // const [towerOptions, setTowerOptions] = useState<any[]>([]);
-  // const [wingOptions, setWingOptions] = useState<any[]>([]);
   const [noticedata, setNoticeData] = useState<any>([]);
   const [singleNoticedata, setSingleNoticeData] = useState<any>(null);
   const [addnotices, setaddnotices] = useState(false);
   const [viewnotice, setviewnotice] = useState(false);
    const [isLoading, setIsLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+  const { society } = useSelector((state: RootState) => state.auth)
 
   const columns = [
     {
@@ -102,7 +98,7 @@ export default function Notices() {
 
   const fetchAllNotice = async () => {
     try {
-      const response = await getAllNoticeApi()
+      const response = await getAllNoticeApi(society.value)
       const data = response.data.data
       const formattedData = data.map((notice: any, index: number) => (
         {
@@ -136,23 +132,9 @@ export default function Notices() {
   useEffect(() => {
 
     fetchAllNotice();
-    fetchSocietiesForDropDown()
-  }, [])
+  }, [society])
 
-  const fetchSocietiesForDropDown = async () => {
-    try {
-      const response = await getAllSocietyApi();
-      const formattedData = response.data.data.map((item: any) => ({
-        value: item.societyIdentifier,
-        label: item.societyName,
-      }));
-      setSocietyData(formattedData);
-    } catch (error) {
-      const errorMessage = handleApiError(error)
-      showToast("error", errorMessage)
-    }
-  }
-
+  
   const viewDemoShow = (modal: any) => {
     switch (modal) {
       case "addnotices":
@@ -562,7 +544,7 @@ export default function Notices() {
 
           </Modal> */}
           {
-            singleNoticedata&&addnotices?<NoticeModal show={addnotices} onClose={handleClose} editing={editing} initialVals={singleNoticedata} onSave={handleSubmit}/>:<NoticeModal show={addnotices} onClose={handleClose} editing={editing} onSave={handleSubmit}/>
+            addnotices&&(singleNoticedata?<NoticeModal show={addnotices} onClose={handleClose} editing={editing} initialVals={singleNoticedata} onSave={handleSubmit}/>:<NoticeModal show={addnotices} onClose={handleClose} editing={editing} onSave={handleSubmit}/>)
           }
         </div>
       </div>

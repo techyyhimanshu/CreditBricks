@@ -14,6 +14,8 @@ import stateCities from "../../components/masters/stateCity.json"
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import DataTable from 'react-data-table-component';
 import { deleteVehicleApi, getTenantApi, updateTenantApi, updateVehicleApi } from '../../api/tenant-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 interface StateCities {
   [key: string]: string[]; // Index signature
 }
@@ -33,6 +35,7 @@ export default function UpdateTenant() {
   const [vehicleData, setVehicleData] = useState<Row[]>([]);
   const [singleVehicleData, setSingleVehicleData] = useState<any>(null);
   const params = useParams()
+  const { society } = useSelector((state: RootState) => state.auth)
   const identifier = params.identifier as string
 
 
@@ -116,12 +119,12 @@ export default function UpdateTenant() {
         const filePath = row?.vehicleRcFilePath;
         const fileExtension = filePath?.split('.').pop()?.toLowerCase();
         const fileUrl = import.meta.env.VITE_STATIC_PATH + filePath;
-    
+
         // Check if the file path exists
         if (!filePath) {
           return 'No File';
         }
-    
+
         // Check for image extensions (jpg, jpeg, png, gif, etc.)
         if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
           return (
@@ -130,7 +133,7 @@ export default function UpdateTenant() {
             </a>
           );
         }
-    
+
         // Check for PDF extension
         if (fileExtension === 'pdf') {
           return (
@@ -139,14 +142,14 @@ export default function UpdateTenant() {
             </a>
           );
         }
-    
+
         // If it's neither an image nor a PDF, return "No File"
         return 'No File';
       },
       ignoreRowClick: true,
       allowOverflow: true,
     },
-    
+
     {
       name: "Actions",
       cell: (row: any, index: number) => (
@@ -342,14 +345,14 @@ export default function UpdateTenant() {
 
       const vehicleDetails = {
         vehicleNumber: values.vehicleNumber,
-        vehicleType: values.vehicleType.value||values.vehicleType,
+        vehicleType: values.vehicleType.value || values.vehicleType,
       }
       Object.entries(vehicleDetails).forEach(([key, value]) => {
         formData.append(key, value);
       });
 
-      if (values.vehicleRc||values.vehicleRC) {
-        formData.append("vehicleRCFile", values.vehicleRc||values.vehicleRC)
+      if (values.vehicleRc || values.vehicleRC) {
+        formData.append("vehicleRCFile", values.vehicleRc || values.vehicleRC)
       }
       if (values.vehicleId) {
         formData.append("vehicleId", values.vehicleId)
@@ -411,6 +414,14 @@ export default function UpdateTenant() {
         onSubmit={handleSubmit}
       >
         {({ setFieldValue, values }) => {
+
+          useEffect(() => {
+            if (society) {
+              setFieldValue("society", society);
+              fetchPropertiesForDropDown(society);
+            }
+          }, [society,currentTenant]);
+
           const getFileExtension = (fileName: string) => {
             if (!fileName) {
               return '';
@@ -446,9 +457,11 @@ export default function UpdateTenant() {
                                   fetchPropertiesForDropDown(selected);
                                   setFieldValue("society", selected);
                                 }}
+                                name='society'
                                 value={values.society}
                                 placeholder="Select society"
                                 classNamePrefix="Select2"
+                                isDisabled
                               />
                             </Form.Group>
                           </Col>

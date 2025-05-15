@@ -6,7 +6,7 @@ import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 // import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 // import stateCities from "../stateCity.json"
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 // import { Uploader } from 'uploader';
 // import { UploadButton } from 'react-uploader';
 import { getAllSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../../api/society-api';
@@ -173,6 +173,7 @@ export default function EditPropertyMaster() {
     const [fifthOwnerOptions, setFifthOwnerOptions] = useState<any[]>([]);
     const [flatsoldmodalshow, setflatsoldmodal] = useState(false);
     const params = useParams()
+    const navigate = useNavigate()
     const location = useLocation();
     const ownerChange = location.state ?? false;
     const identifier = params.identifier as string
@@ -435,7 +436,7 @@ export default function EditPropertyMaster() {
         <Fragment>
             <div className="breadcrumb-header justify-content-between">
                 <div className="left-content">
-                    <span className="main-content-title mg-b-0 mg-b-lg-1"> <Link to={`${import.meta.env.BASE_URL}property/propertymaster`} className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Link> Edit Property Master</span>
+                    <span className="main-content-title mg-b-0 mg-b-lg-1"> <Button onClick={() => navigate(-1)}  className="p-1 pe-2 ps-2 me-1"><i className='bi bi-arrow-left'></i> </Button> Edit Property Master</span>
                 </div>
             </div>
             {currentProperty ? (

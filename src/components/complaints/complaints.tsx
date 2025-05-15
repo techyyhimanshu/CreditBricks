@@ -311,16 +311,7 @@ export default function Complaints() {
     }
   }
 
-  // const fetchAllPropertiesForDropDown = async () => {
-  //   try {
-  //     const response = await getAllPropertiesForDropdownApi()
-  //     if (response.status === 200) {
-  //       setPropertiesForDropDown(response.data.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching properties:", error);
-  //   }
-  // }
+ 
   const fetchPropertiesOfSocietyForDropdown = async (identifier: string) => {
     try {
       const response = await getPropertiesOfSocietyApi(identifier)

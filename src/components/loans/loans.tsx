@@ -11,6 +11,8 @@ import { handleApiError } from '../../helpers/handle-api-error';
 import { CustomToastContainer, showToast } from '../../common/services/toastServices';
 import LoanModal from '../../common/modals/loanModal';
 import LoanViewModal from '../../common/modals/loanViewModal';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 
 
 export default function Loans() {
@@ -93,15 +95,16 @@ export default function Loans() {
   const [singleLoanData, setSingleLoanData] = useState<any>(null);
   const [loanData, setLoanData] = useState<any>([]);
   const [editing, setEditing] = useState(false);
+  const { society } = useSelector((state: RootState) => state.auth)
 
   useEffect(() => {
 
     fetchAllLoans();
-  }, []);
+  }, [society]);
 
   const fetchAllLoans = async () => {
     try {
-      const response = await getAllLoansApi()
+      const response = await getAllLoansApi(society.value)
       if (response.status === 200) {
         const formattedData = response.data.data.map((complaint: any, index: number) => {
           return {

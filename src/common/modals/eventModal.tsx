@@ -9,6 +9,8 @@ import { Field, Formik, Form as FormikForm } from "formik";
 import { getSocietyVenueApi } from "../../api/application-api";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import TermsAndConditionModal from "./termsAndConditionModal";
+import { getTermsConditionBySocietyAndTypeApi } from "../../api/termsCondition-api";
 
 interface ProductModalProps {
     show: boolean;
@@ -30,13 +32,48 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [, setCommiteeMemberData] = useState<any>(null);
     const [venuesForDropDown, setVenuesForDropDown] = useState([]);
+    const [termsconditionsview, settermsconditionsview] = useState(false);
+    const [termsAndConditionData, setTermsAndConditionData] = useState("")
     const { society } = useSelector((state: RootState) => state.auth)
 
+    const viewDemoShow = (modal: any) => {
+        switch (modal) {
+
+            case "termsconditionsview":
+                settermsconditionsview(true);
+                break;
+
+        }
+    };
+
+    const viewDemoClose = (modal: any) => {
+        switch (modal) {
+
+            case "termsconditionsview":
+                settermsconditionsview(false);
+                break;
+
+        }
+    };
 
 
     useEffect(() => {
         fetchSocietiesForDropDown()
-    }, [])
+        fetchTermsData()
+    }, [society])
+
+    const fetchTermsData = async () => {
+        try {
+            const response = await getTermsConditionBySocietyAndTypeApi(society.value, name)
+            if (response.status === 200) {
+                setTermsAndConditionData(response.data.data?.termCondition)
+            }
+        } catch (error: any) {
+
+            // const errorMessage = handleApiError(error)
+            // showToast("error", errorMessage)
+        }
+    }
 
     const fetchSocietiesForDropDown = async () => {
         try {
@@ -177,7 +214,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 sound: values?.SoundSystem === "Yes",
                 guestParking: values?.GuestParking === "Yes",
                 createdBy: "admin_user",
-                committeeMemberId: values.approverIdentifier||"",
+                committeeMemberId: values.approverIdentifier || "",
                 parentCommitteeMemberId: values.parentCommitteeMemberId || ""
             };
             if (editing) {
@@ -199,8 +236,11 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
     const formatDateTimeUTC = (isoString: string) => {
         if (!isoString) return "";
-        return isoString.slice(0, 16); // trims to 'YYYY-MM-DDTHH:mm'
+        return isoString.slice(0, 16);
     };
+    const handleTermsAndConditionClose = () => {
+        viewDemoClose("termsconditionsview")
+    }
 
 
     return (
@@ -290,7 +330,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                     fetchApproverDetails(selected, setFieldValue)
                                                                     setFieldValue("society", selected);
                                                                 }}
-                                                                isDisabled={initialVals && !editing}
+                                                                isDisabled
                                                             />
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -771,9 +811,9 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                     </Accordion>
 
                                     <Col xl={12} className='p-0'>
-                                        {/* <label><input type="checkbox" className='float-start m-2' />
-                        <b className='float-start mt-1 cursor'
-                         onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label> */}
+                                        <label><input type="checkbox" className='float-start m-2' />
+                                            <b className='float-start mt-1 cursor'
+                                                onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label>
                                     </Col>
 
                                 </Modal.Body>
@@ -798,6 +838,9 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 </Formik>
 
             </Modal>
+            {
+                termsconditionsview && <TermsAndConditionModal onClose={handleTermsAndConditionClose} initialVals={termsAndConditionData} show={termsconditionsview} />
+            }
 
 
 
