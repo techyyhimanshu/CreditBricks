@@ -24,6 +24,7 @@ export default function Accounts() {
   const [cheque, setcheque] = useState(false);
   const [otpverify, setotpverify] = useState(false);
   const [sendOTP, setSendOTP] = useState(false);
+  const [onlineself, setonlineself] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isInvoicePayment, setIsInvoicePayment] = useState(true);
   const [invoiceToPay, setInvoiceToPay] = useState<any>({})
@@ -50,6 +51,14 @@ export default function Accounts() {
     { value: "1", label: "A101" },
     { value: "2", label: "A102" },
     { value: "3", label: "A103" }
+  ];
+
+  const paymentmode = [
+    { value: "1", label: "NEFT" },
+    { value: "2", label: "IMPS" },
+    { value: "3", label: "Gpay" },
+    { value: "3", label: "Phonepe" },
+    { value: "3", label: "CRED" }
   ];
 
   const paymenttype = [
@@ -628,6 +637,11 @@ export default function Accounts() {
   const viewDemoShow = (modal: any) => {
     switch (modal) {
 
+      case "onlineself":
+        setonlineself(true);
+        setpaynow(false);
+        break;
+
       case "chequeview":
         setchequeview(true);
         break;
@@ -695,6 +709,10 @@ export default function Accounts() {
 
   const viewDemoClose = (modal: any) => {
     switch (modal) {
+
+      case "onlineself":
+        setonlineself(false);
+        break;
 
       case "cashview":
         setcashview(false);
@@ -1871,6 +1889,172 @@ export default function Accounts() {
                 </Tab>
 
 
+                <Tab eventKey="OnlineSelf" title="Online Self">
+                  <Row className='bg-light p-2'>
+                    <Formik initialValues={{
+                      fromDate: "",
+                      toDate: "",
+                      property: { value: "", label: "" },
+                      invoiceNumber: "",
+                      amountInFigures: "",
+                    }}
+                      onSubmit={handlePaymentLogSearch}>
+                      {({ setFieldValue, values }) => (
+                        <FormikForm>
+                          <Row className='bg-light p-2'>
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>From <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='date'
+                                  name="fromDate"
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>To <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='date'
+                                  name="toDate"
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Payment Mode<span className="text-danger">*</span></Form.Label>
+
+                                <div className="SlectBox">
+                                  <Select
+                                    options={paymentmode}
+                                    placeholder="Select mode"
+                                    value={values.property}
+                                    // classNamePrefix="selectform"
+                                    classNamePrefix='Select2' className="multi-select"
+
+                                  />
+                                </div>
+
+
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Transaction Id <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='text'
+                                  name="transactionid"
+                                  placeholder='Id'
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='text'
+                                  name="amountInFigures"
+                                  placeholder='enter amount'
+                                  className='form-control'
+
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Label className='mb-4'></Form.Label>
+                              <button type="submit" className="btn btn-primary mt-1 me-1" >Search</button>
+                              {/* <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button> */}
+                              <Modal centered show={exportshow}>
+                                <Modal.Header>
+                                  <Modal.Title>Import</Modal.Title>
+                                  <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    x
+                                  </Button>
+                                </Modal.Header>
+                                <Modal.Body>
+
+                                  <p>Browse or Drop the file</p>
+                                  <Form.Group className="form-group">
+                                    <div className='textnone'>
+                                      <input type='file' className='fileupload' />
+                                      <p>Drag & Drop your file here or click</p>
+                                    </div>
+
+                                    <div className='upload-data'>
+                                      <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
+                                      <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
+                                    </div>
+
+
+
+                                  </Form.Group>
+
+
+                                </Modal.Body>
+                                <Modal.Footer>
+                                  <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    Close
+                                  </Button>
+                                  <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    Save
+                                  </Button>
+
+                                </Modal.Footer>
+                              </Modal>
+                            </Col>
+
+                          </Row>
+                        </FormikForm>
+                      )}
+
+                    </Formik>
+                    <div className="table-responsive ">
+   <table className='table table-border mt-3 bg-white'>
+    <thead>
+      <tr>
+        <th>S.No.</th>
+        <th>Date of Payment</th>
+        <th>Payment Mode</th>
+        <th>Transaction ID</th>
+        <th>Amount</th>
+        <th>Remarks</th>
+        <th>Receipt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>2025-05-12</td>
+        <td>NEFT</td>
+        <td>#5475845749</td>
+        <td><i className='fa fa-rupee'></i> 2500.00</td>
+        <td></td>
+        <td><span className='text-info cursor'>View</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>2025-05-12</td>
+        <td>NEFT</td>
+        <td>#5475845749</td>
+        <td><i className='fa fa-rupee'></i> 2500.00</td>
+        <td></td>
+        <td><span className='text-info cursor'>View</span></td>
+      </tr>
+    </tbody>
+   </table>
+                    </div>
+                  </Row>
+
+                </Tab>
 
               </Tabs>
 
@@ -1888,17 +2072,17 @@ export default function Accounts() {
               </Button>
             </Modal.Header>
 
-            <Modal.Body className='bg-light pt-4'>
+            <Modal.Body className='bg-light'>
               {invoicePaymentOutstanding && (
                 <>
-                  <Col xl={12} className='w-100 tx-20 text-center tx-bold'>
-                    Interest Outstanding: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.interestOutstanding}
+                  <Col xl={12} className='w-100 tx-18 mb-1 text-center'>
+                    Interest Outstanding: <i className="fa fa-rupee tx-16"></i> {invoicePaymentOutstanding.interestOutstanding}
                   </Col>
-                  <Col xl={12} className='w-100 tx-20 text-center tx-bold'>
-                    Interest Till Now: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.currentInterest}
+                  <Col xl={12} className='w-100 tx-18 mb-1 text-center'>
+                    Interest Till Now <i className="fa fa-rupee tx-16"></i> {invoicePaymentOutstanding.currentInterest}
                   </Col>
                   <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
-                    Total: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
+                    Total <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
                   </Col>
                 </>
               )}
@@ -1915,9 +2099,9 @@ export default function Accounts() {
                     <img alt="" src={imagesData('cheque')} />
                     <span>Cheque</span>
                   </li>
-                  <li>
-                    <img alt="" src={imagesData('online')} />
-                    <span>Online</span>
+                  <li onClick={() => { viewDemoShow("onlineself"); }}>
+                    <img alt="" src={imagesData('online')}  />
+                    <span>Online Self</span>
                   </li>
                 </ul>
               </Card>
@@ -2232,6 +2416,60 @@ export default function Accounts() {
 
 
 
+
+          </Modal>
+
+          <Modal show={onlineself} centered>
+            <Modal.Header>
+              <Modal.Title>Online Self</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("onlineself"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+                    <Modal.Body>
+                    <FormGroup>
+                              <FormLabel>Date of Payment</FormLabel>
+<Form.Control type='date'/>
+                            </FormGroup>
+
+                            <FormGroup>
+                              <FormLabel>Payment Mode</FormLabel>
+                              <Select
+                      options={paymentmode}
+                      placeholder="Select mode"
+                      name="paymentmode"
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+                            </FormGroup>
+
+                            <FormGroup>
+                              <FormLabel>Transaction ID</FormLabel>
+<Form.Control type='text' placeholder='enter id'/>
+                            </FormGroup>
+
+                            <FormGroup>
+                              <FormLabel>Amount</FormLabel>
+<Form.Control type='text' placeholder='0.00'/>
+                            </FormGroup>
+
+                            <FormGroup>
+                              <FormLabel>Remarks</FormLabel>
+<textarea className='form-control' placeholder='enter remarks'></textarea>
+                            </FormGroup>
+                            <FormGroup>
+                              <FormLabel>Upload Receipt</FormLabel>
+<Form.Control type='file'/>
+                            </FormGroup>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                    <Button type='button' className='btn btn-default'  onClick={() => { viewDemoClose("onlineself"); }}>Cancel</Button>
+                    <Button type='submit' className='btn btn-primary me-2'  onClick={() => { viewDemoClose("onlineself"); }}>Save</Button>
+
+                    </Modal.Footer>
 
           </Modal>
 
