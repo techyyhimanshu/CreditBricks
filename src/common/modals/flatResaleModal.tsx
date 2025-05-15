@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { Accordion, Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import { Accordion, Button, Col, Form,  Modal, Row } from "react-bootstrap";
 import Select from "react-select";
 import 'suneditor/dist/css/suneditor.min.css';
 import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } from "../../api/society-api";
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
-import { getSocietyVenueApi } from "../../api/application-api";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { getTermsConditionBySocietyAndTypeApi } from "../../api/termsCondition-api";
+import TermsAndConditionModal from "./termsAndConditionModal";
 
 interface ProductModalProps {
     show: boolean;
@@ -25,14 +26,49 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [, setCommiteeMemberData] = useState<any>(null);
-    const [venuesForDropDown, setVenuesForDropDown] = useState([]);
+    const [termsconditionsview, settermsconditionsview] = useState(false);
+    const [termsAndConditionData, setTermsAndConditionData] = useState("")
     const { society } = useSelector((state: RootState) => state.auth)
+
+    const viewDemoShow = (modal: any) => {
+        switch (modal) {
+
+            case "termsconditionsview":
+                settermsconditionsview(true);
+                break;
+
+        }
+    };
+
+    const viewDemoClose = (modal: any) => {
+        switch (modal) {
+
+            case "termsconditionsview":
+                settermsconditionsview(false);
+                break;
+
+        }
+    };
 
 
 
     useEffect(() => {
         fetchSocietiesForDropDown()
-    }, [])
+        fetchTermsData()
+    }, [society])
+
+    const fetchTermsData = async () => {
+        try {
+            const response = await getTermsConditionBySocietyAndTypeApi(society.value, "Flat Resale")
+            if (response.status === 200) {
+                setTermsAndConditionData(response.data.data?.termCondition)
+            }
+        } catch (error: any) {
+
+            // const errorMessage = handleApiError(error)
+            // showToast("error", errorMessage)
+        }
+    }
 
     const fetchSocietiesForDropDown = async () => {
         try {
@@ -61,20 +97,7 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
             showToast("error", errorMessage)
         }
     }
-    const fetchVenuesForSociety = async (society: any) => {
-        try {
-            const response = await getSocietyVenueApi(society.value);
-            // const response = await getAllVenueApi();
-            const formattedData = response.data.data.map((item: any) => ({
-                value: item.venueId,
-                label: item.venueName,
-            }));
-            setVenuesForDropDown(formattedData);
-        } catch (error) {
-            const errorMessage = handleApiError(error)
-            showToast("error", errorMessage)
-        }
-    }
+    
 
     const fetchApproverDetails = async (society: any, setFieldValue: any) => {
         try {
@@ -90,7 +113,7 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                 Array.isArray(member.applicationType) &&
                 member.applicationType.includes("Flat Resale")
             );
-            console.log(matched,parentMatched)
+            console.log(matched, parentMatched)
             if (matched) {
                 setFieldValue("tower", { value: matched.towerIdentifier, label: matched.towerName });
                 setFieldValue("wing", { value: matched.wingIdentifier, label: matched.wingName });
@@ -129,15 +152,15 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                 propertyIdentifier: values?.property?.value,
                 committeeMemberId: values.approverIdentifier || "",
                 parentCommitteeMemberId: values.parentCommitteeMemberId || "",
-                transferDocumentsSubmitted: values.transferdocument ,
-                originalShareCertificateProcessed: values.proccesscertificate ,
-                existingHomeLoan: values.existinghomeloanproperty ,
-                homeLoanFullySettled: values.fullysettledhomeloan ,
-                shareTransferPremiumPaid: values.transferpremiumpaid ,
-                shareTransferFeesPaid: values.transferfeespaid ,
-                membershipFeePaid: values.membershipfeepaid ,
-                entranceFeePaid: values.entrancefeepaid ,
-                otherChargesPaid: values.otherchargepaid ,
+                transferDocumentsSubmitted: values.transferdocument,
+                originalShareCertificateProcessed: values.proccesscertificate,
+                existingHomeLoan: values.existinghomeloanproperty,
+                homeLoanFullySettled: values.fullysettledhomeloan,
+                shareTransferPremiumPaid: values.transferpremiumpaid,
+                shareTransferFeesPaid: values.transferfeespaid,
+                membershipFeePaid: values.membershipfeepaid,
+                entranceFeePaid: values.entrancefeepaid,
+                otherChargesPaid: values.otherchargepaid,
                 otherCharges: values.otherchargeDetails,
                 saleAgreementCopy: values.saleAgreementCopy,
                 saleAgreement: values.saleAgreementFile,
@@ -149,7 +172,7 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                 oldOwnerHomeLoanClosureLetter: values.oldLoanClosureFile,
                 receipt: values.uploadReceipt,
                 loanClosureLetter: values.uploadLoanClosureLetter,
-                jointHolder: values.jointHolder ,
+                jointHolder: values.jointHolder,
                 ownerName: values.ownerName,
                 coOwnerName: values.coOwnerName,
                 flatRegistrationId: values.flatRegistrationId,
@@ -163,17 +186,16 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
             if (onSave) {
                 onSave(formattedData, editing)
             }
-            
+
         } catch (error) {
             const errorMessage = handleApiError(error)
             showToast("error", errorMessage)
         }
     }
 
-    const formatDateTimeUTC = (isoString: string) => {
-        if (!isoString) return "";
-        return isoString.slice(0, 16); // trims to 'YYYY-MM-DDTHH:mm'
-    };
+    const handleTermsAndConditionClose = () => {
+        viewDemoClose("termsconditionsview")
+    }
 
 
     return (
@@ -193,31 +215,38 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                         property: initialVals ? { label: initialVals.property?.propertyName, value: initialVals.property?.propertyIdentifier } : { label: "", value: "" },
                         approverIdentifier: "",
                         parentCommitteeMemberId: "",
-                        transferdocument: initialVals?.transferdocument === true ? "Yes" : initialVals?.transferdocument === false ? "No" : "",
-                        proccesscertificate: initialVals?.proccesscertificate === true ? "Yes" : initialVals?.proccesscertificate === false ? "No" : "",
-                        existinghomeloanproperty: initialVals?.existinghomeloanproperty === true ? "Yes" : initialVals?.existinghomeloanproperty === false ? "No" : "",
-                        fullysettledhomeloan: initialVals?.fullysettledhomeloan === true ? "Yes" : initialVals?.fullysettledhomeloan === false ? "No" : "",
-                        transferpremiumpaid: initialVals?.transferpremiumpaid === true ? "Yes" : initialVals?.transferpremiumpaid === false ? "No" : "",
-                        transferfeespaid: initialVals?.transferfeespaid === true ? "Yes" : initialVals?.transferfeespaid === false ? "No" : "",
-                        membershipfeepaid: initialVals?.membershipfeepaid === true ? "Yes" : initialVals?.membershipfeepaid === false ? "No" : "",
-                        entrancefeepaid: initialVals?.entrancefeepaid === true ? "Yes" : initialVals?.entrancefeepaid === false ? "No" : "",
-                        otherchargepaid: initialVals?.otherchargepaid === true ? "Yes" : initialVals?.otherchargepaid === false ? "No" : "",
+                        transferdocument: initialVals?.transferDocumentsSubmitted || "",
+                        proccesscertificate: initialVals?.originalShareCertificateProcessed || "",
+                        existinghomeloanproperty: initialVals?.existingHomeLoan || "",
+                        fullysettledhomeloan: initialVals?.homeLoanFullySettled || "",
+                        transferpremiumpaid: initialVals?.shareTransferPremiumPaid || "",
+                        transferfeespaid: initialVals?.shareTransferFeesPaid || "",
+                        membershipfeepaid: initialVals?.membershipFeePaid || "",
+                        entrancefeepaid: initialVals?.entranceFeePaid || "",
+                        otherchargepaid: initialVals?.otherChargesPaid || "",
                         saleAgreementCopy: "",
                         saleAgreementFile: null,
+                        saleAgreementFileView: initialVals?.saleAgreement,
                         flatRegistrationCertificate: "",
                         flatRegistrationFile: null,
+                        flatRegistrationFileView: initialVals?.flatRegistrationCertificate,
                         homeLoanSanctionLetter: "",
                         homeLoanSanctionFile: null,
+                        homeLoanSanctionFileView: initialVals?.homeLoanSanctionLetter,
                         oldLoanClosureLetter: "",
                         oldLoanClosureFile: null,
+                        oldLoanClosureFileView: initialVals?.oldOwnerHomeLoanClosureLetter,
                         uploadReceipt: null,
+                        uploadReceiptView: initialVals?.receipt,
                         uploadLoanClosureLetter: null,
-                        otherchargeDetails: initialVals?.otherchargeDetails || "",
+                        uploadLoanClosureLetterView: initialVals?.loanClosureLetter,
+                        otherchargeDetails: initialVals?.otherCharges,
                         jointHolder: "",
                         ownerName: "",
                         coOwnerName: "",
                         flatRegistrationId: "",
                         flatRegistrationCopy: null,
+                        flatRegistrationCopyView: initialVals?.flatRegistrationFilePath,
                         tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
                         wing: { value: initialVals?.wingIdentifier || "", label: initialVals?.wingName || "" },
                         approverSociety: { value: initialVals?.socityIdentifier || "", label: initialVals?.societyName || "" },
@@ -234,12 +263,23 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                     }}
                     onSubmit={handleSubmit}>
                     {({ values, handleChange, setFieldValue }) => {
+                        const getFileExtension = (fileName: string) => {
+                            if (!fileName) {
+                                return '';
+                            }
+                            return fileName.split(".").pop()?.toLowerCase() || '';
+                        };
+                        const getFileName = (fileName: string) => {
+                            if (!fileName) {
+                                return '';
+                            }
+                            return fileName?.split("/").pop() || '';
+                        };
 
                         useEffect(() => {
                             if (society) {
                                 setFieldValue("society", society);
                                 fetchPropertiesForDropDown(society);
-                                fetchVenuesForSociety(society)
                                 fetchApproverDetails(society, setFieldValue)
                             }
                         }, [society]);
@@ -262,11 +302,10 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                 value={values.society}
                                                                 onChange={(selected) => {
                                                                     fetchPropertiesForDropDown(selected);
-                                                                    fetchVenuesForSociety(selected)
                                                                     fetchApproverDetails(selected, setFieldValue)
                                                                     setFieldValue("society", selected);
                                                                 }}
-                                                                isDisabled={initialVals && !editing}
+                                                                isDisabled
                                                             />
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -709,6 +748,29 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                 )}
                                                             </Row>
                                                         </Form.Group>
+                                                        {values.saleAgreementFileView && (
+                                                            <p
+                                                                className="text-center pt-2"
+                                                                style={{ cursor: "pointer", color: "blue" }}
+                                                                onClick={() => {
+                                                                    const fileExtension = getFileExtension(values.saleAgreementFileView);
+
+
+                                                                    // If it's a PDF, image, or Excel file, open in new tab
+                                                                    if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                        window.open(import.meta.env.VITE_STATIC_PATH + values.saleAgreementFileView, "_blank");
+                                                                    } else {
+                                                                        // For other files, trigger download
+                                                                        const link = document.createElement("a");
+                                                                        link.href = import.meta.env.VITE_STATIC_PATH + values.saleAgreementFileView;
+                                                                        link.download = values.saleAgreementFileView;
+                                                                        link.click();
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {getFileName(values.saleAgreementFileView)}
+                                                            </p>
+                                                        )}
                                                     </Col>
 
                                                     <Col xl={4}>
@@ -752,6 +814,29 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                 )}
                                                             </Row>
                                                         </Form.Group>
+                                                        {values.flatRegistrationFileView && (
+                                                            <p
+                                                                className="text-center pt-2"
+                                                                style={{ cursor: "pointer", color: "blue" }}
+                                                                onClick={() => {
+                                                                    const fileExtension = getFileExtension(values.flatRegistrationFileView);
+
+
+                                                                    // If it's a PDF, image, or Excel file, open in new tab
+                                                                    if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                        window.open(import.meta.env.VITE_STATIC_PATH + values.flatRegistrationFileView, "_blank");
+                                                                    } else {
+                                                                        // For other files, trigger download
+                                                                        const link = document.createElement("a");
+                                                                        link.href = import.meta.env.VITE_STATIC_PATH + values.flatRegistrationFileView;
+                                                                        link.download = values.flatRegistrationFileView;
+                                                                        link.click();
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {getFileName(values.flatRegistrationFileView)}
+                                                            </p>
+                                                        )}
                                                     </Col>
 
                                                     <Col xl={4}>
@@ -795,6 +880,29 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                 )}
                                                             </Row>
                                                         </Form.Group>
+                                                        {values.homeLoanSanctionFileView && (
+                                                            <p
+                                                                className="text-center pt-2"
+                                                                style={{ cursor: "pointer", color: "blue" }}
+                                                                onClick={() => {
+                                                                    const fileExtension = getFileExtension(values.homeLoanSanctionFileView);
+
+
+                                                                    // If it's a PDF, image, or Excel file, open in new tab
+                                                                    if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                        window.open(import.meta.env.VITE_STATIC_PATH + values.homeLoanSanctionFileView, "_blank");
+                                                                    } else {
+                                                                        // For other files, trigger download
+                                                                        const link = document.createElement("a");
+                                                                        link.href = import.meta.env.VITE_STATIC_PATH + values.homeLoanSanctionFileView;
+                                                                        link.download = values.homeLoanSanctionFileView;
+                                                                        link.click();
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {getFileName(values.homeLoanSanctionFileView)}
+                                                            </p>
+                                                        )}
                                                     </Col>
 
                                                     <Col xl={4}>
@@ -838,6 +946,29 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                 )}
                                                             </Row>
                                                         </Form.Group>
+                                                        {values.oldLoanClosureFileView && (
+                                                            <p
+                                                                className="text-center pt-2"
+                                                                style={{ cursor: "pointer", color: "blue" }}
+                                                                onClick={() => {
+                                                                    const fileExtension = getFileExtension(values.oldLoanClosureFileView);
+
+
+                                                                    // If it's a PDF, image, or Excel file, open in new tab
+                                                                    if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                        window.open(import.meta.env.VITE_STATIC_PATH + values.oldLoanClosureFileView, "_blank");
+                                                                    } else {
+                                                                        // For other files, trigger download
+                                                                        const link = document.createElement("a");
+                                                                        link.href = import.meta.env.VITE_STATIC_PATH + values.oldLoanClosureFileView;
+                                                                        link.download = values.oldLoanClosureFileView;
+                                                                        link.click();
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {getFileName(values.oldLoanClosureFileView)}
+                                                            </p>
+                                                        )}
                                                     </Col>
 
                                                     <Col xl={4}>
@@ -859,6 +990,29 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                 </Col>
                                                             </Row>
                                                         </Form.Group>
+                                                        {values.uploadReceiptView && (
+                                                            <p
+                                                                className="text-center pt-2"
+                                                                style={{ cursor: "pointer", color: "blue" }}
+                                                                onClick={() => {
+                                                                    const fileExtension = getFileExtension(values.uploadReceiptView);
+
+
+                                                                    // If it's a PDF, image, or Excel file, open in new tab
+                                                                    if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                        window.open(import.meta.env.VITE_STATIC_PATH + values.uploadReceiptView, "_blank");
+                                                                    } else {
+                                                                        // For other files, trigger download
+                                                                        const link = document.createElement("a");
+                                                                        link.href = import.meta.env.VITE_STATIC_PATH + values.uploadReceiptView;
+                                                                        link.download = values.uploadReceiptView;
+                                                                        link.click();
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {getFileName(values.uploadReceiptView)}
+                                                            </p>
+                                                        )}
                                                     </Col>
 
                                                     <Col xl={4}>
@@ -880,6 +1034,29 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                 </Col>
                                                             </Row>
                                                         </Form.Group>
+                                                        {values.uploadLoanClosureLetterView && (
+                                                            <p
+                                                                className="text-center pt-2"
+                                                                style={{ cursor: "pointer", color: "blue" }}
+                                                                onClick={() => {
+                                                                    const fileExtension = getFileExtension(values.uploadLoanClosureLetterView);
+
+
+                                                                    // If it's a PDF, image, or Excel file, open in new tab
+                                                                    if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                        window.open(import.meta.env.VITE_STATIC_PATH + values.uploadLoanClosureLetterView, "_blank");
+                                                                    } else {
+                                                                        // For other files, trigger download
+                                                                        const link = document.createElement("a");
+                                                                        link.href = import.meta.env.VITE_STATIC_PATH + values.uploadLoanClosureLetterView;
+                                                                        link.download = values.uploadLoanClosureLetterView;
+                                                                        link.click();
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {getFileName(values.uploadLoanClosureLetterView)}
+                                                            </p>
+                                                        )}
                                                     </Col>
                                                 </Row>
                                             </Accordion.Body>
@@ -987,6 +1164,29 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                     }}
                                                                 />
                                                             </Form.Group>
+                                                            {values.flatRegistrationCopyView && (
+                                                                <p
+                                                                    className="text-center pt-2"
+                                                                    style={{ cursor: "pointer", color: "blue" }}
+                                                                    onClick={() => {
+                                                                        const fileExtension = getFileExtension(values.flatRegistrationCopyView);
+
+
+                                                                        // If it's a PDF, image, or Excel file, open in new tab
+                                                                        if (["pdf", "jpg", "jpeg", "png", "gif", "bmp", "xlsx", "xls"].includes(fileExtension)) {
+                                                                            window.open(import.meta.env.VITE_STATIC_PATH + values.flatRegistrationCopyView, "_blank");
+                                                                        } else {
+                                                                            // For other files, trigger download
+                                                                            const link = document.createElement("a");
+                                                                            link.href = import.meta.env.VITE_STATIC_PATH + values.flatRegistrationCopyView;
+                                                                            link.download = values.flatRegistrationCopyView;
+                                                                            link.click();
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {getFileName(values.flatRegistrationCopyView)}
+                                                                </p>
+                                                            )}
                                                         </Col>
                                                     </>
 
@@ -1186,9 +1386,9 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                     </Accordion>
 
                                     <Col xl={12} className='p-0'>
-                                        {/* <label><input type="checkbox" className='float-start m-2' />
-                        <b className='float-start mt-1 cursor'
-                         onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label> */}
+                                        <label><input type="checkbox" className='float-start m-2' />
+                                            <b className='float-start mt-1 cursor'
+                                                onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label>
                                     </Col>
 
                                 </Modal.Body>
@@ -1213,6 +1413,9 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                 </Formik>
 
             </Modal>
+            {
+                termsconditionsview && <TermsAndConditionModal onClose={handleTermsAndConditionClose} initialVals={termsAndConditionData} show={termsconditionsview} />
+            }
 
 
 

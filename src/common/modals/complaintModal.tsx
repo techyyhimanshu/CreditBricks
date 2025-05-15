@@ -6,6 +6,8 @@ import { getAllSocietyApi, getPropertiesOfSocietyApi } from '../../api/society-a
 import { handleApiError } from '../../helpers/handle-api-error';
 import { showToast } from '../services/toastServices';
 import { getAllComplainCategoriesApi } from '../../api/complaint-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 interface ProductModalProps {
     show: boolean;
@@ -24,6 +26,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
     const [societyData, setSocietyData] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [complaintCategoriesData, setComplaintCategoriesData] = useState([]);
+    const { society } = useSelector((state: RootState) => state.auth)
 
     useEffect(() => {
         fetchSocietiesForDropDown()
@@ -55,7 +58,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
             showToast("error", errorMessage)
         }
     }
- 
+
 
     const fetchPropertiesOfSocietyForDropdown = async (identifier: string) => {
         try {
@@ -127,6 +130,14 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
                     onSubmit={handleSubmit}
                 >
                     {({ values, setFieldValue }) => {
+                        useEffect(() => {
+                            if (society && !initialVals) {
+                                setFieldValue("society", society);
+                                setFieldValue("tower", null);
+                                // fetchTowersForDropDown(society);
+                                fetchPropertiesOfSocietyForDropdown(society.value)
+                            }
+                        }, [society]);
                         // useEffect(() => {
                         //   if (values.society && values.society.value) {
                         //     fetchTowersForDropDown(values.society);
@@ -191,6 +202,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
                                                     }}
                                                     placeholder="Select society"
                                                     classNamePrefix="Select2"
+                                                    isDisabled
                                                 />
                                             </Form.Group>
                                         </Col>

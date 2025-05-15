@@ -12,6 +12,8 @@ import { getMembersOfPropertyApi, getPropertyOutstandingAmountApi, getTenantsOfP
 import { getVendorForDropDownApi } from "../../api/vendor-api";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import TermsAndConditionModal from "./termsAndConditionModal";
+import { getTermsConditionBySocietyAndTypeApi } from "../../api/termsCondition-api";
 
 interface ProductModalProps {
     show: boolean;
@@ -30,16 +32,15 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
     const [tenantsForDropDown, setTenantsForDropDown] = useState([]);
     const [membersForDropDown, setMembersForDropDown] = useState([]);
     const [vendorsForDropDown, setVendorsForDropDown] = useState([]);
-
     const [tenatview, settenatview] = useState(false);
+    const [termsconditionsview, settermsconditionsview] = useState(false);
+    const [termsAndConditionData,setTermsAndConditionData]=useState("")
 
     const [vendorview, setvendorview] = useState(false);
     const { society } = useSelector((state: RootState) => state.auth)
 
     const viewDemoShow = (modal: any) => {
         switch (modal) {
-
-
             case "tenatview":
                 settenatview(true);
                 break;
@@ -47,15 +48,15 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
             case "vendorview":
                 setvendorview(true);
                 break;
+            case "termsconditionsview":
+                settermsconditionsview(true);
+                break;
 
         }
     };
 
     const viewDemoClose = (modal: any) => {
         switch (modal) {
-
-
-
             case "tenatview":
                 settenatview(false);
                 break;
@@ -63,7 +64,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
             case "vendorview":
                 setvendorview(false);
                 break;
-
+            case "termsconditionsview":
+                settermsconditionsview(false);
+                break;
 
         }
     };
@@ -71,7 +74,21 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
 
     useEffect(() => {
         fetchSocietiesForDropDown()
-    }, [])
+        fetchTermsData()
+    }, [society])
+
+    const fetchTermsData = async () => {
+        try {
+            const response = await getTermsConditionBySocietyAndTypeApi(society.value, "Gate Pass")
+            if (response.status === 200) {
+                setTermsAndConditionData(response.data.data?.termCondition)
+            }
+        } catch (error: any) {
+            
+            // const errorMessage = handleApiError(error)
+            // showToast("error", errorMessage)
+        }
+    }
 
     const fetchSocietiesForDropDown = async () => {
         try {
@@ -189,7 +206,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 Array.isArray(member.applicationType) &&
                 member.applicationType.includes("Gate Pass")
             );
-            
+
 
             const parentMatched = parentMembers.find((member: any) =>
                 Array.isArray(member.applicationType) &&
@@ -264,8 +281,8 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 approverName: initialVals?.fullName || "",
                 approverContact: initialVals?.contactNumber || "",
                 designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
-                committeeMemberId:values.committeeMemberId||"",
-                parentCommitteeMemberId:values.parentCommitteeMemberId||""
+                committeeMemberId: values.committeeMemberId || "",
+                parentCommitteeMemberId: values.parentCommitteeMemberId || ""
 
             }
             if (editing) {
@@ -282,6 +299,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
             const errorMessage = handleApiError(error)
             showToast("error", errorMessage)
         }
+    }
+    const handleTermsAndConditionClose = () => {
+        viewDemoClose("termsconditionsview")
     }
 
 
@@ -1028,9 +1048,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                     </Accordion>
 
                                     <Col xl={12} className='p-0'>
-                                        {/* <label><input type="checkbox" className='float-start m-2' />
-                        <b className='float-start mt-1 cursor'
-                         onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label> */}
+                                        <label><input type="checkbox" className='float-start m-2' />
+                                            <b className='float-start mt-1 cursor'
+                                                onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label>
                                     </Col>
 
                                 </Modal.Body>
@@ -1053,6 +1073,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 </Formik>
 
             </Modal>
+            {
+                termsconditionsview && <TermsAndConditionModal onClose={handleTermsAndConditionClose} initialVals={termsAndConditionData} show={termsconditionsview} />
+            }
 
             {/* Tenant View */}
             <Modal show={tenatview} size="xl" centered>

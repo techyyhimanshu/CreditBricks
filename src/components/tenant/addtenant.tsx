@@ -14,6 +14,8 @@ import stateCities from "../../components/masters/stateCity.json"
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import DataTable from 'react-data-table-component';
 import { addTenantApi } from '../../api/tenant-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 interface StateCities {
   [key: string]: string[]; // Index signature
 }
@@ -29,6 +31,7 @@ export default function AddTenant() {
   });
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [vehicleData, setVehicleData] = useState<Row[]>([]);
+  const { society } = useSelector((state: RootState) => state.auth)
 
   const vehicletype = [
     { value: "2Wheeler", label: "2 Wheeler" },
@@ -287,470 +290,480 @@ export default function AddTenant() {
         }}
         onSubmit={handleSubmit}
       >
-        {({ setFieldValue, values }) => (
-          <FormikForm>
-            <Accordion defaultActiveKey="Basic Details">
+        {({ setFieldValue, values }) => {
+          useEffect(() => {
+            if (society) {
+              setFieldValue("society", society);
+              fetchPropertiesForDropDown(society);
+            }
+          }, [society]);
+          return (
+            <FormikForm>
+              <Accordion defaultActiveKey="Basic Details">
 
-              <Accordion.Item eventKey="Basic Details" className="bg-white mb-3">
-                <Accordion.Header className="borders ">
-                  Basic Details
-                </Accordion.Header>
-                <Accordion.Body className="borders p-0">
-                  <Card className='m-0'>
+                <Accordion.Item eventKey="Basic Details" className="bg-white mb-3">
+                  <Accordion.Header className="borders ">
+                    Basic Details
+                  </Accordion.Header>
+                  <Accordion.Body className="borders p-0">
+                    <Card className='m-0'>
 
-                    <Card.Body className='pt-3'>
+                      <Card.Body className='pt-3'>
 
-                      <Row>
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Society<span className="text-danger">*</span></Form.Label>
-                            <Select
-                              options={societyOptions}
-                              onChange={(selected) => {
-                                fetchPropertiesForDropDown(selected);
-                                setFieldValue("society", selected);
-                              }}
-                              placeholder="Select society"
-                              classNamePrefix="Select2"
-                            />
-                          </Form.Group>
-                        </Col>
+                        <Row>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Society<span className="text-danger">*</span></Form.Label>
+                              <Select
+                                options={societyOptions}
+                                onChange={(selected) => {
+                                  fetchPropertiesForDropDown(selected);
+                                  setFieldValue("society", selected);
+                                }}
+                                name='society'
+                                value={values.society}
+                                placeholder="Select society"
+                                classNamePrefix="Select2"
+                                isDisabled
+                              />
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Property<span className="text-danger">*</span></Form.Label>
-                            <Select
-                              options={propertyOptions}
-                              onChange={(selected) => {
-                                setFieldValue("property", selected);
-                              }}
-                              placeholder="Select property"
-                              classNamePrefix="Select2"
-                            />
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Property<span className="text-danger">*</span></Form.Label>
+                              <Select
+                                options={propertyOptions}
+                                onChange={(selected) => {
+                                  setFieldValue("property", selected);
+                                }}
+                                placeholder="Select property"
+                                classNamePrefix="Select2"
+                              />
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>First Name<span className="text-danger">*</span></Form.Label>
-                            <Field
-                              type="text"
-                              name="firstName"
-                              className='form-control'
-                              placeholder='Tenant name'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Middle Name</Form.Label>
-                            <Field
-                              type="text"
-                              name="middleName"
-                              className='form-control'
-                              placeholder='Tenant name'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Last Name<span className="text-danger">*</span></Form.Label>
-                            <Field
-                              type="text"
-                              name="lastName"
-                              className='form-control'
-                              placeholder='Tenant name'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>First Name<span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type="text"
+                                name="firstName"
+                                className='form-control'
+                                placeholder='Tenant name'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Middle Name</Form.Label>
+                              <Field
+                                type="text"
+                                name="middleName"
+                                className='form-control'
+                                placeholder='Tenant name'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Last Name<span className="text-danger">*</span></Form.Label>
+                              <Field
+                                type="text"
+                                name="lastName"
+                                className='form-control'
+                                placeholder='Tenant name'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Mobile </Form.Label>
-                            <Field
-                              type="text"
-                              name="mobileNumber"
-                              className='form-control' placeholder='Mobile'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Mobile </Form.Label>
+                              <Field
+                                type="text"
+                                name="mobileNumber"
+                                className='form-control' placeholder='Mobile'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Alternative Mobile</Form.Label>
-                            <Field
-                              type="text"
-                              name="alternateMobileNumber"
-                              className='form-control' placeholder='Alternative mobile'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Alternative Mobile</Form.Label>
+                              <Field
+                                type="text"
+                                name="alternateMobileNumber"
+                                className='form-control' placeholder='Alternative mobile'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label> Email</Form.Label>
-                            <Field
-                              type="text"
-                              name="email"
-                              className='form-control' placeholder='Email'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label> Email</Form.Label>
+                              <Field
+                                type="text"
+                                name="email"
+                                className='form-control' placeholder='Email'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Gender<span className="text-danger">*</span></Form.Label>
-                            <Select
-                              options={genderOptions}
-                              onChange={(selected) => setFieldValue("gender", selected)}
-                              placeholder="Select gender"
-                              classNamePrefix="Select2"
-                            />
-                          </Form.Group>
-                        </Col>
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Age</Form.Label>
-                            <Field
-                              type="text"
-                              name="age"
-                              className='form-control'
-                              placeholder='Age'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Gender<span className="text-danger">*</span></Form.Label>
+                              <Select
+                                options={genderOptions}
+                                onChange={(selected) => setFieldValue("gender", selected)}
+                                placeholder="Select gender"
+                                classNamePrefix="Select2"
+                              />
+                            </Form.Group>
+                          </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Age</Form.Label>
+                              <Field
+                                type="text"
+                                name="age"
+                                className='form-control'
+                                placeholder='Age'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Date Of Birth</Form.Label>
-                            <Field
-                              type="date"
-                              name="dateOfBirth"
-                              className='form-control'
-                              placeholder=''
-                            ></Field>
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Date Of Birth</Form.Label>
+                              <Field
+                                type="date"
+                                name="dateOfBirth"
+                                className='form-control'
+                                placeholder=''
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Anniversary</Form.Label>
-                            <Field
-                              type="date"
-                              name="anniversary"
-                              className='form-control'
-                              placeholder=''></Field>
-                          </Form.Group>
-                        </Col>
-
-
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Address</Form.Label>
-                            <Field
-                              type="text"
-                              name="address"
-                              className='form-control' placeholder='Address'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
-
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Country</Form.Label>
-                            <Select
-                              options={country}
-                              onChange={(selected) => {
-                                setFieldValue("country", selected);
-                              }}
-                              placeholder="Select country"
-                              classNamePrefix="Select2"
-                            />
-                          </Form.Group>
-                        </Col>
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>State</Form.Label>
-                            <Select
-                              options={state}
-                              onChange={(selected) => {
-                                setFieldValue("state", selected);
-                              }}
-                              placeholder="Select state"
-                              classNamePrefix="Select2"
-                            />
-                          </Form.Group>
-                        </Col>
-
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>City</Form.Label>
-                            <Select
-                              options={city}
-                              onChange={(selected) => {
-                                setFieldValue("city", selected);
-                              }}
-                              placeholder="Select city"
-                              classNamePrefix="Select2"
-                            />
-                          </Form.Group>
-                        </Col>
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Pincode</Form.Label>
-                            <Field
-                              type="text"
-                              name="pincode"
-                              className='form-control' placeholder='Pincode'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Family Members</Form.Label>
-                            <Field
-                              type="number"
-                              name="familyMembers"
-                              className='form-control'
-                              placeholder='ex: 2,3'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Have a Pet?</Form.Label>
-                            <Select
-                              options={pet}
-                              onChange={(selected) => {
-                                setFieldValue("havePet", selected);
-                              }}
-                              placeholder="Select"
-                              classNamePrefix="Select2"
-                            />
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Anniversary</Form.Label>
+                              <Field
+                                type="date"
+                                name="anniversary"
+                                className='form-control'
+                                placeholder=''></Field>
+                            </Form.Group>
+                          </Col>
 
 
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group mb-1">
-                            <Form.Label>Aadhar Number</Form.Label>
-                            <Field
-                              type="text"
-                              name="aadharNumber"
-                              className='form-control' placeholder='Aadhar Number'
-                            ></Field>
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Address</Form.Label>
+                              <Field
+                                type="text"
+                                name="address"
+                                className='form-control' placeholder='Address'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
+
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Country</Form.Label>
+                              <Select
+                                options={country}
+                                onChange={(selected) => {
+                                  setFieldValue("country", selected);
+                                }}
+                                placeholder="Select country"
+                                classNamePrefix="Select2"
+                              />
+                            </Form.Group>
+                          </Col>
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>State</Form.Label>
+                              <Select
+                                options={state}
+                                onChange={(selected) => {
+                                  setFieldValue("state", selected);
+                                }}
+                                placeholder="Select state"
+                                classNamePrefix="Select2"
+                              />
+                            </Form.Group>
+                          </Col>
+
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>City</Form.Label>
+                              <Select
+                                options={city}
+                                onChange={(selected) => {
+                                  setFieldValue("city", selected);
+                                }}
+                                placeholder="Select city"
+                                classNamePrefix="Select2"
+                              />
+                            </Form.Group>
+                          </Col>
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Pincode</Form.Label>
+                              <Field
+                                type="text"
+                                name="pincode"
+                                className='form-control' placeholder='Pincode'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Family Members</Form.Label>
+                              <Field
+                                type="number"
+                                name="familyMembers"
+                                className='form-control'
+                                placeholder='ex: 2,3'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Have a Pet?</Form.Label>
+                              <Select
+                                options={pet}
+                                onChange={(selected) => {
+                                  setFieldValue("havePet", selected);
+                                }}
+                                placeholder="Select"
+                                classNamePrefix="Select2"
+                              />
+                            </Form.Group>
+                          </Col>
+
+
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group mb-1">
+                              <Form.Label>Aadhar Number</Form.Label>
+                              <Field
+                                type="text"
+                                name="aadharNumber"
+                                className='form-control' placeholder='Aadhar Number'
+                              ></Field>
+                            </Form.Group>
+                          </Col>
 
 
 
 
-                      </Row>
+                        </Row>
 
-                    </Card.Body>
-                  </Card>
-
-
-                </Accordion.Body>
-              </Accordion.Item>
-
-              <Accordion.Item eventKey="Tenant Details" className="bg-white  mb-3">
-                <Accordion.Header className="borders">
-                  Rent Agreement Details
-                </Accordion.Header>
-                <Accordion.Body className="borders p-0">
-                  <Card className='m-0'>
-
-                    <Card.Body className='pt-3'>
-
-                      <Row>
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Rent Registration ID</Form.Label>
-
-                            <Field
-                              type="text"
-                              name="rentRegistrationId"
-                              placeholder="id"
-                              className="form-control"
-                            />
-                            {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                          </Form.Group>
-                        </Col>
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Rent Agreement Start Date</Form.Label>
-
-                            <Field
-                              type="date"
-                              name="rentAgreementStartDate"
-                              placeholder=""
-                              className="form-control"
-                            />
-                            {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                          </Form.Group>
-                        </Col>
+                      </Card.Body>
+                    </Card>
 
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Rent Agreement End Date</Form.Label>
-                            <Field
-                              type="date"
-                              name="rentAgreementEndDate"
-                              placeholder=""
-                              className="form-control"
-                            />
-                            {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
-                          </Form.Group>
-                        </Col>
+                  </Accordion.Body>
+                </Accordion.Item>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Monthly Rent</Form.Label>
-                            <Field
-                              type="text"
-                              name="monthlyRent"
-                              placeholder="0"
-                              className="form-control"
-                            />
-                            {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                          </Form.Group>
-                        </Col>
+                <Accordion.Item eventKey="Tenant Details" className="bg-white  mb-3">
+                  <Accordion.Header className="borders">
+                    Rent Agreement Details
+                  </Accordion.Header>
+                  <Accordion.Body className="borders p-0">
+                    <Card className='m-0'>
 
+                      <Card.Body className='pt-3'>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Due Amount</Form.Label>
-                            <Field
-                              type="text"
-                              name="dueAmount"
-                              placeholder="0"
-                              className="form-control"
-                            />
-                            {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                          </Form.Group>
-                        </Col>
+                        <Row>
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Rent Registration ID</Form.Label>
 
+                              <Field
+                                type="text"
+                                name="rentRegistrationId"
+                                placeholder="id"
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Deposit Amount</Form.Label>
-                            <Field
-                              type="text"
-                              name="depositAmount"
-                              placeholder="0"
-                              className="form-control"
-                            />
-                            {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Rent Agreement Start Date</Form.Label>
+
+                              <Field
+                                type="date"
+                                name="rentAgreementStartDate"
+                                placeholder=""
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
 
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Upload Rent Agreement   <small className='text-muted float-end'>Upload Size : Max 2MB</small></Form.Label>
-                            <input
-                              type="file"
-                              className="form-control"
-                              name="rentAgreementFile"
-                              onChange={(e: any) => setFieldValue("rentAgreementFile", e.target.files[0])}
-                            />
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Rent Agreement End Date</Form.Label>
+                              <Field
+                                type="date"
+                                name="rentAgreementEndDate"
+                                placeholder=""
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
-                          </Form.Group>
-                        </Col>
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Police Verification Document   <small className='text-muted float-end'>Upload Size : Max 2MB</small></Form.Label>
-                            <input
-                              type="file"
-                              className="form-control"
-                              name="policeVerificationFile"
-                              onChange={(e: any) => setFieldValue("policeVerificationFile", e.target.files[0])}
-                            />
-
-                          </Form.Group>
-                        </Col>
-
-                      </Row>
-
-                    </Card.Body>
-                  </Card>
-                </Accordion.Body>
-              </Accordion.Item>
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Monthly Rent</Form.Label>
+                              <Field
+                                type="text"
+                                name="monthlyRent"
+                                placeholder="0"
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
 
-              <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
-                <Accordion.Header className="borders">
-                  Vehicle Details
-                </Accordion.Header>
-                <Accordion.Body className="borders p-0">
-                  <Card className='m-0'>
-
-                    <Card.Body className='pt-3'>
-                      <Row>
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Vehicle Type </Form.Label>
-                            <select
-                              name="vehicleType"
-                              // value={vehicleFormData.vehicleType}
-                              onChange={handleVehicleTypeChange}
-                              className="form-control"
-                            >
-                              <option value="2Wheeler">2 Wheeler</option>
-                              <option value="4Wheeler">4 Wheeler</option>
-                            </select>
-
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Due Amount</Form.Label>
+                              <Field
+                                type="text"
+                                name="dueAmount"
+                                placeholder="0"
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
 
-
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Vehicle No.</Form.Label>
-                            <input
-                              type="text"
-                              name="vehicleNumber"
-                              value={vehicleFormData.vehicleNumber}
-                              placeholder="Vehicle number"
-                              className="form-control"
-                              onChange={handleInputChange}
-                            />
-
-                          </Form.Group>
-                        </Col>
-                        <Col xl={4}>
-                          <Form.Group className="form-group">
-                            <Form.Label>Vehicle RC Copy  <small className='text-muted float-end'>Upload Size : Max 2MB</small></Form.Label>
-                            <input
-                              type="file"
-                              name="vehicleRC"
-                              onChange={handleFileChange}
-                              className="form-control" />
-                          </Form.Group>
-                        </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Deposit Amount</Form.Label>
+                              <Field
+                                type="text"
+                                name="depositAmount"
+                                placeholder="0"
+                                className="form-control"
+                              />
+                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                            </Form.Group>
+                          </Col>
 
 
-                        <Col xl={12}>
-                          <Form.Group className="form-group">
-                            <Button className="btn btn-primary float-end mb-3" type="button" onClick={handleAddNewVehicle} >Add </Button>
-                          </Form.Group>
-                        </Col>
-                      </Row>
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Upload Rent Agreement   <small className='text-muted float-end'>Upload Size : Max 2MB</small></Form.Label>
+                              <input
+                                type="file"
+                                className="form-control"
+                                name="rentAgreementFile"
+                                onChange={(e: any) => setFieldValue("rentAgreementFile", e.target.files[0])}
+                              />
 
-                      {/* <table className='table'>
+                            </Form.Group>
+                          </Col>
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Police Verification Document   <small className='text-muted float-end'>Upload Size : Max 2MB</small></Form.Label>
+                              <input
+                                type="file"
+                                className="form-control"
+                                name="policeVerificationFile"
+                                onChange={(e: any) => setFieldValue("policeVerificationFile", e.target.files[0])}
+                              />
+
+                            </Form.Group>
+                          </Col>
+
+                        </Row>
+
+                      </Card.Body>
+                    </Card>
+                  </Accordion.Body>
+                </Accordion.Item>
+
+
+                <Accordion.Item eventKey="Add Parent Scoiety" className="bg-white  mb-3">
+                  <Accordion.Header className="borders">
+                    Vehicle Details
+                  </Accordion.Header>
+                  <Accordion.Body className="borders p-0">
+                    <Card className='m-0'>
+
+                      <Card.Body className='pt-3'>
+                        <Row>
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Vehicle Type </Form.Label>
+                              <select
+                                name="vehicleType"
+                                // value={vehicleFormData.vehicleType}
+                                onChange={handleVehicleTypeChange}
+                                className="form-control"
+                              >
+                                <option value="2Wheeler">2 Wheeler</option>
+                                <option value="4Wheeler">4 Wheeler</option>
+                              </select>
+
+                            </Form.Group>
+                          </Col>
+
+
+
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Vehicle No.</Form.Label>
+                              <input
+                                type="text"
+                                name="vehicleNumber"
+                                value={vehicleFormData.vehicleNumber}
+                                placeholder="Vehicle number"
+                                className="form-control"
+                                onChange={handleInputChange}
+                              />
+
+                            </Form.Group>
+                          </Col>
+                          <Col xl={4}>
+                            <Form.Group className="form-group">
+                              <Form.Label>Vehicle RC Copy  <small className='text-muted float-end'>Upload Size : Max 2MB</small></Form.Label>
+                              <input
+                                type="file"
+                                name="vehicleRC"
+                                onChange={handleFileChange}
+                                className="form-control" />
+                            </Form.Group>
+                          </Col>
+
+
+                          <Col xl={12}>
+                            <Form.Group className="form-group">
+                              <Button className="btn btn-primary float-end mb-3" type="button" onClick={handleAddNewVehicle} >Add </Button>
+                            </Form.Group>
+                          </Col>
+                        </Row>
+
+                        {/* <table className='table'>
                         <thead>
                           <tr>
                             <th>S.no.</th>
@@ -796,23 +809,24 @@ export default function AddTenant() {
 
                         </tbody>
                       </table> */}
-                      <Col xl={12}>
-                        <DataTableExtensions {...tableData}>
-                          <DataTable columns={columns} data={vehicleData} pagination fixedHeader />
-                        </DataTableExtensions>
-                      </Col>
-                    </Card.Body>
-                  </Card>
-                </Accordion.Body>
-              </Accordion.Item>
-              <span className='float-end mb-5'>
-                <Button variant="default ms-3"> Cancel </Button>
-                <Button className="btn btn-primary" type="submit">Save </Button>
-              </span>
+                        <Col xl={12}>
+                          <DataTableExtensions {...tableData}>
+                            <DataTable columns={columns} data={vehicleData} pagination fixedHeader />
+                          </DataTableExtensions>
+                        </Col>
+                      </Card.Body>
+                    </Card>
+                  </Accordion.Body>
+                </Accordion.Item>
+                <span className='float-end mb-5'>
+                  <Button variant="default ms-3"> Cancel </Button>
+                  <Button className="btn btn-primary" type="submit">Save </Button>
+                </span>
 
-            </Accordion>
-          </FormikForm>
-        )}
+              </Accordion>
+            </FormikForm>
+          )
+        }}
       </Formik>
       <CustomToastContainer />
     </Fragment >

@@ -77,7 +77,6 @@ export default function TermsCondition() {
         setFieldValue("termsIdentifier", response.data.data?.termConditionId)
       }
     } catch (error: any) {
-      console.log("kartik", error.response)
       if (error.response.status === 400) {
         setEditing(false)
         setFieldValue("terms", "")

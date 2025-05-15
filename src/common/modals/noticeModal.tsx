@@ -10,6 +10,8 @@ import { showToast } from '../services/toastServices';
 import { getWingPropertiesApi } from '../../api/property-api';
 import { getTowerWingsApi } from '../../api/wing-api';
 import { getSocietyTowersApi } from '../../api/tower-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 interface ProductModalProps {
     show: boolean;
@@ -29,6 +31,7 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [towerOptions, setTowerOptions] = useState<any[]>([]);
     const [wingOptions, setWingOptions] = useState<any[]>([]);
+    const { society } = useSelector((state: RootState) => state.auth)
 
     const noticetype = [
         { value: "General Notice", label: "General Notice" },
@@ -135,6 +138,12 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                 >
                     {({ values, handleChange, setFieldValue }) => {
                         useEffect(() => {
+                            if (society) {
+                                setFieldValue("society", society);
+                                fetchTowersForDropDown(society);
+                            }
+                        }, [society]);
+                        useEffect(() => {
                             if (values.society && values.society.value) {
                                 fetchTowersForDropDown(values.society);
                             }
@@ -184,6 +193,7 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                                         setFieldValue("property", null);
                                                         setFieldValue("society", selected);
                                                     }}
+                                                    isDisabled
                                                 />
                                             </Form.Group>
                                         </Col>

@@ -47,6 +47,7 @@ export default function Applications() {
   const [celebrationview, setcelebrationview] = useState(false);
   const [banquethallview, setbanquethallview] = useState(false);
   const [clubhouseview, setclubhouseview] = useState(false);
+  const [flatresaleview, setflatresaleview] = useState(false);
   const [playareaview, setplayareaview] = useState(false);
   const [foodcourtview, setfoodcourtview] = useState(false);
   const [otherapplicationview, setotherapplicationview] = useState(false);
@@ -259,7 +260,7 @@ export default function Applications() {
 
           case "FR":
             setSingleFlatResaleData(data);
-            viewDemoShow("addflatresale");
+            viewDemoShow("addflateresale");
             break;
 
           default:
@@ -350,7 +351,7 @@ export default function Applications() {
 
           case "FR":
             setSingleFlatResaleData(data);
-            viewDemoShow("viewflatresale");
+            viewDemoShow("flatresaleview");
             break;
 
           default:
@@ -542,7 +543,7 @@ export default function Applications() {
         settermsconditionsview(true);
         break;
       case "flatresaleview":
-        settermsconditionsview(true);
+        setflatresaleview(true);
         break;
 
       case "addapplication":
@@ -688,7 +689,7 @@ export default function Applications() {
         setSingleOthersData(null)
         break;
       case "flatresaleview":
-        setotherapplicationview(false);
+        setflatresaleview(false);
         setSingleFlatResaleData(null)
         break;
 
@@ -848,11 +849,7 @@ export default function Applications() {
     { value: "20", label: "Others" },
   ]
 
-  const societyOptions = [
-    { value: "1", label: "Mohan Areca Co-Op Housing Society Limited" },
-    { value: "2", label: "SKA MetroVilla Society Limited" },
-  ]
-
+  
   const relation = [
     { value: "1", label: "Self" },
     { value: "2", label: "Spouse" },
@@ -1948,75 +1945,14 @@ export default function Applications() {
           </Modal>
 
           {/* Add Flat Resale */}
-          
-
-          {addflateresale && (singleCelebrationData ? <FlatResaleModal show={addflateresale} initialVals={singleCelebrationData} onSave={handleFlatResaleSave} onClose={handleFlatResaleClose} editing={true} /> : <FlatResaleModal show={addflateresale} onSave={handleFlatResaleSave} onClose={handleFlatResaleClose} editing={false} />)}
 
 
-          {/* Flate Resale upload reciept */}
-          {/* <Modal show={flateresaleuploadreciept} centered>
-            <Modal.Header>
-              <Modal.Title>Upload Reciept</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("flateresaleuploadreciept"); }}>
-                x
-              </Button>
-            </Modal.Header>
+          {addflateresale && (singleFlatResaleData ? <FlatResaleModal show={addflateresale} initialVals={singleFlatResaleData} onSave={handleFlatResaleSave} onClose={handleFlatResaleClose} editing={true} /> : <FlatResaleModal show={addflateresale} onSave={handleFlatResaleSave} onClose={handleFlatResaleClose} editing={false} />)}
 
-            <Modal.Body>
-              <Form.Group className="form-group mb-0">
-                <Form.Label>Upload <small className='text-muted float-end'>Upload Size : 2MB</small> </Form.Label>
-                <Form.Control
-                  type="file"
-                  placeholder=""
-                  className="form-control"
-                ></Form.Control>
-              </Form.Group>
-              <Col xl={12} className='bg-light p-2 mt-2'>
-                <span className='tx-semibold'>recieptfile.pdf</span>
-                <i className='fa fa-trash text-danger float-end cursor'></i>
-              </Col>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("flateresaleuploadreciept"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("flateresaleuploadreciept"); }}>
-                Save
-              </Button>
+          {
+            flatresaleview && <FlatResaleModal show={flatresaleview} initialVals={singleFlatResaleData} onClose={handleFlatResaleViewClose} editing={false} />
+          }
 
-            </Modal.Footer>
-          </Modal> */}
-
-          {/* Upload loan closure*/}
-          {/* <Modal show={Uploadloanclosure} centered>
-            <Modal.Header>
-              <Modal.Title>Upload loan Closure Letter</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("Uploadloanclosure"); }}>
-                x
-              </Button>
-            </Modal.Header>
-
-            <Modal.Body>
-              <Form.Group className="form-group mb-0">
-                <Form.Label>Upload <small className='text-muted float-end'>Upload Size : 2MB</small> </Form.Label>
-                <Form.Control
-                  type="file"
-                  placeholder=""
-                  className="form-control"
-                ></Form.Control>
-              </Form.Group>
-
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("Uploadloanclosure"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("Uploadloanclosure"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
-          </Modal> */}
 
           {/* Add Interior Work */}
           <Modal show={addinteriorwork} size='lg' centered>
@@ -2322,10 +2258,10 @@ export default function Applications() {
           </Modal>
 
 
-          {addbanquethall && (singleBanquetHallData ? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={singleBanquetHallData} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" /> : <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />)}
+          {addbanquethall && (singleBanquetHallData ? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={singleBanquetHallData} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet Hall" modal="addbanquethall" /> : <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet Hall" modal="addbanquethall" />)}
 
           {
-            banquethallview && <EventModal show={banquethallview} initialVals={singleBanquetHallData} onClose={handleBanquetHallViewClose} editing={false} name="Banquet hall" modal="addbanquethall" />
+            banquethallview && <EventModal show={banquethallview} initialVals={singleBanquetHallData} onClose={handleBanquetHallViewClose} editing={false} name="Banquet Hall" modal="addbanquethall" />
           }
           {/* {addbanquethall && <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />} */}
           {/* Add Club House */}
@@ -3516,242 +3452,6 @@ export default function Applications() {
             foodcourtview && <EventModal show={foodcourtview} initialVals={singleFoodCourtData} onClose={handleFoodCourtViewClose} editing={false} name="Food Court" modal="addfoodcourt" />
           }
 
-          {/* Add Others */}
-          {/* <Modal show={addothers} size='xl' centered>
-            <Modal.Header>
-              <Modal.Title>Others</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addothers"); }}>
-                x
-              </Button>
-            </Modal.Header>
-
-            <Modal.Body className='bg-light'>
-              <div className="tab-menu-heading tabs-style-4 ps-3">
-                <div className="tabs-menu ">
-
-                  <Tab.Container
-                    id="left-tabs-example"
-                    defaultActiveKey="TabStyle01"
-                  >
-                    <Row>
-                      <Col sm={3} className='p-0'>
-                        <Nav variant="pills" className="flex-column">
-                          <Nav.Item>
-                            <Nav.Link eventKey="TabStyle01" className='rounded-0'>
-                              {" "}
-                              Document Submission
-                            </Nav.Link>
-                          </Nav.Item>
-                          <Nav.Item>
-                            <Nav.Link eventKey="TabStyle02" className='rounded-0'>
-                              {" "}
-                              Enquiry
-                            </Nav.Link>
-                          </Nav.Item>
-                          <Nav.Item>
-                            <Nav.Link eventKey="TabStyle03" className='rounded-0'>
-                              {" "}
-                              Others
-                            </Nav.Link>
-                          </Nav.Item>
-
-                        </Nav>
-                      </Col>
-                      <Col sm={9} className='p-0'>
-                        <Tab.Content className="tabs-style-4 card ps-4 pb-5 rounded-0">
-                          <Tab.Pane eventKey="TabStyle01">
-                            <div
-                              className="panel-body tabs-menu-body"
-                              id="tab21"
-                            >
-                              <Row>
-                                <Col xl={6}>
-                                  <Form.Group className="form-groupx">
-                                    <Form.Label className='tx-16'>Society </Form.Label>
-                                    <Select
-                                      options={society}
-                                      placeholder="Select society"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-
-                                <Col xl={6}>
-                                  <Form.Group className="form-group">
-                                    <Form.Label className='tx-16'>Property </Form.Label>
-                                    <Select
-                                      options={property}
-                                      placeholder="Select property"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-                              </Row>
-
-                              <Form.Group className="form-group">
-
-                                <Form.Label className='tx-16'>Document Submission</Form.Label>
-                                <Select
-                                  options={documentsubmission}
-                                  placeholder="Select submission"
-                                  classNamePrefix="Select2"
-                                />
-                              </Form.Group>
-
-                              <Form.Group className="form-group">
-                                <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-                                <Form.Control className="form-control" type="file" />
-                              </Form.Group>
-
-                              <Form.Group className="form-group">
-                                <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-                              </Form.Group>
-
-
-                            </div>
-                          </Tab.Pane>
-                          <Tab.Pane eventKey="TabStyle02">
-                            <div
-                              className="panel-body tabs-menu-body"
-                              id="tab22"
-                            >
-                              <Row>
-                                <Col xl={6}>
-                                  <Form.Group className="form-group">
-                                    <Form.Label className='tx-16'>Society </Form.Label>
-                                    <Select
-                                      options={society}
-                                      placeholder="Select society"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-
-                                <Col xl={6}>
-                                  <Form.Group className="form-group">
-                                    <Form.Label className='tx-16'>Property </Form.Label>
-                                    <Select
-                                      options={property}
-                                      placeholder="Select property"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-                              </Row>
-
-                              <Form.Group className="form-group">
-
-                                <Form.Label className='tx-16'>Enquiry</Form.Label>
-                                <Select
-                                  options={enquiry}
-                                  placeholder="Select enquiry"
-                                  classNamePrefix="Select2"
-                                />
-
-
-                              </Form.Group>
-
-                              <Form.Group className="form-group">
-                                <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-                                <Form.Control className="form-control" type="file" />
-                              </Form.Group>
-
-                              <Form.Group className="form-group">
-                                <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-                              </Form.Group>
-
-                            </div>
-                          </Tab.Pane>
-                          <Tab.Pane eventKey="TabStyle03">
-                            <div
-                              className="panel-body tabs-menu-body"
-                              id="tab23"
-                            >
-                              <Row>
-                                <Col xl={6}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label className='tx-16'>Society </Form.Label>
-                                    <Select
-                                      options={society}
-                                      placeholder="Select society"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-
-                                <Col xl={6}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label className='tx-16'>Property </Form.Label>
-                                    <Select
-                                      options={property}
-                                      placeholder="Select property"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-                              </Row>
-
-                              <Form.Group>
-
-                                <Form.Label className='tx-16'>Type</Form.Label>
-                                <Row>
-                                  <Col xl={12}>
-                                    <Select
-                                      options={otherstype}
-                                      placeholder="Select"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Col>
-
-
-                                  <Col xl={12}>
-                                    <Form.Group className='mt-4'>
-                                      <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-                                      <Form.Control className="form-control" type="file" />
-                                    </Form.Group>
-                                  </Col>
-
-
-                                  <Col xl={12}>
-                                    <Form.Group className='mt-4'>
-                                      <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                      <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-                                    </Form.Group>
-                                  </Col>
-                                </Row>
-
-
-
-
-
-
-
-
-
-                              </Form.Group>
-                            </div>
-                          </Tab.Pane>
-
-                        </Tab.Content>
-                      </Col>
-                    </Row>
-                  </Tab.Container>
-                </div>
-              </div>
-
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("addothers"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("addothers"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
-          </Modal> */}
           {addothers && (singleOthersData ? <OtherApplicationModal initialVals={singleOthersData} show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={true} /> : <OtherApplicationModal show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={false} />)}
           {
             otherapplicationview && <OtherApplicationModal show={otherapplicationview} initialVals={singleOthersData} onClose={handleOtherApplicationViewClose} editing={false} />

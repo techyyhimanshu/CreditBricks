@@ -126,12 +126,15 @@ export const getAllVenueApi = async (): Promise<any> => {
         throw error
     }
 }
-export const getAllApplicationApi = async (societyIdentifier?:string): Promise<any> => {
+export const getAllApplicationApi = async (societyIdentifier?:string,propertyIdentifier?:string): Promise<any> => {
     try {
         const params: any = {};
 
         if (societyIdentifier) {
             params.society_identifier = societyIdentifier;
+        }
+        if (propertyIdentifier) {
+            params.property_identifier = propertyIdentifier;
         }
         const response = await axiosInstance.get(`event/applications/all`,{params})
         return response

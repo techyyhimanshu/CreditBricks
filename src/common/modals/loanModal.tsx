@@ -9,7 +9,9 @@ import { showToast } from '../services/toastServices';
 // import { getWingPropertiesApi } from '../../api/property-api';
 // import { getTowerWingsApi } from '../../api/wing-api';
 // import { getSocietyTowersApi } from '../../api/tower-api';
-import { getAllPropertiesForDropdownApi } from '../../api/complaint-api';
+import { getAllPropertyApi } from '../../api/property-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
 
 interface ModalProps {
     show: boolean;
@@ -29,6 +31,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
     // const [societyData, setSocietyData] = useState<any[]>([]);
     // const [towerOptions, setTowerOptions] = useState<any[]>([]);
     // const [wingOptions, setWingOptions] = useState<any[]>([]);
+    const { society } = useSelector((state: RootState) => state.auth)
 
     const loantype = [
         { value: "home", label: "Home" },
@@ -58,7 +61,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
     useEffect(() => {
         // fetchSocietiesForDropDown()
         fetchPropertiesForDropDown()
-    }, [])
+    }, [society])
 
     // const fetchSocietiesForDropDown = async () => {
     //     try {
@@ -77,7 +80,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
 
     const fetchPropertiesForDropDown = async () => {
         try {
-            const response = await getAllPropertiesForDropdownApi();
+            const response = await getAllPropertyApi(undefined,society.value);
             const formattedData = response.data.data.map((item: any) => ({
                 value: item.propertyIdentifier,
                 label: item.propertyName ? item.propertyName : item.flatNumber,
@@ -141,7 +144,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                     enableReinitialize
                     initialValues={{
                         // society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
-                        property: initialVals ? { label: initialVals.propertyIdentifier, value: initialVals.propertyIdentifier } : { label: "", value: "" },
+                        property: initialVals ? { label: initialVals.propertyName, value: initialVals.propertyIdentifier } : { label: "", value: "" },
                         // wing: initialVals ? { label: initialVals.wingName, value: initialVals.wingIdentifier } : { label: "", value: "" },
                         // tower: initialVals ? { label: initialVals.towerName, value: initialVals.towerIdentifier } : { label: "", value: "" },
                         type: initialVals ? { label: initialVals.type, value: initialVals.type } : { label: "", value: "" },

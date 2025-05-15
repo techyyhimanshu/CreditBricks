@@ -16,6 +16,7 @@ import { numberToWords } from "amount-to-words";
 import { getAllPropertiesForDropdownApi } from '../../api/complaint-api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../common/store/store';
+
 export default function Accounts() {
   const [accountdata, setAccountdata] = useState<any>([]);
   const [paynow, setpaynow] = useState(false);
