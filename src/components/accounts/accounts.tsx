@@ -173,7 +173,7 @@ export default function Accounts() {
     {
       name: 'Status',
       cell: (row: any) => (
-        <span className={` ${row.status === 'Unpaid' ? 'text-danger' : 'text-success'}`}>
+        <span className={` ${row.status === 'Unpaid' ? 'badge badge-danger' : 'badge badge-success'}`}>
           {row.status}
         </span>
       ),
@@ -306,13 +306,18 @@ export default function Accounts() {
     },
     {
       name: 'Status',
-      selector: (row: any) => row.status,
+      selector: (row: any) => (
+        <span className={` ${row.status === 'Pending' ? 'badge badge-warning' : 'badge badge-success'}`}>
+          {row.status}
+        </span>
+      ),
+
       sortable: true,
     },
     {
       name: 'Action',
       cell: (row: any) => (
-        row.status === "Pending" ? <Button type="button" className='btn btn-sm btn-success' onClick={
+        row.status === "Pending" ? <Button type="button" className='btn btn-sm btn-dark' onClick={
           () => {
             setIsInvoicePayment(false);
             setTransactionData(row)
@@ -2022,10 +2027,13 @@ export default function Accounts() {
     <thead>
       <tr>
         <th>S.No.</th>
+        <th>Society</th>
         <th>Date of Payment</th>
         <th>Payment Mode</th>
         <th>Transaction ID</th>
         <th>Amount</th>
+        <th>Bank Name</th>
+        <th>Payment Status</th>
         <th>Remarks</th>
         <th>Receipt</th>
       </tr>
@@ -2033,19 +2041,25 @@ export default function Accounts() {
     <tbody>
       <tr>
         <td>1</td>
+        <td>testname</td>
         <td>2025-05-12</td>
         <td>NEFT</td>
         <td>#5475845749</td>
         <td><i className='fa fa-rupee'></i> 2500.00</td>
+        <td>HDFC Bank</td>
+        <td className='text-center'><span className='badge badge-success'>Approved</span> </td>
         <td></td>
         <td><span className='text-info cursor'>View</span></td>
       </tr>
       <tr>
         <td>2</td>
+        <td>testname</td>
         <td>2025-05-12</td>
         <td>NEFT</td>
         <td>#5475845749</td>
         <td><i className='fa fa-rupee'></i> 2500.00</td>
+        <td>HDFC Bank</td>
+        <td className='text-center'><span className='badge badge-warning'>Pending</span> </td>
         <td></td>
         <td><span className='text-info cursor'>View</span></td>
       </tr>
@@ -2428,10 +2442,27 @@ export default function Accounts() {
             </Modal.Header>
 
                     <Modal.Body>
+                      <Row>
+                        <Col sm={12}>
+                    <FormGroup>
+                              <FormLabel>Society</FormLabel>
+                              <Select
+                      options={society}
+                      placeholder="Select society"
+                      name="paymentmode"
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+                            </FormGroup>
+                            </Col>
+                            <Col sm={6}>
                     <FormGroup>
                               <FormLabel>Date of Payment</FormLabel>
 <Form.Control type='date'/>
                             </FormGroup>
+</Col>
+<Col sm={6}>
 
                             <FormGroup>
                               <FormLabel>Payment Mode</FormLabel>
@@ -2444,25 +2475,39 @@ export default function Accounts() {
 
                     />
                             </FormGroup>
-
+</Col>
+<Col sm={6}>
                             <FormGroup>
                               <FormLabel>Transaction ID</FormLabel>
 <Form.Control type='text' placeholder='enter id'/>
                             </FormGroup>
-
+</Col>
+<Col sm={6}>
                             <FormGroup>
                               <FormLabel>Amount</FormLabel>
 <Form.Control type='text' placeholder='0.00'/>
                             </FormGroup>
+</Col>
+<Col sm={12}>
+                            <FormGroup>
+                              <FormLabel>Bank Name</FormLabel>
+<Form.Control type='text' placeholder='enter name'/>
+                            </FormGroup>
+</Col>
 
+<Col sm={12}>
                             <FormGroup>
                               <FormLabel>Remarks</FormLabel>
 <textarea className='form-control' placeholder='enter remarks'></textarea>
                             </FormGroup>
+                            </Col>
+                            <Col sm={12}>
                             <FormGroup>
                               <FormLabel>Upload Receipt</FormLabel>
 <Form.Control type='file'/>
                             </FormGroup>
+                            </Col>
+                            </Row>
                     </Modal.Body>
 
                     <Modal.Footer>
