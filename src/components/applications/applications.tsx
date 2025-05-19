@@ -849,7 +849,7 @@ export default function Applications() {
     { value: "20", label: "Others" },
   ]
 
-  
+
   const relation = [
     { value: "1", label: "Self" },
     { value: "2", label: "Spouse" },

@@ -2263,50 +2263,66 @@ export default function Accounts() {
                       )}
 
                     </Formik>
-                    <div className="table-responsive ">
-                      <table className='table table-border mt-3 bg-white'>
-                        <thead>
-                          <tr>
-                            <th>S.No.</th>
-                            <th>Society</th>
-                            <th>Date of Payment</th>
-                            <th>Payment Mode</th>
-                            <th>Transaction ID</th>
-                            <th>Amount</th>
-                            <th>Bank Name</th>
-                            <th>Payment Status</th>
-                            <th>Remarks</th>
-                            <th>Receipt</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>1</td>
-                            <td>testname</td>
-                            <td>2025-05-12</td>
-                            <td>NEFT</td>
-                            <td>#5475845749</td>
-                            <td><i className='fa fa-rupee'></i> 2500.00</td>
-                            <td>HDFC Bank</td>
-                            <td className='text-center'><span className='badge badge-success'>Approved</span> </td>
-                            <td></td>
-                            <td><span className='text-info cursor'>View</span></td>
-                          </tr>
-                          <tr>
-                            <td>2</td>
-                            <td>testname</td>
-                            <td>2025-05-12</td>
-                            <td>NEFT</td>
-                            <td>#5475845749</td>
-                            <td><i className='fa fa-rupee'></i> 2500.00</td>
-                            <td>HDFC Bank</td>
-                            <td className='text-center'><span className='badge badge-warning'>Pending</span> </td>
-                            <td></td>
-                            <td><span className='text-info cursor'>View</span></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+
+                    <table className='table table-border mt-3 bg-white'>
+                      <thead>
+                        <tr>
+                          <th>S.No.</th>
+                          <th>Society</th>
+                          <th>Date of Payment</th>
+                          <th>Payment Mode</th>
+                          <th>Transaction ID</th>
+                          <th>Amount</th>
+                          <th>Bank Name</th>
+                          <th>Payment Status</th>
+                          <th>Remarks</th>
+                          <th>Receipt</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>1</td>
+                          <td>testname</td>
+                          <td>2025-05-12</td>
+                          <td>NEFT</td>
+                          <td>#5475845749</td>
+                          <td><i className='fa fa-rupee'></i> 2500.00</td>
+                          <td>HDFC Bank</td>
+                          <td className='text-center'><Dropdown className='profile-user border-0'>
+                            <Dropdown.Toggle variant="">
+                              <strong className="text-success">Receipt </strong>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
+                              <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown> </td>
+                          <td></td>
+                          <td><span className='text-info cursor'>View</span></td>
+                        </tr>
+                        <tr>
+                          <td>2</td>
+                          <td>testname</td>
+                          <td>2025-05-12</td>
+                          <td>NEFT</td>
+                          <td>#5475845749</td>
+                          <td><i className='fa fa-rupee'></i> 2500.00</td>
+                          <td>HDFC Bank</td>
+                          <td className='text-center'><Dropdown className='profile-user border-0'>
+                            <Dropdown.Toggle variant="">
+                              <strong className="text-success">Receipt </strong>
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
+                              <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown> </td>
+                          <td></td>
+                          <td><span className='text-info cursor'>View</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
                   </Row>
 
                 </Tab>
@@ -2546,7 +2562,7 @@ export default function Accounts() {
               validationSchema={Yup.object({
                 chequeDate: Yup.string().required('Cheque Date is required'),
                 chequeIssuedDate: Yup.string().required('Cheque Issued Date is required'),
-                chequeReceivedDate: Yup.string().required('Cheque Received Date is required'),
+                chequeReceivedDate: Yup.string().required('Cheque Clearing Date is required'),
                 chequeNumber: Yup.string().required('Cheque Number is required'),
                 bankName: Yup.string().required('Bank Name is required'),
                 branchName: Yup.string().required('Branch is required'),
@@ -2600,7 +2616,7 @@ export default function Accounts() {
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
-                              <FormLabel>Cheque Received Date</FormLabel>
+                              <FormLabel>Cheque Clearing Date</FormLabel>
                               <Field name="chequeReceivedDate" type="date" className={`form-control ${errors.chequeReceivedDate && touched.chequeReceivedDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeReceivedDate" component="div" className="text-danger" />
                             </FormGroup>
@@ -2690,6 +2706,19 @@ export default function Accounts() {
                     <Select
                       options={society}
                       placeholder="Select society"
+                      name="paymentmode"
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+                  </FormGroup>
+                </Col>
+                <Col sm={12}>
+                  <FormGroup>
+                    <FormLabel>Property</FormLabel>
+                    <Select
+                      options={propertyOptions}
+                      placeholder="Select property"
                       name="paymentmode"
                       classNamePrefix='Select2'
                       className="multi-select"
@@ -3004,7 +3033,7 @@ export default function Accounts() {
                   </Col>
                   <Col xl={6}>
                     <FormGroup>
-                      <FormLabel>Cheque Recived Date</FormLabel>
+                      <FormLabel>Cheque Clearing Date</FormLabel>
                       <Form.Control className='form-control' value={chequeViewData?.createdAt} disabled type="text" />
                     </FormGroup>
                   </Col>
