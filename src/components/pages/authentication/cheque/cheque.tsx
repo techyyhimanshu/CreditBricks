@@ -93,34 +93,6 @@ const Cheque = () => {
                         </Card>
 
 
-
-                        <Card className='box-shadow border border-primary'>
-                          <Card.Body>
-                            <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Documents</h5>
-                            <Row>
-
-                            <Col sm={3} className='mb-0'>
-                                <Form.Label>Sale Agreement Copy</Form.Label>
-                                <p className='tx-14 mb-0'>Yes</p>
-                              </Col>
-
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Flat Registration Certificate</Form.Label>
-                                <p className='tx-14 mb-0'>Yes </p>
-                              </Col>
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Home Loan Sanction Letter</Form.Label>
-                                <p className='tx-14 mb-0'>Yes</p>
-                              </Col>
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
-                                <p className='tx-14 mb-0'>Yes </p>
-                              </Col>
-
-
-                            </Row>
-                          </Card.Body>
-                        </Card>
                         <Card className='box-shadow border border-primary'>
                           <Card.Body>
                             <h5 className="card-title main-content-label tx-15 tx-dark tx-medium mg-b-10">Approval Details and Status</h5>
@@ -171,12 +143,12 @@ const Cheque = () => {
                               <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
                               <Dropdown className='profile-user border-0'>
                                 <Dropdown.Toggle variant="">
-                                  <strong className="text-success">Approve</strong>
+                                  <strong className="text-danger">Uncleared</strong>
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                  <Dropdown.Item className="dropdown-item text-success" href="/">Approve </Dropdown.Item>
-                                  <Dropdown.Item className="dropdown-item text-danger" href="/">Reject </Dropdown.Item>
-                                  <Dropdown.Item className="dropdown-item" href="/">On Hold </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item text-danger" href="/">Uncleared </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item text-success" href="/">Cleared </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item" href="/">Bounce </Dropdown.Item>
                                 </Dropdown.Menu>
                               </Dropdown>
                               <p className="mb-0 mt-2">Remarks</p>

@@ -2022,7 +2022,7 @@ export default function Accounts() {
                       )}
 
                     </Formik>
-                    <div className="table-responsive ">
+
    <table className='table table-border mt-3 bg-white'>
     <thead>
       <tr>
@@ -2047,7 +2047,15 @@ export default function Accounts() {
         <td>#5475845749</td>
         <td><i className='fa fa-rupee'></i> 2500.00</td>
         <td>HDFC Bank</td>
-        <td className='text-center'><span className='badge badge-success'>Approved</span> </td>
+        <td className='text-center'><Dropdown className='profile-user border-0'>
+                                <Dropdown.Toggle variant="">
+                                  <strong className="text-success">Receipt </strong>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown> </td>
         <td></td>
         <td><span className='text-info cursor'>View</span></td>
       </tr>
@@ -2059,13 +2067,21 @@ export default function Accounts() {
         <td>#5475845749</td>
         <td><i className='fa fa-rupee'></i> 2500.00</td>
         <td>HDFC Bank</td>
-        <td className='text-center'><span className='badge badge-warning'>Pending</span> </td>
+        <td className='text-center'><Dropdown className='profile-user border-0'>
+                                <Dropdown.Toggle variant="">
+                                  <strong className="text-success">Receipt </strong>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown> </td>
         <td></td>
         <td><span className='text-info cursor'>View</span></td>
       </tr>
     </tbody>
    </table>
-                    </div>
+
                   </Row>
 
                 </Tab>
@@ -2449,6 +2465,19 @@ export default function Accounts() {
                               <Select
                       options={society}
                       placeholder="Select society"
+                      name="paymentmode"
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+                            </FormGroup>
+                            </Col>
+                            <Col sm={12}>
+                    <FormGroup>
+                              <FormLabel>Property</FormLabel>
+                              <Select
+                      options={propertyOptions}
+                      placeholder="Select property"
                       name="paymentmode"
                       classNamePrefix='Select2'
                       className="multi-select"
