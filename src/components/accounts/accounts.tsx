@@ -2321,7 +2321,7 @@ export default function Accounts() {
               validationSchema={Yup.object({
                 chequeDate: Yup.string().required('Cheque Date is required'),
                 chequeIssuedDate: Yup.string().required('Cheque Issued Date is required'),
-                chequeReceivedDate: Yup.string().required('Cheque Received Date is required'),
+                chequeReceivedDate: Yup.string().required('Cheque Clearing Date is required'),
                 chequeNumber: Yup.string().required('Cheque Number is required'),
                 bankName: Yup.string().required('Bank Name is required'),
                 branchName: Yup.string().required('Branch is required'),
@@ -2375,7 +2375,7 @@ export default function Accounts() {
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
-                              <FormLabel>Cheque Received Date</FormLabel>
+                              <FormLabel>Cheque Clearing Date</FormLabel>
                               <Field name="chequeReceivedDate" type="date" className={`form-control ${errors.chequeReceivedDate && touched.chequeReceivedDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeReceivedDate" component="div" className="text-danger" />
                             </FormGroup>
@@ -2792,7 +2792,7 @@ export default function Accounts() {
                   </Col>
                   <Col xl={6}>
                     <FormGroup>
-                      <FormLabel>Cheque Recived Date</FormLabel>
+                      <FormLabel>Cheque Clearing Date</FormLabel>
                       <Form.Control className='form-control' value={chequeViewData?.createdAt} disabled type="text" />
                     </FormGroup>
                   </Col>
