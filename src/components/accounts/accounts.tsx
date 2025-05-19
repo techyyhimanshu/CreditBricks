@@ -341,7 +341,7 @@ export default function Accounts() {
     }
   ]
   const propertyOptions = [
-    { value: "", label: "Society" },
+    { value: "", label: "All" },
     ...propertyData.map((property: any) => ({
       value: property.propertyIdentifier,
       label: property.propertyName
