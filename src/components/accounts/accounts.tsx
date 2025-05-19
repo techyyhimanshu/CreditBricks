@@ -6,7 +6,7 @@ import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
-import { getAllInvoicesApi, getAllPaymentLogsApi, getAllReceiptsApi } from '../../api/account-api';
+import { generateInvoiceApi, getAllInvoicesApi, getAllPaymentLogsApi, getAllReceiptsApi } from '../../api/account-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import TestLoader from '../../layout/layoutcomponent/testloader';
 import { createCashPaymentApi, createChequePaymentApi, getInvoicePaymentOutstandingApi, sendOTPApi, verifyPaymentApi } from '../../api/payment-api';
@@ -17,6 +17,10 @@ import { getAllPropertiesForDropdownApi } from '../../api/complaint-api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../common/store/store';
 import * as Yup from 'yup';
+import { getSocietyDetailsApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '../../api/society-api';
+import { getWingsOfTowerApi } from '../../api/tower-api';
+import { getPropertiesOfWing } from '../../api/wing-api';
+import { getSinglePropertyDetailsApi } from '../../api/property-api';
 export default function Accounts() {
   const [accountdata, setAccountdata] = useState<any>([]);
   const [paynow, setpaynow] = useState(false);
@@ -26,7 +30,10 @@ export default function Accounts() {
   const [sendOTP, setSendOTP] = useState(false);
   const [onlineself, setonlineself] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInvoiceProcessing, setIsInvoiceProcessing] = useState(false);
   const [isInvoicePayment, setIsInvoicePayment] = useState(true);
+  const [disabledProcessInvoiceSelectOptions, setDisabledProcessInvoiceSelectOptions] = useState(true);
+  const [disabledDueDateField, setDisabledDueDateField] = useState(true);
   const [invoiceToPay, setInvoiceToPay] = useState<any>({})
   const denominationsList = [
     { value: 500, count: 0, total: 0 },
@@ -67,16 +74,16 @@ export default function Accounts() {
   ];
 
   const invoicetype = [
-     { value: "1", label: "Maintenance" },
-    { value: "2", label: "Additional" }
+    { value: "Maintenance", label: "Maintenance" },
+    { value: "Additional Bill", label: "Additional Bill" }
   ];
 
   const propertytype = [
-    { value: "1", label: "All" },
-    { value: "2", label: "Sold" },
-    { value: "3", label: "Unsold" },
-    { value: "4", label: "Blocked by Management" },
-    { value: "5", label: "Refuge" }
+    { value: "All", label: "All" },
+    { value: "Sold", label: "Sold" },
+    { value: "Unsold", label: "Unsold" },
+    { value: "Blocked by Management", label: "Blocked by Management" },
+    { value: "Refuge", label: "Refuge" }
   ];
 
   const societyoption = [
@@ -95,6 +102,11 @@ export default function Accounts() {
   const [chequeViewData, setChequeViewData] = useState<any>({});
   const [paymentLogData, setPaymentLogData] = useState<any>([]);
   const [transactionData, setTransactionData] = useState<any>([]);
+  const [towers, setTowers] = useState<any>([]);
+  const [wings, setWings] = useState<any>([]);
+  const [properties, setProperties] = useState<any>([]);
+  const [propertyInfo, setPropertyInfo] = useState<any>({});
+  const [interestCalculationStartDate, setInterestCalculationStartDate] = useState<any>("");
 
   const [invoicePaymentOutstanding, setInvoicePaymentOutstanding] = useState<any>([]);
   const [propertyData, setPropertyData] = useState<any>([]);
@@ -329,7 +341,7 @@ export default function Accounts() {
     }
   ]
   const propertyOptions = [
-    { value: "", label: "All" },
+    { value: "", label: "Society" },
     ...propertyData.map((property: any) => ({
       value: property.propertyIdentifier,
       label: property.propertyName
@@ -522,6 +534,106 @@ export default function Accounts() {
       ));
       setPaymentLogData(formattedData)
 
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const fetchTowersOfSociety = async () => {
+    try {
+      const response = await getTowersOfSocietyApi(society.value)
+      const data = response.data.data
+      const formattedData = data.map((tower: any) => (
+        {
+          label: tower.towerName,
+          value: tower.towerIdentifier,
+        }
+      ));
+      setTowers(formattedData)
+
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const fetchWingsOfTower = async (towerIdentifier: string) => {
+    try {
+      const response = await getWingsOfTowerApi(towerIdentifier)
+      const data = response.data.data
+      const formattedData = data.map((wing: any) => (
+        {
+          label: wing.wingName,
+          value: wing.wingIdentifier,
+        }
+      ));
+      setWings(formattedData)
+
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+
+  const fetchPropertiesOfWings = async (wingIdentifier: string) => {
+    try {
+      const response = await getPropertiesOfWing(wingIdentifier)
+      const data = response.data.data
+      const formattedData = data.map((property: any) => (
+        {
+          label: property.propertyName,
+          value: property.propertyIdentifier,
+        }
+      ));
+      setProperties(formattedData)
+
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const fetchPropertyInfo = async (towerIdentifier: string) => {
+    try {
+      const response = await getSinglePropertyDetailsApi(towerIdentifier)
+      const data = response.data.data
+      let memberName = ""
+      data.propertyMembers.forEach((member: any) => {
+        if (member.ownership === 1) {
+          memberName = member.member.firstName + " " + member.member.middleName + " " + member.member.lastName
+        }
+      })
+      let dueDate = (data.society.interestCalculationStartDate).split("T")[0]
+      console.log(dueDate);
+
+      const formattedData = {
+        memberName: memberName,
+      }
+      setPropertyInfo(formattedData)
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const fetchSocietyInfo = async () => {
+    try {
+      const response = await getSocietyDetailsApi(society.value)
+      const data = response.data.data
+      let dueDate = (data.interestCalculationStartDate).split("T")[0]
+      setInterestCalculationStartDate(dueDate)
     } catch (error) {
       console.log(error)
       handleApiError(error)
@@ -875,6 +987,33 @@ export default function Accounts() {
       showToast("error", errorMessage);
     }
   }
+  const handleProcessInvoice = async (values: any) => {
+    try {
+
+      const filters = {
+        societyIdentifier: society.value,
+        invoiceType: values.invoiceType.value,
+        propertyStatus: values.propertyStatus.value,
+        invoiceProcessType: values.invoiceProcessType,
+        propertyIdentifier: values.property.value,
+        fromDate: values.fromDate,
+        toDate: values.toDate,
+        dueDate: values.dueDate ? values.dueDate : values.dueDate2,
+      }
+      setIsInvoiceProcessing(true)
+      const response = await generateInvoiceApi(filters)
+      if (response.status === 200) {
+        setIsInvoiceProcessing(false);
+        viewDemoClose("processinvoice");
+        fetchAllAccounts();
+        showToast("success", "Invoice processed successfully")
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    }
+
+  }
 
   return (
     <Fragment>
@@ -899,198 +1038,300 @@ export default function Accounts() {
       </div>
       {/* Process invoice */}
       <Modal show={processinvoice} size='lg' centered>
+        <Formik
+          initialValues={{
+            invoiceType: { value: "", label: "" },
+            propertyStatus: { value: "", label: "" },
+            invoiceProcessType: "",
+            society: { value: society.value, label: society.label },
+            tower: { value: "", label: "" },
+            wing: { value: "", label: "" },
+            property: { value: "", label: "" },
+            fromDate: "",
+            toDate: "",
+            dueDateSelectionOption: "",
+            dueDate: "",
+          }} onSubmit={handleProcessInvoice}>
+          {({ setFieldValue, values }) => {
+            useEffect(() => {
+              if (values.invoiceProcessType === "Property") {
+                fetchTowersOfSociety()
+                setDisabledProcessInvoiceSelectOptions(false);
+              } else if (values.invoiceProcessType === "Tower") {
+                setTowers([]);
+                setDisabledProcessInvoiceSelectOptions(true);
 
-        <Modal.Header>
-          <Modal.Title>Process Invoice</Modal.Title>
-          <Button variant="" className="btn-close" onClick={() => viewDemoClose("processinvoice")}>
-            x
-          </Button>
-        </Modal.Header>
-        <Modal.Body>
-          <Row>
-            <Col xl={6}>
-              <Form.Group className="form-group mb-1">
-                <Form.Label>Invoice Type</Form.Label>
-                <Select
-                  options={invoicetype}
-                  placeholder="Select type"
-                  name=""
-                  classNamePrefix='Select2'
-                  className="multi-select"
+              } else if (values.invoiceProcessType === "Wing") {
+                setTowers([]);
+                setDisabledProcessInvoiceSelectOptions(true);
+              } else {
+                setTowers([]);
+                setDisabledProcessInvoiceSelectOptions(true);
+              }
+            }, [values.invoiceProcessType, setFieldValue]);
 
-                />
-              </Form.Group>
-            </Col>
-            <Col xl={6}>
-              <Form.Group className="form-group mb-1">
-                <Form.Label>Property Status</Form.Label>
-                <Select
-                  options={propertytype}
-                  placeholder="Select"
-                  name=""
-                  classNamePrefix='Select2'
-                  className="multi-select"
+            useEffect(() => {
 
-                />
-              </Form.Group>
-            </Col>
+              if (values.dueDateSelectionOption === "SocietyWiseDueDate") {
+                setDisabledDueDateField(true);
+                fetchSocietyInfo()
+                setFieldValue("dueDate", interestCalculationStartDate)
+              } else if (values.dueDateSelectionOption === "CustomDueDate") {
+                setDisabledDueDateField(false);
+                setFieldValue("dueDate", "")
+              }
+            }, [values.dueDateSelectionOption, setFieldValue, interestCalculationStartDate]);
+            return (
+              <FormikForm>
 
-            <Col xl={12}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>Choose</Form.Label>
-                <div className="form-control bg-light process_invoice_radio pt-2">
+                <Modal.Header>
+                  <Modal.Title>Process Invoice</Modal.Title>
+                  <Button variant="" className="btn-close" onClick={() => {
+                    setPropertyInfo({})
+                    viewDemoClose("processinvoice")
+                  }}>
+                    x
+                  </Button>
+                </Modal.Header>
+                <Modal.Body>
                   <Row>
-                    <Col sm={2}>
+                    <Col xl={6}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Invoice Type</Form.Label>
+                        <Select
+                          options={invoicetype}
+                          placeholder="Select type"
+                          name="invoiceType"
+                          value={values.invoiceType}
+                          onChange={(option) => setFieldValue("invoiceType", option)}
+                          classNamePrefix='Select2'
+                          className="multi-select"
 
-                      <Form.Check type="radio" label="All" name="invoiceprocess" />
+                        />
+                      </Form.Group>
                     </Col>
-                    <Col sm={3}>
+                    <Col xl={6}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Property Status</Form.Label>
+                        <Select
+                          options={propertytype}
+                          placeholder="Select"
+                          name="propertyStatus"
+                          value={values.propertyStatus}
+                          onChange={(option) => setFieldValue("propertyStatus", option)}
+                          classNamePrefix='Select2'
+                          className="multi-select"
 
-                      <Form.Check type="radio" label="Tower" name="invoiceprocess" />
+                        />
+                      </Form.Group>
                     </Col>
-                    <Col sm={3}>
 
-                      <Form.Check type="radio" label="Wing" name="invoiceprocess" />
+                    <Col xl={12}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Choose</Form.Label>
+                        <div className="form-control bg-light process_invoice_radio pt-2">
+                          <Row>
+                            <Col sm={2}>
+                              <Form.Check
+                                type="radio"
+                                label="Society"
+                                name="invoiceProcessType"
+                                value="Society"
+                                onChange={(e) => setFieldValue("invoiceProcessType", e.target.value)}
+                                id="invoice-all"
+                              />
+                            </Col>
+                            <Col sm={3}>
+                              <Form.Check
+                                type="radio"
+                                label="Tower"
+                                name="invoiceProcessType"
+                                value="Tower"
+                                onChange={(e) => setFieldValue("invoiceProcessType", e.target.value)}
+                                id="invoice-tower"
+                              />
+                            </Col>
+                            <Col sm={3}>
+                              <Form.Check
+                                type="radio"
+                                label="Wing"
+                                name="invoiceProcessType"
+                                value="Wing"
+                                onChange={(e) => setFieldValue("invoiceProcessType", e.target.value)}
+                                id="invoice-wing"
+                              />
+                            </Col>
+                            <Col sm={3}>
+                              <Form.Check
+                                type="radio"
+                                label="Property"
+                                name="invoiceProcessType"
+                                value="Property"
+                                onChange={(e) => setFieldValue("invoiceProcessType", e.target.value)}
+                                id="invoice-individual"
+                              />
+                            </Col>
+                          </Row>
+
+                        </div>
+                      </Form.Group>
                     </Col>
-                    <Col sm={3}>
-                      <Form.Check type="radio" checked label="Individual" name="invoiceprocess" />
+
+
+                    <Col xl={6}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Society</Form.Label>
+                        <Select
+                          placeholder="Select"
+                          name="society"
+                          value={values.society}
+                          onChange={(option) => setFieldValue("society", option)}
+                          classNamePrefix='Select2'
+                          className="multi-select"
+                          isDisabled={true}
+                        />
+                      </Form.Group>
                     </Col>
+
+                    <Col xl={6}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Tower</Form.Label>
+                        <Select
+                          options={towers}
+                          placeholder="Select"
+                          name="tower"
+                          value={values.tower}
+                          onChange={(option) => {
+                            fetchWingsOfTower(option?.value as string)
+                            setFieldValue("tower", option)
+                          }}
+                          classNamePrefix='Select2'
+                          className="multi-select"
+                          isDisabled={disabledProcessInvoiceSelectOptions}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={6}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Wing</Form.Label>
+                        <Select
+                          options={wings}
+                          placeholder="Select"
+                          name="wing"
+                          value={values.wing}
+                          onChange={(option) => {
+                            fetchPropertiesOfWings(option?.value as string)
+                            setFieldValue("wing", option)
+                          }}
+                          classNamePrefix='Select2'
+                          className="multi-select"
+                          isDisabled={disabledProcessInvoiceSelectOptions}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={6}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Property</Form.Label>
+                        <Select
+                          options={properties}
+                          placeholder="Select"
+                          name="property"
+                          value={values.property}
+                          onChange={(option) => {
+                            fetchPropertyInfo(option?.value as string)
+                            setFieldValue("property", option)
+                          }
+                          }
+                          classNamePrefix='Select2'
+                          className="multi-select"
+                          isDisabled={disabledProcessInvoiceSelectOptions}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={6}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>Member</Form.Label>
+                        <Field type='text' name='member' value={propertyInfo?.memberName} placeholder='Member Name' disabled className='form-control'></Field>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={3}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>From Date</Form.Label>d
+                        <Field type='date' name='fromDate' placeholder='dd/mm/yyyy' className='form-control'
+                        ></Field>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={3}>
+                      <Form.Group className="form-group mb-1">
+                        <Form.Label>To Date</Form.Label>
+                        <Field type='date' name='toDate' placeholder='dd/mm/yyyy' className='form-control'></Field>
+                      </Form.Group>
+                    </Col>
+
+                    <Col xl={6}>
+                      <Form.Group className="form-group mb-1 tx-semibold">
+                        <Form.Label className='mb-2'>Due Date</Form.Label>
+
+                        <Row>
+                          <Col sm={5}>
+
+                            <Form.Check
+                              type="radio"
+                              label="Society wise"
+                              name="dueDateSelectionOption"
+                              value="SocietyWiseDueDate"
+                              onChange={(e) => setFieldValue("dueDateSelectionOption", e.target.value)}
+                              id="society-wise"
+                            />
+                          </Col>
+                          <Col sm={5}>
+
+                            <Form.Check
+                              type="radio"
+                              label="Custom"
+                              name="dueDateSelectionOption"
+                              value="CustomDueDate"
+                              onChange={(e) => setFieldValue("dueDateSelectionOption", e.target.value)}
+                              id="custom"
+                            />
+                          </Col>
+
+                        </Row>
+                        {disabledDueDateField ?
+                          <Field disabled={disabledDueDateField} type='date' name='dueDate' placeholder='dd/mm/yyyy' className='form-control'></Field> :
+                          <Field disabled={disabledDueDateField} type='date' name='dueDate' placeholder='dd/mm/yyyy' className='form-control'></Field>
+
+                        }
+                      </Form.Group>
+                    </Col>
+                    {isInvoiceProcessing &&
+                      <Col xl={6}>
+                        <p className='tx-semibold tx-16 mb-2 mt-3'> Processing of Invoices</p>
+                        <button className="btn btn-light tx-semibold" type="button" disabled>
+                          <span className="spinner-border text-info spinner-border-sm align-middle" style={{ width: "2rem", height: "2rem" }} role="status"
+                            aria-hidden="true"></span> <span className='ms-2'>Loading...</span>
+                        </button>
+                      </Col>}
+
                   </Row>
-                </div>
-              </Form.Group>
-            </Col>
 
-
-            <Col xl={6}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>Society</Form.Label>
-                <Select
-                  options={societyoption}
-                  placeholder="Select"
-                  name=""
-                  classNamePrefix='Select2'
-                  className="multi-select"
-
-                />
-              </Form.Group>
-            </Col>
-
-            <Col xl={6}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>Tower</Form.Label>
-                <Select
-                  options={society}
-                  placeholder="Select"
-                  name=""
-                  classNamePrefix='Select2'
-                  className="multi-select"
-
-                />
-              </Form.Group>
-            </Col>
-
-            <Col xl={6}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>Wing</Form.Label>
-                <Select
-                  options={society}
-                  placeholder="Select"
-                  name=""
-                  classNamePrefix='Select2'
-                  className="multi-select"
-
-                />
-              </Form.Group>
-            </Col>
-
-            <Col xl={6}>
-              <Form.Group className="form-group mb-1">
-                <Form.Label>Property</Form.Label>
-                <Select
-                  options={society}
-                  placeholder="Select"
-                  name=""
-                  classNamePrefix='Select2'
-                  className="multi-select"
-
-                />
-              </Form.Group>
-            </Col>
-
-            <Col xl={6}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>Member</Form.Label>
-                <Select
-                  options={society}
-                  placeholder="Select"
-                  name=""
-                  classNamePrefix='Select2'
-                  className="multi-select"
-
-                />
-              </Form.Group>
-            </Col>
-
-            <Col xl={3}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>From Date</Form.Label>
-                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-              </Form.Group>
-            </Col>
-
-            <Col xl={3}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>To Date</Form.Label>
-                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-              </Form.Group>
-            </Col>
-
-            <Col xl={6}>
-            <Form.Group className="form-group mb-1 tx-semibold">
-                <Form.Label className='mb-2'>Due Date</Form.Label>
-
-                  <Row>
-                    <Col sm={5}>
-
-                      <Form.Check type="radio" label="Society Wise" name="duedt" />
-                    </Col>
-                    <Col sm={5}>
-
-                      <Form.Check type="radio" label="Custom" name="duedt" />
-                    </Col>
-
-                  </Row>
-
-                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-              </Form.Group>
-            </Col>
-
-            <Col xl={6}>
-              <p className='tx-semibold tx-16 mb-2 mt-3'> Processing of Invoices (23)</p>
-              {/* <div className="progress mg-b-20">
-                <ProgressBar
-                  variant="success"
-                  role="progressbar"
-                  now={35}
-                  animated
-                ></ProgressBar>
-              </div> */}
-              <button className="btn btn-light tx-semibold" type="button" disabled>
-            <span className="spinner-border text-info spinner-border-sm align-middle" style={{ width: "2rem", height: "2rem" }} role="status"
-                aria-hidden="true"></span> <span className='ms-2'>Loading...</span>
-        </button>
-            </Col>
-
-          </Row>
-
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="default" onClick={() => viewDemoClose("processinvoice")}>
-            Cancel
-          </Button>
-          <button className="btn btn-primary" type="submit">Process</button>
-        </Modal.Footer>
-
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="default" onClick={() => viewDemoClose("processinvoice")}>
+                    Cancel
+                  </Button>
+                  <button className="btn btn-primary" type="submit">Process</button>
+                </Modal.Footer>
+              </FormikForm>
+            )
+          }
+          }
+        </Formik>
       </Modal>
 
       {/* Unprocess invoice */}
@@ -1132,13 +1373,13 @@ export default function Accounts() {
             </Col>
 
             <Col xl={12}>
-            <Form.Group className="form-group mb-1">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Choose</Form.Label>
                 <div className="form-control bg-light process_invoice_radio pt-2">
                   <Row>
                     <Col sm={2}>
 
-                      <Form.Check type="radio" label="All" name="invoiceprocess" />
+                      <Form.Check type="radio" label="Society" name="invoiceprocess" />
                     </Col>
                     <Col sm={3}>
 
@@ -1149,7 +1390,7 @@ export default function Accounts() {
                       <Form.Check type="radio" label="Wing" name="invoiceprocess" />
                     </Col>
                     <Col sm={3}>
-                      <Form.Check type="radio" checked label="Individual" name="invoiceprocess" />
+                      <Form.Check type="radio" checked label="Property" name="invoiceprocess" />
                     </Col>
                   </Row>
                 </div>
@@ -1158,7 +1399,7 @@ export default function Accounts() {
 
 
             <Col xl={6}>
-            <Form.Group className="form-group mb-1">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Society</Form.Label>
                 <Select
                   options={societyoption}
@@ -1172,7 +1413,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-            <Form.Group className="form-group mb-1">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Tower</Form.Label>
                 <Select
                   options={society}
@@ -1186,7 +1427,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-            <Form.Group className="form-group mb-1">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Wing</Form.Label>
                 <Select
                   options={society}
@@ -1214,7 +1455,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-            <Form.Group className="form-group mb-1">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Member</Form.Label>
                 <Select
                   options={society}
@@ -1227,28 +1468,28 @@ export default function Accounts() {
               </Form.Group>
             </Col>
             <Col xl={12}>
-<Row>
-            <Col xl={4}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>From Date</Form.Label>
-                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-              </Form.Group>
-            </Col>
+              <Row>
+                <Col xl={4}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>From Date</Form.Label>
+                    <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                  </Form.Group>
+                </Col>
 
-            <Col xl={4}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>To Date</Form.Label>
-                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-              </Form.Group>
-            </Col>
+                <Col xl={4}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>To Date</Form.Label>
+                    <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                  </Form.Group>
+                </Col>
 
-            <Col xl={4}>
-            <Form.Group className="form-group mb-1">
-                <Form.Label>Due Date</Form.Label>
-                <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
-              </Form.Group>
-            </Col>
-            </Row>
+                <Col xl={4}>
+                  <Form.Group className="form-group mb-1">
+                    <Form.Label>Due Date</Form.Label>
+                    <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
+                  </Form.Group>
+                </Col>
+              </Row>
             </Col>
             <Col xl={12}>
               <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unrocessing of Invoices (23)</p>
@@ -1661,7 +1902,7 @@ export default function Accounts() {
                               Last Six Month
                             </Dropdown.Item>
                             <Dropdown.Item href="#">
-                              All Data
+                              Society Data
                             </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
@@ -2023,48 +2264,48 @@ export default function Accounts() {
 
                     </Formik>
                     <div className="table-responsive ">
-   <table className='table table-border mt-3 bg-white'>
-    <thead>
-      <tr>
-        <th>S.No.</th>
-        <th>Society</th>
-        <th>Date of Payment</th>
-        <th>Payment Mode</th>
-        <th>Transaction ID</th>
-        <th>Amount</th>
-        <th>Bank Name</th>
-        <th>Payment Status</th>
-        <th>Remarks</th>
-        <th>Receipt</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>1</td>
-        <td>testname</td>
-        <td>2025-05-12</td>
-        <td>NEFT</td>
-        <td>#5475845749</td>
-        <td><i className='fa fa-rupee'></i> 2500.00</td>
-        <td>HDFC Bank</td>
-        <td className='text-center'><span className='badge badge-success'>Approved</span> </td>
-        <td></td>
-        <td><span className='text-info cursor'>View</span></td>
-      </tr>
-      <tr>
-        <td>2</td>
-        <td>testname</td>
-        <td>2025-05-12</td>
-        <td>NEFT</td>
-        <td>#5475845749</td>
-        <td><i className='fa fa-rupee'></i> 2500.00</td>
-        <td>HDFC Bank</td>
-        <td className='text-center'><span className='badge badge-warning'>Pending</span> </td>
-        <td></td>
-        <td><span className='text-info cursor'>View</span></td>
-      </tr>
-    </tbody>
-   </table>
+                      <table className='table table-border mt-3 bg-white'>
+                        <thead>
+                          <tr>
+                            <th>S.No.</th>
+                            <th>Society</th>
+                            <th>Date of Payment</th>
+                            <th>Payment Mode</th>
+                            <th>Transaction ID</th>
+                            <th>Amount</th>
+                            <th>Bank Name</th>
+                            <th>Payment Status</th>
+                            <th>Remarks</th>
+                            <th>Receipt</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>1</td>
+                            <td>testname</td>
+                            <td>2025-05-12</td>
+                            <td>NEFT</td>
+                            <td>#5475845749</td>
+                            <td><i className='fa fa-rupee'></i> 2500.00</td>
+                            <td>HDFC Bank</td>
+                            <td className='text-center'><span className='badge badge-success'>Approved</span> </td>
+                            <td></td>
+                            <td><span className='text-info cursor'>View</span></td>
+                          </tr>
+                          <tr>
+                            <td>2</td>
+                            <td>testname</td>
+                            <td>2025-05-12</td>
+                            <td>NEFT</td>
+                            <td>#5475845749</td>
+                            <td><i className='fa fa-rupee'></i> 2500.00</td>
+                            <td>HDFC Bank</td>
+                            <td className='text-center'><span className='badge badge-warning'>Pending</span> </td>
+                            <td></td>
+                            <td><span className='text-info cursor'>View</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </Row>
 
@@ -2114,7 +2355,7 @@ export default function Accounts() {
                     <span>Cheque</span>
                   </li>
                   <li onClick={() => { viewDemoShow("onlineself"); }}>
-                    <img alt="" src={imagesData('online')}  />
+                    <img alt="" src={imagesData('online')} />
                     <span>Online Self</span>
                   </li>
                 </ul>
@@ -2441,12 +2682,12 @@ export default function Accounts() {
               </Button>
             </Modal.Header>
 
-                    <Modal.Body>
-                      <Row>
-                        <Col sm={12}>
-                    <FormGroup>
-                              <FormLabel>Society</FormLabel>
-                              <Select
+            <Modal.Body>
+              <Row>
+                <Col sm={12}>
+                  <FormGroup>
+                    <FormLabel>Society</FormLabel>
+                    <Select
                       options={society}
                       placeholder="Select society"
                       name="paymentmode"
@@ -2454,19 +2695,19 @@ export default function Accounts() {
                       className="multi-select"
 
                     />
-                            </FormGroup>
-                            </Col>
-                            <Col sm={6}>
-                    <FormGroup>
-                              <FormLabel>Date of Payment</FormLabel>
-<Form.Control type='date'/>
-                            </FormGroup>
-</Col>
-<Col sm={6}>
+                  </FormGroup>
+                </Col>
+                <Col sm={6}>
+                  <FormGroup>
+                    <FormLabel>Date of Payment</FormLabel>
+                    <Form.Control type='date' />
+                  </FormGroup>
+                </Col>
+                <Col sm={6}>
 
-                            <FormGroup>
-                              <FormLabel>Payment Mode</FormLabel>
-                              <Select
+                  <FormGroup>
+                    <FormLabel>Payment Mode</FormLabel>
+                    <Select
                       options={paymentmode}
                       placeholder="Select mode"
                       name="paymentmode"
@@ -2474,47 +2715,47 @@ export default function Accounts() {
                       className="multi-select"
 
                     />
-                            </FormGroup>
-</Col>
-<Col sm={6}>
-                            <FormGroup>
-                              <FormLabel>Transaction ID</FormLabel>
-<Form.Control type='text' placeholder='enter id'/>
-                            </FormGroup>
-</Col>
-<Col sm={6}>
-                            <FormGroup>
-                              <FormLabel>Amount</FormLabel>
-<Form.Control type='text' placeholder='0.00'/>
-                            </FormGroup>
-</Col>
-<Col sm={12}>
-                            <FormGroup>
-                              <FormLabel>Bank Name</FormLabel>
-<Form.Control type='text' placeholder='enter name'/>
-                            </FormGroup>
-</Col>
+                  </FormGroup>
+                </Col>
+                <Col sm={6}>
+                  <FormGroup>
+                    <FormLabel>Transaction ID</FormLabel>
+                    <Form.Control type='text' placeholder='enter id' />
+                  </FormGroup>
+                </Col>
+                <Col sm={6}>
+                  <FormGroup>
+                    <FormLabel>Amount</FormLabel>
+                    <Form.Control type='text' placeholder='0.00' />
+                  </FormGroup>
+                </Col>
+                <Col sm={12}>
+                  <FormGroup>
+                    <FormLabel>Bank Name</FormLabel>
+                    <Form.Control type='text' placeholder='enter name' />
+                  </FormGroup>
+                </Col>
 
-<Col sm={12}>
-                            <FormGroup>
-                              <FormLabel>Remarks</FormLabel>
-<textarea className='form-control' placeholder='enter remarks'></textarea>
-                            </FormGroup>
-                            </Col>
-                            <Col sm={12}>
-                            <FormGroup>
-                              <FormLabel>Upload Receipt</FormLabel>
-<Form.Control type='file'/>
-                            </FormGroup>
-                            </Col>
-                            </Row>
-                    </Modal.Body>
+                <Col sm={12}>
+                  <FormGroup>
+                    <FormLabel>Remarks</FormLabel>
+                    <textarea className='form-control' placeholder='enter remarks'></textarea>
+                  </FormGroup>
+                </Col>
+                <Col sm={12}>
+                  <FormGroup>
+                    <FormLabel>Upload Receipt</FormLabel>
+                    <Form.Control type='file' />
+                  </FormGroup>
+                </Col>
+              </Row>
+            </Modal.Body>
 
-                    <Modal.Footer>
-                    <Button type='button' className='btn btn-default'  onClick={() => { viewDemoClose("onlineself"); }}>Cancel</Button>
-                    <Button type='submit' className='btn btn-primary me-2'  onClick={() => { viewDemoClose("onlineself"); }}>Save</Button>
+            <Modal.Footer>
+              <Button type='button' className='btn btn-default' onClick={() => { viewDemoClose("onlineself"); }}>Cancel</Button>
+              <Button type='submit' className='btn btn-primary me-2' onClick={() => { viewDemoClose("onlineself"); }}>Save</Button>
 
-                    </Modal.Footer>
+            </Modal.Footer>
 
           </Modal>
 

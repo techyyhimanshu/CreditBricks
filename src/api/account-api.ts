@@ -28,4 +28,13 @@ export const getAllPaymentLogsApi = async (societyIdentifier: string, filters?: 
     }
 }
 
+export const generateInvoiceApi = async (filters?: any): Promise<any> => {
+    try {
+        const response = await axiosInstance.post(`payment/generate-invoice`, filters)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 
