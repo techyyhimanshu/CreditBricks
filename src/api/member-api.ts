@@ -12,6 +12,15 @@ export const addMemberApi = async (data: any): Promise<any> => {
         throw error
     }
 }
+export const getMemberSearhApi = async (data: any): Promise<any> => {
+    try {
+        
+        const response = await axiosInstance.post(`/member/search`, data)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 
 export const deleteMemberApi = async (identifier: string): Promise<any> => {
     try {

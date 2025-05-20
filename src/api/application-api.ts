@@ -97,6 +97,42 @@ export const createNewOtherApplicationApi = async (data: any): Promise<any> => {
         throw error
     }
 }
+export const createNewFlatResaleApi = async (data: any): Promise<any> => {
+    try {
+        const formData = new FormData();
+
+        for (const key in data) {
+            const value = data[key];
+
+            if (value instanceof File || value instanceof Blob) {
+                formData.append(key, value);
+            } else if (Array.isArray(value) || typeof value === 'object') {
+                if (value !== null) {
+                    formData.append(key, JSON.stringify(value));
+                }
+            } else if (value !== undefined && value !== null) {
+                formData.append(key, value);
+            }
+        }
+        const response = await axiosInstance.post(`flat-resale/new-resale-application`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const updateFlatResaleApi = async (data: any, id: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`flat-resale/update-resale-application/${id}`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const updateOtherApplicationApi = async (data: any, id: string): Promise<any> => {
     try {
         const formData = new FormData();
@@ -126,7 +162,7 @@ export const getAllVenueApi = async (): Promise<any> => {
         throw error
     }
 }
-export const getAllApplicationApi = async (societyIdentifier?:string,propertyIdentifier?:string): Promise<any> => {
+export const getAllApplicationApi = async (societyIdentifier?: string, propertyIdentifier?: string): Promise<any> => {
     try {
         const params: any = {};
 
@@ -136,7 +172,7 @@ export const getAllApplicationApi = async (societyIdentifier?:string,propertyIde
         if (propertyIdentifier) {
             params.property_identifier = propertyIdentifier;
         }
-        const response = await axiosInstance.get(`event/applications/all`,{params})
+        const response = await axiosInstance.get(`event/applications/all`, { params })
         return response
     } catch (error) {
         throw error

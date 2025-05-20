@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Accordion, Button, Col, Form,  Modal, Row } from "react-bootstrap";
+import { Accordion, Button, Col, Form, Modal, Row } from "react-bootstrap";
 import Select from "react-select";
 import 'suneditor/dist/css/suneditor.min.css';
 import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } from "../../api/society-api";
@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { getTermsConditionBySocietyAndTypeApi } from "../../api/termsCondition-api";
 import TermsAndConditionModal from "./termsAndConditionModal";
+import { getMemberForDropDownApi } from "../../api/user-api";
+import { getMemberSearhApi } from "../../api/member-api";
 
 interface ProductModalProps {
     show: boolean;
@@ -28,6 +30,12 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
     const [, setCommiteeMemberData] = useState<any>(null);
     const [termsconditionsview, settermsconditionsview] = useState(false);
     const [termsAndConditionData, setTermsAndConditionData] = useState("")
+    const [memberOptions, setMemberOptions] = useState<any[]>([]);
+    const [dummyMemberOptions, setDummyMemberOptions] = useState<any[]>([]);
+    const [co_OwnerOptions, setCo_OwnerOptions] = useState<any[]>([]);
+    const [thirdOwnerOptions, setThirdOwnerOptions] = useState<any[]>([]);
+    const [fourthOwnerOptions, setFourthOwnerOptions] = useState<any[]>([]);
+    const [fifthOwnerOptions, setFifthOwnerOptions] = useState<any[]>([]);
     const { society } = useSelector((state: RootState) => state.auth)
 
     const viewDemoShow = (modal: any) => {
@@ -55,6 +63,7 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
     useEffect(() => {
         fetchSocietiesForDropDown()
         fetchTermsData()
+        fetchMembersForDropDown();
     }, [society])
 
     const fetchTermsData = async () => {
@@ -67,6 +76,20 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
 
             // const errorMessage = handleApiError(error)
             // showToast("error", errorMessage)
+        }
+    }
+
+    const fetchMembersForDropDown = async () => {
+        try {
+            const response = await getMemberForDropDownApi();
+            const formattedData = response.data.data.map((item: any) => ({
+                value: item.identifier,
+                label: `${item.firstName} ${item.middleName} ${item.lastName}`,
+            }));
+            setMemberOptions(formattedData);
+        } catch (error) {
+            const errorMessage = handleApiError(error)
+            showToast("error", errorMessage)
         }
     }
 
@@ -97,7 +120,7 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
             showToast("error", errorMessage)
         }
     }
-    
+
 
     const fetchApproverDetails = async (society: any, setFieldValue: any) => {
         try {
@@ -144,6 +167,64 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
         }
     }
 
+    const handleMemberChange = async (identifier: string) => {
+
+        const updatedData = memberOptions.filter((member: any) => member.value !== identifier);
+        setCo_OwnerOptions(updatedData);
+
+    };
+    const handleCoOwnerChange = async (identifier: string, memberId: string) => {
+        const updatedData = memberOptions.filter((coOwner: any) => coOwner.value !== identifier && coOwner.value !== memberId);
+        setThirdOwnerOptions(updatedData);
+    };
+    // const handleThirdOwnerChange = async (identifier: string, memberid: string, coOwnerId: string) => {
+    //     const updatedData = memberOptions.filter((thirdOwner: any) => thirdOwner.value !== identifier && thirdOwner.value !== memberid && thirdOwner.value !== coOwnerId);
+    //     setFourthOwnerOptions(updatedData);
+    // };
+
+    // const handleFourthOwnerChange = async (identifier: string, memberid: string, coOwnerId: string, thirdOwnerId: string) => {
+    //     const updatedData = memberOptions.filter((fourthOwner: any) => fourthOwner.value !== identifier && fourthOwner.value !== memberid && fourthOwner.value !== coOwnerId && fourthOwner.value !== thirdOwnerId);
+    //     setFifthOwnerOptions(updatedData);
+    // };
+
+    const getMemberByOwnership = (ownership: number) => {
+        const member = initialVals?.propertyMembers?.find((member: any) => member.ownership === ownership);
+        if (member) {
+            return {
+                value: member.memberIdentifier || "",
+                label: `${member.member.firstName || ''} ${member.member.middleName || ''} ${member.member.lastName || ''}`.trim() || ""
+            };
+        }
+
+        return { value: "", label: "" };
+    };
+
+    const handleMemberOptionsData = (inputValue: string) => {
+        const fetchModuleOptions = async (inputValue: string) => {
+
+            try {
+                const data = {
+                    searchTerm: inputValue,
+                }
+                const res = await getMemberSearhApi(data)
+                const formatted = res?.data?.data?.map((member: any) => ({
+                    value: member.memberIdentifier,
+                    label: member.memberName.trim(),
+                    mobileNumber: member.mobileNumber
+                })) || [];
+
+                setDummyMemberOptions(formatted);
+            } catch (error) {
+                console.error("Error in fetching options:", error);
+            }
+        }
+
+        if (inputValue.length >= 3) {
+            fetchModuleOptions(inputValue)
+        }
+    };
+
+
 
     const handleSubmit = async (values: any) => {
         try {
@@ -162,25 +243,28 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                 entranceFeePaid: values.entrancefeepaid,
                 otherChargesPaid: values.otherchargepaid,
                 otherCharges: values.otherchargeDetails,
-                saleAgreementCopy: values.saleAgreementCopy,
+                // saleAgreementCopy: values.saleAgreementCopy,
                 saleAgreement: values.saleAgreementFile,
-                flatRegistrationCertificateSubmitted: values.flatRegistrationCertificate,
+                // flatRegistrationCertificateSubmitted: values.flatRegistrationCertificate,
                 flatRegistrationCertificate: values.flatRegistrationFile,
-                homeLoanSanctionLetterSubmitted: values.homeLoanSanctionLetter,
+                // homeLoanSanctionLetterSubmitted: values.homeLoanSanctionLetter,
                 homeLoanSanctionLetter: values.homeLoanSanctionFile,
-                oldLoanClosureLetter: values.oldLoanClosureLetter,
+                // oldLoanClosureLetter: values.oldLoanClosureLetter,
                 oldOwnerHomeLoanClosureLetter: values.oldLoanClosureFile,
                 receipt: values.uploadReceipt,
                 loanClosureLetter: values.uploadLoanClosureLetter,
-                jointHolder: values.jointHolder,
-                ownerName: values.ownerName,
-                coOwnerName: values.coOwnerName,
-                flatRegistrationId: values.flatRegistrationId,
-                flatRegistrationCopy: values.flatRegistrationCopy,
+                // jointHolder: values.jointHolder,
+                jointHolders: [
+                    { memberIdentifier: values.ownerName?.value || "" },
+                    { memberIdentifier: values.coOwnerName?.value || "" }
+                ],
+                // ownerName: values.ownerName,
+                // coOwnerName: values.coOwnerName,
+                flatRegistrationNumber: values.flatRegistrationId,
+                flatRegistrationFilePath: values.flatRegistrationCopy,
             };
 
             if (editing) {
-                formattedData.eventId = initialVals?.eventId
                 formattedData.eventIdentifier = initialVals?.applicationIdentifier
             }
             if (onSave) {
@@ -224,27 +308,27 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                         membershipfeepaid: initialVals?.membershipFeePaid || "",
                         entrancefeepaid: initialVals?.entranceFeePaid || "",
                         otherchargepaid: initialVals?.otherChargesPaid || "",
-                        saleAgreementCopy: "",
+                        saleAgreementCopy: initialVals?.saleAgreement ? "Yes" : "No",
                         saleAgreementFile: null,
                         saleAgreementFileView: initialVals?.saleAgreement,
-                        flatRegistrationCertificate: "",
+                        flatRegistrationCertificate: initialVals?.flatRegistrationCertificate ? "Yes" : "No",
                         flatRegistrationFile: null,
                         flatRegistrationFileView: initialVals?.flatRegistrationCertificate,
-                        homeLoanSanctionLetter: "",
+                        homeLoanSanctionLetter: initialVals?.homeLoanSanctionLetter ? "Yes" : "No",
                         homeLoanSanctionFile: null,
                         homeLoanSanctionFileView: initialVals?.homeLoanSanctionLetter,
-                        oldLoanClosureLetter: "",
+                        oldLoanClosureLetter: initialVals?.oldOwnerHomeLoanClosureLetter ? "Yes" : "No",
                         oldLoanClosureFile: null,
                         oldLoanClosureFileView: initialVals?.oldOwnerHomeLoanClosureLetter,
                         uploadReceipt: null,
                         uploadReceiptView: initialVals?.receipt,
                         uploadLoanClosureLetter: null,
                         uploadLoanClosureLetterView: initialVals?.loanClosureLetter,
-                        otherchargeDetails: initialVals?.otherCharges,
+                        otherchargeDetails: initialVals?.otherCharges || "",
                         jointHolder: "",
-                        ownerName: "",
-                        coOwnerName: "",
-                        flatRegistrationId: "",
+                        ownerName: getMemberByOwnership(1),
+                        coOwnerName: getMemberByOwnership(2),
+                        flatRegistrationId: initialVals?.flatRegistrationNumber,
                         flatRegistrationCopy: null,
                         flatRegistrationCopyView: initialVals?.flatRegistrationFilePath,
                         tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
@@ -1107,13 +1191,51 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group mb-0 mt-0">
                                                                 <Form.Label>Owner Name <small className='text-muted tx-bold'>(As per Agreement)</small></Form.Label>
-                                                                <Form.Control
-                                                                    type="text"
+
+                                                                {/* <Select
+                                                                    options={memberOptions}
                                                                     name="ownerName"
-                                                                    placeholder="Name"
-                                                                    className="form-control"
                                                                     value={values.ownerName}
-                                                                    onChange={handleChange}
+                                                                    onChange={(selected) => {
+                                                                        setFieldValue("ownerName", selected)
+                                                                        handleMemberChange(selected?.value || "")
+                                                                    }
+                                                                    }
+                                                                    placeholder="Select Member"
+                                                                    classNamePrefix="Select2"
+                                                                /> */}
+                                                                <Select
+                                                                    name="ownerName"
+                                                                    value={values.ownerName}
+                                                                    onChange={(selected) => {
+                                                                        setFieldValue("ownerName", selected);
+                                                                        handleMemberChange(selected?.value || "");
+                                                                    }}
+                                                                    isClearable
+                                                                    placeholder="Select Member"
+                                                                    classNamePrefix="Select2"
+                                                                    formatOptionLabel={(option: any) => {
+                                                                        return (
+                                                                            <div>
+                                                                                <div>{option.label}</div>
+                                                                                <div className="text-muted" style={{ fontSize: '12px' }}>{option.mobileNumber}</div>
+                                                                            </div>
+                                                                        )
+                                                                    }}
+                                                                    getOptionLabel={(data: any) => data.label}
+                                                                    filterOption={(candidate: any, input: string) => {
+                                                                        // Filter by both productName and hsnCode
+                                                                        return (
+                                                                            candidate.data.label.toLowerCase().includes(input.toLowerCase()) ||
+                                                                            candidate.data.mobileNumber.toLowerCase().includes(input.toLowerCase())
+                                                                        );
+                                                                    }}
+                                                                    onInputChange={(inputValue) => {
+                                                                        if (inputValue.length >= 3) {
+                                                                            handleMemberOptionsData(inputValue)
+                                                                        }
+                                                                    }}
+                                                                    options={dummyMemberOptions}
                                                                 />
                                                             </Form.Group>
                                                         </Col>
@@ -1124,13 +1246,19 @@ const FlatResaleModal: React.FC<ProductModalProps> = ({ show, initialVals, onClo
                                                                 <Form.Label>
                                                                     Co-owner Name <small className='text-muted tx-bold'>(As per Agreement)</small>
                                                                 </Form.Label>
-                                                                <Form.Control
-                                                                    type="text"
+
+                                                                <Select
+                                                                    options={co_OwnerOptions}
                                                                     name="coOwnerName"
-                                                                    placeholder="Name"
-                                                                    className="form-control"
                                                                     value={values.coOwnerName}
-                                                                    onChange={handleChange}
+                                                                    // isDisabled={coOwnerNameDisabled}
+                                                                    onChange={(selected) => {
+                                                                        setFieldValue("coOwnerName", selected)
+                                                                        handleCoOwnerChange(selected?.value || "", values.ownerName?.value)
+                                                                        // setThirdOwnerDisabled(false)
+                                                                    }}
+                                                                    placeholder="Select Co Owner"
+                                                                    classNamePrefix="Select2"
                                                                 />
                                                                 <small className='float-end text-black tx-bold cursor mt-1'>+ Add</small>
                                                             </Form.Group>

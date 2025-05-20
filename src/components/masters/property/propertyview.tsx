@@ -400,6 +400,7 @@ export default function PropertyView() {
 
     }
   }
+  
   const fetchLoanData = async () => {
     try {
       const response = await getPropertLoansApi(identifier)
