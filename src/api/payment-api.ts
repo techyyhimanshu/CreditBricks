@@ -69,13 +69,15 @@ export const getInvoicePaymentOutstandingApi =
         }
     }
 
-export const sendOTPApi = async (mobileNumber: string, propertyIdentifier: string, amountInFigures: number, param: string): Promise<any> => {
+export const sendOTPApi = async (mobileNumber: string, invoiceNumber: string, propertyIdentifier: string, chequeNumber: string, amountInFigures: number, paymentMethod: string): Promise<any> => {
     try {
         const response = await axiosInstance.post(`payment/resend-otp`, {
             mobileNumber,
-            param,
+            invoiceNumber,
             propertyIdentifier,
-            amountInFigures
+            chequeNumber,
+            amountInFigures,
+            paymentMethod
         })
         return response
     } catch (error) {

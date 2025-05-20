@@ -57,6 +57,14 @@ const CelebrationBooking = React.lazy(() =>
   import("./components/pages/authentication/celebrationbooking/celebrationbooking")
 )
 
+const Cheque = React.lazy(() =>
+  import("./components/pages/authentication/cheque/cheque")
+)
+
+const Approve = React.lazy(() =>
+  import("./components/pages/authentication/approve/approve")
+)
+
 //Form
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -96,6 +104,8 @@ const Main = () => {
                 <Route path={`${import.meta.env.BASE_URL}pages/authentication/privacypolicy`} element={<PrivacyPolicy />} />
                 <Route path={`${import.meta.env.BASE_URL}gatepassapproval`} element={<GatePassApproval />} />
                 <Route path={`${import.meta.env.BASE_URL}celebrationbooking`} element={<CelebrationBooking />} />
+                <Route path={`${import.meta.env.BASE_URL}cheque`} element={<Cheque />} />
+                <Route path={`${import.meta.env.BASE_URL}approve`} element={<Approve />} />
                 <Route path="*" element={<Error404 />} />
               </Route>
               <Route></Route>

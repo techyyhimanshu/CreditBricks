@@ -16,16 +16,19 @@ import { numberToWords } from "amount-to-words";
 import { getAllPropertiesForDropdownApi } from '../../api/complaint-api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../common/store/store';
-
+import * as Yup from 'yup';
 export default function Accounts() {
   const [accountdata, setAccountdata] = useState<any>([]);
   const [paynow, setpaynow] = useState(false);
   const [cash, setcash] = useState(false);
   const [cheque, setcheque] = useState(false);
   const [otpverify, setotpverify] = useState(false);
+  const [sendOTP, setSendOTP] = useState(false);
+  const [onlineself, setonlineself] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInvoicePayment, setIsInvoicePayment] = useState(true);
   const [invoiceToPay, setInvoiceToPay] = useState<any>({})
-  const [denominations, setDenominations] = useState([
+  const denominationsList = [
     { value: 500, count: 0, total: 0 },
     { value: 200, count: 0, total: 0 },
     { value: 100, count: 0, total: 0 },
@@ -35,7 +38,8 @@ export default function Accounts() {
     { value: 5, count: 0, total: 0 },
     { value: 2, count: 0, total: 0 },
     { value: 1, count: 0, total: 0 },
-  ]);
+  ]
+  const [denominations, setDenominations] = useState(denominationsList);
   const [cashview, setcashview] = useState(false);
   const [chequeview, setchequeview] = useState(false);
   const [receiptData, setReceiptData] = useState([]);
@@ -49,14 +53,30 @@ export default function Accounts() {
     { value: "3", label: "A103" }
   ];
 
+  const paymentmode = [
+    { value: "1", label: "NEFT" },
+    { value: "2", label: "IMPS" },
+    { value: "3", label: "Gpay" },
+    { value: "3", label: "Phonepe" },
+    { value: "3", label: "CRED" }
+  ];
+
   const paymenttype = [
     { value: "1", label: "Cash" },
     { value: "2", label: "Cheque" }
   ];
 
   const invoicetype = [
-    { value: "1", label: "Maintenance" },
+     { value: "1", label: "Maintenance" },
     { value: "2", label: "Additional" }
+  ];
+
+  const propertytype = [
+    { value: "1", label: "All" },
+    { value: "2", label: "Sold" },
+    { value: "3", label: "Unsold" },
+    { value: "4", label: "Blocked by Management" },
+    { value: "5", label: "Refuge" }
   ];
 
   const societyoption = [
@@ -153,7 +173,7 @@ export default function Accounts() {
     {
       name: 'Status',
       cell: (row: any) => (
-        <span className={` ${row.status === 'Unpaid' ? 'text-danger' : 'text-success'}`}>
+        <span className={` ${row.status === 'Unpaid' ? 'badge badge-danger' : 'badge badge-success'}`}>
           {row.status}
         </span>
       ),
@@ -173,7 +193,7 @@ export default function Accounts() {
         <Dropdown.Menu>
           <Dropdown.Item>Edit</Dropdown.Item>
           {row.status === 'Unpaid' || row.status === 'Partially Paid' ? <Dropdown.Item onClick={() => {
-
+            setIsInvoicePayment(true);
             setInvoiceToPay(row); // this updates the state
             fetchInvoicePaymentOutstanding(row.invoiceNumber); // use row directly
             viewDemoShow("paynow");
@@ -286,16 +306,22 @@ export default function Accounts() {
     },
     {
       name: 'Status',
-      selector: (row: any) => row.status,
+      selector: (row: any) => (
+        <span className={` ${row.status === 'Pending' ? 'badge badge-warning' : 'badge badge-success'}`}>
+          {row.status}
+        </span>
+      ),
+
       sortable: true,
     },
     {
       name: 'Action',
       cell: (row: any) => (
-        row.status === "Pending" ? <Button type="button" className='btn btn-sm btn-success' onClick={
+        row.status === "Pending" ? <Button type="button" className='btn btn-sm btn-dark' onClick={
           () => {
+            setIsInvoicePayment(false);
             setTransactionData(row)
-            viewDemoShow("otpverify")
+            viewDemoShow("sendOTP");
           }
         }><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> : "-"
       ),
@@ -366,7 +392,25 @@ export default function Accounts() {
   };
 
 
+  const handleSendOTP = async () => {
+    try {
+      if (!mobile || mobile.length < 10) {
+        return alert("Please enter a valid mobile number")
+      }
+      console.log(transactionData);
 
+      const response = await sendOTPApi(mobile, transactionData.invoiceNumber, "", transactionData.chequeNumber, transactionData.amount, transactionData.paymentMethod)
+      if (response.status === 200) {
+        // setTransactionData(response.data.data)
+        showToast("success", "OTP sent successfully")
+        viewDemoShow("otpverify");
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+
+    }
+  }
   // const tableData = {
   //   columns,
   //   data,
@@ -490,6 +534,8 @@ export default function Accounts() {
       if (amount > invoicePaymentOutstanding?.totalDueNow * 1) {
         return showToast("error", "Amount cannot be greater than outstanding amount")
       }
+      console.log(mobile);
+
       if (amount <= 0) {
         return showToast("error", "Amount cannot be less than or equal to zero")
       }
@@ -551,6 +597,8 @@ export default function Accounts() {
   const handleVerifyPayment = async () => {
     try {
       const joinedOtp = otp.join('');
+      console.log(transactionData);
+
       if (joinedOtp.length === 6) {
         const response = await verifyPaymentApi(transactionData.invoiceNumber, transactionData.amount, transactionData.createdAt, transactionData.propertyIdentifier, transactionData.txnId, mobile, joinedOtp)
         if (response.status === 200) {
@@ -566,12 +614,15 @@ export default function Accounts() {
 
   const handleResendOTP = async () => {
     try {
-      const param = "CSH"
-      const response = await sendOTPApi(mobile, invoiceToPay.propertyIdentifier, invoiceToPay.amountInFigures, param)
+      console.log(transactionData);
+
+      const response = await sendOTPApi(mobile, transactionData.invoiceNumber, "", transactionData.chequeNumber, transactionData.amount, transactionData.paymentMethod)
       if (response.status === 200) {
-        setTransactionData(response.data.data)
+        // setTransactionData(response.data.data)
         showToast("success", "OTP sent successfully")
       }
+
+
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
@@ -590,6 +641,11 @@ export default function Accounts() {
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
+
+      case "onlineself":
+        setonlineself(true);
+        setpaynow(false);
+        break;
 
       case "chequeview":
         setchequeview(true);
@@ -615,6 +671,15 @@ export default function Accounts() {
 
       case "otpverify":
         setotpverify(true);
+        setSendOTP(false);
+        setcheque(false);
+        setpaynow(false);
+        setcash(false);
+        break;
+
+      case "sendOTP":
+        setSendOTP(true);
+        setotpverify(false);
         setcheque(false);
         setpaynow(false);
         setcash(false);
@@ -649,6 +714,10 @@ export default function Accounts() {
 
   const viewDemoClose = (modal: any) => {
     switch (modal) {
+
+      case "onlineself":
+        setonlineself(false);
+        break;
 
       case "cashview":
         setcashview(false);
@@ -697,6 +766,10 @@ export default function Accounts() {
 
       case "otpverify":
         setotpverify(false);
+        break;
+
+      case "sendOTP":
+        setSendOTP(false);
         break;
 
       case "chequeview":
@@ -836,7 +909,7 @@ export default function Accounts() {
         <Modal.Body>
           <Row>
             <Col xl={6}>
-              <Form.Group className="form-group">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Invoice Type</Form.Label>
                 <Select
                   options={invoicetype}
@@ -848,11 +921,24 @@ export default function Accounts() {
                 />
               </Form.Group>
             </Col>
-
             <Col xl={6}>
-              <Form.Group>
+              <Form.Group className="form-group mb-1">
+                <Form.Label>Property Status</Form.Label>
+                <Select
+                  options={propertytype}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
+
+                />
+              </Form.Group>
+            </Col>
+
+            <Col xl={12}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Choose</Form.Label>
-                <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
+                <div className="form-control bg-light process_invoice_radio pt-2">
                   <Row>
                     <Col sm={2}>
 
@@ -876,7 +962,7 @@ export default function Accounts() {
 
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Society</Form.Label>
                 <Select
                   options={societyoption}
@@ -889,8 +975,8 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={3}>
-              <Form.Group className="form-group">
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Tower</Form.Label>
                 <Select
                   options={society}
@@ -903,8 +989,8 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={3}>
-              <Form.Group className="form-group">
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Wing</Form.Label>
                 <Select
                   options={society}
@@ -918,7 +1004,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Property</Form.Label>
                 <Select
                   options={society}
@@ -932,7 +1018,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Member</Form.Label>
                 <Select
                   options={society}
@@ -945,36 +1031,54 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={4}>
-              <Form.Group className="form-group">
+            <Col xl={3}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>From Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
-            <Col xl={4}>
-              <Form.Group className="form-group">
+            <Col xl={3}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>To Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
-            <Col xl={4}>
-              <Form.Group className="form-group">
-                <Form.Label>Due Date</Form.Label>
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1 tx-semibold">
+                <Form.Label className='mb-2'>Due Date</Form.Label>
+
+                  <Row>
+                    <Col sm={5}>
+
+                      <Form.Check type="radio" label="Society Wise" name="duedt" />
+                    </Col>
+                    <Col sm={5}>
+
+                      <Form.Check type="radio" label="Custom" name="duedt" />
+                    </Col>
+
+                  </Row>
+
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
-            <Col xl={12}>
-              <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Processing of Invoices (23)</p>
-              <div className="progress mg-b-20">
+
+            <Col xl={6}>
+              <p className='tx-semibold tx-16 mb-2 mt-3'> Processing of Invoices (23)</p>
+              {/* <div className="progress mg-b-20">
                 <ProgressBar
                   variant="success"
                   role="progressbar"
                   now={35}
                   animated
                 ></ProgressBar>
-              </div>
+              </div> */}
+              <button className="btn btn-light tx-semibold" type="button" disabled>
+            <span className="spinner-border text-info spinner-border-sm align-middle" style={{ width: "2rem", height: "2rem" }} role="status"
+                aria-hidden="true"></span> <span className='ms-2'>Loading...</span>
+        </button>
             </Col>
 
           </Row>
@@ -1001,7 +1105,7 @@ export default function Accounts() {
         <Modal.Body>
           <Row>
             <Col xl={6}>
-              <Form.Group className="form-group">
+              <Form.Group className="form-group mb-1">
                 <Form.Label>Invoice Type</Form.Label>
                 <Select
                   options={invoicetype}
@@ -1013,11 +1117,24 @@ export default function Accounts() {
                 />
               </Form.Group>
             </Col>
-
             <Col xl={6}>
-              <Form.Group>
+              <Form.Group className="form-group mb-1">
+                <Form.Label>Property Status</Form.Label>
+                <Select
+                  options={propertytype}
+                  placeholder="Select"
+                  name=""
+                  classNamePrefix='Select2'
+                  className="multi-select"
+
+                />
+              </Form.Group>
+            </Col>
+
+            <Col xl={12}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Choose</Form.Label>
-                <div className="form-control mb-3 bg-light process_invoice_radio pt-2">
+                <div className="form-control bg-light process_invoice_radio pt-2">
                   <Row>
                     <Col sm={2}>
 
@@ -1041,7 +1158,7 @@ export default function Accounts() {
 
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Society</Form.Label>
                 <Select
                   options={societyoption}
@@ -1054,8 +1171,8 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={3}>
-              <Form.Group className="form-group">
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Tower</Form.Label>
                 <Select
                   options={society}
@@ -1068,8 +1185,8 @@ export default function Accounts() {
               </Form.Group>
             </Col>
 
-            <Col xl={3}>
-              <Form.Group className="form-group">
+            <Col xl={6}>
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Wing</Form.Label>
                 <Select
                   options={society}
@@ -1097,7 +1214,7 @@ export default function Accounts() {
             </Col>
 
             <Col xl={6}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Member</Form.Label>
                 <Select
                   options={society}
@@ -1109,29 +1226,32 @@ export default function Accounts() {
                 />
               </Form.Group>
             </Col>
-
+            <Col xl={12}>
+<Row>
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>From Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>To Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
 
             <Col xl={4}>
-              <Form.Group className="form-group">
+            <Form.Group className="form-group mb-1">
                 <Form.Label>Due Date</Form.Label>
                 <Form.Control type='date' placeholder='dd/mm/yyyy' className='form-control'></Form.Control>
               </Form.Group>
             </Col>
+            </Row>
+            </Col>
             <Col xl={12}>
-              <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unprocessing of Invoices (2)</p>
+              <p className='text-center tx-semibold tx-16 mb-2 mt-3'>Unrocessing of Invoices (23)</p>
               <div className="progress mg-b-20">
                 <ProgressBar
                   variant="success"
@@ -1773,6 +1893,199 @@ export default function Accounts() {
 
                 </Tab>
 
+
+                <Tab eventKey="OnlineSelf" title="Online Self">
+                  <Row className='bg-light p-2'>
+                    <Formik initialValues={{
+                      fromDate: "",
+                      toDate: "",
+                      property: { value: "", label: "" },
+                      invoiceNumber: "",
+                      amountInFigures: "",
+                    }}
+                      onSubmit={handlePaymentLogSearch}>
+                      {({ setFieldValue, values }) => (
+                        <FormikForm>
+                          <Row className='bg-light p-2'>
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>From <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='date'
+                                  name="fromDate"
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>To <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='date'
+                                  name="toDate"
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Payment Mode<span className="text-danger">*</span></Form.Label>
+
+                                <div className="SlectBox">
+                                  <Select
+                                    options={paymentmode}
+                                    placeholder="Select mode"
+                                    value={values.property}
+                                    // classNamePrefix="selectform"
+                                    classNamePrefix='Select2' className="multi-select"
+
+                                  />
+                                </div>
+
+
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Transaction Id <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='text'
+                                  name="transactionid"
+                                  placeholder='Id'
+                                  className='form-control'
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+
+                            <Col xl={2}>
+                              <Form.Group className="form-group mb-0">
+                                <Form.Label>Amount <span className="text-danger">*</span></Form.Label>
+                                <Field
+                                  type='text'
+                                  name="amountInFigures"
+                                  placeholder='enter amount'
+                                  className='form-control'
+
+                                ></Field>
+                              </Form.Group>
+                            </Col>
+
+                            <Col xl={2}>
+                              <Form.Label className='mb-4'></Form.Label>
+                              <button type="submit" className="btn btn-primary mt-1 me-1" >Search</button>
+                              {/* <button type="button" className="btn btn-info mt-1" onClick={() => viewDemoShow("exportshow")}>Import</button> */}
+                              <Modal centered show={exportshow}>
+                                <Modal.Header>
+                                  <Modal.Title>Import</Modal.Title>
+                                  <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    x
+                                  </Button>
+                                </Modal.Header>
+                                <Modal.Body>
+
+                                  <p>Browse or Drop the file</p>
+                                  <Form.Group className="form-group">
+                                    <div className='textnone'>
+                                      <input type='file' className='fileupload' />
+                                      <p>Drag & Drop your file here or click</p>
+                                    </div>
+
+                                    <div className='upload-data'>
+                                      <div><i className='bi bi-file-earmark-text-fill me-1 text-primary'></i> invoice.xls</div>
+                                      <div><i className='bi bi-x-circle float-end cursor text-danger'></i></div>
+                                    </div>
+
+
+
+                                  </Form.Group>
+
+
+                                </Modal.Body>
+                                <Modal.Footer>
+                                  <Button variant="default" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    Close
+                                  </Button>
+                                  <Button variant="primary" onClick={() => { viewDemoClose("exportshow"); }}>
+                                    Save
+                                  </Button>
+
+                                </Modal.Footer>
+                              </Modal>
+                            </Col>
+
+                          </Row>
+                        </FormikForm>
+                      )}
+
+                    </Formik>
+
+   <table className='table table-border mt-3 bg-white'>
+    <thead>
+      <tr>
+        <th>S.No.</th>
+        <th>Society</th>
+        <th>Date of Payment</th>
+        <th>Payment Mode</th>
+        <th>Transaction ID</th>
+        <th>Amount</th>
+        <th>Bank Name</th>
+        <th>Payment Status</th>
+        <th>Remarks</th>
+        <th>Receipt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>testname</td>
+        <td>2025-05-12</td>
+        <td>NEFT</td>
+        <td>#5475845749</td>
+        <td><i className='fa fa-rupee'></i> 2500.00</td>
+        <td>HDFC Bank</td>
+        <td className='text-center'><Dropdown className='profile-user border-0'>
+                                <Dropdown.Toggle variant="">
+                                  <strong className="text-success">Receipt </strong>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown> </td>
+        <td></td>
+        <td><span className='text-info cursor'>View</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>testname</td>
+        <td>2025-05-12</td>
+        <td>NEFT</td>
+        <td>#5475845749</td>
+        <td><i className='fa fa-rupee'></i> 2500.00</td>
+        <td>HDFC Bank</td>
+        <td className='text-center'><Dropdown className='profile-user border-0'>
+                                <Dropdown.Toggle variant="">
+                                  <strong className="text-success">Receipt </strong>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown> </td>
+        <td></td>
+        <td><span className='text-info cursor'>View</span></td>
+      </tr>
+    </tbody>
+   </table>
+
+                  </Row>
+
+                </Tab>
+
               </Tabs>
 
 
@@ -1789,17 +2102,17 @@ export default function Accounts() {
               </Button>
             </Modal.Header>
 
-            <Modal.Body className='bg-light pt-4'>
+            <Modal.Body className='bg-light'>
               {invoicePaymentOutstanding && (
                 <>
-                  <Col xl={12} className='w-100 tx-20 text-center tx-bold'>
-                    Interest Outstanding: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.interestOutstanding}
+                  <Col xl={12} className='w-100 tx-18 mb-1 text-center'>
+                    Interest Outstanding: <i className="fa fa-rupee tx-16"></i> {invoicePaymentOutstanding.interestOutstanding}
                   </Col>
-                  <Col xl={12} className='w-100 tx-20 text-center tx-bold'>
-                    Interest Till Now: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.currentInterest}
+                  <Col xl={12} className='w-100 tx-18 mb-1 text-center'>
+                    Interest Till Now <i className="fa fa-rupee tx-16"></i> {invoicePaymentOutstanding.currentInterest}
                   </Col>
                   <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
-                    Total: <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
+                    Total <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
                   </Col>
                 </>
               )}
@@ -1816,9 +2129,9 @@ export default function Accounts() {
                     <img alt="" src={imagesData('cheque')} />
                     <span>Cheque</span>
                   </li>
-                  <li>
-                    <img alt="" src={imagesData('online')} />
-                    <span>Online</span>
+                  <li onClick={() => { viewDemoShow("onlineself"); }}>
+                    <img alt="" src={imagesData('online')}  />
+                    <span>Online Self</span>
                   </li>
                 </ul>
               </Card>
@@ -1967,7 +2280,7 @@ export default function Accounts() {
                     <hr />
                     <FormGroup className='mt-3'>
                       <FormLabel className='text-black'>Mobile Number</FormLabel>
-                      <Form.Control onChange={(e) => setMobile(e.target.value)} className='form-control' placeholder='Enter Number' type="text"></Form.Control>
+                      <input onChange={(e) => setMobile(e.target.value)} className='form-control' required placeholder='Enter Number' type="text"></input>
                     </FormGroup>
 
                     <FormGroup className='mt-5'>
@@ -2000,15 +2313,32 @@ export default function Accounts() {
                 chequeReceivedDate: '',
                 chequeNumber: '',
                 bankName: '',
-                branch: '',
+                branchName: '',
                 amountInFigures: '',
                 amountInWords: '',
                 mobile: ''
               }}
-              // validationSchema={validationSchema}
-              onSubmit={handleChequeSubmit}
+              validationSchema={Yup.object({
+                chequeDate: Yup.string().required('Cheque Date is required'),
+                chequeIssuedDate: Yup.string().required('Cheque Issued Date is required'),
+                chequeReceivedDate: Yup.string().required('Cheque Clearing Date is required'),
+                chequeNumber: Yup.string().required('Cheque Number is required'),
+                bankName: Yup.string().required('Bank Name is required'),
+                branchName: Yup.string().required('Branch is required'),
+                amountInFigures: Yup.string().required('Amount in Figures is required'),
+                mobile: Yup.string()
+                  .required('Mobile Number is required')
+                  .matches(/^[0-9]{10}$/, 'Mobile Number must be 10 digits'),
+              })}
+              validateOnChange={true}
+              validateOnBlur={true}
+              validateOnMount={false}
+              onSubmit={(values, { setSubmitting }) => {
+                handleChequeSubmit(values);
+                setSubmitting(false);
+              }}
             >
-              {({ values, setFieldValue }) => {
+              {({ values, setFieldValue, errors, touched, isSubmitting }) => {
                 useEffect(() => {
                   if (values.amountInFigures && !isNaN(Number(values.amountInFigures))) {
                     const amount = parseInt(values.amountInFigures, 10);
@@ -2020,8 +2350,9 @@ export default function Accounts() {
                     setFieldValue('amountInWords', '');
                   }
                 }, [values.amountInFigures, setFieldValue]);
+
                 return (
-                  <FormikForm>
+                  <FormikForm noValidate>
                     <Modal.Body className='bg-light pt-2'>
                       <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
                         <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
@@ -2031,49 +2362,49 @@ export default function Accounts() {
                           <Col xl={6}>
                             <FormGroup>
                               <FormLabel>Cheque Date</FormLabel>
-                              <Field name="chequeDate" type="date" className="form-control" />
+                              <Field name="chequeDate" type="date" className={`form-control ${errors.chequeDate && touched.chequeDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeDate" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
                               <FormLabel>Cheque Issued Date</FormLabel>
-                              <Field name="chequeIssuedDate" type="date" className="form-control" />
+                              <Field name="chequeIssuedDate" type="date" className={`form-control ${errors.chequeIssuedDate && touched.chequeIssuedDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeIssuedDate" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
-                              <FormLabel>Cheque Recived Date</FormLabel>
-                              <Field name="chequeReceivedDate" type="date" className="form-control" />
+                              <FormLabel>Cheque Clearing Date</FormLabel>
+                              <Field name="chequeReceivedDate" type="date" className={`form-control ${errors.chequeReceivedDate && touched.chequeReceivedDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeReceivedDate" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
                               <FormLabel>Cheque Number</FormLabel>
-                              <Field name="chequeNumber" type="text" className="form-control" />
+                              <Field name="chequeNumber" type="text" className={`form-control ${errors.chequeNumber && touched.chequeNumber ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeNumber" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={12}>
                             <FormGroup>
                               <FormLabel>Bank Name</FormLabel>
-                              <Field name="bankName" type="text" className="form-control" />
+                              <Field name="bankName" type="text" className={`form-control ${errors.bankName && touched.bankName ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="bankName" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={12}>
                             <FormGroup>
                               <FormLabel>Branch</FormLabel>
-                              <Field name="branchName" type="text" className="form-control" />
+                              <Field name="branchName" type="text" className={`form-control ${errors.branchName && touched.branchName ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="branchName" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={12}>
                             <FormGroup>
                               <FormLabel>Amount (in figures)</FormLabel>
-                              <Field name="amountInFigures" type="text" className="form-control" />
+                              <Field name="amountInFigures" type="text" className={`form-control ${errors.amountInFigures && touched.amountInFigures ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="amountInFigures" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
@@ -2090,7 +2421,7 @@ export default function Accounts() {
                               <Field
                                 name="mobile"
                                 type="text"
-                                className="form-control"
+                                className={`form-control ${errors.mobile && touched.mobile ? 'is-invalid' : ''}`}
                                 placeholder="Enter mobile number for verification"
                               />
                               <ErrorMessage name="mobile" component="div" className="text-danger" />
@@ -2098,7 +2429,11 @@ export default function Accounts() {
                           </Col>
                         </Row>
                         <FormGroup>
-                          <Button className='btn btn-primary w-100 mt-3' type="submit">
+                          <Button
+                            className='btn btn-primary w-100 mt-3'
+                            type="submit"
+                            disabled={isSubmitting}
+                          >
                             Send OTP
                           </Button>
                         </FormGroup>
@@ -2106,8 +2441,7 @@ export default function Accounts() {
                     </Modal.Body>
                   </FormikForm>
                 )
-              }
-              }
+              }}
             </Formik>
 
 
@@ -2115,11 +2449,115 @@ export default function Accounts() {
 
           </Modal>
 
+          <Modal show={onlineself} centered>
+            <Modal.Header>
+              <Modal.Title>Online Self</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("onlineself"); }}>
+                x
+              </Button>
+            </Modal.Header>
+
+                    <Modal.Body>
+                      <Row>
+                        <Col sm={12}>
+                    <FormGroup>
+                              <FormLabel>Society</FormLabel>
+                              <Select
+                      options={society}
+                      placeholder="Select society"
+                      name="paymentmode"
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+                            </FormGroup>
+                            </Col>
+                            <Col sm={12}>
+                    <FormGroup>
+                              <FormLabel>Property</FormLabel>
+                              <Select
+                      options={propertyOptions}
+                      placeholder="Select property"
+                      name="paymentmode"
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+                            </FormGroup>
+                            </Col>
+                            <Col sm={6}>
+                    <FormGroup>
+                              <FormLabel>Date of Payment</FormLabel>
+<Form.Control type='date'/>
+                            </FormGroup>
+</Col>
+<Col sm={6}>
+
+                            <FormGroup>
+                              <FormLabel>Payment Mode</FormLabel>
+                              <Select
+                      options={paymentmode}
+                      placeholder="Select mode"
+                      name="paymentmode"
+                      classNamePrefix='Select2'
+                      className="multi-select"
+
+                    />
+                            </FormGroup>
+</Col>
+<Col sm={6}>
+                            <FormGroup>
+                              <FormLabel>Transaction ID</FormLabel>
+<Form.Control type='text' placeholder='enter id'/>
+                            </FormGroup>
+</Col>
+<Col sm={6}>
+                            <FormGroup>
+                              <FormLabel>Amount</FormLabel>
+<Form.Control type='text' placeholder='0.00'/>
+                            </FormGroup>
+</Col>
+<Col sm={12}>
+                            <FormGroup>
+                              <FormLabel>Bank Name</FormLabel>
+<Form.Control type='text' placeholder='enter name'/>
+                            </FormGroup>
+</Col>
+
+<Col sm={12}>
+                            <FormGroup>
+                              <FormLabel>Remarks</FormLabel>
+<textarea className='form-control' placeholder='enter remarks'></textarea>
+                            </FormGroup>
+                            </Col>
+                            <Col sm={12}>
+                            <FormGroup>
+                              <FormLabel>Upload Receipt</FormLabel>
+<Form.Control type='file'/>
+                            </FormGroup>
+                            </Col>
+                            </Row>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                    <Button type='button' className='btn btn-default'  onClick={() => { viewDemoClose("onlineself"); }}>Cancel</Button>
+                    <Button type='submit' className='btn btn-primary me-2'  onClick={() => { viewDemoClose("onlineself"); }}>Save</Button>
+
+                    </Modal.Footer>
+
+          </Modal>
+
 
           <Modal show={otpverify} centered>
             <Modal.Header>
               <Modal.Title>OTP Verification</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => viewDemoClose("otpverify")}>x</Button>
+              <Button variant="" className="btn btn-close" onClick={() => {
+                setMobile("");
+                setDenominations(denominationsList);
+                setOtp(["", "", "", "", "", ""]);
+                viewDemoClose("otpverify")
+              }
+              }>x</Button>
             </Modal.Header>
 
             <Modal.Body className='p-5 text-center'>
@@ -2153,6 +2591,43 @@ export default function Accounts() {
                 Resend OTP
               </p>
 
+              <p className='text-info w-100 text-center mt-4' style={{ cursor: 'pointer' }}>
+                {/* Resend OTP */}
+              </p>
+            </Modal.Body>
+          </Modal>
+          <Modal show={sendOTP} centered>
+            <Modal.Header>
+              <Modal.Title>Send OTP</Modal.Title>
+              <Button variant="" className="btn btn-close" onClick={() => {
+                setMobile("");
+                viewDemoClose("sendOTP")
+              }}>x</Button>
+            </Modal.Header>
+
+            <Modal.Body className='p-5 text-center'>
+              <h4 className='text-black'>Send Verification OTP</h4>
+              <p>Enter Mobile Number</p>
+              <Row className='justify-content-center'>
+                <Col xs={8} className='px-1'>
+                  <Form.Control
+                    type="text"
+                    maxLength={10}
+                    value={mobile}
+                    className='text-center'
+                    onChange={(e) => setMobile(e.target.value)}
+                  />
+                </Col>
+              </Row>
+
+
+              <FormGroup>
+                <Col xl={8} className='m-auto'>
+                  <Button className='btn btn-primary w-100 mt-4' type="button" onClick={handleSendOTP}>
+                    Send
+                  </Button>
+                </Col>
+              </FormGroup>
               <p className='text-info w-100 text-center mt-4' style={{ cursor: 'pointer' }}>
                 {/* Resend OTP */}
               </p>
@@ -2317,7 +2792,7 @@ export default function Accounts() {
                   </Col>
                   <Col xl={6}>
                     <FormGroup>
-                      <FormLabel>Cheque Recived Date</FormLabel>
+                      <FormLabel>Cheque Clearing Date</FormLabel>
                       <Form.Control className='form-control' value={chequeViewData?.createdAt} disabled type="text" />
                     </FormGroup>
                   </Col>
