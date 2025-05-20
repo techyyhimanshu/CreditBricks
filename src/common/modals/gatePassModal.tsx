@@ -9,11 +9,12 @@ import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
 import { getMembersOfPropertyApi, getPropertyOutstandingAmountApi, getTenantsOfPropertyApi } from "../../api/property-api";
-import { getVendorForDropDownApi } from "../../api/vendor-api";
+import { getVendorDetail, getVendorForDropDownApi } from "../../api/vendor-api";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import TermsAndConditionModal from "./termsAndConditionModal";
 import { getTermsConditionBySocietyAndTypeApi } from "../../api/termsCondition-api";
+import { getTenantDetailsApi } from "../../api/tenant-api";
 
 interface ProductModalProps {
     show: boolean;
@@ -34,7 +35,49 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
     const [vendorsForDropDown, setVendorsForDropDown] = useState([]);
     const [tenatview, settenatview] = useState(false);
     const [termsconditionsview, settermsconditionsview] = useState(false);
-    const [termsAndConditionData,setTermsAndConditionData]=useState("")
+    const [termsAndConditionData, setTermsAndConditionData] = useState("")
+    const [singleVendorData, setSingleVendordata] = useState<any>({})
+    const [tenantDetails, setTenantDetails] = useState(
+        {
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            email: '',
+            mobileNumber: '',
+            alternateMobileNumber: '',
+            dateOfBirth: '',
+            anniversary: '',
+            address: '',
+            country: '',
+            state: '',
+            city: '',
+            pincode: '',
+            havePet: '',
+            familyMembers: '',
+            property:
+            {
+                rentAgreementStartDate: '',
+                rentAgreementEndDate: '',
+                monthlyRent: '',
+                depositAmount: '',
+                dueAmount: '',
+                rentRegistrationId: '',
+                rentAgreementFile: '',
+                policeVerificationFile: '',
+                propertyName: ''
+            },
+            society: {
+                societyIdentifier: "",
+                societyName: ""
+            },
+            tenantVehicles: [
+                {
+                    vehicleNumber: '',
+                    vehicleType: '',
+                    vehicleRcFilePath: ""
+                }
+            ]
+        });
 
     const [vendorview, setvendorview] = useState(false);
     const { society } = useSelector((state: RootState) => state.auth)
@@ -84,7 +127,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 setTermsAndConditionData(response.data.data?.termCondition)
             }
         } catch (error: any) {
-            
+
             // const errorMessage = handleApiError(error)
             // showToast("error", errorMessage)
         }
@@ -147,7 +190,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         try {
             const response = await getVendorForDropDownApi();
             const formattedData = response.data.data.map((item: any) => ({
-                value: item.identifier,
+                value: item.vendorIdentifier,
                 label: `${item.contactPersonName}`,
             }));
             setVendorsForDropDown(formattedData);
@@ -238,6 +281,26 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         } catch (error: any) {
             const errorMessage = handleApiError(error)
             showToast('error', errorMessage)
+        }
+    }
+
+    const fetchTenantDetails = async (identifier: string) => {
+        try {
+            const response = await getTenantDetailsApi(identifier)
+            if (response.status === 200) {
+                setTenantDetails(response.data.data)
+            }
+        } catch (error) {
+
+        }
+    }
+
+    const fetchVendorDetails = async (identifier: string) => {
+        try {
+            const response = await getVendorDetail(identifier)
+            setSingleVendordata(response?.data?.data || [])
+        } catch (error) {
+
         }
     }
 
@@ -357,6 +420,18 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                     }}
                     onSubmit={handleSubmit}>
                     {({ values, setFieldValue }) => {
+                        console.log(values.vendor.value)
+                        useEffect(() => {
+                            if (values.tenant.value) {
+                                fetchTenantDetails(values.tenant.value)
+                            }
+                        }, [values.tenant.value])
+                        useEffect(() => {
+                            if (values.vendor.value) {
+                                console.log("hi there")
+                                fetchVendorDetails(values.vendor.value)
+                            }
+                        }, [values.vendor.value])
                         useEffect(() => {
                             if (society) {
                                 setFieldValue("society", society);
@@ -555,7 +630,13 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                         ["Tenant"].includes(values?.category?.label || "") &&
                                                         <Col xl="4">
                                                             <Form.Group className="form-group mb-1">
-                                                                <Form.Label>Tenant <span className='text-info float-end cursor' onClick={() => { viewDemoShow("tenatview"); }}
+                                                                <Form.Label>Tenant <span className='text-info float-end cursor' onClick={() => {
+                                                                    if (values.tenant.value) {
+                                                                        viewDemoShow("tenatview");
+                                                                    }
+                                                                }
+                                                                }
+
                                                                 >View Tenant Detail</span> </Form.Label>
                                                                 <Select
                                                                     options={tenantsForDropDown}
@@ -574,7 +655,11 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                         ["Material"].includes(values?.category?.label || "") &&
                                                         <Col xl="4">
                                                             <Form.Group className="form-group mb-1">
-                                                                <Form.Label>Vendor <span className='text-info float-end cursor' onClick={() => { viewDemoShow("vendorview"); }}>View Vendor Detail</span> </Form.Label>
+                                                                <Form.Label>Vendor <span className='text-info float-end cursor' onClick={() => {
+                                                                    if (values.vendor.value) {
+                                                                        viewDemoShow("vendorview");
+                                                                    }
+                                                                }}>View Vendor Detail</span> </Form.Label>
                                                                 <Select
                                                                     options={vendorsForDropDown}
                                                                     placeholder="Select vendor"
@@ -1093,74 +1178,75 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                 <Card.Body>
                                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Details</h5>
                                     <Row>
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Society Name</Form.Label>
-                                            <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>N/A</Link>
+                                        <Col xl={6}>
+                                            <FormLabel>Society Name</FormLabel>
+                                            <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>{tenantDetails?.society?.societyName || "N/A"}</Link>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Property Name</Form.Label>
-                                            <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>N/A</Link>
+                                        <Col xl={6}>
+                                            <FormLabel>Property Name</FormLabel>
+                                            <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>{tenantDetails?.property?.propertyName || "N/A"}</Link>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Tenant Name</Form.Label>
-                                            <p className='tx-15'>Rohit Sharma</p>
-                                        </Col>
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Tenant Number</Form.Label>
-                                            <p className='tx-15 col-sm-11 p-0'>1212621024</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Tenant Name</FormLabel>
+                                            <p className='tx-15'>{`${tenantDetails?.firstName} ${tenantDetails?.middleName} ${tenantDetails?.lastName}`}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Alternative Mobile</Form.Label>
-                                            <p className='tx-15 col-sm-11 p-0'>-</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Tenant Number</FormLabel>
+                                            <p className='tx-15 col-sm-11 p-0'>{tenantDetails.mobileNumber}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Tenant Email</Form.Label>
-                                            <p className='tx-15'>orhit@gmail.com</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Alternative Mobile</FormLabel>
+                                            <p className='tx-15 col-sm-11 p-0'>{tenantDetails.alternateMobileNumber}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Date Of Birth</Form.Label>
-                                            <p className='tx-15'>2025-02-27</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Tenant Email</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.email}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Address</Form.Label>
-                                            <p className='tx-15 col-sm-11 p-0'>123st lauren</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Date Of Birth</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.dateOfBirth}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>City</Form.Label>
-                                            <p className='tx-15'>Delhi</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Address</FormLabel>
+                                            <p className='tx-15 col-sm-11 p-0'>{tenantDetails.address}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>State</Form.Label>
-                                            <p className='tx-15'>Delhi</p>
+                                        <Col xl={6}>
+                                            <FormLabel>City</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.city}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Country</Form.Label>
-                                            <p className='tx-15'>India</p>
+                                        <Col xl={6}>
+                                            <FormLabel>State</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.state}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Pincode</Form.Label>
-                                            <p className='tx-15'>250007</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Country</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.country}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Pincode</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.pincode}</p>
                                         </Col>
 
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Family Members</Form.Label>
-                                            <p className='tx-15'>8</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Family Members</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.familyMembers}</p>
                                         </Col>
 
-                                        <Col xl={6} className='mb-2'>
-                                            <Form.Label>Pets</Form.Label>
-                                            <p className='tx-15'>false</p>
+                                        <Col xl={6}>
+                                            <FormLabel>Pets</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.havePet?.toString()}</p>
                                         </Col>
 
                                     </Row>
@@ -1172,23 +1258,30 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                         <Col xl={4}>
 
                             <Card>
-                                <Card.Body className='pb-3'>
+                                <Card.Body className='pb-0'>
                                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Current Lease</h5>
                                     <Row>
                                         <Col xl={6}>
                                             <p className='mb-0 text-muted'>Agreement Start Date</p>
-                                            <p className='tx-15 tx-semibold'>2025-02-28</p>
+                                            <p className='tx-15 tx-semibold'>{tenantDetails?.property?.rentAgreementStartDate}</p>
                                             <p className='mb-0 text-muted'>Agreement End Date</p>
-                                            <p className='tx-15 tx-semibold mb-2'>2025-04-05</p>
+                                            <p className='tx-15 tx-semibold mb-2'>{tenantDetails?.property?.rentAgreementEndDate}</p>
                                         </Col>
                                         <Col xl={6} className='text-end'>
                                             <p className='mb-0 text-muted'>Monthly Rent</p>
-                                            <p className='tx-15 tx-semibold text-primary'>₹ 5000</p>
+                                            <p className='tx-15 tx-semibold text-primary'>₹ {tenantDetails?.property?.monthlyRent}</p>
                                             <p className='mb-0 pt-2 text-muted'></p>
                                             {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
                                         </Col>
 
-                                        <Col xl={12}>
+                                        {/* <Col xl={12}>
+                                            <div className="progress mb-1">
+                                                <ProgressBar
+                                                    variant="info"
+                                                    role="progressbar"
+                                                    now={55}
+                                                ></ProgressBar>
+                                            </div>
 
                                             <Row>
                                                 <Col xl={6} className='text-muted text-bold'>
@@ -1198,19 +1291,21 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                     365 days left
                                                 </Col>
                                             </Row>
-                                        </Col>
+                                        </Col> */}
 
                                         <Col xl={6}>
                                             <p className='mb-0 mt-2 text-muted'>Due Amount</p>
-                                            <p className='tx-15 tx-semibold'>₹ 1000</p>
+                                            <p className='tx-15 tx-semibold'>₹ {tenantDetails?.property?.dueAmount}</p>
                                         </Col>
                                         <Col xl={6}>
                                             <p className='mb-0 mt-2 text-muted text-end'>Deposit Amount</p>
-                                            <p className='tx-15 tx-semibold mb-0 text-end'>₹ 4000</p>
+                                            <p className='tx-15 tx-semibold mb-0 text-end'>₹ {tenantDetails?.property?.depositAmount}</p>
                                         </Col>
 
                                     </Row>
-
+                                    <Row>
+                                        N/A
+                                    </Row>
                                 </Card.Body>
 
                             </Card>
@@ -1219,34 +1314,48 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                             <Card>
                                 <Card.Body className='pb-1'>
                                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
+                                    {
+                                        tenantDetails?.property?.rentAgreementFile ?
+                                            <><Row>
+                                                <Col xl={2} className='p-0'>
+                                                    <img
+                                                        alt="" className='w-100'
+                                                        src={imagesData('pdficon')}
+                                                    />
+                                                </Col>
+                                                <Col xl={9} className='p-0'>
+                                                    <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : {tenantDetails?.property?.rentRegistrationId}</p>
+                                                    <a
+                                                        href={`${import.meta.env.VITE_STATIC_PATH}${tenantDetails?.property?.rentAgreementFile}`}
+                                                        className="text-info"
+                                                        download={tenantDetails?.property?.rentAgreementFile}
+                                                    >
+                                                        Download
+                                                    </a>
+                                                </Col>
+                                            </Row></> : <>N/A</>
+                                    }
+
                                     <Row>
-                                        <Col xl={2} className='p-0'>
-                                            <img
-                                                alt="" className='w-100'
-                                                src={imagesData('pdficon')}
-                                            />
-                                        </Col>
-                                        <Col xl={9} className='p-0'>
-                                            <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : 565675756</p>
-                                            <Link to={``} className="text-info">Download</Link>
-                                        </Col>
-                                    </Row>
-
-
-                                    <Row>
-                                        <Col xl={2} className='p-0'>
-                                            <img alt="" className='w-100'
-                                                src={imagesData('pdficon')}
-                                            />
-                                        </Col>
-                                        <Col xl={9} className='p-0'>
-                                            <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
-                                            <Link to={``}
-                                                className="text-info">
-                                                Download
-                                            </Link>
-                                        </Col>
-
+                                        {
+                                            tenantDetails?.property?.policeVerificationFile ? <>
+                                                <Col xl={2} className='p-0'>
+                                                    <img
+                                                        alt="" className='w-100'
+                                                        src={imagesData('pdficon')}
+                                                    />
+                                                </Col>
+                                                <Col xl={9} className='p-0'>
+                                                    <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
+                                                    <a
+                                                        href={`${import.meta.env.VITE_STATIC_PATH}${tenantDetails?.property?.policeVerificationFile}`}
+                                                        className="text-info"
+                                                        download
+                                                    >
+                                                        Download
+                                                    </a>
+                                                </Col></> : <>N/A</>
+                                        }
                                     </Row>
                                 </Card.Body>
                             </Card>
@@ -1256,28 +1365,35 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                 <Card.Body className='pb-1'>
                                     <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
                                     <Row>
-
-
-
-                                        <Row>
-                                            <Col xl={2} className='p-0'>
-                                                <img
-                                                    alt="Vehicle Icon"
-                                                    className='w-100'
-                                                    src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
-                                                />
+                                        {tenantDetails?.tenantVehicles?.length === 0 ? (
+                                            <Col xl={12} className='p-0'>
+                                                <span>N/A</span> {/* Show N/A if no vehicles are available */}
                                             </Col>
-                                            <Col xl={9} className='p-0'>
-                                                <p className='tx-14 mb-0 mt-2 tx-semibold'>
-                                                    Vehicle No. dl1ct1004  <span className='text-muted'>(4Wheeler)</span>
-                                                </p>
-                                                <Link to={``}
-                                                    className="text-info" >
-                                                    Download
-                                                </Link>
-                                            </Col>
-                                        </Row>
-
+                                        ) : (
+                                            tenantDetails?.tenantVehicles?.map((vehicle: any, index: number) => (
+                                                <Row key={index}>
+                                                    <Col xl={2} className='p-0'>
+                                                        <img
+                                                            alt="Vehicle Icon"
+                                                            className='w-100'
+                                                            src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
+                                                        />
+                                                    </Col>
+                                                    <Col xl={9} className='p-0'>
+                                                        <p className='tx-14 mb-0 mt-2 tx-semibold'>
+                                                            Vehicle No. {vehicle?.vehicleNumber} <span className='text-muted'>({vehicle?.vehicleType})</span>
+                                                        </p>
+                                                        <a
+                                                            href={`${import.meta.env.VITE_STATIC_PATH}${vehicle?.vehicleRcFilePath}`}
+                                                            className="text-info"
+                                                            download
+                                                        >
+                                                            Download
+                                                        </a>
+                                                    </Col>
+                                                </Row>
+                                            ))
+                                        )}
                                     </Row>
                                 </Card.Body>
                             </Card>
@@ -1290,130 +1406,132 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
             </Modal>
 
             {/* Vendor View */}
-            <Modal show={vendorview} size="xl" centered>
-                <Modal.Header>
-                    <Modal.Title>Vendor Details</Modal.Title>
-                    <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("vendorview"); }}>
-                        x
-                    </Button>
-                </Modal.Header>
+            {
+                vendorview && singleVendorData && Object.keys(singleVendorData).length > 0 && <Modal show={vendorview} size="xl" centered>
+                    <Modal.Header>
+                        <Modal.Title>Vendor Details</Modal.Title>
+                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("vendorview"); }}>
+                            x
+                        </Button>
+                    </Modal.Header>
 
-                <Modal.Body className='bg-light'>
-                    <Row>
-                        <Col xl={8}>
-                            <Card>
-                                <Card.Body>
-                                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Basic Details</h5>
-                                    <Row>
-                                        <Col xl={6}>
-                                            <FormLabel>Vendor Name</FormLabel>
-                                            <p className='tx-15'>Siddhi solutions</p>
-                                        </Col>
-
-
-                                        <Col xl={6}>
-                                            <FormLabel>Vendor Address</FormLabel>
-                                            <p className='tx-15'>Ghaziabad</p>
-                                        </Col>
-
-                                        <Col xl={6}>
-                                            <FormLabel>GST Number</FormLabel>
-                                            <p className='tx-15'>GSTIN768JU</p>
-                                        </Col>
-
-                                        <Col xl={6}>
-                                            <FormLabel>PAN Number</FormLabel>
-                                            <p className='tx-15'>FUOPH8989N</p>
-                                        </Col>
+                    <Modal.Body className='bg-light'>
+                        <Row>
+                            <Col xl={8}>
+                                <Card>
+                                    <Card.Body>
+                                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Basic Details</h5>
+                                        <Row>
+                                            <Col xl={6}>
+                                                <FormLabel>Vendor Name</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.vendorName || "N/A"}</p>
+                                            </Col>
 
 
-                                        <Col xl={6}>
-                                            <FormLabel>Product</FormLabel>
-                                            <p className='tx-15'>Security</p>
-                                        </Col>
+                                            <Col xl={6}>
+                                                <FormLabel>Vendor Address</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.vendorAddress || "N/A"}</p>
+                                            </Col>
+
+                                            <Col xl={6}>
+                                                <FormLabel>GST Number</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.gstin || "N/A"}</p>
+                                            </Col>
+
+                                            <Col xl={6}>
+                                                <FormLabel>PAN Number</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.pan || "N/A"}</p>
+                                            </Col>
 
 
-
-                                        <Col xl={6}>
-                                            <FormLabel>Service Type</FormLabel>
-                                            <p className='tx-15 col-sm-11 p-0'>On Request</p>
-                                        </Col>
-
-                                        <Col xl={6}>
-                                            <FormLabel>Frequency</FormLabel>
-                                            <p className='tx-1 p-0'>Yearly</p>
-                                        </Col>
-                                        <hr className='w-100' />
-                                        <Col xl={6}>
-                                            <FormLabel>Contact Person Name</FormLabel>
-                                            <p className='tx-15'>sudhir sharma</p>
-                                        </Col>
-
-                                        <Col xl={6}>
-                                            <FormLabel>Contact Person Number</FormLabel>
-                                            <p className='tx-15'>9528185696</p>
-                                        </Col>
-
-                                        <Col xl={6}>
-                                            <FormLabel>Contact Value:</FormLabel>
-                                            <p className='tx-15'>GST</p>
-                                        </Col>
-
-
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-
-
-                        </Col>
-                        <Col xl={4} className='p-0 pe-3'>
-
-
-                            <Card>
-                                <Card.Body>
-                                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Contract Period Details</h5>
-                                    <Row>
-                                        <Col xl={5} className='mb-1 tx-12'>Start Date</Col>
-                                        <Col xl={7} className='tx-semibold tx-12'>2025-03-01</Col>
-                                        <Col xl={5} className='mb-1 tx-12'>End Date</Col>
-                                        <Col xl={7} className='tx-semibold tx-12'>2026-03-01</Col>
-                                        <Col xl={5} className='mb-1 tx-12'>Total Period Calculation</Col>
-                                        <Col xl={7} className='tx-semibold tx-12'>1</Col>
-                                        <Col xl={12} className='mb-1 tx-12'>Contact Terms & Conditions
-                                        </Col>
-                                        <Col xl={12} className='tx-semibold tx-12'>N/A</Col>
-
-                                    </Row>
-                                </Card.Body>
-                            </Card>
+                                            <Col xl={6}>
+                                                <FormLabel>Product</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.product || "N/A"}</p>
+                                            </Col>
 
 
 
-                            <Card>
-                                <Card.Body>
-                                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Bank Details Details</h5>
-                                    <Row>
+                                            <Col xl={6}>
+                                                <FormLabel>Service Type</FormLabel>
+                                                <p className='tx-15 col-sm-11 p-0'>{singleVendorData.serviceType || "N/A"}</p>
+                                            </Col>
 
-                                        <Col xl={5} className='mb-1 tx-12'>Society Bank Name</Col>
-                                        <Col xl={7} className='tx-semibold tx-12'>Punjab natinal bank</Col>
-                                        <Col xl={5} className='mb-1 tx-12'>Account Number</Col>
-                                        <Col xl={7} className='tx-semibold tx-12'>5874963258</Col>
-                                        <Col xl={5} className='mb-1 tx-12'>Branch Name</Col>
-                                        <Col xl={7} className='tx-semibold tx-12'>Tigri</Col>
-                                        <Col xl={5} className='mb-1 tx-12 '>IFSC Code</Col>
-                                        <Col xl={7} className='tx-semibold tx-12'>PUNB789U</Col>
+                                            <Col xl={6}>
+                                                <FormLabel>Frequency</FormLabel>
+                                                <p className='tx-1 p-0'>{singleVendorData.frequency || "N/A"}</p>
+                                            </Col>
+                                            <hr className='w-100' />
+                                            <Col xl={6}>
+                                                <FormLabel>Contact Person Name</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.contactPersonName || "N/A"}</p>
+                                            </Col>
 
-                                    </Row>
-                                </Card.Body>
-                            </Card>
+                                            <Col xl={6}>
+                                                <FormLabel>Contact Person Number</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.contactPersonNumber || "N/A"}</p>
+                                            </Col>
+
+                                            <Col xl={6}>
+                                                <FormLabel>Contact Value:</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.contactValue || "N/A"}</p>
+                                            </Col>
+
+
+                                        </Row>
+                                    </Card.Body>
+                                </Card>
+
+
+                            </Col>
+                            <Col xl={4} className='p-0 pe-3'>
+
+
+                                <Card>
+                                    <Card.Body>
+                                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Contract Period Details</h5>
+                                        <Row>
+                                            <Col xl={5} className='mb-1 tx-12'>Start Date</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.contractStartDate || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12'>End Date</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.contractEndDate || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12'>Total Period Calculation</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.totalPeriodCalculation || "N/A"}</Col>
+                                            <Col xl={12} className='mb-1 tx-12'>Contact Terms & Conditions
+                                            </Col>
+                                            <Col xl={12} className='tx-semibold tx-12'>{singleVendorData.terms || "N/A"}</Col>
+
+                                        </Row>
+                                    </Card.Body>
+                                </Card>
 
 
 
-                        </Col>
-                    </Row>
-                </Modal.Body>
+                                <Card>
+                                    <Card.Body>
+                                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Bank Details Details</h5>
+                                        <Row>
 
-            </Modal>
+                                            <Col xl={5} className='mb-1 tx-12'>Society Bank Name</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.bankName || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12'>Account Number</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.accountNumber || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12'>Branch Name</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.branchName || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12 '>IFSC Code</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.ifsc || "N/A"}</Col>
+
+                                        </Row>
+                                    </Card.Body>
+                                </Card>
+
+
+
+                            </Col>
+                        </Row>
+                    </Modal.Body>
+
+                </Modal>
+            }
 
         </>
     )

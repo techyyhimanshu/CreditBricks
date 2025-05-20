@@ -731,7 +731,7 @@ export default function EditPropertyMaster() {
                                                                             onChange={(selected) => setFieldValue("dealType", selected)}
                                                                             placeholder="Select Type"
                                                                             classNamePrefix="Select2"
-                                                                            isDisabled={ownerChange}
+                                                                            // isDisabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -747,7 +747,7 @@ export default function EditPropertyMaster() {
                                                                                 onChange={(selected) => setFieldValue("tenant", selected)}
                                                                                 placeholder="Select tenant"
                                                                                 classNamePrefix="Select2"
-                                                                                isDisabled={ownerChange}
+                                                                                // isDisabled={ownerChange}
                                                                             />
                                                                             {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
                                                                         </Form.Group>
@@ -778,7 +778,7 @@ export default function EditPropertyMaster() {
                                                                                         value="yes"
                                                                                         checked={values.primaryProperty === "yes"}
                                                                                         onChange={() => setFieldValue("primaryProperty", "yes")}
-                                                                                        disabled={ownerChange}
+                                                                                        // disabled={ownerChange}
                                                                                     />
                                                                                     <label htmlFor="yes" className="ms-2">Yes</label>
                                                                                 </div>
@@ -791,7 +791,7 @@ export default function EditPropertyMaster() {
                                                                                         value="no"
                                                                                         checked={values.primaryProperty === "no"}
                                                                                         onChange={() => setFieldValue("primaryProperty", "no")}
-                                                                                        disabled={ownerChange}
+                                                                                        // disabled={ownerChange}
                                                                                     />
                                                                                     <label htmlFor="no" className="ms-2">No</label>
                                                                                 </div>
@@ -799,19 +799,6 @@ export default function EditPropertyMaster() {
                                                                         </Form.Group>
                                                                     </Col>
                                                                 }
-
-
-                                                                {/* <Col xl={4}>
-                        <Form.Group className="form-group">
-                          <Form.Label>Designation</Form.Label>
-                          <FormControl
-                            type="text"
-                            name="designation"
-                            placeholder="Designation"
-                            className="form-control"
-                          />
-                        </Form.Group>
-                      </Col> */}
 
                                                             </Row>
 
@@ -976,7 +963,7 @@ export default function EditPropertyMaster() {
                                                                             name="flatRegistrationNumber"
                                                                             placeholder="Flat Registration Number"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -990,7 +977,7 @@ export default function EditPropertyMaster() {
                                                                             name="dateOfAgreement"
                                                                             placeholder="Date of Agreement"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1005,7 +992,7 @@ export default function EditPropertyMaster() {
                                                                             name="dateOfRegistration"
                                                                             placeholder="Date of Registration"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1041,7 +1028,7 @@ export default function EditPropertyMaster() {
                                                                             name="openingPrincipalAmount"
                                                                             placeholder="Principal Amount"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1054,7 +1041,7 @@ export default function EditPropertyMaster() {
                                                                             name="openingInterestAmount"
                                                                             placeholder="Interest Amount"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1066,7 +1053,7 @@ export default function EditPropertyMaster() {
                                                                             type="date"
                                                                             name="dateOfOpeningBalance"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1200,7 +1187,7 @@ export default function EditPropertyMaster() {
                                                                             name="intercomNumber"
                                                                             placeholder="Intercom Number"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1214,7 +1201,7 @@ export default function EditPropertyMaster() {
                                                                             name="electricityNumber"
                                                                             placeholder="Consumer Electricity Number"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1228,7 +1215,7 @@ export default function EditPropertyMaster() {
                                                                             name="gasConnectionNumber"
                                                                             placeholder="Gas Connection Number"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1257,7 +1244,7 @@ export default function EditPropertyMaster() {
                                                                             name="monthlyMaintenance"
                                                                             placeholder="Monthly Paid Maintenance to Builder"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1272,7 +1259,7 @@ export default function EditPropertyMaster() {
                                                                             name="monthlyMaintenanceUpto"
                                                                             placeholder="Monthly Paid Maintenance to Builder Upto"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1287,7 +1274,7 @@ export default function EditPropertyMaster() {
                                                                             name="monthlyPaidArrears"
                                                                             placeholder="Monthly Paid Arrears"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>
@@ -1302,7 +1289,7 @@ export default function EditPropertyMaster() {
                                                                             name="monthlyPaidArrearsUpto"
                                                                             placeholder="Monthly Paid Arrears Upto"
                                                                             className="form-control"
-                                                                            disabled={ownerChange}
+                                                                            // disabled={ownerChange}
                                                                         />
                                                                         {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                                     </Form.Group>

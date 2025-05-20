@@ -265,7 +265,7 @@ export default function UpdateTenant() {
         state: values.state.value,
         city: values.city.value,
         pincode: values.pincode,
-        havePet: values.havePet.value,
+        havePet: values.havePet.value==="Yes"?true:false,
         familyMembers: values.familyMembers,
         aadharNumber: values.aadharNumber,
         rentRegistrationId: values.rentRegistrationId,

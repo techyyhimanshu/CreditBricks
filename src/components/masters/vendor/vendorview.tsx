@@ -5,12 +5,12 @@ import { Link, useParams } from "react-router-dom";
 import { getVendorDetail } from '../../../api/vendor-api';
 
 export default function VendorView() {
-  const [singleVendorData, setSingleVendordata] = useState<any>([])
+  const [singleVendorData, setSingleVendordata] = useState<any>({})
   const params = useParams()
   const identifier = params.identifier as string
 
   useEffect(() => {
-    const fetchPropertyData = async () => {
+    const fetchVendorData = async () => {
       try {
         const response = await getVendorDetail(identifier)
         setSingleVendordata(response?.data?.data || [])
@@ -19,7 +19,7 @@ export default function VendorView() {
       }
     }
     if (identifier) {
-      fetchPropertyData()
+      fetchVendorData()
     }
   }, [])
 

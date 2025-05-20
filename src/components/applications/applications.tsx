@@ -8,7 +8,7 @@ import { showToast, CustomToastContainer } from '../../common/services/toastServ
 import { imagesData } from "../../common/commonimages";
 import Accordion from 'react-bootstrap/Accordion';
 import EventModal from '../../common/modals/eventModal';
-import { createNewDocumentSubmissionApi, createNewEnquiryApi, createNewEventApi, createNewGatePassApi, createNewOtherApplicationApi, deleteApplicationApi, getAllApplicationApi, getApplicationDetailsApi, updateDocumentSubmissionApi, updateEnquiryApi, updateEventApi, updateGatePassApi, updateOtherApplicationApi } from '../../api/application-api';
+import { createNewDocumentSubmissionApi, createNewEnquiryApi, createNewEventApi, createNewFlatResaleApi, createNewGatePassApi, createNewOtherApplicationApi, deleteApplicationApi, getAllApplicationApi, getApplicationDetailsApi, updateDocumentSubmissionApi, updateEnquiryApi, updateEventApi, updateFlatResaleApi, updateGatePassApi, updateOtherApplicationApi } from '../../api/application-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import TestLoader from '../../layout/layoutcomponent/testloader';
 import DataTable from 'react-data-table-component';
@@ -29,7 +29,7 @@ export default function Applications() {
   const [addcontactupdate, setaddcontactupdate] = useState(false);
   const [addparking, setaddparking] = useState(false);
   const [addflateresale, setaddflateresale] = useState(false);
-  const [flateresaleuploadreciept, setflateresaleuploadreciept] = useState(false);
+  const [, setflateresaleuploadreciept] = useState(false);
   const [Uploadloanclosure, setUploadloanclosure] = useState(false);
   const [addinteriorwork, setaddinteriorwork] = useState(false);
   const [addcelebration, setaddcelebration] = useState(false);
@@ -62,14 +62,14 @@ export default function Applications() {
   const [singleClubhouseData, setSingleClubhouseData] = useState(null);
   const [singlePlayAreaData, setSinglePlayAreaData] = useState(null);
   const [singleFoodCourtData, setSingleFoodCourtData] = useState(null);
-  const [singleContactUpdateData, setSingleContactUpdateData] = useState(null);
-  const [singleSwimmingPoolData, setSingleSwimmingPoolData] = useState(null);
-  const [singleParkingData, setSingleParkingData] = useState(null);
+  const [, setSingleContactUpdateData] = useState(null);
+  const [, setSingleSwimmingPoolData] = useState(null);
+  const [, setSingleParkingData] = useState(null);
   const [singleOthersData, setSingleOthersData] = useState(null);
-  const [singleInteriorData, setSingleInteriorData] = useState(null);
+  const [, setSingleInteriorData] = useState(null);
   const [singleGatePassData, setSingleGatePassData] = useState(null);
   const [viewGatePassData, setViewGatePassData] = useState<ViewGatePassData | null>(null);
-  const [singleChangeInNameData, setSingleChangeInNameData] = useState(null);
+  const [, setSingleChangeInNameData] = useState(null);
   const [singleFlatResaleData, setSingleFlatResaleData] = useState(null);
   const { society } = useSelector((state: RootState) => state.auth)
 
@@ -455,27 +455,29 @@ export default function Applications() {
 
   const handleFlatResaleSave = async (values: any, editing: boolean) => {
     try {
-      console.log(values)
-      // let response;
+      let response;
+      const payload = { ...values };
 
-      // if (editing) {
-      //   response = await updateOtherApplicationApi(values, values.id);
-      // } else {
-      //   response = await createNewOtherApplicationApi(values);
-      // }
-
-      // if (response.status === 200 || response.status === 201) {
-      //   showToast("success", response.data.message)
-      //   fetchAllApplications()
-      // }
+      const eventIdentifier = payload.eventIdentifier;
+      if (eventIdentifier) {
+        delete payload.eventIdentifier;
+      }
+      if (editing) {
+        response = await updateFlatResaleApi(payload, eventIdentifier || "")
+      } else {
+        response = await createNewFlatResaleApi(payload)
+      }
+      if (response.status === 200 || response.status === 201) {
+        showToast("success", response.data.message)
+        fetchAllApplications()
+      }
 
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
-    } finally {
-      // viewDemoClose("addflateresale")
-    }
+    } 
   }
+  
 
   const handleDelete = (id: string) => {
     ; (async () => {
