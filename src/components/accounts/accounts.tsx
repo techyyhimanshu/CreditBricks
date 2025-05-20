@@ -2290,7 +2290,7 @@ export default function Accounts() {
                           <td>HDFC Bank</td>
                           <td className='text-center'><Dropdown className='profile-user border-0'>
                             <Dropdown.Toggle variant="">
-                              <strong className="text-success">Receipt </strong>
+                              <strong className="text-danger">Unreceipt </strong>
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                               <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>

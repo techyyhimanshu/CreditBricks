@@ -105,7 +105,7 @@ const Main = () => {
                 <Route path={`${import.meta.env.BASE_URL}gatepassapproval`} element={<GatePassApproval />} />
                 <Route path={`${import.meta.env.BASE_URL}celebrationbooking`} element={<CelebrationBooking />} />
                 <Route path={`${import.meta.env.BASE_URL}cheque`} element={<Cheque />} />
-                <Route path={`${import.meta.env.BASE_URL}approve`} element={<Approve />} />
+                <Route path={`${import.meta.env.BASE_URL}ap`} element={<Approve />} />
                 <Route path="*" element={<Error404 />} />
               </Route>
               <Route></Route>
