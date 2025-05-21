@@ -285,11 +285,20 @@ export default function Accounts() {
       name: 'S.no',
       selector: (row: any) => row.sno,
       sortable: true,
-      width: '50px'
+      width: '60px'
     },
     {
       name: 'Date',
       selector: (row: any) => row.date,
+      sortable: true,
+       width: '170px'
+    },
+
+    {
+      name: 'Property',
+      cell: (row: any) => (
+        <Link to={`${import.meta.env.BASE_URL}property/propertyview/${row.propertyIdentifier}`} className='text-info'>Property A</Link>
+      ),
       sortable: true,
     },
     {
@@ -312,19 +321,31 @@ export default function Accounts() {
     },
 
     {
-      name: 'Payee Description',
+      name: 'Remarks  ',
       selector: (row: any) => "-",
       sortable: true,
     },
     {
       name: 'Status',
-      selector: (row: any) => (
-        <span className={` ${row.status === 'Pending' ? 'badge badge-warning' : 'badge badge-success'}`}>
-          {row.status}
-        </span>
-      ),
+      // selector: (row: any) => (
+      //   <span className={` ${row.status === 'Pending' ? 'badge badge-warning' : 'badge badge-success'}`}>
+      //     {row.status}
+      //   </span>
+      // ),
+         cell: (row: any) => (
+          <Dropdown>
+          <Dropdown.Toggle variant="" className='p-0'>
+          <strong className="text-danger">Uncleared </strong>
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item className="dropdown-item text-success" href="">Cleared </Dropdown.Item>
+          <Dropdown.Item className="dropdown-item text-danger" href="">Uncleared</Dropdown.Item><Dropdown.Item className="dropdown-item" href="">Bounce</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+            ),
 
       sortable: true,
+         width: '130px'
     },
     {
       name: 'Action',
@@ -338,6 +359,7 @@ export default function Accounts() {
         }><i className='bo bi-check-circle'></i>&nbsp; Verify</Button> : "-"
       ),
       sortable: true,
+      width: '100px'
     }
   ]
   const propertyOptions = [
