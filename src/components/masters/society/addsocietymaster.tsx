@@ -67,27 +67,7 @@ const validationSchema = Yup.object().shape({
   panNumber: Yup.string().required('PAN number is required'),
   signatory: Yup.string().required('Signatory is required'),
   hsnCode: Yup.string().required('HSN code is required'),
-  gstin: Yup.string().required('GSTIN is required'),
-
-  // bankName: Yup.string().required('Bank name is required'),
-  // accountNumber: Yup.string()
-  //   .required('Account number is required')
-  //   .matches(/^\d+$/, 'Account number must be a number'),
-  // branchName: Yup.string().required('Branch name is required'),
-  // ifscCode: Yup.string().required('IFSC code is required'),
-  // chequeFavourable: Yup.string().required('Cheque favourable is required'),
-
-  // paymentQrFile: Yup.mixed()
-  //   .required('QR file is required')
-  //   .test(
-  //     'fileFormat',
-  //     'Only PDF or image files are allowed',
-  //     (value: any) => {
-  //       if (!value) return false;
-  //       const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-  //       return allowedTypes.includes(value.type);
-  //     }
-  //   )
+  gstin: Yup.string().required('GSTIN is required')
 });
 
 const stateCitiesTyped: StateCities = stateCities;
@@ -347,10 +327,32 @@ export default function AddSocietyMaster() {
       return;
     }
 
-    // Optional: Validate paymentQrFile (if required)
-    if (!formData.paymentQrFile) {
-      showToast("error", "QR Code File is required");
-      return;
+    // if (!formData.paymentQrFile) {
+    //   showToast("error", "QR Code File is required");
+    //   return;
+    // }
+    // const allowedTypes = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp"];
+    // const fileType = formData.paymentQrFile.type;
+
+    // if (!allowedTypes.includes(fileType)) {
+    //   showToast("error", "Only PDF and image formats (JPG, PNG, WEBP) are allowed");
+    //   return;
+    // }
+
+    if (formData.paymentQrFile) {
+      const allowedTypes = [
+        "application/pdf",
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/webp"
+      ];
+      const fileType = formData.paymentQrFile.type;
+  
+      if (!allowedTypes.includes(fileType)) {
+        showToast("error", "Only PDF and image formats (JPG, PNG, WEBP) are allowed");
+        return;
+      }
     }
     if (editingIndex !== null) {
       // Update existing row
