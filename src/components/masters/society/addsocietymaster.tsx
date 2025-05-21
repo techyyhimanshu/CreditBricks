@@ -54,11 +54,12 @@ const validationSchema = Yup.object().shape({
     .required('Pincode is required')
     .matches(/^\d+$/, 'Pincode must be a number'),
 
-  billingFrequency: selectFieldValidation('billingFrequency'),
-  interestCalculationType: selectFieldValidation('interestCalculationType'),
+  billingFrequency: selectFieldValidation('Billing Frequency'),
+  interestCalculationType: selectFieldValidation('Interest Calculation Type'),
   annualRateOfInterest: Yup.number()
     .typeError('Annual rate of interest must be a number')
-    .required('Annual rate of interest is required'),
+    .required('Annual rate of interest is required')
+    .positive("Invalid Rate of interest"),
   interestCalculationStartDate: Yup.date()
     .required('Interest calculation date is required'),
 
@@ -348,7 +349,7 @@ export default function AddSocietyMaster() {
         "image/webp"
       ];
       const fileType = formData.paymentQrFile.type;
-  
+
       if (!allowedTypes.includes(fileType)) {
         showToast("error", "Only PDF and image formats (JPG, PNG, WEBP) are allowed");
         return;
