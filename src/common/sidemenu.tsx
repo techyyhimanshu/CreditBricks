@@ -329,6 +329,15 @@ export const MENUITEMS = [
             active: false,
           },
 
+          {
+            path: `${import.meta.env.BASE_URL}documentsubmission`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Document Submission",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
           // {
           //   path: ``,
           //   icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
