@@ -4,11 +4,12 @@ import { Fragment, useEffect, useState } from 'react';
 import { Col, Card, Row, Accordion, Button, Form } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
-import { Formik, Field, Form as FormikForm } from 'formik';
+import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import { Link, useParams } from "react-router-dom";
 import { getVendorDetail, updateVendorApi } from '../../../api/vendor-api';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 import { handleApiError } from '../../../helpers/handle-api-error';
+import * as Yup from 'yup';
 
 const product = [
     { value: "Lift", label: "Lift" },
@@ -35,6 +36,61 @@ const contactvalue = [
     { value: "Basic", label: "Basic" },
     { value: "GST", label: "GST" },
 ]
+
+const selectFieldValidation = (fieldLabel: string) =>
+  Yup.object()
+    .nullable()
+    .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+      if (!val || typeof val !== 'object') return false;
+
+      if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+      return true;
+    });
+
+const vendorValidationSchema = Yup.object().shape({
+  vendorName: Yup.string().required('Vendor name is required'),
+  vendorAddress: Yup.string().required('Vendor address is required'),
+
+  // gstin: Yup.string()
+  //   .required('GSTIN is required')
+  //   .matches(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/, 'Invalid GSTIN format'),
+
+  aadharNumber: Yup.string()
+    .required('Aadhar number is required')
+    .matches(/^\d{12}$/, 'Aadhar number must be 12 digits'),
+
+  pan: Yup.string()
+    .required('PAN is required')
+    .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, 'PAN must be in uppercase and valid format'),
+
+  product: selectFieldValidation('Product'),
+  serviceType: selectFieldValidation('Service Type'),
+  frequency: selectFieldValidation('Frequency'),
+
+  contactPersonName: Yup.string().required('Contact person name is required'),
+
+  contactPersonNumber: Yup.string()
+    .required('Contact person number is required')
+    .matches(/^\d{10}$/, 'Contact number must be 10 digits'),
+
+  contactValue: selectFieldValidation('Contact Value'),
+
+  contractStartDate: Yup.string().required('Contract start date is required'),
+
+  bankName: Yup.string().required('Bank name is required'),
+
+  accountNumber: Yup.string()
+    .required('Account number is required')
+    .matches(/^\d+$/, 'Account number must be numeric'),
+
+  branchName: Yup.string().required('Branch name is required'),
+
+  ifsc: Yup.string()
+    .required('IFSC code is required')
+    .matches(/^[A-Z]{4}0[A-Z0-9]{6}$/, 'Invalid IFSC code format')
+});
 
 export default function EditVendorMaster() {
     const [currentVendor, setCurrentVendor] = useState<any>()
@@ -118,6 +174,7 @@ export default function EditVendorMaster() {
                     ifsc: currentVendor?.ifsc || "",
                 }}
                 onSubmit={handleSubmit}
+                validationSchema={vendorValidationSchema}
             >
                 {({ setFieldValue, values }) => (
                     <FormikForm>
@@ -145,12 +202,12 @@ export default function EditVendorMaster() {
                                                                     placeholder="Vendor name"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="vendorName" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Vendor Address</Form.Label>
+                                                                <Form.Label>Vendor Address <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     value={values.vendorAddress}
@@ -158,7 +215,7 @@ export default function EditVendorMaster() {
                                                                     placeholder="Vendor Address"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="vendorAddress" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
                                                         <Col xl={4}>
@@ -170,48 +227,49 @@ export default function EditVendorMaster() {
                                                                     placeholder="GST Number"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="gstin" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>PAN Number</Form.Label>
+                                                                <Form.Label>PAN Number <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     name="pan"
                                                                     placeholder="PAN Number"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="pan" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
                                 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Aadhaar No.</Form.Label>
+                                                                <Form.Label>Aadhaar No. <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     name="aadharNumber"
                                                                     placeholder="Aadhaar No."
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="aadharNumber" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Product</Form.Label>
+                                                                <Form.Label>Product <span className="text-danger">*</span></Form.Label>
                                                                 <Select
                                                                     options={product}
                                                                     value={values.product}
                                                                     placeholder="Select Product"
                                                                     onChange={(selected) => setFieldValue("product", selected)}
                                                                     classNamePrefix="Select2"
+                                                                    name='product'
                                                                 />
-                                                                {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="product" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
@@ -219,68 +277,71 @@ export default function EditVendorMaster() {
 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Service Type</Form.Label>
+                                                                <Form.Label>Service Type <span className="text-danger">*</span></Form.Label>
                                                                 <Select
                                                                     options={servicetype}
                                                                     value={values.serviceType}
                                                                     placeholder="Select Type"
                                                                     onChange={(selected) => setFieldValue("serviceType", selected)}
                                                                     classNamePrefix="Select2"
+                                                                    name='serviceType'
                                                                 />
-                                                                {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="serviceType" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Frequency </Form.Label>
+                                                                <Form.Label>Frequency <span className="text-danger">*</span></Form.Label>
                                                                 <Select
                                                                     options={frequency}
                                                                     value={values.frequency}
                                                                     placeholder="Select frequency"
                                                                     onChange={(selected) => setFieldValue("frequency", selected)}
                                                                     classNamePrefix="Select2"
+                                                                    name='frequency'
                                                                 />
-                                                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="frequency" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Contact Person Name</Form.Label>
+                                                                <Form.Label>Contact Person Name <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     name="contactPersonName"
                                                                     placeholder="Contact Person Name"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="contactPersonName" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Contact Person Number</Form.Label>
+                                                                <Form.Label>Contact Person Number <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     name="contactPersonNumber"
                                                                     placeholder="Contact Person Number"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="contactPersonNumber" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Contact Value </Form.Label>
+                                                                <Form.Label>Contact Value <span className="text-danger">*</span></Form.Label>
                                                                 <Select
                                                                     options={contactvalue}
                                                                     placeholder="Select value"
                                                                     value={values.contactValue}
                                                                     onChange={(selected) => setFieldValue("contactValue", selected)}
                                                                     classNamePrefix="Select2"
+                                                                    name='contactValue'
                                                                 />
-                                                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="contactValue" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
                                                     </Row>
@@ -303,14 +364,14 @@ export default function EditVendorMaster() {
                                                     <Row>
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Start Date</Form.Label>
+                                                                <Form.Label>Start Date <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="date"
                                                                     name="contractStartDate"
                                                                     placeholder=""
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="contractStartDate" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
@@ -323,7 +384,7 @@ export default function EditVendorMaster() {
                                                                     placeholder=""
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="contractEndDate" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
@@ -335,7 +396,7 @@ export default function EditVendorMaster() {
                                                                     name="totalPeriodCalculation"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="totalPeriodCalculation" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
@@ -360,54 +421,54 @@ export default function EditVendorMaster() {
                                                     <Row>
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Bank Name</Form.Label>
+                                                                <Form.Label>Bank Name <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     name="bankName"
                                                                     placeholder="Bank Name"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="bankName" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Account Number</Form.Label>
+                                                                <Form.Label>Account Number <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     name="accountNumber"
                                                                     placeholder="Account Number"
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="accountNumber" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>Branch Name</Form.Label>
+                                                                <Form.Label>Branch Name <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     name="branchName"
                                                                     placeholder='Branch Name'
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="branchName" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
 
                                                         <Col xl={4}>
                                                             <Form.Group className="form-group">
-                                                                <Form.Label>IFSC Code</Form.Label>
+                                                                <Form.Label>IFSC Code <span className="text-danger">*</span></Form.Label>
                                                                 <Field
                                                                     type="text"
                                                                     name="ifsc"
                                                                     placeholder='IFSC Code'
                                                                     className="form-control"
                                                                 />
-                                                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                <ErrorMessage name="ifsc" component="div" className="text-danger" />
                                                             </Form.Group>
                                                         </Col>
 
