@@ -1,12 +1,45 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Button, Col, Form, Row, Card, Dropdown } from 'react-bootstrap';
 import * as Switcherdatacustam from "../../../../common/switcherdatacustam";
 import { imagesData } from '../../../../common/commonimages';
 
-const CelebrationBooking = () => {
-  return(
+interface ProductModalProps {
+  initialVals?: any;
+}
 
- <Fragment>
+const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
+  const [selectedStatus, setSelectedStatus] = useState("Approve");
+  const [remarks, setRemarks] = useState("");
+
+
+  const handleSaveStatus = async () => {
+    try {
+      console.log(selectedStatus,remarks)
+      // showToast("success", "Status updated successfully");
+    } catch (error) {
+      // const errorMessage = handleApiError(error);
+      // showToast("error", errorMessage);
+    } 
+  };
+
+  const formatDateTime = (isoDateStr?: string): string => {
+    if (!isoDateStr) return "-";
+  
+    const date = new Date(isoDateStr);
+    const yyyy = date.getUTCFullYear();
+    const mm = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const dd = String(date.getUTCDate()).padStart(2, '0');
+    const hh = String(date.getUTCHours()).padStart(2, '0');
+    const min = String(date.getUTCMinutes()).padStart(2, '0');
+  
+    return `${dd}-${mm}-${yyyy}, ${hh}:${min}`;
+  };
+  
+
+  
+  return (
+
+    <Fragment>
       <div className="cover-image">
 
         <div className="page loginbg">
@@ -26,12 +59,12 @@ const CelebrationBooking = () => {
                   <div className="card-sigin p-3">
 
 
-                  <table className="w-100">
+                    <table className="w-100">
                       <tr>
                         <td className="text-center" colSpan={2}>
                           <h3 className="mb-0">Credit Bricks PVt Ltd</h3>
                           <strong>Registration Number : BSE/01/02/45  </strong>
-                          <h5>Celebration</h5>
+                          <h5>{initialVals?.applicationType || "-"}</h5>
                         </td>
                       </tr>
 
@@ -44,36 +77,36 @@ const CelebrationBooking = () => {
                             <Row>
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Society</Form.Label>
-                                <p className="mb-0">Credit Bricks PVt Ltd</p>
+                                <p className="mb-0">{initialVals?.society?.societyName || "-"}</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Property</Form.Label>
-                                <p className="mb-0">A101</p>
+                                <p className="mb-0">{initialVals?.property?.propertyName || "-"}</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Occassion</Form.Label>
-                                <p className='tx-14 mb-0'>Celebration</p>
+                                <p className='tx-14 mb-0'>{initialVals?.occasionId || "-"}</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Day</Form.Label>
-                                <p className='tx-14 mb-0'>Second Half</p>
+                                <p className='tx-14 mb-0'>{initialVals?.shift || "-"}</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>No. of Guest</Form.Label>
-                                <p className='tx-14 mb-0'>80</p>
+                                <p className='tx-14 mb-0'>{initialVals?.guestCount || "-"}</p>
                               </Col>
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Start Date & Time</Form.Label>
-                                <p className='tx-14 mb-0'>12/04/2025. 6:00 Pm</p>
+                                <p className='tx-14 mb-0'>{formatDateTime(initialVals?.startDate)}</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>End Date & Time</Form.Label>
-                                <p className='tx-14 mb-0'>12/04/2025. 10:00 Pm</p>
+                                <p className='tx-14 mb-0'>{formatDateTime(initialVals?.endDate)}</p>
                               </Col>
 
 
@@ -81,23 +114,23 @@ const CelebrationBooking = () => {
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Venue</Form.Label>
-                                <p className='tx-14 mb-0'>Banquet Hall</p>
+                                <p className='tx-14 mb-0'>{initialVals?.venue?.venueName || "-"}</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Name of the Organizer</Form.Label>
-                                <p className='tx-14 mb-0 '>Vishal Jain</p>
+                                <p className='tx-14 mb-0 '>{initialVals?.organizer || "-"}</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Contact Details</Form.Label>
-                                <p className='tx-14  mb-0'>9876543212</p>
+                                <p className='tx-14  mb-0'>{initialVals?.contact || "-"}</p>
                               </Col>
 
-                              <Col sm={3} className='mb-0'>
+                              {/* <Col sm={3} className='mb-0'>
                                 <Form.Label>Outstanding</Form.Label>
                                 <p className='tx-14 tx-bold mb-0'>0.00 </p>
-                              </Col>
+                              </Col> */}
 
                             </Row>
                           </Card.Body>
@@ -107,26 +140,26 @@ const CelebrationBooking = () => {
                           <Card.Body>
                             <h5 className="card-title  main-content-label tx-14 tx-dark tx-medium mg-b-10">Does this celebration include any of the following?</h5>
                             <Row>
-                            <Col sm={3} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Catering Service</Form.Label>
-                                <p className='tx-14  mb-0'>Yes</p>
+                                <p className='tx-14  mb-0'>{initialVals?.catering ? "Yes" : "No"}</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Decorations</Form.Label>
-                                <p className='tx-14  mb-0'>Yes </p>
+                                <p className='tx-14  mb-0'>{initialVals?.decorations ? "Yes" : "No"} </p>
                               </Col>
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Sound System</Form.Label>
-                                <p className='tx-14  mb-0'>Yes</p>
+                                <p className='tx-14  mb-0'>{initialVals?.sound ? "Yes" : "No"}</p>
                               </Col>
                               <Col sm={3} className='mb-0'>
                                 <Form.Label>Guest Parking</Form.Label>
-                                <p className='tx-14  mb-0'>Yes </p>
+                                <p className='tx-14  mb-0'>{initialVals?.guestParking ? "Yes" : "No"} </p>
                               </Col>
                               <Col sm={12} className='mb-0'>
                                 <Form.Label>Remarks</Form.Label>
-                                <p className='tx-14 mb-0'>-</p>
+                                <p className='tx-14 mb-0'>{initialVals?.remark || "-"}</p>
                               </Col>
 
                             </Row>
@@ -138,7 +171,7 @@ const CelebrationBooking = () => {
                             <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Documents</h5>
                             <Row>
 
-                            <Col sm={3} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Sale Agreement Copy</Form.Label>
                                 <p className='tx-14 mb-0'>Yes</p>
                               </Col>
@@ -165,7 +198,7 @@ const CelebrationBooking = () => {
                             <h5 className="card-title main-content-label tx-15 tx-dark tx-medium mg-b-10">Approval Details and Status</h5>
 
                             <Row>
-                              <Col sm ={3} className='mb-0'>
+                              <Col sm={3} className='mb-0'>
                                 <Form.Label>Society</Form.Label>
                                 <p className='tx-14 mb-0'>-</p>
                               </Col>
@@ -207,23 +240,35 @@ const CelebrationBooking = () => {
                               </Col>
 
                               <Col xl={12} className="pt-2">
-                              <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
-                              <Dropdown className='profile-user border-0'>
-                                <Dropdown.Toggle variant="">
-                                  <strong className="text-success">Approve</strong>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item className="dropdown-item text-success" href="/">Approve </Dropdown.Item>
-                                  <Dropdown.Item className="dropdown-item text-danger" href="/">Reject </Dropdown.Item>
-                                  <Dropdown.Item className="dropdown-item" href="/">On Hold </Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
-                              <p className="mb-0 mt-2">Remarks</p>
-                              <textarea className='form-control' placeholder='Remarks'></textarea>
-                            </Col>
-                            <Col sm={12} className="text-end pt-3">
-                              <Button type='button' className='btn btn-primary'>Save</Button>
-                            </Col>
+                                <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
+                                <Dropdown className='profile-user border-0'>
+                                  <Dropdown.Toggle variant="">
+                                    {/* <strong className="text-success">Approve</strong> */}
+                                    <strong className={
+                                      selectedStatus === 'Approve' ? 'text-success' :
+                                        selectedStatus === 'Reject' ? 'text-danger' :
+                                          'text-warning'
+                                    }>
+                                      {selectedStatus}
+                                    </strong>
+                                  </Dropdown.Toggle>
+                                  {/* <Dropdown.Menu>
+                                    <Dropdown.Item className="dropdown-item text-success" href="/">Approve </Dropdown.Item>
+                                    <Dropdown.Item className="dropdown-item text-danger" href="/">Reject </Dropdown.Item>
+                                    <Dropdown.Item className="dropdown-item" href="/">On Hold </Dropdown.Item>
+                                  </Dropdown.Menu> */}
+                                  <Dropdown.Menu>
+                                    <Dropdown.Item onClick={() => setSelectedStatus("Approve")} className="dropdown-item text-success">Approve</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => setSelectedStatus("Reject")} className="dropdown-item text-danger">Reject</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => setSelectedStatus("On Hold")} >On Hold</Dropdown.Item>
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                                <p className="mb-0 mt-2">Remarks</p>
+                                <textarea className='form-control' placeholder='Remarks' value={remarks} onChange={(e) => setRemarks(e.target.value)}></textarea>
+                              </Col>
+                              <Col sm={12} className="text-end pt-3">
+                                <Button type='button' className='btn btn-primary' onClick={handleSaveStatus}>Save</Button>
+                              </Col>
                             </Row>
 
 
@@ -236,16 +281,16 @@ const CelebrationBooking = () => {
                             <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Terms & Conditions</h5>
                             <Row>
 
-                            <Col sm={12} className='mb-0'>
-                                 <p className='tx-12 mb-0 text-justify'>Interest will be charged at 1.75% p.m. after the due date.
-The cheque should be drawn in favor of CreditBricks Society.
-No claim in respect of this bill will be entertained unless notified in writing within 10 days from the date of this bill.
-If the dues are not cleared within 90 days, then the member shall be termed as a defaulter, and appropriate action will be taken by the society against the defaulters as per the Bylaws
-In case of no response on the payment for a prolonged period the membership from the society can be terminated and expulsion procedure can be initiated.
-The penalty charges do not create any right in your favor.
-Society reserves the right to enhance the penalty in case of continuing default and misuse.</p>
+                              <Col sm={12} className='mb-0'>
+                                <p className='tx-12 mb-0 text-justify'>Interest will be charged at 1.75% p.m. after the due date.
+                                  The cheque should be drawn in favor of CreditBricks Society.
+                                  No claim in respect of this bill will be entertained unless notified in writing within 10 days from the date of this bill.
+                                  If the dues are not cleared within 90 days, then the member shall be termed as a defaulter, and appropriate action will be taken by the society against the defaulters as per the Bylaws
+                                  In case of no response on the payment for a prolonged period the membership from the society can be terminated and expulsion procedure can be initiated.
+                                  The penalty charges do not create any right in your favor.
+                                  Society reserves the right to enhance the penalty in case of continuing default and misuse.</p>
                               </Col>
-</Row>
+                            </Row>
                           </Card.Body>
                         </Card>
                       </Col>
@@ -267,7 +312,8 @@ Society reserves the right to enhance the penalty in case of continuing default 
       </div>
     </Fragment>
 
-); };
+  );
+};
 
 CelebrationBooking.propTypes = {};
 
