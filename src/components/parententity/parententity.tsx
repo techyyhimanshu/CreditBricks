@@ -177,10 +177,10 @@ export default function ParentEntity() {
         >
           {({ setFieldValue, values }) => (
             <FormikForm className='col-sm-12'>
-
+{/*
               <Card className='m-0'>
                 <CardHeader>
-                  <h3 className='card-title'>Add Parent Entity</h3>
+                  <h3 className='card-title'>Filter</h3>
 
                 </CardHeader>
                 <Card.Body className='pt-0 pb-1'>
@@ -195,7 +195,7 @@ export default function ParentEntity() {
                           placeholder="Select Society"
                           classNamePrefix="Select2"
                         />
-                        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+
                       </Form.Group>
                     </Col>
 
@@ -207,7 +207,7 @@ export default function ParentEntity() {
                           placeholder="Select address"
                           classNamePrefix="Select2"
                         />
-                        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+
                       </Form.Group>
                     </Col>
 
@@ -219,7 +219,7 @@ export default function ParentEntity() {
                           placeholder="Select parent"
                           classNamePrefix="Select2"
                         />
-                        {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+
                       </Form.Group>
                     </Col>
 
@@ -233,11 +233,11 @@ export default function ParentEntity() {
                     </Col>
                   </Row>
                 </Card.Body>
-              </Card>
+              </Card> */}
 
               <Card className='mt-3'>
                 <CardHeader>
-                  <h3 className='card-title'>   List</h3>
+                  <h3 className='card-title'>List Of Parent Entity</h3>
                 </CardHeader>
                 <Card.Body className='pt-0'>
                   {/* <table className='table'>
