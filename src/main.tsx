@@ -61,6 +61,10 @@ const Cheque = React.lazy(() =>
   import("./components/pages/authentication/cheque/cheque")
 )
 
+const FlatResale = React.lazy(() =>
+  import("./components/pages/authentication/flatresale/flatresale")
+)
+
 const Approve = React.lazy(() =>
   import("./components/pages/authentication/approve/approve")
 )
@@ -105,6 +109,7 @@ const Main = () => {
                 <Route path={`${import.meta.env.BASE_URL}gatepassapproval`} element={<GatePassApproval />} />
                 <Route path={`${import.meta.env.BASE_URL}celebrationbooking`} element={<CelebrationBooking />} />
                 <Route path={`${import.meta.env.BASE_URL}cheque`} element={<Cheque />} />
+                <Route path={`${import.meta.env.BASE_URL}flatresale`} element={<FlatResale />} />
                 <Route path={`${import.meta.env.BASE_URL}ap`} element={<Approve />} />
                 <Route path="*" element={<Error404 />} />
               </Route>

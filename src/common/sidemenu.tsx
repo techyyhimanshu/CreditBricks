@@ -311,6 +311,24 @@ export const MENUITEMS = [
             active: false,
           },
 
+          {
+            path: `${import.meta.env.BASE_URL}flatresale`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Flat Resale",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
+          {
+            path: `${import.meta.env.BASE_URL}cheque`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Cheque",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
           // {
           //   path: ``,
           //   icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
