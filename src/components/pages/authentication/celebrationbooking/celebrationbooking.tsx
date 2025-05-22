@@ -27,7 +27,7 @@ const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
 
     const date = new Date(isoDateStr);
     const yyyy = date.getUTCFullYear();
-    const mm = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const mm = String(date.getUTCMonth() + 1).padStart(2, '0'); 
     const dd = String(date.getUTCDate()).padStart(2, '0');
     const hh = String(date.getUTCHours()).padStart(2, '0');
     const min = String(date.getUTCMinutes()).padStart(2, '0');

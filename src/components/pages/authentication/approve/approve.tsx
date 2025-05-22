@@ -350,7 +350,7 @@ const Approve = () => {
       showBooking&&data&&<CelebrationBooking initialVals={data}/>
     }
     {
-      showGatePass&&<GatePassApproval/>
+      showGatePass&&data&&<GatePassApproval initialVals={data}/>
     }
     {
       showFlatResale&&<FlatResale/>

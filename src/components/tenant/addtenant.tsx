@@ -16,10 +16,78 @@ import DataTable from 'react-data-table-component';
 import { addTenantApi } from '../../api/tenant-api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../common/store/store';
+import * as Yup from 'yup';
 interface StateCities {
   [key: string]: string[]; // Index signature
 }
 const stateCitiesTyped: StateCities = stateCities;
+
+const selectFieldValidation = (fieldLabel: string) =>
+  Yup.object()
+    .nullable()
+    .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+      if (!val || typeof val !== 'object') return false;
+
+      if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+      return true;
+    });
+
+const validationSchema = Yup.object().shape({
+  society: selectFieldValidation('Society'),
+  property: selectFieldValidation('Property'),
+  firstName: Yup.string().required('First name is required'),
+  lastName: Yup.string().required('Last name is required'),
+  aadharNumber: Yup.string()
+    .required('Aadhar number is required')
+    .matches(/^\d{12}$/, 'Aadhar must be exactly 12 digits'),
+  mobileNumber: Yup.string()
+    .notRequired()
+    .test('mobile-check', 'Mobile number must be 10 digits', val =>
+      !val || /^\d{10}$/.test(val)
+    ),
+  alternateMobileNumber: Yup.string()
+    .notRequired()
+    .test('alt-mobile-check', 'Alternate mobile number must be 10 digits', val =>
+      !val || /^\d{10}$/.test(val)
+    ),
+  email: Yup.string()
+    .notRequired()
+    .email('Invalid email format'),
+  age: Yup.string()
+    .notRequired()
+    .matches(/^[0-9]+$/, 'Invalid Age'),
+  pincode: Yup.string()
+    .notRequired()
+    .matches(/^[0-9]+$/, 'Invalid Pincode'),
+  familyMembers: Yup.string()
+    .notRequired()
+    .matches(/^[0-9]+$/, 'Invalid Number'),
+  monthlyRent: Yup.string()
+    .notRequired()
+    .matches(/^[0-9]+$/, 'Invalid Monthly rent'),
+  depositAmount: Yup.string()
+    .notRequired()
+    .matches(/^[0-9]+$/, 'Invalid Deposit amount'),
+  dueAmount: Yup.string()
+    .notRequired()
+    .matches(/^[0-9]+$/, 'Invalid Due amount'),
+  rentAgreementFile: Yup.mixed()
+    .notRequired()
+    .test('fileType', 'Only PDF or image files are allowed', (value: any) => {
+      if (!value) return true;
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+      return allowedTypes.includes(value.type);
+    }),
+  policeVerificationFile: Yup.mixed()
+    .notRequired()
+    .test('fileType', 'Only PDF or image files are allowed', (value: any) => {
+      if (!value) return true;
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+      return allowedTypes.includes(value.type);
+    }),
+});
 export default function AddTenant() {
   const [societyOptions, setSocietyOptions] = useState([]);
   const [propertyOptions, setPropertyOptions] = useState([]);
@@ -148,6 +216,33 @@ export default function AddTenant() {
     }
   }
   const handleAddNewVehicle = () => {
+    const requiredFields: { [key: string]: string } = {
+      vehicleType: "Vehicle Type",
+      vehicleNumber: "Vehicle Number",
+    };
+
+    // Check for missing fields
+    const missingField = Object.entries(requiredFields).find(
+      ([key]) => !vehicleFormData[key as keyof typeof vehicleFormData]
+    );
+
+    if (missingField) {
+      const [, fieldLabel] = missingField;
+      showToast("error", `${fieldLabel} is required`);
+      return;
+    }
+
+    if (!vehicleFormData.vehicleRC) {
+      showToast("error", "QR Code File is required");
+      return;
+    }
+    const allowedTypes = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp"];
+    const fileType = vehicleFormData.vehicleRC.type;
+
+    if (!allowedTypes.includes(fileType)) {
+      showToast("error", "Only PDF and image formats (JPG, PNG, WEBP) are allowed");
+      return;
+    }
 
     if (editingIndex !== null) {
       // Update existing row
@@ -186,7 +281,7 @@ export default function AddTenant() {
         state: values.state.value,
         city: values.city.value,
         pincode: values.pincode,
-        havePet: values.havePet.value==="Yes"?true:false,
+        havePet: values.havePet.value === "Yes" ? true : false,
         familyMembers: values.familyMembers,
         aadharNumber: values.aadharNumber,
         rentRegistrationId: values.rentRegistrationId,
@@ -288,6 +383,7 @@ export default function AddTenant() {
           policeVerificationFile: "",
 
         }}
+        validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ setFieldValue, values }) => {
@@ -326,6 +422,7 @@ export default function AddTenant() {
                                 classNamePrefix="Select2"
                                 isDisabled
                               />
+                              <ErrorMessage name="society" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -339,7 +436,9 @@ export default function AddTenant() {
                                 }}
                                 placeholder="Select property"
                                 classNamePrefix="Select2"
+                                name='property'
                               />
+                              <ErrorMessage name="property" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -352,6 +451,7 @@ export default function AddTenant() {
                                 className='form-control'
                                 placeholder='Tenant name'
                               ></Field>
+                              <ErrorMessage name="firstName" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -363,6 +463,7 @@ export default function AddTenant() {
                                 className='form-control'
                                 placeholder='Tenant name'
                               ></Field>
+
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -374,6 +475,7 @@ export default function AddTenant() {
                                 className='form-control'
                                 placeholder='Tenant name'
                               ></Field>
+                              <ErrorMessage name="lastName" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -385,6 +487,7 @@ export default function AddTenant() {
                                 name="mobileNumber"
                                 className='form-control' placeholder='Mobile'
                               ></Field>
+                              <ErrorMessage name="mobileNumber" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -396,6 +499,7 @@ export default function AddTenant() {
                                 name="alternateMobileNumber"
                                 className='form-control' placeholder='Alternative mobile'
                               ></Field>
+                              <ErrorMessage name="alternateMobileNumber" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -407,6 +511,7 @@ export default function AddTenant() {
                                 name="email"
                                 className='form-control' placeholder='Email'
                               ></Field>
+                              <ErrorMessage name="email" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -418,7 +523,9 @@ export default function AddTenant() {
                                 onChange={(selected) => setFieldValue("gender", selected)}
                                 placeholder="Select gender"
                                 classNamePrefix="Select2"
+                                name='gender'
                               />
+                              <ErrorMessage name="gender" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -430,6 +537,7 @@ export default function AddTenant() {
                                 className='form-control'
                                 placeholder='Age'
                               ></Field>
+                              <ErrorMessage name="age" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -442,6 +550,7 @@ export default function AddTenant() {
                                 className='form-control'
                                 placeholder=''
                               ></Field>
+                              <ErrorMessage name="dateOfBirth" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -453,6 +562,7 @@ export default function AddTenant() {
                                 name="anniversary"
                                 className='form-control'
                                 placeholder=''></Field>
+                                <ErrorMessage name="anniversary" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -466,6 +576,7 @@ export default function AddTenant() {
                                 name="address"
                                 className='form-control' placeholder='Address'
                               ></Field>
+                              <ErrorMessage name="address" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -480,7 +591,9 @@ export default function AddTenant() {
                                 }}
                                 placeholder="Select country"
                                 classNamePrefix="Select2"
+                                name='country'
                               />
+                              <ErrorMessage name="country" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -494,7 +607,9 @@ export default function AddTenant() {
                                 }}
                                 placeholder="Select state"
                                 classNamePrefix="Select2"
+                                name='state'
                               />
+                              <ErrorMessage name="state" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -509,7 +624,9 @@ export default function AddTenant() {
                                 }}
                                 placeholder="Select city"
                                 classNamePrefix="Select2"
+                                name='city'
                               />
+                              <ErrorMessage name="city" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -521,6 +638,7 @@ export default function AddTenant() {
                                 name="pincode"
                                 className='form-control' placeholder='Pincode'
                               ></Field>
+                              <ErrorMessage name="pincode" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -533,6 +651,7 @@ export default function AddTenant() {
                                 className='form-control'
                                 placeholder='ex: 2,3'
                               ></Field>
+                              <ErrorMessage name="familyMembers" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -546,7 +665,9 @@ export default function AddTenant() {
                                 }}
                                 placeholder="Select"
                                 classNamePrefix="Select2"
+                                name='havePet'
                               />
+                              <ErrorMessage name="havePet" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -560,6 +681,7 @@ export default function AddTenant() {
                                 name="aadharNumber"
                                 className='form-control' placeholder='Aadhar Number'
                               ></Field>
+                              <ErrorMessage name="aadharNumber" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -595,7 +717,8 @@ export default function AddTenant() {
                                 placeholder="id"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="rentRegistrationId" component="div" className="text-danger" />
+                             
                             </Form.Group>
                           </Col>
 
@@ -609,7 +732,7 @@ export default function AddTenant() {
                                 placeholder=""
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="rentAgreementStartDate" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -623,7 +746,7 @@ export default function AddTenant() {
                                 placeholder=""
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="rentAgreementEndDate" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -636,7 +759,7 @@ export default function AddTenant() {
                                 placeholder="0"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="monthlyRent" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -650,7 +773,7 @@ export default function AddTenant() {
                                 placeholder="0"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="dueAmount" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -664,7 +787,7 @@ export default function AddTenant() {
                                 placeholder="0"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="depositAmount" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -678,7 +801,7 @@ export default function AddTenant() {
                                 name="rentAgreementFile"
                                 onChange={(e: any) => setFieldValue("rentAgreementFile", e.target.files[0])}
                               />
-
+                              <ErrorMessage name="rentAgreementFile" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -691,7 +814,7 @@ export default function AddTenant() {
                                 name="policeVerificationFile"
                                 onChange={(e: any) => setFieldValue("policeVerificationFile", e.target.files[0])}
                               />
-
+                              <ErrorMessage name="policeVerificationFile" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 

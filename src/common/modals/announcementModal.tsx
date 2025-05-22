@@ -1,4 +1,4 @@
-import { Formik, Form as FormikForm } from 'formik';
+import { ErrorMessage, Formik, Form as FormikForm } from 'formik';
 import { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import Select from "react-select";
@@ -12,6 +12,7 @@ import { getTowerWingsApi } from '../../api/wing-api';
 import { getSocietyTowersApi } from '../../api/tower-api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
+import * as Yup from 'yup';
 
 interface ProductModalProps {
   show: boolean;
@@ -24,6 +25,37 @@ interface ProductModalProps {
   initialVals?: any;
 
 }
+
+const selectFieldValidation = (fieldLabel: string) =>
+    Yup.object()
+        .nullable()
+        .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+            if (!val || typeof val !== 'object') return false;
+
+            if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+            return true;
+        });
+
+const announcementValidationSchema = Yup.object().shape({
+    society: selectFieldValidation("Society"),
+
+    message: Yup.string()
+        .required("Message is required"),
+
+    file: Yup.mixed()
+        .nullable()
+        .test(
+            "fileFormat",
+            "Only PDF or image files (jpg, jpeg, png) are allowed",
+            (value:any) => {
+                if (!value) return true;
+                const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
+                return allowedTypes.includes(value.type);
+            }
+        )
+});
 
 
 const AnnouncementModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, onSave, editing }) => {
@@ -128,6 +160,7 @@ const AnnouncementModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
             file: null,
             fileName: initialVals?.announcementFilePath || null,
           }}
+          validationSchema={announcementValidationSchema}
           onSubmit={handleSubmit}
         >
           {({ values, handleChange, setFieldValue }) => {
@@ -194,6 +227,7 @@ const AnnouncementModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                           }}
                           isDisabled
                         />
+                        <ErrorMessage name="society" component="div" className="text-danger" />
                       </Form.Group>
                     </Col>
                     <Col xl={6}>
@@ -269,7 +303,9 @@ const AnnouncementModal: React.FC<ProductModalProps> = ({ show, initialVals, onC
                         <SunEditor
                           defaultValue={values.message}
                           onChange={(content) => setFieldValue("message", content)}
+                          name='message'
                         />
+                        <ErrorMessage name="message" component="div" className="text-danger" />
                       </Form.Group>
                     </Col>
 

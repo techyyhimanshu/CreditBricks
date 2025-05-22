@@ -1,4 +1,4 @@
-import { Formik, Form as FormikForm } from 'formik';
+import { ErrorMessage, Formik, Form as FormikForm } from 'formik';
 import { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import Select from "react-select";
@@ -12,6 +12,7 @@ import { showToast } from '../services/toastServices';
 import { getAllPropertyApi } from '../../api/property-api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
+import * as Yup from 'yup';
 
 interface ModalProps {
     show: boolean;
@@ -24,6 +25,51 @@ interface ModalProps {
     initialVals?: any;
 
 }
+
+const selectFieldValidation = (fieldLabel: string) =>
+    Yup.object()
+        .nullable()
+        .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+            if (!val || typeof val !== 'object') return false;
+
+            if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+            return true;
+        });
+
+const loanValidationSchema = Yup.object().shape({
+    property: selectFieldValidation("Property"),
+    type: selectFieldValidation("Loan Type"),
+    memberType: selectFieldValidation("Member Type"),
+    period: selectFieldValidation("Period"),
+
+    fullName: Yup.string().required("Full name is required"),
+    loanNumber: Yup.string().required("Loan number is required"),
+    amount: Yup.number()
+        .typeError("Amount must be a number")
+        .required("Amount is required")
+        .positive("Invalid Amount"),
+    monthlyEmi: Yup.number()
+        .typeError("Monthly EMI must be a number")
+        .required("Monthly EMI is required")
+        .positive("Invalid Monthly Emi "),
+    startDate: Yup.date().required("Start date is required"),
+    endDate: Yup.date().required("End date is required"),
+    bankName: Yup.string().required("Bank name is required"),
+    bankAddress: Yup.string(),
+    file: Yup.mixed()
+        .nullable()
+        .test(
+            "fileFormat",
+            "Only PDF or image files (jpg, jpeg, png) are allowed",
+            (value:any) => {
+                if (!value) return true; 
+                const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
+                return allowedTypes.includes(value.type);
+            }
+        )
+});
 
 
 const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, editing }) => {
@@ -80,7 +126,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
 
     const fetchPropertiesForDropDown = async () => {
         try {
-            const response = await getAllPropertyApi(undefined,society.value);
+            const response = await getAllPropertyApi(undefined, society.value);
             const formattedData = response.data.data.map((item: any) => ({
                 value: item.propertyIdentifier,
                 label: item.propertyName ? item.propertyName : item.flatNumber,
@@ -161,6 +207,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                         file: null,
                         fileName: initialVals?.loanFilePath || null,
                     }}
+                    validationSchema={loanValidationSchema}
                     onSubmit={handleSubmit}
                 >
                     {({ values, handleChange, setFieldValue }) => {
@@ -211,6 +258,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                     placeholder="Select property"
                                                     classNamePrefix="Select2"
                                                 />
+                                                <ErrorMessage name="property" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -228,6 +276,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                     classNamePrefix="Select2"
 
                                                 />
+                                                <ErrorMessage name="memberType" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -237,6 +286,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                 <Form.Control type="text" name="fullName"
                                                     value={values.fullName}
                                                     onChange={handleChange} className='form-control' placeholder='Name'></Form.Control>
+                                                    <ErrorMessage name="fullName" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -253,6 +303,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                     placeholder="Select type"
                                                     classNamePrefix="Select2"
                                                 />
+                                                <ErrorMessage name="type" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -262,6 +313,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                 <Form.Control type="text" name="loanNumber"
                                                     value={values.loanNumber}
                                                     onChange={handleChange} className='form-control' placeholder='Loan number'></Form.Control>
+                                                    <ErrorMessage name="loanNumber" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -278,6 +330,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                     placeholder="Search period"
                                                     classNamePrefix="Select2"
                                                 />
+                                                <ErrorMessage name="period" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -287,6 +340,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                 <Form.Control type="text" name="amount"
                                                     value={values.amount}
                                                     onChange={handleChange} className='form-control' placeholder='Loan amount'></Form.Control>
+                                                    <ErrorMessage name="amount" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -296,6 +350,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                 <Form.Control type="date" name="startDate"
                                                     value={values.startDate}
                                                     onChange={handleChange} className='form-control'></Form.Control>
+                                                    <ErrorMessage name="startDate" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -305,6 +360,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                 <Form.Control type="date" name="endDate"
                                                     value={values.endDate}
                                                     onChange={handleChange} className='form-control'></Form.Control>
+                                                    <ErrorMessage name="endDate" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -314,6 +370,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                 <Form.Control type="text" name="monthlyEmi"
                                                     value={values.monthlyEmi}
                                                     onChange={handleChange} className='form-control' placeholder='EMI'></Form.Control>
+                                                    <ErrorMessage name="monthlyEmi" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -323,6 +380,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                 <Form.Control type="text" name="bankName"
                                                     value={values.bankName}
                                                     onChange={handleChange} className='form-control' placeholder='Bank name'></Form.Control>
+                                                    <ErrorMessage name="bankName" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -332,6 +390,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                 <Form.Control type="text" name="bankAddress"
                                                     value={values.bankAddress}
                                                     onChange={handleChange} className='form-control' placeholder='Address'></Form.Control>
+                                                    <ErrorMessage name="bankAddress" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -344,6 +403,7 @@ const LoanModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                     onChange={(event: any) =>
                                                         setFieldValue("file", event.currentTarget.files[0])
                                                     } className='form-control' placeholder=''></Form.Control>
+                                                    <ErrorMessage name="file" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
                                         {values.fileName && (
