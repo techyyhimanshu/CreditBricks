@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosInstance"
 
 export const createCashPaymentApi =
-    async (amountInFigures: number, invoiceNumber: string, propertyIdentifier: string, notesDetails: any, mobile: string): Promise<any> => {
+    async (amountInFigures: number, invoiceNumber: string, propertyIdentifier: string, notesDetails: any, mobile: string, receiptDate: string): Promise<any> => {
         try {
             const response = await axiosInstance.post(`payment/cash`, {
                 amountInFigures,
@@ -9,7 +9,8 @@ export const createCashPaymentApi =
                 propertyIdentifier,
                 notesDetails,
                 paidDate: new Date(),
-                mobile
+                mobile,
+                receiptDate
             })
             return response
         } catch (error) {
@@ -40,6 +41,20 @@ export const createChequePaymentApi =
         }
     }
 
+
+export const createNewOnlineSelfPaymentApi = async (data: any) => {
+    try {
+        const formdata = new FormData()
+        for (const key in data) {
+            formdata.append(key, data[key])
+        }
+
+        const response = await axiosInstance.post(`/payment/online-self`, formdata)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const verifyPaymentApi =
     async (invoiceNumber: string, amountInFigures: number,
         paidDate: Date, propertyIdentifier: string, transactionId: string, mobileNumber: string, otp: string): Promise<any> => {

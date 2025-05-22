@@ -37,4 +37,13 @@ export const generateInvoiceApi = async (filters?: any): Promise<any> => {
     }
 }
 
+export const getAllOnlineSelfPaymentApi = async (societyIdentifier: string, filters?: any): Promise<any> => {
+    try {
+        const response = await axiosInstance.post(`payment/online-self/all?society_identifier=${societyIdentifier}`, filters)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
 

@@ -6,10 +6,10 @@ import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { imagesData } from "../../common/commonimages";
-import { generateInvoiceApi, getAllInvoicesApi, getAllPaymentLogsApi, getAllReceiptsApi } from '../../api/account-api';
+import { generateInvoiceApi, getAllInvoicesApi, getAllOnlineSelfPaymentApi, getAllPaymentLogsApi, getAllReceiptsApi } from '../../api/account-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import TestLoader from '../../layout/layoutcomponent/testloader';
-import { createCashPaymentApi, createChequePaymentApi, getInvoicePaymentOutstandingApi, sendOTPApi, verifyPaymentApi } from '../../api/payment-api';
+import { createCashPaymentApi, createChequePaymentApi, createNewOnlineSelfPaymentApi, getInvoicePaymentOutstandingApi, sendOTPApi, verifyPaymentApi } from '../../api/payment-api';
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { ErrorMessage, Field, Formik, Form as FormikForm } from 'formik';
 import { numberToWords } from "amount-to-words";
@@ -51,6 +51,7 @@ export default function Accounts() {
   const [chequeview, setchequeview] = useState(false);
   const [receiptData, setReceiptData] = useState([]);
   const [mobile, setMobile] = useState('');
+  const [receiptDate, setReceiptDate] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputsRef = useRef([]);
 
@@ -61,11 +62,11 @@ export default function Accounts() {
   ];
 
   const paymentmode = [
-    { value: "1", label: "NEFT" },
-    { value: "2", label: "IMPS" },
-    { value: "3", label: "Gpay" },
-    { value: "3", label: "Phonepe" },
-    { value: "3", label: "CRED" }
+    { value: "NEFT", label: "NEFT" },
+    { value: "IMPS", label: "IMPS" },
+    { value: "Gpay", label: "Gpay" },
+    { value: "Phonepe", label: "Phonepe" },
+    { value: "CRED", label: "CRED" }
   ];
 
   const paymenttype = [
@@ -101,6 +102,7 @@ export default function Accounts() {
   const [cashViewData, setCashViewData] = useState<any>({});
   const [chequeViewData, setChequeViewData] = useState<any>({});
   const [paymentLogData, setPaymentLogData] = useState<any>([]);
+  const [onlineSelfData, setOnlineSelfData] = useState<any>([]);
   const [transactionData, setTransactionData] = useState<any>([]);
   const [towers, setTowers] = useState<any>([]);
   const [wings, setWings] = useState<any>([]);
@@ -291,7 +293,7 @@ export default function Accounts() {
       name: 'Date',
       selector: (row: any) => row.date,
       sortable: true,
-       width: '170px'
+      width: '170px'
     },
 
     {
@@ -332,20 +334,39 @@ export default function Accounts() {
       //     {row.status}
       //   </span>
       // ),
-         cell: (row: any) => (
-          <Dropdown>
-          <Dropdown.Toggle variant="" className='p-0'>
-          <strong className="text-danger">Uncleared </strong>
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          <Dropdown.Item className="dropdown-item text-success" href="">Cleared </Dropdown.Item>
-          <Dropdown.Item className="dropdown-item text-danger" href="">Uncleared</Dropdown.Item><Dropdown.Item className="dropdown-item" href="">Bounce</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-            ),
+
+      cell: (row: any) => {
+        return (
+          row.paymentMethod === "Cash" ? <span className={` ${row.status === 'Pending' ? 'badge badge-warning' : 'badge badge-success'}`}>
+            {row.status}
+          </span> :
+            <Dropdown>
+              <Dropdown.Toggle variant="" className='p-0'>
+                <strong className="text-danger">Uncleared </strong>
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item className="dropdown-item text-success" href="">Cleared </Dropdown.Item>
+                <Dropdown.Item className="dropdown-item text-danger" href="">Uncleared</Dropdown.Item><Dropdown.Item className="dropdown-item" href="">Bounce</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>)
+      },
+      // cell: (row: any) => (
+      //   {
+
+      //   }
+      //   // <Dropdown>
+      //   //   <Dropdown.Toggle variant="" className='p-0'>
+      //   //     <strong className="text-danger">Uncleared </strong>
+      //   //   </Dropdown.Toggle>
+      //   //   <Dropdown.Menu>
+      //   //     <Dropdown.Item className="dropdown-item text-success" href="">Cleared </Dropdown.Item>
+      //   //     <Dropdown.Item className="dropdown-item text-danger" href="">Uncleared</Dropdown.Item><Dropdown.Item className="dropdown-item" href="">Bounce</Dropdown.Item>
+      //   //   </Dropdown.Menu>
+      //   // </Dropdown>
+      // ),
 
       sortable: true,
-         width: '130px'
+      width: '130px'
     },
     {
       name: 'Action',
@@ -362,8 +383,100 @@ export default function Accounts() {
       width: '100px'
     }
   ]
+  const columnsOnlineSelfPayment = [
+    {
+      name: 'S.no',
+      selector: (row: any) => row.sno,
+      sortable: true,
+      width: '60px'
+    },
+    {
+      name: 'Society',
+      selector: (row: any) => row.societyName,
+      sortable: true,
+      width: '170px'
+    },
+
+    {
+      name: 'Date Of Payment',
+      selector: (row: any) => row.dateOfPayment,
+      sortable: true,
+      width: '170px'
+
+    },
+    {
+      name: 'Payment Mode',
+      selector: (row: any) => row.paymentMode,
+      sortable: true,
+    },
+    {
+      name: 'Transaction ID',
+      selector: (row: any) => row.transactionId,
+      sortable: true,
+    },
+    {
+      name: 'Amount',
+      selector: (row: any) => row.amount,
+      sortable: true,
+    },
+    {
+      name: 'Bank Name',
+      selector: (row: any) => row.bankName ? row.bankName : "-",
+      sortable: true,
+
+    },
+
+
+    {
+      name: 'Remarks',
+      selector: (row: any) => row.remarks ? row.remarks : "-",
+      sortable: true,
+    },
+
+    {
+      name: 'Payment Status',
+      cell: (row: any) => (
+        <span className={` 
+            ${row.paymentStatus === 'Pending' ? 'badge badge-warning' :
+            row.paymentStatus === 'Failure' ? 'badge badge-danger' :
+              row.paymentStatus === 'Success' ? 'badge badge-success' :
+                'badge badge-success'}
+`}>
+          {row.paymentStatus}
+        </span>
+      ),
+      sortable: true,
+    },
+    {
+      name: 'Receipt  ',
+      cell: (row: any) => (<span className='text-info cursor'>View</span>),
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      width: '90px',
+      cell: (row: any) => (
+        <Dropdown className='profile-user border-0'>
+          <Dropdown.Toggle variant="">
+            <strong className="text-danger">Unreceipt </strong>
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
+            <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
+      ),
+      sortable: true,
+    },
+  ]
   const propertyOptions = [
     { value: "", label: "All" },
+    ...propertyData.map((property: any) => ({
+      value: property.propertyIdentifier,
+      label: property.propertyName
+    }))
+  ];
+  const propertyOptionsWithoutAll = [
     ...propertyData.map((property: any) => ({
       value: property.propertyIdentifier,
       label: property.propertyName
@@ -381,6 +494,11 @@ export default function Accounts() {
   const paymentLogTableData = {
     columns: columnsPaymentLog,
     data: paymentLogData
+  };
+
+  const onlineSelfPaymentTableData = {
+    columns: columnsOnlineSelfPayment,
+    data: onlineSelfData
   };
 
   const handleCountChange = (index: number, value: number) => {
@@ -481,7 +599,7 @@ export default function Accounts() {
           totalAmount: account?.totalAmount,
           totalPaidAmount: account?.totalPaidAmount,
           propertyIdentifier: account.propertyIdentifier,
-          totalOutstanding: account?.invoicePaymentOutstanding?.principleOutstanding * 1 + account?.invoicePaymentOutstanding?.interestOutstanding * 1,
+          totalOutstanding: account?.invoicePaymentOutstanding?.principleOutstanding * 1,
         }
 
       ));
@@ -663,19 +781,48 @@ export default function Accounts() {
       setIsLoading(false)
     }
   }
+  const fetchAllOnlineSelfPayments = async () => {
+    try {
+      const response = await getAllOnlineSelfPaymentApi(society.value, {})
+      const data = response.data.data
+      const formattedData = data.map((paymentLog: any, index: number) => (
+        {
+          sno: index + 1,
+          societyName: paymentLog.property.society.societyName,
+          dateOfPayment: paymentLog.dateOfPayment,
+          paymentMode: paymentLog.paymentMode,
+          transactionId: paymentLog.transactionId,
+          amount: paymentLog.amount,
+          bankName: paymentLog.bankName,
+          paymentStatus: paymentLog.paymentStatus,
+          remarks: paymentLog.remarks,
+        }
+      ));
+      setOnlineSelfData(formattedData)
+
+    } catch (error) {
+      console.log(error)
+      handleApiError(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
   const handleCashSubmit = async (amount: any) => {
     try {
       if (amount > invoicePaymentOutstanding?.totalDueNow * 1) {
-        return showToast("error", "Amount cannot be greater than outstanding amount")
+        return alert("Amount cannot be greater than outstanding amount")
       }
-      console.log(mobile);
 
       if (amount <= 0) {
-        return showToast("error", "Amount cannot be less than or equal to zero")
+        return alert("Amount cannot be less than or equal to zero")
+      }
+      if (!receiptDate) {
+        return alert("Please select a valid date")
       }
       if (!mobile || mobile.length < 10) {
-        return showToast("error", "Please enter a valid mobile number")
+        return alert("Please enter a valid mobile number")
       }
+
       const notesDetails = denominations.reduce((acc: Record<number, number>, curr) => {
         if (curr.count > 0) {
           acc[curr.value] = curr.count;
@@ -683,13 +830,15 @@ export default function Accounts() {
         return acc;
       }, {} as Record<number, number>);
 
+      console.log(amount, invoiceToPay.invoiceNumber, invoiceToPay.propertyIdentifier, notesDetails, mobile, receiptDate);
 
-      const response = await createCashPaymentApi(amount, invoiceToPay.invoiceNumber, invoiceToPay.propertyIdentifier, notesDetails, mobile)
+      const response = await createCashPaymentApi(amount, invoiceToPay.invoiceNumber, invoiceToPay.propertyIdentifier, notesDetails, mobile, receiptDate)
       if (response.status === 200) {
         setTransactionData(response.data.data)
         viewDemoShow("otpverify");
       }
-      viewDemoShow("otpverify");
+
+      // viewDemoShow("otpverify");
 
     } catch (error) {
       const errorMessage = handleApiError(error)
@@ -709,7 +858,7 @@ export default function Accounts() {
       const response = await createChequePaymentApi(invoiceToPay.invoiceNumber,
         values.bankName,
         values.chequeDate,
-        values.chequeIssuedDate,
+        values.receiptDate,
         values.chequeReceivedDate,
         values.branchName,
         values.amountInFigures,
@@ -731,13 +880,14 @@ export default function Accounts() {
   const handleVerifyPayment = async () => {
     try {
       const joinedOtp = otp.join('');
-      console.log(transactionData);
 
       if (joinedOtp.length === 6) {
         const response = await verifyPaymentApi(transactionData.invoiceNumber, transactionData.amount, transactionData.createdAt, transactionData.propertyIdentifier, transactionData.txnId, mobile, joinedOtp)
         if (response.status === 200) {
           viewDemoClose("otpverify");
           showToast("success", "Payment verified successfully")
+          fetchAllReceipts()
+          fetchAllPaymentLogs()
         }
       }
     } catch (error) {
@@ -769,6 +919,7 @@ export default function Accounts() {
     fetchAllPropertiesForDropDown();
     fetchAllReceipts();
     fetchAllPaymentLogs();
+    fetchAllOnlineSelfPayments();
   }, [])
 
 
@@ -1036,7 +1187,39 @@ export default function Accounts() {
     }
 
   }
+  const handleOnlineSelfSubmit = async (values: any) => {
+    try {
+      if (values.amount * 1 <= 0) {
+        return alert("Amount cannot be less than or equal to zero")
+      }
 
+      if (values.amount * 1 > invoicePaymentOutstanding.totalDueNow * 1) {
+        return alert("Amount cannot be greater than outstanding amount")
+      }
+      console.log(values);
+
+      const formattedData = {
+        propertyIdentifier: invoiceToPay.propertyIdentifier,
+        dateOfPayment: values.dateOfPayment,
+        paymentMode: values.paymentMode.value,
+        transactionId: values.transactionId,
+        amount: values.amount,
+        bankName: values.bankName,
+        remarks: values.remarks,
+        paymentFile: values.paymentFile,
+        invoiceNumber: invoiceToPay.invoiceNumber
+      }
+      const response = await createNewOnlineSelfPaymentApi(formattedData)
+      if (response.status === 200) {
+        showToast("success", "Payment submitted successfully");
+        fetchAllOnlineSelfPayments()
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage);
+    }
+
+  }
   return (
     <Fragment>
       <div className="breadcrumb-header justify-content-between">
@@ -2285,66 +2468,19 @@ export default function Accounts() {
                       )}
 
                     </Formik>
+                    <div className="table-responsive ">
+                      <DataTableExtensions {...onlineSelfPaymentTableData}>
+                        <DataTable
+                          columns={columnsOnlineSelfPayment}
+                          data={onlineSelfData}
+                          pagination
+                          progressPending={isLoading}
+                          progressComponent={<TestLoader />}
 
-                    <table className='table table-border mt-3 bg-white'>
-                      <thead>
-                        <tr>
-                          <th>S.No.</th>
-                          <th>Society</th>
-                          <th>Date of Payment</th>
-                          <th>Payment Mode</th>
-                          <th>Transaction ID</th>
-                          <th>Amount</th>
-                          <th>Bank Name</th>
-                          <th>Payment Status</th>
-                          <th>Remarks</th>
-                          <th>Receipt</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>testname</td>
-                          <td>2025-05-12</td>
-                          <td>NEFT</td>
-                          <td>#5475845749</td>
-                          <td><i className='fa fa-rupee'></i> 2500.00</td>
-                          <td>HDFC Bank</td>
-                          <td className='text-center'><Dropdown className='profile-user border-0'>
-                            <Dropdown.Toggle variant="">
-                              <strong className="text-danger">Unreceipt </strong>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                              <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
-                              <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown> </td>
-                          <td></td>
-                          <td><span className='text-info cursor'>View</span></td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>testname</td>
-                          <td>2025-05-12</td>
-                          <td>NEFT</td>
-                          <td>#5475845749</td>
-                          <td><i className='fa fa-rupee'></i> 2500.00</td>
-                          <td>HDFC Bank</td>
-                          <td className='text-center'><Dropdown className='profile-user border-0'>
-                            <Dropdown.Toggle variant="">
-                              <strong className="text-success">Receipt </strong>
-                            </Dropdown.Toggle>
-                            <Dropdown.Menu>
-                              <Dropdown.Item className="dropdown-item text-success" href="">Receipt </Dropdown.Item>
-                              <Dropdown.Item className="dropdown-item text-danger" href="">Unreceipt </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown> </td>
-                          <td></td>
-                          <td><span className='text-info cursor'>View</span></td>
-                        </tr>
-                      </tbody>
-                    </table>
 
+                        />
+                      </DataTableExtensions>
+                    </div>
                   </Row>
 
                 </Tab>
@@ -2372,10 +2508,10 @@ export default function Accounts() {
                     Interest Outstanding: <i className="fa fa-rupee tx-16"></i> {invoicePaymentOutstanding.interestOutstanding}
                   </Col>
                   <Col xl={12} className='w-100 tx-18 mb-1 text-center'>
-                    Interest Till Now <i className="fa fa-rupee tx-16"></i> {invoicePaymentOutstanding.currentInterest}
+                    Interest Till Now: <i className="fa fa-rupee tx-16"></i> {invoicePaymentOutstanding.currentInterest}
                   </Col>
                   <Col xl={12} className='w-100 tx-26 text-center tx-bold'>
-                    Total <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
+                    Total:  <i className="fa fa-rupee"></i> {invoicePaymentOutstanding.totalDueNow}
                   </Col>
                 </>
               )}
@@ -2541,6 +2677,11 @@ export default function Accounts() {
                       <Form.Control className='form-control' disabled value={numberToWords(calculateGrandTotal())} placeholder='Enter amount in words' type="text"></Form.Control>
                     </FormGroup>
                     <hr />
+
+                    <FormGroup className='mt-3'>
+                      <FormLabel className='text-black'>Receipt Date</FormLabel>
+                      <input onChange={(e) => setReceiptDate(e.target.value)} className='form-control' required placeholder='Enter Number' type="date"></input>
+                    </FormGroup>
                     <FormGroup className='mt-3'>
                       <FormLabel className='text-black'>Mobile Number</FormLabel>
                       <input onChange={(e) => setMobile(e.target.value)} className='form-control' required placeholder='Enter Number' type="text"></input>
@@ -2572,7 +2713,7 @@ export default function Accounts() {
             <Formik
               initialValues={{
                 chequeDate: '',
-                chequeIssuedDate: '',
+                receiptDate: '',
                 chequeReceivedDate: '',
                 chequeNumber: '',
                 bankName: '',
@@ -2583,7 +2724,7 @@ export default function Accounts() {
               }}
               validationSchema={Yup.object({
                 chequeDate: Yup.string().required('Cheque Date is required'),
-                chequeIssuedDate: Yup.string().required('Cheque Issued Date is required'),
+                receiptDate: Yup.string().required('Cheque Issued Date is required'),
                 chequeReceivedDate: Yup.string().required('Cheque Clearing Date is required'),
                 chequeNumber: Yup.string().required('Cheque Number is required'),
                 bankName: Yup.string().required('Bank Name is required'),
@@ -2631,15 +2772,15 @@ export default function Accounts() {
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
-                              <FormLabel>Cheque Issued Date</FormLabel>
-                              <Field name="chequeIssuedDate" type="date" className={`form-control ${errors.chequeIssuedDate && touched.chequeIssuedDate ? 'is-invalid' : ''}`} />
-                              <ErrorMessage name="chequeIssuedDate" component="div" className="text-danger" />
+                              <FormLabel>Receipt Date</FormLabel>
+                              <Field name="receiptDate" type="date" className={`form-control ${errors.receiptDate && touched.receiptDate ? 'is-invalid' : ''}`} />
+                              <ErrorMessage name="receiptDate" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
                           <Col xl={6}>
                             <FormGroup>
                               <FormLabel>Cheque Clearing Date</FormLabel>
-                              <Field name="chequeReceivedDate" type="date" className={`form-control ${errors.chequeReceivedDate && touched.chequeReceivedDate ? 'is-invalid' : ''}`} />
+                              <Field disabled type="date" className={`form-control ${errors.chequeReceivedDate && touched.chequeReceivedDate ? 'is-invalid' : ''}`} />
                               <ErrorMessage name="chequeReceivedDate" component="div" className="text-danger" />
                             </FormGroup>
                           </Col>
@@ -2719,95 +2860,134 @@ export default function Accounts() {
                 x
               </Button>
             </Modal.Header>
+            <Formik
+              initialValues={{
+                property: { label: invoiceToPay.propertyName, value: invoiceToPay.propertyIdentifier },
+                dateOfPayment: "",
+                paymentMode: { label: "Select Payment Mode", value: "" },
+                transactionId: "",
+                amount: "",
+                bankName: "",
+                remarks: "",
+                paymentFile: null
 
-            <Modal.Body>
-              <Row>
-                <Col sm={12}>
-                  <FormGroup>
-                    <FormLabel>Society</FormLabel>
-                    <Select
-                      options={society}
-                      placeholder="Select society"
-                      name="paymentmode"
-                      classNamePrefix='Select2'
-                      className="multi-select"
+              }} onSubmit={handleOnlineSelfSubmit}>
+              {({ values, setFieldValue }) => (
+                <FormikForm>
+                  <Modal.Body>
+                    <Row>
+                      <Col sm={12}>
+                        <FormGroup>
+                          <FormLabel>Society</FormLabel>
+                          <Select
+                            // options={society}
+                            value={society}
+                            isDisabled={true}
+                            placeholder="Select society"
+                            name="paymentmode"
+                            classNamePrefix='Select2'
+                            className="multi-select"
 
-                    />
-                  </FormGroup>
-                </Col>
-                <Col sm={12}>
-                  <FormGroup>
-                    <FormLabel>Property</FormLabel>
-                    <Select
-                      options={propertyOptions}
-                      placeholder="Select property"
-                      name="paymentmode"
-                      classNamePrefix='Select2'
-                      className="multi-select"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col sm={12}>
+                        <FormGroup>
+                          <FormLabel>Property</FormLabel>
+                          <Select
+                            options={[{ label: invoiceToPay.propertyName, value: invoiceToPay.propertyIdentifier }]}
+                            placeholder={invoiceToPay.propertyName}
+                            isDisabled={true}
+                            name="property"
+                            classNamePrefix='Select2'
+                            className="multi-select"
+                            onChange={(e) => setFieldValue("property", e)}
 
-                    />
-                  </FormGroup>
-                </Col>
-                <Col sm={6}>
-                  <FormGroup>
-                    <FormLabel>Date of Payment</FormLabel>
-                    <Form.Control type='date' />
-                  </FormGroup>
-                </Col>
-                <Col sm={6}>
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col sm={6}>
+                        <FormGroup>
+                          <FormLabel>Date of Payment</FormLabel>
+                          <Field type='date' className="form-control" name="dateOfPayment" value={values.dateOfPayment}></Field>
+                        </FormGroup>
+                      </Col>
+                      <Col sm={6}>
 
-                  <FormGroup>
-                    <FormLabel>Payment Mode</FormLabel>
-                    <Select
-                      options={paymentmode}
-                      placeholder="Select mode"
-                      name="paymentmode"
-                      classNamePrefix='Select2'
-                      className="multi-select"
+                        <FormGroup>
+                          <FormLabel>Payment Mode</FormLabel>
+                          <Select
+                            options={paymentmode}
+                            placeholder="Select mode"
+                            name="paymentMode"
+                            classNamePrefix='Select2'
+                            className="multi-select"
+                            onChange={(e) => setFieldValue("paymentMode", e)}
 
-                    />
-                  </FormGroup>
-                </Col>
-                <Col sm={6}>
-                  <FormGroup>
-                    <FormLabel>Transaction ID</FormLabel>
-                    <Form.Control type='text' placeholder='enter id' />
-                  </FormGroup>
-                </Col>
-                <Col sm={6}>
-                  <FormGroup>
-                    <FormLabel>Amount</FormLabel>
-                    <Form.Control type='text' placeholder='0.00' />
-                  </FormGroup>
-                </Col>
-                <Col sm={12}>
-                  <FormGroup>
-                    <FormLabel>Bank Name</FormLabel>
-                    <Form.Control type='text' placeholder='enter name' />
-                  </FormGroup>
-                </Col>
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col sm={6}>
+                        <FormGroup>
+                          <FormLabel>Transaction ID</FormLabel>
+                          <Field type='text'
+                            className="form-control"
+                            name="transactionId"
+                            value={values.transactionId}
+                            placeholder='enter id' ></Field>
+                        </FormGroup>
+                      </Col>
+                      <Col sm={6}>
+                        <FormGroup>
+                          <FormLabel>Amount</FormLabel>
+                          <Field type='text'
+                            className="form-control"
+                            name="amount"
+                            value={values.amount}
+                            placeholder='0.00' ></Field>
+                        </FormGroup>
+                      </Col>
+                      <Col sm={12}>
+                        <FormGroup>
+                          <FormLabel>Bank Name</FormLabel>
+                          <Field type='text'
+                            className="form-control"
+                            name="bankName"
+                            value={values.bankName}
+                            placeholder='enter name' ></Field>
+                        </FormGroup>
+                      </Col>
 
-                <Col sm={12}>
-                  <FormGroup>
-                    <FormLabel>Remarks</FormLabel>
-                    <textarea className='form-control' placeholder='enter remarks'></textarea>
-                  </FormGroup>
-                </Col>
-                <Col sm={12}>
-                  <FormGroup>
-                    <FormLabel>Upload Receipt</FormLabel>
-                    <Form.Control type='file' />
-                  </FormGroup>
-                </Col>
-              </Row>
-            </Modal.Body>
+                      <Col sm={12}>
+                        <FormGroup>
+                          <FormLabel>Remarks</FormLabel>
+                          <textarea className='form-control'
+                            name="remarks"
+                            value={values.remarks}
+                            onChange={(e: any) => setFieldValue("remarks", e.target.value)}
+                            placeholder='enter remarks'></textarea>
+                        </FormGroup>
+                      </Col>
+                      <Col sm={12}>
+                        <FormGroup>
+                          <FormLabel>Upload Receipt</FormLabel>
+                          <input className="form-control" type='file' name='paymentFile'
+                            onChange={(e: any) => setFieldValue("paymentFile", e.target.files[0])}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                  </Modal.Body>
 
-            <Modal.Footer>
-              <Button type='button' className='btn btn-default' onClick={() => { viewDemoClose("onlineself"); }}>Cancel</Button>
-              <Button type='submit' className='btn btn-primary me-2' onClick={() => { viewDemoClose("onlineself"); }}>Save</Button>
+                  <Modal.Footer>
+                    <Button type='button' className='btn btn-default' onClick={() => { viewDemoClose("onlineself"); }}>Cancel</Button>
+                    <Button type='submit' className='btn btn-primary me-2' onClick={() => { viewDemoClose("onlineself"); }}>Save</Button>
 
-            </Modal.Footer>
+                  </Modal.Footer>
+                </FormikForm>
+              )}
 
+            </Formik>
           </Modal>
 
 
@@ -3015,9 +3195,14 @@ export default function Accounts() {
                       <Form.Control className='form-control' value={cashViewData?.amountInWords} type="text"></Form.Control>
                     </FormGroup>
                     <hr />
+
+                    <FormGroup>
+                      <FormLabel className='text-black'>Receipt Data</FormLabel>
+                      <Form.Control className='form-control' value={cashViewData?.receiptDate} type="date" disabled></Form.Control>
+                    </FormGroup>
                     <FormGroup className='mt-3'>
                       <FormLabel className='text-black'>Mobile Number</FormLabel>
-                      <Form.Control className='form-control' value={"0000000000"} disabled type="text"></Form.Control>
+                      <Form.Control className='form-control' value={""} disabled type="text"></Form.Control>
                     </FormGroup>
 
 
