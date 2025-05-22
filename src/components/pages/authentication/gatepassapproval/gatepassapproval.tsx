@@ -274,23 +274,24 @@ const GatePassApproval: React.FC<ProductModalProps> = ({ initialVals }) => {
                               </Col>
 
                               <Col xl={12} className="pt-2">
-                                <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
-                                <Dropdown className='profile-user border-0'>
-                                  <Dropdown.Toggle variant="">
-                                    <strong className="text-danger">Reject</strong>
-                                  </Dropdown.Toggle>
-                                  <Dropdown.Menu>
-                                    <Dropdown.Item className="dropdown-item text-success" href="/">Approve </Dropdown.Item>
-                                    <Dropdown.Item className="dropdown-item text-danger" href="/">Reject </Dropdown.Item>
-                                    <Dropdown.Item className="dropdown-item" href="/">On Hold </Dropdown.Item>
-                                  </Dropdown.Menu>
-                                </Dropdown>
-                                <p className="mb-0 mt-2">Remarks</p>
-                                <textarea className='form-control' placeholder='Remarks'></textarea>
-                              </Col>
-                              <Col sm={12} className="text-end pt-3">
-                                <Button type='button' className='btn btn-primary'>Save</Button>
-                              </Col>
+                              <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
+                              <Dropdown className='profile-user border-0'>
+                                <Dropdown.Toggle variant="">
+                                  <strong className="text-danger">Decline</strong>
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                  <Dropdown.Item className="dropdown-item text-success" href="/">Approve </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item text-danger" href="/">Decline </Dropdown.Item>
+                                  <Dropdown.Item className="dropdown-item" href="/">On Hold </Dropdown.Item>
+                                </Dropdown.Menu>
+                              </Dropdown>
+                              <p className="mb-0 mt-2">Remarks</p>
+                              <textarea className='form-control' placeholder='Remarks'></textarea>
+                            </Col>
+                            <Col sm={12} className="text-end pt-3">
+                              <Button type='button' className='btn btn-primary ms-2'>Save</Button>
+                                <Button type='button' className='btn btn-info'>Print</Button>
+                            </Col>
                             </Row>
 
 

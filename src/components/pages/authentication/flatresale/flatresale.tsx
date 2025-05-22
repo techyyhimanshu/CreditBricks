@@ -2,19 +2,20 @@ import { Fragment, useState } from "react";
 import { Button, Col, Form, Row, Card, Dropdown } from 'react-bootstrap';
 import * as Switcherdatacustam from "../../../../common/switcherdatacustam";
 import { imagesData } from '../../../../common/commonimages';
+import { Link } from "react-router-dom";
 
 interface ProductModalProps {
   initialVals?: any;
 }
 
-const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
+const FlatResale: React.FC<ProductModalProps> = ({ initialVals }) => {
   const [selectedStatus, setSelectedStatus] = useState("Decline");
   const [remarks, setRemarks] = useState("");
 
 
   const handleSaveStatus = async () => {
     try {
-      console.log(selectedStatus,remarks)
+      console.log(selectedStatus, remarks)
       // showToast("success", "Status updated successfully");
     } catch (error) {
       // const errorMessage = handleApiError(error);
@@ -27,7 +28,7 @@ const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
 
     const date = new Date(isoDateStr);
     const yyyy = date.getUTCFullYear();
-    const mm = String(date.getUTCMonth() + 1).padStart(2, '0'); 
+    const mm = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are 0-indexed
     const dd = String(date.getUTCDate()).padStart(2, '0');
     const hh = String(date.getUTCHours()).padStart(2, '0');
     const min = String(date.getUTCMinutes()).padStart(2, '0');
@@ -64,7 +65,7 @@ const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
                         <td className="text-center" colSpan={2}>
                           <h3 className="mb-0">Credit Bricks PVt Ltd</h3>
                           <strong>Registration Number : BSE/01/02/45  </strong>
-                          <h5>{initialVals?.applicationType || "-"}</h5>
+                          <h5>Flat Resale</h5>
                         </td>
                       </tr>
 
@@ -84,53 +85,58 @@ const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
                                 <Form.Label>Property</Form.Label>
                                 <p className="mb-0">{initialVals?.property?.propertyName || "-"}</p>
                               </Col>
-
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Occassion</Form.Label>
-                                <p className='tx-14 mb-0'>{initialVals?.occasionId || "-"}</p>
+                              <Col sm={12} className='mb-0'>
+                                <h5 className="main-content-label mt-3 tx-14 tx-dark tx-medium mg-b-10">To share your payment receipt, kindly click on the "Yes" option</h5>
                               </Col>
 
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Day</Form.Label>
-                                <p className='tx-14 mb-0'>{initialVals?.shift || "-"}</p>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Share Transfer Documents Submitted</Form.Label>
+                                <p className="mb-0">Yes</p>
                               </Col>
 
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>No. of Guest</Form.Label>
-                                <p className='tx-14 mb-0'>{initialVals?.guestCount || "-"}</p>
-                              </Col>
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Start Date & Time</Form.Label>
-                                <p className='tx-14 mb-0'>{formatDateTime(initialVals?.startDate)}</p>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Do you currently process the original share
+                                certificate?</Form.Label>
+                                <p className="mb-0">Yes</p>
                               </Col>
 
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>End Date & Time</Form.Label>
-                                <p className='tx-14 mb-0'>{formatDateTime(initialVals?.endDate)}</p>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Is there an existing home loan on your
+                                property?</Form.Label>
+                                <p className="mb-0">Yes</p>
+                              </Col>
+
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Have you fully settled your home loan?</Form.Label>
+                                <p className="mb-0">Yes</p>
                               </Col>
 
 
-
-
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Venue</Form.Label>
-                                <p className='tx-14 mb-0'>{initialVals?.venue?.venueName || "-"}</p>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Share Transfer Premium Paid</Form.Label>
+                                <p className="mb-0">Yes</p>
                               </Col>
 
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Name of the Organizer</Form.Label>
-                                <p className='tx-14 mb-0 '>{initialVals?.organizer || "-"}</p>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Share Transfer Fees Paid</Form.Label>
+                                <p className="mb-0">Yes</p>
                               </Col>
 
-                              <Col sm={3} className='mb-0'>
-                                <Form.Label>Contact Details</Form.Label>
-                                <p className='tx-14  mb-0'>{initialVals?.contact || "-"}</p>
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Membership Fee Paid</Form.Label>
+                                <p className="mb-0">Yes</p>
                               </Col>
 
-                              {/* <Col sm={3} className='mb-0'>
-                                <Form.Label>Outstanding</Form.Label>
-                                <p className='tx-14 tx-bold mb-0'>0.00 </p>
-                              </Col> */}
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Entrance Fee Paid</Form.Label>
+                                <p className="mb-0">Yes</p>
+                              </Col>
+
+                              <Col sm={4} className='mb-0'>
+                                <Form.Label>Other Charges Paid</Form.Label>
+                                <p className="mb-0">Yes, cross circular 1505</p>
+                              </Col>
+
 
                             </Row>
                           </Card.Body>
@@ -138,28 +144,29 @@ const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
 
                         <Card className='box-shadow border border-primary'>
                           <Card.Body>
-                            <h5 className="card-title  main-content-label tx-14 tx-dark tx-medium mg-b-10">Does this celebration include any of the following?</h5>
+<h5 className="card-title main-content-label tx-14 tx-dark tx-medium mg-b-10">Joint Holder</h5>
                             <Row>
                               <Col sm={3} className='mb-0'>
-                                <Form.Label>Catering Service</Form.Label>
-                                <p className='tx-14  mb-0'>{initialVals?.catering ? "Yes" : "No"}</p>
+                                <Form.Label>Joint Holder</Form.Label>
+                                <p className='tx-14  mb-0'>Yes</p>
                               </Col>
 
                               <Col sm={3} className='mb-0'>
-                                <Form.Label>Decorations</Form.Label>
-                                <p className='tx-14  mb-0'>{initialVals?.decorations ? "Yes" : "No"} </p>
+                                <Form.Label>Owner Name (As per Agreement)</Form.Label>
+                                <p className='tx-14  mb-0'>- </p>
                               </Col>
                               <Col sm={3} className='mb-0'>
-                                <Form.Label>Sound System</Form.Label>
-                                <p className='tx-14  mb-0'>{initialVals?.sound ? "Yes" : "No"}</p>
+                                <Form.Label>Co-owner Name (As per Agreement)
+                                </Form.Label>
+                                <p className='tx-14  mb-0'>-</p>
                               </Col>
                               <Col sm={3} className='mb-0'>
-                                <Form.Label>Guest Parking</Form.Label>
-                                <p className='tx-14  mb-0'>{initialVals?.guestParking ? "Yes" : "No"} </p>
+                                <Form.Label>Flat Registration ID</Form.Label>
+                                <p className='tx-14  mb-0'>- </p>
                               </Col>
-                              <Col sm={12} className='mb-0'>
-                                <Form.Label>Remarks</Form.Label>
-                                <p className='tx-14 mb-0'>{initialVals?.remark || "-"}</p>
+                              <Col sm={3} className='mb-0'>
+                                <Form.Label>Flat Registration Copy</Form.Label>
+                                <p className='tx-14 mb-0'><Link to={``} target="_blank" className="text-info">flatresale.pdf</Link></p>
                               </Col>
 
                             </Row>
@@ -268,7 +275,7 @@ const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
                               </Col>
                               <Col sm={12} className="text-end pt-3">
                                 <Button type='button' className='btn btn-primary ms-2' onClick={handleSaveStatus}>Save</Button>
-                              <Button type='button' className='btn btn-info'>Print</Button>
+                                   <Button type='button' className='btn btn-info'>Print</Button>
                               </Col>
                             </Row>
 
@@ -316,8 +323,8 @@ const CelebrationBooking: React.FC<ProductModalProps> = ({ initialVals }) => {
   );
 };
 
-CelebrationBooking.propTypes = {};
+FlatResale.propTypes = {};
 
-CelebrationBooking.defaultProps = {};
+FlatResale.defaultProps = {};
 
-export default CelebrationBooking;
+export default FlatResale;

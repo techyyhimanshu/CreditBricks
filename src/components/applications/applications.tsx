@@ -475,9 +475,9 @@ export default function Applications() {
     } catch (error) {
       const errorMessage = handleApiError(error)
       showToast("error", errorMessage)
-    } 
+    }
   }
-  
+
 
   const handleDelete = (id: string) => {
     ; (async () => {
@@ -810,10 +810,10 @@ export default function Applications() {
 
   const status = [
     { value: "", label: "All" },
-    { value: "In-Progress", label: "In-Progress" },
-    { value: "Pending", label: "Pending" },
+   { value: "Pending", label: "Pending" },
+    { value: "onhold", label: "On Hold" },
     { value: "Approved", label: "Approved" },
-    { value: "Completed", label: "Completed" },
+    { value: "Declined", label: "Declined" },
   ]
 
   const property = [
@@ -1485,7 +1485,7 @@ export default function Applications() {
 
                   </Row>
                 </Tab>
-                <Tab eventKey="ApprovalHistory" title="Approval History">
+                {/* <Tab eventKey="ApprovalHistory" title="Approval History">
 
                   <div className="table-responsive min-height500">
                     <table className='table table-bordered'>
@@ -1514,7 +1514,7 @@ export default function Applications() {
                       </tbody>
                     </table>
                   </div>
-                </Tab>
+                </Tab> */}
 
 
               </Tabs>

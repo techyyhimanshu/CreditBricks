@@ -7,6 +7,7 @@ import { handleApiError } from "../../../../helpers/handle-api-error";
 import { CustomToastContainer, showToast } from "../../../../common/services/toastServices";
 import CelebrationBooking from "../celebrationbooking/celebrationbooking";
 import GatePassApproval from "../gatepassapproval/gatepassapproval";
+import FlatResale from "../flatresale/flatresale";
 
 const Approve = () => {
   const [showGatePass, setShowGatePass] = useState(false)
@@ -352,7 +353,7 @@ const Approve = () => {
       showGatePass&&data&&<GatePassApproval initialVals={data}/>
     }
     {
-      showFlatResale&&<CelebrationBooking/>
+      showFlatResale&&<FlatResale/>
     }
     </>
 

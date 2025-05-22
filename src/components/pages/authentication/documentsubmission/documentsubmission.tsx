@@ -2,8 +2,8 @@ import { Fragment } from "react";
 import { Button, Col, Form, Row, Card, Dropdown } from 'react-bootstrap';
 import * as Switcherdatacustam from "../../../../common/switcherdatacustam";
 import { imagesData } from '../../../../common/commonimages';
-
-const Cheque = () => {
+import { Link } from "react-router-dom";
+const DocumentSubmission = () => {
   return(
 
  <Fragment>
@@ -31,7 +31,7 @@ const Cheque = () => {
                         <td className="text-center" colSpan={2}>
                           <h3 className="mb-0">Credit Bricks PVt Ltd</h3>
                           <strong>Registration Number : BSE/01/02/45  </strong>
-                          <h5>Cheque Acknowledgement</h5>
+                          <h5>Document Submission</h5>
                         </td>
                       </tr>
 
@@ -40,64 +40,67 @@ const Cheque = () => {
                       <Col sm={12}>
                         <Card className='box-shadow border border-primary'>
                           <Card.Body>
-                            <h5 className="card-title main-content-label tx-14 tx-dark tx-medium mg-b-10">Details</h5>
+                            <h5 className="card-title main-content-label tx-14 tx-dark tx-medium mg-b-10">Document Details</h5>
                             <Row>
-                                <Col sm={4} className='mb-0'>
+                                <Col sm={6} className='mb-0'>
                                                               <Form.Label>Society</Form.Label>
                                                               <p className='mb-0'>Credit Bricks PVt Ltd</p>
                                                             </Col>
 
-                                                            <Col sm={4} className='mb-0'>
+                                                            <Col sm={6} className='mb-0'>
                                                               <Form.Label>Property</Form.Label>
                                                               <p className='mb-0'>A101</p>
                                                             </Col>
-                                                            <Col xl={4}></Col>
 
-                              <Col sm={4} className='mb-0'>
-                                <Form.Label>Cheque Date</Form.Label>
-                                <p className="mb-0">16/05/2025</p>
+
+                              <Col sm={6} className='mb-0'>
+                                <Form.Label>Document Submission</Form.Label>
+                                <p className="mb-0">Agreement Copy</p>
                               </Col>
 
-                              <Col sm={4} className='mb-0'>
-                                <Form.Label>Cheque Issued Date</Form.Label>
-                                <p className="mb-0">-</p>
+                              <Col sm={6} className='mb-0'>
+                                <Form.Label>File</Form.Label>
+                                <p className="mb-0"><Link to={``} className="text-info">agreementcopy.pdf</Link></p>
                               </Col>
 
 
-                              <Col sm={4} className='mb-0'>
-                                <Form.Label>Cheque Clearing Date</Form.Label>
+                              <Col sm={12} className='mb-0'>
+                                <Form.Label>Comment</Form.Label>
                                 <p className='tx-14 mb-0'>-</p>
                               </Col>
-
-                              <Col sm={4} className='mb-0'>
-                                <Form.Label>Cheque Number</Form.Label>
-                                <p className='tx-14 mb-0'>3543657</p>
-                              </Col>
-                              <Col sm={4} className='mb-0'>
-                                <Form.Label>Bank Name</Form.Label>
-                                <p className='tx-14 mb-0'>HDFC Bank</p>
-                              </Col>
-
-                              <Col sm={4} className='mb-0'>
-                                <Form.Label>Branch</Form.Label>
-                                <p className='tx-14 mb-0'>Noida</p>
-                              </Col>
-
-<Col sm={4} className='mb-0'>
-                                <Form.Label>Amount (in figures)</Form.Label>
-                                <p className='tx-14 mb-0'>2,000.00</p>
-                              </Col>
-
-                              <Col sm={4} className='mb-0'>
-                                <Form.Label>Amount (in words)</Form.Label>
-                                <p className='tx-14 mb-0 '>Two Thousand Only</p>
-                              </Col>
-
 
 
                             </Row>
                           </Card.Body>
                         </Card>
+
+                        <Card className='box-shadow border border-primary'>
+                                                  <Card.Body>
+                                                    <h5 className="card-title main-content-label tx-dark tx-14 tx-medium mg-b-10">Documents</h5>
+                                                    <Row>
+
+                                                    <Col sm={3} className='mb-0'>
+                                                        <Form.Label>Sale Agreement Copy</Form.Label>
+                                                        <p className='tx-14 mb-0'>Yes</p>
+                                                      </Col>
+
+                                                      <Col sm={3} className='mb-0'>
+                                                        <Form.Label>Flat Registration Certificate</Form.Label>
+                                                        <p className='tx-14 mb-0'>Yes </p>
+                                                      </Col>
+                                                      <Col sm={3} className='mb-0'>
+                                                        <Form.Label>Home Loan Sanction Letter</Form.Label>
+                                                        <p className='tx-14 mb-0'>Yes</p>
+                                                      </Col>
+                                                      <Col sm={3} className='mb-0'>
+                                                        <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
+                                                        <p className='tx-14 mb-0'>Yes </p>
+                                                      </Col>
+
+
+                                                    </Row>
+                                                  </Card.Body>
+                                                </Card>
 
 
                         <Card className='box-shadow border border-primary'>
@@ -148,16 +151,17 @@ const Cheque = () => {
 
                               <Col xl={12} className="pt-2">
                               <Form.Label className='float-start tx-bold tx-15 text-primary'>Update Status</Form.Label>
-                              <Dropdown className='profile-user border-0'>
-                                <Dropdown.Toggle variant="">
-                                  <strong className="text-danger">Uncleared</strong>
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                  <Dropdown.Item className="dropdown-item text-danger" href="/">Uncleared </Dropdown.Item>
-                                  <Dropdown.Item className="dropdown-item text-success" href="/">Cleared </Dropdown.Item>
-                                  <Dropdown.Item className="dropdown-item" href="/">Bounce </Dropdown.Item>
-                                </Dropdown.Menu>
-                              </Dropdown>
+                                <Dropdown className='profile-user border-0'>
+                                                               <Dropdown.Toggle variant="">
+                                                                  <strong className="text-danger"> Decline </strong>
+                                                               </Dropdown.Toggle>
+
+                                                               <Dropdown.Menu>
+                                                                 <Dropdown.Item className="dropdown-item text-success">Approve</Dropdown.Item>
+                                                                 <Dropdown.Item className="dropdown-item text-danger">Decline</Dropdown.Item>
+                                                                 <Dropdown.Item >On Hold</Dropdown.Item>
+                                                               </Dropdown.Menu>
+                                                             </Dropdown>
                               <p className="mb-0 mt-2">Remarks</p>
                               <textarea className='form-control' placeholder='Remarks'></textarea>
                             </Col>
@@ -210,8 +214,8 @@ Society reserves the right to enhance the penalty in case of continuing default 
 
 ); };
 
-Cheque.propTypes = {};
+DocumentSubmission.propTypes = {};
 
-Cheque.defaultProps = {};
+DocumentSubmission.defaultProps = {};
 
-export default Cheque;
+export default DocumentSubmission;

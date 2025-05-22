@@ -620,7 +620,87 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                             </Accordion.Body>
                                         </Accordion.Item>
 
+                                        <Accordion.Item eventKey="Documentdetails">
+                                            <Accordion.Header>Document Details</Accordion.Header>
+                                            <Accordion.Body>
+                                                <Row>
 
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Sale Agreement Copy</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Flat Registration Certificate</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Home Loan Sanction Letter</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+
+
+
+
+                                                </Row>
+                                            </Accordion.Body>
+                                        </Accordion.Item>
                                         <Accordion.Item eventKey="approvaldetails">
                                             <Accordion.Header>Approval Details</Accordion.Header>
                                             <Accordion.Body className='p-2'>
