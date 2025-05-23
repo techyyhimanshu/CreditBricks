@@ -11,6 +11,8 @@ import { createAnnouncementApi, deleteAnnouncementApi, getAllAnnouncementApi, up
 import AnnouncementViewModal from '../../common/modals/announcementViewModal';
 import AnnouncementModal from '../../common/modals/announcementModal';
 import TestLoader from '../../layout/layoutcomponent/testloader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 // import { getAllSocietyApi } from '../../api/society-api';
 // import Select from "react-select";
 // import { imagesData } from "../../common/commonimages";
@@ -27,6 +29,7 @@ export default function Announcements() {
   const [isLoading, setIsLoading] = useState(true);
   const [announcementData, setAnnouncementData] = useState<any>([]);
   const [singleAnnouncementData, setSingleAnnouncementData] = useState<any>(null);
+    const { society } = useSelector((state: RootState) => state.auth)
   // const [societyData, setSocietyData] = useState<any[]>([]);
   // const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
   // const [towerOptions, setTowerOptions] = useState<any[]>([]);
@@ -91,7 +94,7 @@ export default function Announcements() {
 
   const fetchAllAnnouncement = async () => {
     try {
-      const response = await getAllAnnouncementApi()
+      const response = await getAllAnnouncementApi(society.value)
       const data = response.data.data
       const formattedData = data.map((announcement: any, index: number) => (
         {
@@ -141,65 +144,9 @@ export default function Announcements() {
   useEffect(() => {
 
     fetchAllAnnouncement();
-    // fetchSocietiesForDropDown()
-  }, [])
+  }, [society])
 
-  // const fetchSocietiesForDropDown = async () => {
-  //   try {
-  //     const response = await getAllSocietyApi();
-  //     const formattedData = response.data.data.map((item: any) => ({
-  //       value: item.societyIdentifier,
-  //       label: item.societyName,
-  //     }));
-  //     setSocietyData(formattedData);
-  //   } catch (error) {
-  //     const errorMessage = handleApiError(error)
-  //     showToast("error", errorMessage)
-  //   }
-  // }
-
-  // const fetchPropertiesForDropDown = async (society: any) => {
-  //   try {
-  //     const response = await getWingPropertiesApi(society.value);
-  //     const formattedData = response.data.data.map((item: any) => ({
-  //       value: item.propertyIdentifier,
-  //       label: item.propertyName ? item.propertyName : item.flatNumber,
-  //     }));
-  //     setPropertiesForDropDown(formattedData);
-  //   } catch (error) {
-  //     const errorMessage = handleApiError(error)
-  //     showToast("error", errorMessage)
-  //   }
-  // }
-
-  // const fetchWingsForDropDown = async (society: any) => {
-  //   try {
-  //     const response = await getTowerWingsApi(society.value);
-  //     const formattedData = response.data.data.map((item: any) => ({
-  //       value: item.wingIdentifier,
-  //       label: item.wingName,
-  //     }));
-
-  //     setWingOptions(formattedData);
-  //   } catch (error) {
-  //     const errorMessage = handleApiError(error)
-  //     showToast("error", errorMessage)
-  //   }
-  // }
-
-  // const fetchTowersForDropDown = async (society: any) => {
-  //   try {
-  //     const response = await getSocietyTowersApi(society.value);
-  //     const formattedData = response.data.data.map((item: any) => ({
-  //       value: item.towerIdentifier,
-  //       label: item.towerName,
-  //     }));
-  //     setTowerOptions(formattedData);
-  //   } catch (error) {
-  //     const errorMessage = handleApiError(error)
-  //     showToast("error", errorMessage)
-  //   }
-  // }
+  
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -540,7 +487,7 @@ export default function Announcements() {
 
           </Modal> */}
           {
-            singleAnnouncementData && addannouncement ? <AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} initialVals={singleAnnouncementData} onSave={handleSubmit} /> : <AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} onSave={handleSubmit} />
+           addannouncement&& (singleAnnouncementData   ? <AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} initialVals={singleAnnouncementData} onSave={handleSubmit} /> : <AnnouncementModal show={addannouncement} onClose={handleClose} editing={editing} onSave={handleSubmit} />)
           }
         </div>
       </div>

@@ -1,8 +1,13 @@
 import axiosInstance from "./axiosInstance"
 
-export const getAllAnnouncementApi = async (): Promise<any> => {
+export const getAllAnnouncementApi = async (societyIdentifier:String): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`announcement/all`)
+        const params: any = {};
+
+        if (societyIdentifier) {
+            params.society_identifier = societyIdentifier;
+        }
+        const response = await axiosInstance.get(`announcement/all`,{params})
         return response
     } catch (error) {
         throw error

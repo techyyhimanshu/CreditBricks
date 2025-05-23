@@ -6,11 +6,78 @@ import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 // import { Formik, Field, Form as FormikForm, ErrorMessage } from 'formik';
 import { Link, useParams } from "react-router-dom";
-import { Field, Formik, Form as FormikForm } from 'formik';
+import { ErrorMessage, Field, Formik, Form as FormikForm } from 'formik';
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 import { getMemberDetailApi, updateMemberApi } from '../../../api/member-api';
+import * as Yup from 'yup';
 // Define the types for the stateCities object
+
+const validationSchema = Yup.object().shape({
+  firstName: Yup.string().required('First name is required'),
+  lastName: Yup.string().required('Last name is required'),
+  mobileNumber: Yup.string()
+    .required('Mobile number is required')
+    .matches(/^\d{10}$/, 'Mobile number must be 10 digits'),
+
+  alternatePhone: Yup.string()
+    .required('Alternate number is required')
+    .test('is-valid-alt-phone', 'Alternate phone must be 10 digits', val => {
+      return !val || /^\d{10}$/.test(val);
+    }),
+  age: Yup.string()
+    .notRequired()
+    .test('is-valid-age', 'Age must be number', (val) => {
+      return !val || /^[0-9]+$/.test(val);
+    }),
+
+  email: Yup.string()
+    .required('Email is required')
+    .email('Invalid email format'),
+
+  alternateEmail: Yup.string()
+    .notRequired()
+    .email('Invalid alternate email'),
+
+  dateOfBirth: Yup.date().required('Date of birth is required'),
+
+  // gender: selectFieldValidation('Gender'),
+
+  profilePic: Yup.mixed()
+    .notRequired()
+    .test('fileFormat', 'Only image files are allowed', (value: any) => {
+      if (!value) return true; // skip if not provided
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      return allowedTypes.includes(value.type);
+    }),
+
+  aadharNumber: Yup.string()
+    .notRequired()
+    .test('is-valid-aadhar', 'Aadhar number must be 12 digits', val => {
+      return !val || /^\d{12}$/.test(val);
+    }),
+
+  panNo: Yup.string()
+    .notRequired()
+    .test('is-uppercase', 'PAN must be in uppercase and valid format', val => {
+      return !val || /^[A-Z]{5}[0-9]{4}[A-Z]$/.test(val);
+    }),
+
+  passportNo: Yup.string()
+    .notRequired()
+    .test('is-valid-passport', 'Invalid passport number format', val =>
+      !val || /^[A-Z][0-9]{7}$/.test(val)
+    ),
+
+  tanNumber: Yup.string()
+    .notRequired()
+    .test('is-valid-tan', 'Invalid TAN number format', val =>
+      !val || /^[A-Z]{4}[0-9]{5}[A-Z]$/.test(val)
+    ),
+  gstinNo: Yup.string(),
+  address: Yup.string(),
+  alternateAddress: Yup.string(),
+});
 export default function EditMemberMaster() {
     const [currentMember, setCurrentMember] = useState<any>(null)
 
@@ -106,6 +173,7 @@ export default function EditMemberMaster() {
                             alternateAddress: currentMember?.alternateAddress || ""
                         }}
                         onSubmit={handleSubmit}
+                        validationSchema={validationSchema}
                     >
                         {({ setFieldValue, values }) => {
                             const getFileExtension = (fileName: string) => {
@@ -144,7 +212,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="First name"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="firstName" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -158,7 +226,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Middle name"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="middleName" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -173,7 +241,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Last Name"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="lastName" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -201,7 +269,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Mobile Number"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="mobileNumber" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -216,7 +284,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Alternative Number"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="alternatePhone" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -230,13 +298,13 @@ export default function EditMemberMaster() {
                                                                         placeholder="Email address"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="email" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
                                                             <Col xl={4}>
                                                                 <Form.Group className="form-group">
-                                                                    <Form.Label>Alternate Email<span className="text-danger">*</span></Form.Label>
+                                                                    <Form.Label>Alternate Email</Form.Label>
                                                                     <Field
                                                                         type="email"
                                                                         name="alternateEmail"
@@ -244,7 +312,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Alternate email address"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="alternateEmail" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -259,7 +327,7 @@ export default function EditMemberMaster() {
                                                                         placeholder=""
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="dateOfBirth" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -275,7 +343,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Select Gender"
                                                                         classNamePrefix="Select2"
                                                                     />
-                                                                    {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="gender" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -291,7 +359,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Age"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="age" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -305,7 +373,7 @@ export default function EditMemberMaster() {
                                                                         placeholder=""
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="anniversary" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -313,7 +381,7 @@ export default function EditMemberMaster() {
                                                                 <Form.Group className="form-group">
                                                                     <Form.Label>Profile Picture</Form.Label>
                                                                     <input type="file" className="form-control" name="profilePic" onChange={(e: any) => setFieldValue("profilePic", e.target.files[0])} />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="profilePic" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                                 {values.fileName && (
                                                                     <p
@@ -492,7 +560,7 @@ export default function EditMemberMaster() {
                                                                         className="form-control"
                                                                         value={values.aadharNumber}
                                                                     />
-                                                                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="aadharNumber" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -506,7 +574,7 @@ export default function EditMemberMaster() {
                                                                         value={values.panNo}
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="panNo" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -521,7 +589,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Passport Number"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="passportNo" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -535,7 +603,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="GSTIN (Member)"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="gstinNo" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -550,7 +618,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="TAN number"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="tanNumber" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -585,7 +653,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Address"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="address" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 
@@ -598,7 +666,7 @@ export default function EditMemberMaster() {
                                                                         placeholder="Alternate Address"
                                                                         className="form-control"
                                                                     />
-                                                                    {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                                    <ErrorMessage name="alternateAddress" component="div" className="text-danger" />
                                                                 </Form.Group>
                                                             </Col>
 

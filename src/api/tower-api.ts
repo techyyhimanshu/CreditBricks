@@ -1,17 +1,30 @@
 import axiosInstance from "./axiosInstance"
 
 
-export const getAllTowerApi = async (): Promise<any> => {
+export const getAllTowerApi = async (societyIdentifier?: string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`/tower/all`)
+        const params: any = {}
+        if (societyIdentifier) {
+            params.society_identifier = societyIdentifier
+        }
+        const response = await axiosInstance.get(`/tower/all`, { params })
         return response
     } catch (error) {
         throw error
     }
 }
-export const getSocietyTowersApi = async (identifier:string): Promise<any> => {
+export const getSocietyTowersApi = async (identifier: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`society/${identifier}/towers`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export const getWingsOfTowerApi = async (identifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`tower/${identifier}/wings`)
         return response
     } catch (error) {
         throw error

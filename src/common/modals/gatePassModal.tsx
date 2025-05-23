@@ -1,27 +1,30 @@
 import { useEffect, useState } from "react";
-import { Accordion, Button, Col, Form, InputGroup, Modal, Row } from "react-bootstrap";
+import { Accordion, Button, Col, Form, InputGroup, Modal, Row, Card, FormLabel } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import Select from "react-select";
+import { imagesData } from "../../common/commonimages";
 import 'suneditor/dist/css/suneditor.min.css';
-import { getAllSocietyApi, getPropertiesOfSocietyApi } from "../../api/society-api";
+import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } from "../../api/society-api";
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
-import { getTenantOptions } from "../../api/property-api";
-import { getMemberForDropDownApi } from "../../api/user-api";
-import { getVendorForDropDownApi } from "../../api/vendor-api";
-import { createNewGatePassApi } from "../../api/application-api";
+import { getMembersOfPropertyApi, getPropertyOutstandingAmountApi, getTenantsOfPropertyApi } from "../../api/property-api";
+import { getVendorDetail, getVendorForDropDownApi } from "../../api/vendor-api";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import TermsAndConditionModal from "./termsAndConditionModal";
+import { getTermsConditionBySocietyAndTypeApi } from "../../api/termsCondition-api";
+import { getTenantDetailsApi } from "../../api/tenant-api";
 
 interface ProductModalProps {
     show: boolean;
-    onSave: (values: any) => void;
+    onSave: (values: any, editing: boolean) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
     isShow?: boolean;
     editing: boolean;
     initialVals?: any;
-
-
 }
 
 const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, onSave }) => {
@@ -30,10 +33,105 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
     const [tenantsForDropDown, setTenantsForDropDown] = useState([]);
     const [membersForDropDown, setMembersForDropDown] = useState([]);
     const [vendorsForDropDown, setVendorsForDropDown] = useState([]);
+    const [tenatview, settenatview] = useState(false);
+    const [termsconditionsview, settermsconditionsview] = useState(false);
+    const [termsAndConditionData, setTermsAndConditionData] = useState("")
+    const [singleVendorData, setSingleVendordata] = useState<any>({})
+    const [tenantDetails, setTenantDetails] = useState(
+        {
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            email: '',
+            mobileNumber: '',
+            alternateMobileNumber: '',
+            dateOfBirth: '',
+            anniversary: '',
+            address: '',
+            country: '',
+            state: '',
+            city: '',
+            pincode: '',
+            havePet: '',
+            familyMembers: '',
+            property:
+            {
+                rentAgreementStartDate: '',
+                rentAgreementEndDate: '',
+                monthlyRent: '',
+                depositAmount: '',
+                dueAmount: '',
+                rentRegistrationId: '',
+                rentAgreementFile: '',
+                policeVerificationFile: '',
+                propertyName: ''
+            },
+            society: {
+                societyIdentifier: "",
+                societyName: ""
+            },
+            tenantVehicles: [
+                {
+                    vehicleNumber: '',
+                    vehicleType: '',
+                    vehicleRcFilePath: ""
+                }
+            ]
+        });
+
+    const [vendorview, setvendorview] = useState(false);
+    const { society } = useSelector((state: RootState) => state.auth)
+
+    const viewDemoShow = (modal: any) => {
+        switch (modal) {
+            case "tenatview":
+                settenatview(true);
+                break;
+
+            case "vendorview":
+                setvendorview(true);
+                break;
+            case "termsconditionsview":
+                settermsconditionsview(true);
+                break;
+
+        }
+    };
+
+    const viewDemoClose = (modal: any) => {
+        switch (modal) {
+            case "tenatview":
+                settenatview(false);
+                break;
+
+            case "vendorview":
+                setvendorview(false);
+                break;
+            case "termsconditionsview":
+                settermsconditionsview(false);
+                break;
+
+        }
+    };
+
 
     useEffect(() => {
         fetchSocietiesForDropDown()
-    }, [])
+        fetchTermsData()
+    }, [society])
+
+    const fetchTermsData = async () => {
+        try {
+            const response = await getTermsConditionBySocietyAndTypeApi(society.value, "Gate Pass")
+            if (response.status === 200) {
+                setTermsAndConditionData(response.data.data?.termCondition)
+            }
+        } catch (error: any) {
+
+            // const errorMessage = handleApiError(error)
+            // showToast("error", errorMessage)
+        }
+    }
 
     const fetchSocietiesForDropDown = async () => {
         try {
@@ -64,7 +162,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
     }
     const fetchTenantsForDropDown = async (propertyIdentifier: string) => {
         try {
-            const response = await getTenantOptions(propertyIdentifier);
+            const response = await getTenantsOfPropertyApi(propertyIdentifier);
             const formattedData = response.data.data.map((item: any) => ({
                 value: item.tenantIdentifier,
                 label: `${item.firstName} ${item.middleName} ${item.lastName}`,
@@ -75,9 +173,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
             showToast("error", errorMessage)
         }
     }
-    const fetchMembersForDropDown = async () => {
+    const fetchMembersForDropDown = async (propertyIdentifier: string) => {
         try {
-            const response = await getMemberForDropDownApi();
+            const response = await getMembersOfPropertyApi(propertyIdentifier);
             const formattedData = response.data.data.map((item: any) => ({
                 value: item.identifier,
                 label: `${item.firstName} ${item.middleName} ${item.lastName}`,
@@ -92,7 +190,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         try {
             const response = await getVendorForDropDownApi();
             const formattedData = response.data.data.map((item: any) => ({
-                value: item.identifier,
+                value: item.vendorIdentifier,
                 label: `${item.contactPersonName}`,
             }));
             setVendorsForDropDown(formattedData);
@@ -140,10 +238,86 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
         { value: "Minivan", label: "Minivan" },
     ]
 
+    const fetchApproverDetails = async (society: any, setFieldValue: any) => {
+        try {
+            const response = await getSocietyDetailsApi(society.value)
+            const members = response.data.data?.committeeMembers || [];
+            const parentMembers = response.data.data?.parentSociety?.parentSociety?.committeeMembers || [];
+
+
+            const matched = members.find((member: any) =>
+                Array.isArray(member.applicationType) &&
+                member.applicationType.includes("Gate Pass")
+            );
+
+
+            const parentMatched = parentMembers.find((member: any) =>
+                Array.isArray(member.applicationType) &&
+                member.applicationType.includes("Gate Pass")
+            );
+            if (matched) {
+                setFieldValue("tower", { value: matched.towerIdentifier, label: matched.towerName });
+                setFieldValue("wing", { value: matched.wingIdentifier, label: matched.wingName });
+                setFieldValue("approverSociety", { value: matched.societyIdentifier, label: matched.societyName });
+                setFieldValue("approverProperty", { value: matched.propertyIdentifier, label: matched.propertyName });
+                setFieldValue("approverName", matched.fullName);
+                setFieldValue("approverContact", matched.contactNumber);
+                setFieldValue("committeeMemberId", matched.committeeMemberId);
+                setFieldValue("designation", { value: matched.designation, label: matched.designation });
+            }
+            if (parentMatched) {
+                setFieldValue("hasParentApprover", "true");
+                setFieldValue("parentApproverName", parentMatched.fullName);
+                setFieldValue("parentApproverContact", parentMatched.contactNumber);
+                setFieldValue("parentCommitteeMemberId", parentMatched.parentCommitteeMemberId);
+                setFieldValue("parentDesignation", {
+                    value: parentMatched.designation,
+                    label: parentMatched.designation
+                });
+                setFieldValue("parentSocietyName", { label: response.data.data.parentSociety?.parentSociety?.parentSocietyName || "", value: response.data.data.parentSociety?.parentSocietyIdentifier || "" });
+            } else if (!parentMatched) {
+                setFieldValue("hasParentApprover", "false");
+            }
+        } catch (error: any) {
+            const errorMessage = handleApiError(error)
+            showToast('error', errorMessage)
+        }
+    }
+
+    const fetchTenantDetails = async (identifier: string) => {
+        try {
+            const response = await getTenantDetailsApi(identifier)
+            if (response.status === 200) {
+                setTenantDetails(response.data.data)
+            }
+        } catch (error) {
+
+        }
+    }
+
+    const fetchVendorDetails = async (identifier: string) => {
+        try {
+            const response = await getVendorDetail(identifier)
+            setSingleVendordata(response?.data?.data || [])
+        } catch (error) {
+
+        }
+    }
+
+    const fetchOutstandingAmount = async (property: any, setFieldValue: any) => {
+        try {
+            const response = await getPropertyOutstandingAmountApi(property.value);
+            setFieldValue("outstandingAmount", response.data.data)
+
+        } catch (error) {
+            const errorMessage = handleApiError(error);
+            showToast("error", errorMessage);
+        }
+    };
 
     const handleSubmit = async (values: any) => {
         try {
-            const formattedData = {
+            const formattedData: any = {
                 societyIdentifier: values.society.value,
                 propertyIdentifier: values.property.value,
                 gateType: values.gateType.value,
@@ -162,10 +336,23 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 vehicleType: values.vehicleType.value,
                 contactPersonName: values.contactPersonName,
                 contactPersonNumber: values.contactPersonNumber,
-                remarks: values.remarks
+                remarks: values.remarks,
+                tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
+                wing: { value: initialVals?.wingIdentifier || "", label: initialVals?.wingName || "" },
+                approverSociety: { value: initialVals?.socityIdentifier || "", label: initialVals?.societyName || "" },
+                approverProperty: initialVals ? { label: initialVals.propertyName, value: initialVals.propertyIdentifier } : { label: "", value: "" },
+                approverName: initialVals?.fullName || "",
+                approverContact: initialVals?.contactNumber || "",
+                designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
+                committeeMemberId: values.committeeMemberId || "",
+                parentCommitteeMemberId: values.parentCommitteeMemberId || ""
+
+            }
+            if (editing) {
+                formattedData.gatePassNumber = initialVals.gatePassNumber
             }
             if (onSave) {
-                onSave(formattedData)
+                onSave(formattedData, editing)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
@@ -175,6 +362,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
             const errorMessage = handleApiError(error)
             showToast("error", errorMessage)
         }
+    }
+    const handleTermsAndConditionClose = () => {
+        viewDemoClose("termsconditionsview")
     }
 
 
@@ -190,18 +380,20 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 <Formik
                     initialValues=
                     {{
-                        society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
-                        property: initialVals ? { label: initialVals.propertyName, value: initialVals.propertyIdentifier } : { label: "", value: "" },
+                        society: initialVals ? { label: initialVals.society?.societyName, value: initialVals.society?.societyIdentifier } : { label: "", value: "" },
+                        property: initialVals ? { label: initialVals.property?.propertyName, value: initialVals.property?.propertyIdentifier } : { label: "", value: "" },
                         gateType: initialVals ? { label: initialVals.gateType, value: initialVals.gateTypeIdentifier } : { label: "", value: "" },
                         category: initialVals ? { label: initialVals.category, value: initialVals.gateTypeCategoryIdentifier } : { label: "", value: "" },
                         subCategory: initialVals ? { label: initialVals.subCategory, value: initialVals.gateTypeSubCategoryIdentifier } : { label: "", value: "" },
                         entryDateTime: initialVals ? initialVals.entryDateTime : "",
                         exitDateTime: initialVals ? initialVals.exitDateTime : "",
-                        member: initialVals ? { label: initialVals.memberName, value: initialVals.memberIdentifier } : { label: "", value: "" },
-                        tenant: initialVals ? { label: initialVals.tenantName, value: initialVals.tenantIdentifier } : { label: "", value: "" },
-                        vendor: initialVals ? { label: initialVals.vendorName, value: initialVals.vendorIdentifier } : { label: "", value: "" },
-                        vehicleNature: initialVals ? { label: initialVals.vehicleNature, value: initialVals.vehicleNatureIdentifier } : { label: "", value: "" },
-                        vehicleType: initialVals ? { label: initialVals.vehicleType, value: initialVals.vehicleTypeIdentifier } : { label: "", value: "" },
+                        gatePassNumber: initialVals ? initialVals.gatePassNumber : "",
+                        outstandingAmount: initialVals ? initialVals.outstandingAmount : "",
+                        member: initialVals ? { label: `${initialVals.user?.firstName || ""} ${initialVals.user?.middleName || ""} ${initialVals.user?.lastName || ""}`.replace(/\s+/g, " ").trim(), value: initialVals.user?.identifier } : { label: "", value: "" },
+                        tenant: initialVals ? { label: initialVals?.tenantName|| "", value: initialVals?.tenantIdentifier|| "" } : { label: "", value: "" },
+                        vendor: initialVals ? { label: initialVals?.vendorName|| "", value: initialVals?.vendorIdentifier|| "" } : { label: "", value: "" },
+                        vehicleNature: initialVals ? { label: initialVals?.vehicleNature|| "", value: initialVals?.vehicleNatureIdentifier|| "" } : { label: "", value: "" },
+                        vehicleType: initialVals ? { label: initialVals?.vehicleType|| "", value: initialVals?.vehicleTypeIdentifier|| "" } : { label: "", value: "" },
                         purpose: initialVals ? initialVals.purpose : "",
                         description: initialVals ? initialVals.description : "",
                         driverName: initialVals ? initialVals.driverName : "",
@@ -211,10 +403,42 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                         contactPersonName: initialVals ? initialVals.contactPersonName : "",
                         contactPersonNumber: initialVals ? initialVals.contactPersonNumber : "",
                         remarks: initialVals ? initialVals.remarks : "",
-
+                        tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
+                        wing: { value: initialVals?.wingIdentifier || "", label: initialVals?.wingName || "" },
+                        approverSociety: { value: initialVals?.socityIdentifier || "", label: initialVals?.societyName || "" },
+                        approverProperty: initialVals ? { label: initialVals.propertyName, value: initialVals.propertyIdentifier } : { label: "", value: "" },
+                        approverName: initialVals?.fullName || "",
+                        approverContact: initialVals?.contactNumber || "",
+                        designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
+                        hasParentApprover: "false",
+                        parentApproverName: initialVals?.fullName || "",
+                        parentApproverContact: initialVals?.contactNumber || "",
+                        parentDesignation: { value: initialVals?.parentDesignation || "", label: initialVals?.parentDesignation || "" },
+                        parentSocietyName: { value: "", label: "" },
+                        committeeMemberId: "",
+                        parentCommitteeMemberId: ""
                     }}
                     onSubmit={handleSubmit}>
                     {({ values, setFieldValue }) => {
+                        console.log(values.vendor.value)
+                        useEffect(() => {
+                            if (values.tenant.value) {
+                                fetchTenantDetails(values.tenant.value)
+                            }
+                        }, [values.tenant.value])
+                        useEffect(() => {
+                            if (values.vendor.value) {
+                                console.log("hi there")
+                                fetchVendorDetails(values.vendor.value)
+                            }
+                        }, [values.vendor.value])
+                        useEffect(() => {
+                            if (society) {
+                                setFieldValue("society", society);
+                                fetchPropertiesForDropDown(society);
+                                fetchApproverDetails(society, setFieldValue)
+                            }
+                        }, [society]);
                         return (
                             <FormikForm>
                                 <Modal.Body className='bg-light'>
@@ -235,7 +459,9 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                 onChange={(selected) => {
                                                                     fetchPropertiesForDropDown(selected);
                                                                     setFieldValue("society", selected);
+                                                                    fetchApproverDetails(selected, setFieldValue)
                                                                 }}
+                                                                isDisabled
                                                             />
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -250,6 +476,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                 value={values.property}
                                                                 onChange={(selected) => {
                                                                     setFieldValue("property", selected);
+                                                                    fetchOutstandingAmount(selected, setFieldValue)
                                                                 }}
                                                                 placeholder="Select property"
                                                                 classNamePrefix="Select2"
@@ -286,7 +513,7 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                     switch (selected?.label) {
                                                                         case "Tenant": fetchTenantsForDropDown(values.property.value)
                                                                             break;
-                                                                        case "Member": fetchMembersForDropDown()
+                                                                        case "Member": fetchMembersForDropDown(values.property.value)
                                                                             break;
                                                                         case "Material": fetchVendorsForDropDown()
                                                                     }
@@ -324,7 +551,6 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                     className="form-control"
                                                                     id="datetime-local"
                                                                     type="datetime-local"
-                                                                    defaultValue="2020-01-16T14:22"
                                                                     name="entryDateTime"
                                                                     value={values.entryDateTime}
                                                                 />
@@ -342,7 +568,6 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                                     className="form-control"
                                                                     id="datetime-local"
                                                                     type="datetime-local"
-                                                                    defaultValue="2020-01-16T14:22"
                                                                     name="exitDateTime"
                                                                     value={values.exitDateTime}
 
@@ -358,9 +583,27 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                             <Form.Control
                                                                 type="text"
                                                                 disabled
+                                                                name="gatePassNumber"
+                                                                value={values.gatePassNumber}
                                                                 placeholder="Gate Pass Number"
                                                                 className="form-control"
                                                             ></Form.Control>
+                                                            {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                                        </Form.Group>
+                                                    </Col>
+                                                    <Col xl={4}>
+                                                        <Form.Group className="form-group mb-1">
+                                                            <Form.Label>Outstanding Amount
+                                                                <Link to={``} className="float-end text-white rounded-1 bg-primary ps-1">Pay Now</Link>
+                                                            </Form.Label>
+                                                            <Field
+                                                                type="text"
+                                                                disabled
+                                                                name="outstandingAmount"
+
+                                                                placeholder="Outstanding Amount"
+                                                                className="form-control"
+                                                            />
                                                             {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                         </Form.Group>
                                                     </Col>
@@ -387,7 +630,13 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                         ["Tenant"].includes(values?.category?.label || "") &&
                                                         <Col xl="4">
                                                             <Form.Group className="form-group mb-1">
-                                                                <Form.Label>Tenant <span className='text-info float-end cursor'
+                                                                <Form.Label>Tenant <span className='text-info float-end cursor' onClick={() => {
+                                                                    if (values.tenant.value) {
+                                                                        viewDemoShow("tenatview");
+                                                                    }
+                                                                }
+                                                                }
+
                                                                 >View Tenant Detail</span> </Form.Label>
                                                                 <Select
                                                                     options={tenantsForDropDown}
@@ -406,7 +655,11 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                         ["Material"].includes(values?.category?.label || "") &&
                                                         <Col xl="4">
                                                             <Form.Group className="form-group mb-1">
-                                                                <Form.Label>Vendor <span className='text-info float-end cursor'>View Vendor Detail</span> </Form.Label>
+                                                                <Form.Label>Vendor <span className='text-info float-end cursor' onClick={() => {
+                                                                    if (values.vendor.value) {
+                                                                        viewDemoShow("vendorview");
+                                                                    }
+                                                                }}>View Vendor Detail</span> </Form.Label>
                                                                 <Select
                                                                     options={vendorsForDropDown}
                                                                     placeholder="Select vendor"
@@ -424,6 +677,89 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                                 </Row>
                                             </Accordion.Body>
                                         </Accordion.Item>
+
+                                        <Accordion.Item eventKey="Documentdetails">
+                                            <Accordion.Header>Document Details</Accordion.Header>
+                                            <Accordion.Body>
+                                                <Row>
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Sale Agreement Copy</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Flat Registration Certificate</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Home Loan Sanction Letter</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+
+
+
+
+                                                </Row>
+                                            </Accordion.Body>
+                                        </Accordion.Item>
+
                                         <Accordion.Item eventKey="ApplicationDescription">
                                             <Accordion.Header>Application Description</Accordion.Header>
                                             <Accordion.Body className='p-2'>
@@ -606,110 +942,200 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                                             <Accordion.Header>Approval Details</Accordion.Header>
                                             <Accordion.Body className='p-2'>
                                                 <Row>
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Society </Form.Label>
                                                             <Select
-                                                                // options={society}
+                                                                name='approverSociety'
                                                                 placeholder="Select Society"
                                                                 classNamePrefix="Select2"
+                                                                onChange={(selected) => setFieldValue("approverSociety", selected)}
+                                                                value={values.approverSociety}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
-                                                    <Col xl={4}>
-                                                        <Form.Group className="form-group mb-1">
-                                                            <Form.Label>Property </Form.Label>
-                                                            <Select
-                                                                // options={property}
-                                                                placeholder="Select property"
-                                                                classNamePrefix="Select2"
-                                                            />
-                                                        </Form.Group>
-                                                    </Col>
 
-                                                    <Col xl={4}>
+
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Tower </Form.Label>
                                                             <Select
-                                                                // options={wing}
+                                                                // options={towerOptions}
                                                                 placeholder="Select Tower"
                                                                 classNamePrefix="Select2"
+                                                                name='tower'
+                                                                onChange={(selected) => {
+                                                                    // fetchWingsForDropDown(selected);
+                                                                    // setFieldValue("wing", null);
+                                                                    // setFieldValue("property", null);
+                                                                    setFieldValue("tower", selected);
+                                                                }}
+                                                                value={values.tower}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
 
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Wing </Form.Label>
                                                             <Select
-                                                                // options={wing}
                                                                 placeholder="Select Wing"
                                                                 classNamePrefix="Select2"
+                                                                name='wing'
+                                                                onChange={(selected) => {
+                                                                    // fetchPropertiesForDropDown(selected);
+                                                                    // setFieldValue("property", null);
+                                                                    setFieldValue("wing", selected);
+                                                                }}
+                                                                value={values.wing}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
-
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
-                                                            <Form.Label>Flat </Form.Label>
+                                                            <Form.Label>Property </Form.Label>
                                                             <Select
-                                                                // options={flat}
-                                                                placeholder="Select Flat"
+                                                                placeholder="Select property"
+                                                                options={propertiesForDropDown}
                                                                 classNamePrefix="Select2"
+                                                                name='approverProperty'
+                                                                onChange={(selected) => setFieldValue("approverProperty", selected)}
+                                                                value={values.approverProperty}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
-
-
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Approver Name</Form.Label>
-                                                            <Form.Control
+                                                            <Field
                                                                 type="text"
                                                                 name="approverName"
                                                                 placeholder="Approver Name"
                                                                 className="form-control"
+                                                                value={values.approverName}
+                                                                disabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Approver Contact</Form.Label>
-                                                            <Form.Control
+                                                            <Field
                                                                 type="text"
-                                                                name="contactdetails"
+                                                                name="approverContact"
                                                                 placeholder="Contact"
                                                                 className="form-control"
+                                                                value={values.approverContact}
+                                                                disabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
-                                                    <Col xl={4}>
+                                                    <Col xl={6}>
                                                         <Form.Group className="form-group mb-1">
                                                             <Form.Label>Designation </Form.Label>
                                                             <Select
                                                                 // options={designation}
                                                                 placeholder="Select Designation"
                                                                 classNamePrefix="Select2"
+                                                                name='designation'
+                                                                onChange={(selected) => setFieldValue("designation", selected)}
+                                                                value={values.designation}
+                                                                isDisabled
                                                             />
                                                         </Form.Group>
                                                     </Col>
 
 
+
+
+
+
+
                                                 </Row>
+
+                                                {values.hasParentApprover === "true" && (
+                                                    <>
+                                                        <hr />
+                                                        <h6>Parent Approver Details</h6>
+                                                        <Row>
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Approver Name</Form.Label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="parentApproverName"
+                                                                        placeholder="Parent Approver Name"
+                                                                        className="form-control"
+                                                                        value={values.parentApproverName}
+                                                                        disabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Approver Contact</Form.Label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="parentApproverContact"
+                                                                        placeholder="Parent Contact"
+                                                                        className="form-control"
+                                                                        value={values.parentApproverContact}
+                                                                        disabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Designation</Form.Label>
+                                                                    <Select
+                                                                        placeholder="Parent Designation"
+                                                                        classNamePrefix="Select2"
+                                                                        name="parentDesignation"
+                                                                        onChange={(selected) => setFieldValue("parentDesignation", selected)}
+                                                                        value={values.parentDesignation}
+                                                                        isDisabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Society Name</Form.Label>
+                                                                    <Select
+                                                                        name='parentSocietyName'
+                                                                        placeholder="Select Society"
+                                                                        classNamePrefix="Select2"
+                                                                        onChange={(selected) => setFieldValue("parentSocietyName", selected)}
+                                                                        value={values.parentSocietyName}
+                                                                        isDisabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+                                                        </Row>
+
+                                                    </>
+                                                )}
+
                                             </Accordion.Body>
                                         </Accordion.Item>
 
                                     </Accordion>
 
                                     <Col xl={12} className='p-0'>
-                                        {/* <label><input type="checkbox" className='float-start m-2' />
-                        <b className='float-start mt-1 cursor'
-                         onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label> */}
+                                        <label><input type="checkbox" className='float-start m-2' />
+                                            <b className='float-start mt-1 cursor'
+                                                onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label>
                                     </Col>
 
                                 </Modal.Body>
@@ -732,8 +1158,380 @@ const GatePassModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose
                 </Formik>
 
             </Modal>
+            {
+                termsconditionsview && <TermsAndConditionModal onClose={handleTermsAndConditionClose} initialVals={termsAndConditionData} show={termsconditionsview} />
+            }
+
+            {/* Tenant View */}
+            <Modal show={tenatview} size="xl" centered>
+                <Modal.Header>
+                    <Modal.Title>Tenant Details</Modal.Title>
+                    <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("tenatview"); }}>
+                        x
+                    </Button>
+                </Modal.Header>
+
+                <Modal.Body className='bg-light'>
+                    <Row>
+                        <Col xl={8}>
+                            <Card>
+                                <Card.Body>
+                                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Details</h5>
+                                    <Row>
+                                        <Col xl={6}>
+                                            <FormLabel>Society Name</FormLabel>
+                                            <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>{tenantDetails?.society?.societyName || "N/A"}</Link>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Property Name</FormLabel>
+                                            <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>{tenantDetails?.property?.propertyName || "N/A"}</Link>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Tenant Name</FormLabel>
+                                            <p className='tx-15'>{`${tenantDetails?.firstName} ${tenantDetails?.middleName} ${tenantDetails?.lastName}`}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Tenant Number</FormLabel>
+                                            <p className='tx-15 col-sm-11 p-0'>{tenantDetails.mobileNumber}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Alternative Mobile</FormLabel>
+                                            <p className='tx-15 col-sm-11 p-0'>{tenantDetails.alternateMobileNumber}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Tenant Email</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.email}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Date Of Birth</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.dateOfBirth}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Address</FormLabel>
+                                            <p className='tx-15 col-sm-11 p-0'>{tenantDetails.address}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>City</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.city}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>State</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.state}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Country</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.country}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Pincode</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.pincode}</p>
+                                        </Col>
 
 
+                                        <Col xl={6}>
+                                            <FormLabel>Family Members</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.familyMembers}</p>
+                                        </Col>
+
+                                        <Col xl={6}>
+                                            <FormLabel>Pets</FormLabel>
+                                            <p className='tx-15'>{tenantDetails.havePet?.toString()}</p>
+                                        </Col>
+
+                                    </Row>
+                                </Card.Body>
+                            </Card>
+
+                        </Col>
+
+                        <Col xl={4}>
+
+                            <Card>
+                                <Card.Body className='pb-0'>
+                                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Current Lease</h5>
+                                    <Row>
+                                        <Col xl={6}>
+                                            <p className='mb-0 text-muted'>Agreement Start Date</p>
+                                            <p className='tx-15 tx-semibold'>{tenantDetails?.property?.rentAgreementStartDate}</p>
+                                            <p className='mb-0 text-muted'>Agreement End Date</p>
+                                            <p className='tx-15 tx-semibold mb-2'>{tenantDetails?.property?.rentAgreementEndDate}</p>
+                                        </Col>
+                                        <Col xl={6} className='text-end'>
+                                            <p className='mb-0 text-muted'>Monthly Rent</p>
+                                            <p className='tx-15 tx-semibold text-primary'>₹ {tenantDetails?.property?.monthlyRent}</p>
+                                            <p className='mb-0 pt-2 text-muted'></p>
+                                            {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
+                                        </Col>
+
+                                        {/* <Col xl={12}>
+                                            <div className="progress mb-1">
+                                                <ProgressBar
+                                                    variant="info"
+                                                    role="progressbar"
+                                                    now={55}
+                                                ></ProgressBar>
+                                            </div>
+
+                                            <Row>
+                                                <Col xl={6} className='text-muted text-bold'>
+                                                    180 days left
+                                                </Col>
+                                                <Col xl={6} className='text-end text-muted text-bold'>
+                                                    365 days left
+                                                </Col>
+                                            </Row>
+                                        </Col> */}
+
+                                        <Col xl={6}>
+                                            <p className='mb-0 mt-2 text-muted'>Due Amount</p>
+                                            <p className='tx-15 tx-semibold'>₹ {tenantDetails?.property?.dueAmount}</p>
+                                        </Col>
+                                        <Col xl={6}>
+                                            <p className='mb-0 mt-2 text-muted text-end'>Deposit Amount</p>
+                                            <p className='tx-15 tx-semibold mb-0 text-end'>₹ {tenantDetails?.property?.depositAmount}</p>
+                                        </Col>
+
+                                    </Row>
+                                    <Row>
+                                        N/A
+                                    </Row>
+                                </Card.Body>
+
+                            </Card>
+
+
+                            <Card>
+                                <Card.Body className='pb-1'>
+                                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
+                                    {
+                                        tenantDetails?.property?.rentAgreementFile ?
+                                            <><Row>
+                                                <Col xl={2} className='p-0'>
+                                                    <img
+                                                        alt="" className='w-100'
+                                                        src={imagesData('pdficon')}
+                                                    />
+                                                </Col>
+                                                <Col xl={9} className='p-0'>
+                                                    <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : {tenantDetails?.property?.rentRegistrationId}</p>
+                                                    <a
+                                                        href={`${import.meta.env.VITE_STATIC_PATH}${tenantDetails?.property?.rentAgreementFile}`}
+                                                        className="text-info"
+                                                        download={tenantDetails?.property?.rentAgreementFile}
+                                                    >
+                                                        Download
+                                                    </a>
+                                                </Col>
+                                            </Row></> : <>N/A</>
+                                    }
+
+                                    <Row>
+                                        {
+                                            tenantDetails?.property?.policeVerificationFile ? <>
+                                                <Col xl={2} className='p-0'>
+                                                    <img
+                                                        alt="" className='w-100'
+                                                        src={imagesData('pdficon')}
+                                                    />
+                                                </Col>
+                                                <Col xl={9} className='p-0'>
+                                                    <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
+                                                    <a
+                                                        href={`${import.meta.env.VITE_STATIC_PATH}${tenantDetails?.property?.policeVerificationFile}`}
+                                                        className="text-info"
+                                                        download
+                                                    >
+                                                        Download
+                                                    </a>
+                                                </Col></> : <>N/A</>
+                                        }
+                                    </Row>
+                                </Card.Body>
+                            </Card>
+
+
+                            <Card>
+                                <Card.Body className='pb-1'>
+                                    <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
+                                    <Row>
+                                        {tenantDetails?.tenantVehicles?.length === 0 ? (
+                                            <Col xl={12} className='p-0'>
+                                                <span>N/A</span> {/* Show N/A if no vehicles are available */}
+                                            </Col>
+                                        ) : (
+                                            tenantDetails?.tenantVehicles?.map((vehicle: any, index: number) => (
+                                                <Row key={index}>
+                                                    <Col xl={2} className='p-0'>
+                                                        <img
+                                                            alt="Vehicle Icon"
+                                                            className='w-100'
+                                                            src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
+                                                        />
+                                                    </Col>
+                                                    <Col xl={9} className='p-0'>
+                                                        <p className='tx-14 mb-0 mt-2 tx-semibold'>
+                                                            Vehicle No. {vehicle?.vehicleNumber} <span className='text-muted'>({vehicle?.vehicleType})</span>
+                                                        </p>
+                                                        <a
+                                                            href={`${import.meta.env.VITE_STATIC_PATH}${vehicle?.vehicleRcFilePath}`}
+                                                            className="text-info"
+                                                            download
+                                                        >
+                                                            Download
+                                                        </a>
+                                                    </Col>
+                                                </Row>
+                                            ))
+                                        )}
+                                    </Row>
+                                </Card.Body>
+                            </Card>
+
+
+                        </Col>
+                    </Row>
+                </Modal.Body>
+
+            </Modal>
+
+            {/* Vendor View */}
+            {
+                vendorview && singleVendorData && Object.keys(singleVendorData).length > 0 && <Modal show={vendorview} size="xl" centered>
+                    <Modal.Header>
+                        <Modal.Title>Vendor Details</Modal.Title>
+                        <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("vendorview"); }}>
+                            x
+                        </Button>
+                    </Modal.Header>
+
+                    <Modal.Body className='bg-light'>
+                        <Row>
+                            <Col xl={8}>
+                                <Card>
+                                    <Card.Body>
+                                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Basic Details</h5>
+                                        <Row>
+                                            <Col xl={6}>
+                                                <FormLabel>Vendor Name</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.vendorName || "N/A"}</p>
+                                            </Col>
+
+
+                                            <Col xl={6}>
+                                                <FormLabel>Vendor Address</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.vendorAddress || "N/A"}</p>
+                                            </Col>
+
+                                            <Col xl={6}>
+                                                <FormLabel>GST Number</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.gstin || "N/A"}</p>
+                                            </Col>
+
+                                            <Col xl={6}>
+                                                <FormLabel>PAN Number</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.pan || "N/A"}</p>
+                                            </Col>
+
+
+                                            <Col xl={6}>
+                                                <FormLabel>Product</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.product || "N/A"}</p>
+                                            </Col>
+
+
+
+                                            <Col xl={6}>
+                                                <FormLabel>Service Type</FormLabel>
+                                                <p className='tx-15 col-sm-11 p-0'>{singleVendorData.serviceType || "N/A"}</p>
+                                            </Col>
+
+                                            <Col xl={6}>
+                                                <FormLabel>Frequency</FormLabel>
+                                                <p className='tx-1 p-0'>{singleVendorData.frequency || "N/A"}</p>
+                                            </Col>
+                                            <hr className='w-100' />
+                                            <Col xl={6}>
+                                                <FormLabel>Contact Person Name</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.contactPersonName || "N/A"}</p>
+                                            </Col>
+
+                                            <Col xl={6}>
+                                                <FormLabel>Contact Person Number</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.contactPersonNumber || "N/A"}</p>
+                                            </Col>
+
+                                            <Col xl={6}>
+                                                <FormLabel>Contact Value:</FormLabel>
+                                                <p className='tx-15'>{singleVendorData.contactValue || "N/A"}</p>
+                                            </Col>
+
+
+                                        </Row>
+                                    </Card.Body>
+                                </Card>
+
+
+                            </Col>
+                            <Col xl={4} className='p-0 pe-3'>
+
+
+                                <Card>
+                                    <Card.Body>
+                                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Contract Period Details</h5>
+                                        <Row>
+                                            <Col xl={5} className='mb-1 tx-12'>Start Date</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.contractStartDate || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12'>End Date</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.contractEndDate || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12'>Total Period Calculation</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.totalPeriodCalculation || "N/A"}</Col>
+                                            <Col xl={12} className='mb-1 tx-12'>Contact Terms & Conditions
+                                            </Col>
+                                            <Col xl={12} className='tx-semibold tx-12'>{singleVendorData.terms || "N/A"}</Col>
+
+                                        </Row>
+                                    </Card.Body>
+                                </Card>
+
+
+
+                                <Card>
+                                    <Card.Body>
+                                        <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Bank Details Details</h5>
+                                        <Row>
+
+                                            <Col xl={5} className='mb-1 tx-12'>Society Bank Name</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.bankName || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12'>Account Number</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.accountNumber || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12'>Branch Name</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.branchName || "N/A"}</Col>
+                                            <Col xl={5} className='mb-1 tx-12 '>IFSC Code</Col>
+                                            <Col xl={7} className='tx-semibold tx-12'>{singleVendorData.ifsc || "N/A"}</Col>
+
+                                        </Row>
+                                    </Card.Body>
+                                </Card>
+
+
+
+                            </Col>
+                        </Row>
+                    </Modal.Body>
+
+                </Modal>
+            }
 
         </>
     )

@@ -1,4 +1,4 @@
-import { Field, Formik, Form as FormikForm } from 'formik';
+import { ErrorMessage, Field, Formik, Form as FormikForm } from 'formik';
 import { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import Select from "react-select";
@@ -6,6 +6,9 @@ import { getAllSocietyApi, getPropertiesOfSocietyApi } from '../../api/society-a
 import { handleApiError } from '../../helpers/handle-api-error';
 import { showToast } from '../services/toastServices';
 import { getAllComplainCategoriesApi } from '../../api/complaint-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import * as Yup from 'yup';
 
 interface ProductModalProps {
     show: boolean;
@@ -19,11 +22,43 @@ interface ProductModalProps {
 
 }
 
+const selectFieldValidation = (fieldLabel: string) =>
+    Yup.object()
+        .nullable()
+        .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+            if (!val || typeof val !== 'object') return false;
+
+            if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+            return true;
+        });
+
+const validationSchema = Yup.object().shape({
+    property: selectFieldValidation("Property"),
+    society: selectFieldValidation("Society"),
+    complaintCategory: selectFieldValidation("Complaint Category"),
+    priority: selectFieldValidation("Priority"),
+    complaintDescription: Yup.string().required("Complaint description is required"),
+    complaintFile: Yup.mixed()
+        .nullable()
+        .test(
+            "fileType",
+            "Only image files (jpg, jpeg, png) are allowed",
+            (value:any) => {
+                if (!value) return true; // It's optional
+                const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+                return allowedTypes.includes(value.type);
+            }
+        )
+});
+
 
 const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, onSave, editing }) => {
     const [societyData, setSocietyData] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [complaintCategoriesData, setComplaintCategoriesData] = useState([]);
+    const { society } = useSelector((state: RootState) => state.auth)
 
     useEffect(() => {
         fetchSocietiesForDropDown()
@@ -55,7 +90,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
             showToast("error", errorMessage)
         }
     }
- 
+
 
     const fetchPropertiesOfSocietyForDropdown = async (identifier: string) => {
         try {
@@ -124,9 +159,18 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
                         complaintFile: null,
                         fileName: initialVals?.issueFilePath
                     }}
+                    validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
                     {({ values, setFieldValue }) => {
+                        useEffect(() => {
+                            if (society && !initialVals) {
+                                setFieldValue("society", society);
+                                setFieldValue("tower", null);
+                                // fetchTowersForDropDown(society);
+                                fetchPropertiesOfSocietyForDropdown(society.value)
+                            }
+                        }, [society]);
                         // useEffect(() => {
                         //   if (values.society && values.society.value) {
                         //     fetchTowersForDropDown(values.society);
@@ -191,7 +235,9 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
                                                     }}
                                                     placeholder="Select society"
                                                     classNamePrefix="Select2"
+                                                    isDisabled
                                                 />
+                                                <ErrorMessage name="society" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -206,6 +252,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
                                                     placeholder="Select property"
                                                     classNamePrefix="Select2"
                                                 />
+                                                <ErrorMessage name="property" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -220,7 +267,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
                                                     placeholder="Select service"
                                                     classNamePrefix="Select2"
                                                 />
-                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                <ErrorMessage name="complaintCategory" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
                                         <Col xl={6}>
@@ -234,7 +281,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
                                                     placeholder="Select priority"
                                                     classNamePrefix="Select2"
                                                 />
-                                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                                <ErrorMessage name="priority" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
                                         <Col xl={12}>
@@ -252,6 +299,7 @@ const ComplaintModal: React.FC<ProductModalProps> = ({ show, initialVals, onClos
                                                     onChange={(e: any) => setFieldValue("complaintFile", e.target.files[0])}
                                                     className='form-control' />
                                             </Form.Group>
+                                            <ErrorMessage name="complaintFile" component="div" className="text-danger" />
                                             {values.fileName && (
                                                 <p
                                                     className="text-center pt-2"

@@ -6,11 +6,15 @@ import { getAllSocietyApi, getPropertiesOfSocietyApi, getSocietyDetailsApi } fro
 import { handleApiError } from "../../helpers/handle-api-error";
 import { showToast, CustomToastContainer } from "../services/toastServices";
 import { Field, Formik, Form as FormikForm } from "formik";
-import { createNewGatePassApi, getAllVenueApi, getSocietyVenueApi } from "../../api/application-api";
+import { getSocietyVenueApi } from "../../api/application-api";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import TermsAndConditionModal from "./termsAndConditionModal";
+import { getTermsConditionBySocietyAndTypeApi } from "../../api/termsCondition-api";
 
 interface ProductModalProps {
     show: boolean;
-    onSave?: (values: any,modal:string) => void;
+    onSave?: (values: any, modal: string, editing: boolean) => void;
     mode?: string;
     handleEdit?: () => void;
     onClose: () => void;
@@ -19,20 +23,57 @@ interface ProductModalProps {
     editing: boolean;
     eventVenue?: string;
     initialVals?: any;
-    modal:string
+    modal: string
 
 }
 
 const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, editing, eventVenue, name, onSave, modal }) => {
-    console.log(initialVals)
     const [societiesForDropDown, setSocietiesForDropDown] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
-    const [commiteeMemberData, setCommiteeMemberData] = useState<any>(null);
+    const [, setCommiteeMemberData] = useState<any>(null);
     const [venuesForDropDown, setVenuesForDropDown] = useState([]);
+    const [termsconditionsview, settermsconditionsview] = useState(false);
+    const [termsAndConditionData, setTermsAndConditionData] = useState("")
+    const { society } = useSelector((state: RootState) => state.auth)
+
+    const viewDemoShow = (modal: any) => {
+        switch (modal) {
+
+            case "termsconditionsview":
+                settermsconditionsview(true);
+                break;
+
+        }
+    };
+
+    const viewDemoClose = (modal: any) => {
+        switch (modal) {
+
+            case "termsconditionsview":
+                settermsconditionsview(false);
+                break;
+
+        }
+    };
+
 
     useEffect(() => {
         fetchSocietiesForDropDown()
-    }, [])
+        fetchTermsData()
+    }, [society])
+
+    const fetchTermsData = async () => {
+        try {
+            const response = await getTermsConditionBySocietyAndTypeApi(society.value, name)
+            if (response.status === 200) {
+                setTermsAndConditionData(response.data.data?.termCondition)
+            }
+        } catch (error: any) {
+
+            // const errorMessage = handleApiError(error)
+            // showToast("error", errorMessage)
+        }
+    }
 
     const fetchSocietiesForDropDown = async () => {
         try {
@@ -76,12 +117,17 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
         }
     }
 
-    const fetchApproverDetails = async (society: any,setFieldValue:any) => {
+    const fetchApproverDetails = async (society: any, setFieldValue: any) => {
         try {
             const response = await getSocietyDetailsApi(society.value)
             const members = response.data.data?.committeeMembers || [];
+            const parentMembers = response.data.data?.parentSociety?.parentSociety?.committeeMembers || [];
 
             const matched = members.find((member: any) =>
+                Array.isArray(member.applicationType) &&
+                member.applicationType.includes(name)
+            );
+            const parentMatched = parentMembers.find((member: any) =>
                 Array.isArray(member.applicationType) &&
                 member.applicationType.includes(name)
             );
@@ -92,8 +138,22 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 setFieldValue("approverProperty", { value: matched.propertyIdentifier, label: matched.propertyName });
                 setFieldValue("approverName", matched.fullName);
                 setFieldValue("approverContact", matched.contactNumber);
+                setFieldValue("approverIdentifier", matched.committeeMemberId);
                 setFieldValue("designation", { value: matched.designation, label: matched.designation });
-              }
+            }
+            if (parentMatched) {
+                setFieldValue("hasParentApprover", "true");
+                setFieldValue("parentApproverName", parentMatched.fullName);
+                setFieldValue("parentApproverContact", parentMatched.contactNumber);
+                setFieldValue("parentCommitteeMemberId", parentMatched.parentCommitteeMemberId);
+                setFieldValue("parentDesignation", {
+                    value: parentMatched.designation,
+                    label: parentMatched.designation
+                });
+                setFieldValue("parentSocietyName", { label: response.data.data.parentSociety?.parentSociety?.parentSocietyName || "", value: response.data.data.parentSociety?.parentSocietyIdentifier || "" });
+            } else if (!parentMatched) {
+                setFieldValue("hasParentApprover", "false");
+            }
             setCommiteeMemberData(matched)
         } catch (error: any) {
             const errorMessage = handleApiError(error)
@@ -122,38 +182,47 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
         { value: "Second Half", label: "Second Half" },
     ]
 
-    const venue = [
-        { value: "Flat", label: "Flat" },
-        { value: "Banquet Hall", label: "Banquet Hall" },
-        { value: "Parking Area", label: "Parking Area" },
-        { value: "Club House", label: "Club House" },
-        { value: "Play Area", label: "Play Area" },
-        { value: "Pool Area", label: "Pool Area" },
-        { value: "Food Court", label: "Food Court" },
-    ]
+
+    // const venue = [
+    //     { value: "Flat", label: "Flat" },
+    //     { value: "Banquet Hall", label: "Banquet Hall" },
+    //     { value: "Parking Area", label: "Parking Area" },
+    //     { value: "Club House", label: "Club House" },
+    //     { value: "Play Area", label: "Play Area" },
+    //     { value: "Pool Area", label: "Pool Area" },
+    //     { value: "Food Court", label: "Food Court" },
+    // ]
 
 
     const handleSubmit = async (values: any) => {
         try {
-            const formattedData = {
+            const formattedData: any = {
                 propertyIdentifier: values?.property?.value,
+                societyIdentifier: values?.society?.value,
                 applicationType: name,
-                occasionId: values?.occasion?.value, 
+                occasionId: values?.occasion?.value,
                 shift: values?.day?.value,
                 startDate: values?.entryDateTime,
                 endDate: values?.exitDateTime,
                 venueId: values?.venue?.value,
                 organizer: values?.organizerName,
+                guestCount: values?.guestNo,
                 contact: `${values?.contactNo}`,
                 remark: values?.remarks,
                 catering: values?.CateringService === "Yes",
                 decorations: values?.Decorations === "Yes",
                 sound: values?.SoundSystem === "Yes",
                 guestParking: values?.GuestParking === "Yes",
-                createdBy: "admin_user" 
-              };
-            if(onSave){
-                onSave(formattedData,modal)
+                createdBy: "admin_user",
+                committeeMemberId: values.approverIdentifier || "",
+                parentCommitteeMemberId: values.parentCommitteeMemberId || ""
+            };
+            if (editing) {
+                formattedData.eventId = initialVals?.eventId
+                formattedData.eventIdentifier = initialVals?.applicationIdentifier
+            }
+            if (onSave) {
+                onSave(formattedData, modal, editing)
             }
             // const response = await createNewGatePassApi(formattedData)
             // if (response.status === 200) {
@@ -164,7 +233,14 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
             showToast("error", errorMessage)
         }
     }
-    console.log(venuesForDropDown)
+
+    const formatDateTimeUTC = (isoString: string) => {
+        if (!isoString) return "";
+        return isoString.slice(0, 16);
+    };
+    const handleTermsAndConditionClose = () => {
+        viewDemoClose("termsconditionsview")
+    }
 
 
     return (
@@ -177,24 +253,26 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                     </Button>
                 </Modal.Header>
                 <Formik
-                enableReinitialize
+                    enableReinitialize
                     initialValues=
                     {{
-                        society: initialVals ? { label: initialVals.societyName, value: initialVals.societyIdentifier } : { label: "", value: "" },
+                        society: initialVals ? { label: initialVals.society?.societyName, value: initialVals.society?.societyIdentifier } : { label: society?.label || "", value: society?.value || "" },
                         property: initialVals ? { label: initialVals.property?.propertyName, value: initialVals.property?.propertyIdentifier } : { label: "", value: "" },
-                        venue: initialVals ? { label: initialVals.venue?.venuName, value: initialVals.venue?.venuId } : { label: "", value: "" },
+                        venue: initialVals ? { label: initialVals.venue?.venueName, value: initialVals.venue?.venueId } : { label: "", value: "" },
                         occasion: initialVals ? { label: initialVals.occasionId, value: initialVals.occasionId } : { label: "", value: "" },
                         day: initialVals ? { label: initialVals.shift, value: initialVals.shift } : { label: "", value: "" },
                         guestNo: initialVals ? initialVals.guestCount : "",
-                        entryDateTime: initialVals ? initialVals.startDate : "",
-                        exitDateTime: initialVals ? initialVals.endDate : "",
+                        entryDateTime: initialVals ? formatDateTimeUTC(initialVals.startDate) : "",
+                        exitDateTime: initialVals ? formatDateTimeUTC(initialVals.endDate) : "",
                         organizerName: initialVals ? initialVals.organizer : "",
                         contactNo: initialVals ? initialVals.contact : "",
-                        remarks: initialVals ? initialVals.remarks : "",
-                        CateringService: initialVals ? initialVals.Catering : "",
-                        Decorations: initialVals ? initialVals.decorations : "",
-                        SoundSystem: initialVals ? initialVals.sound : "",
-                        GuestParking: initialVals ? initialVals.guestParking : "",
+                        remarks: initialVals ? initialVals.remark : "",
+                        approverIdentifier: "",
+                        parentCommitteeMemberId: "",
+                        CateringService: initialVals?.catering === true ? "Yes" : initialVals?.catering === false ? "No" : "",
+                        Decorations: initialVals?.decorations === true ? "Yes" : initialVals?.decorations === false ? "No" : "",
+                        SoundSystem: initialVals?.sound === true ? "Yes" : initialVals?.sound === false ? "No" : "",
+                        GuestParking: initialVals?.guestParking === true ? "Yes" : initialVals?.guestParking === false ? "No" : "",
                         tower: { value: initialVals?.towerIdentifier || "", label: initialVals?.towerName || "" },
                         wing: { value: initialVals?.wingIdentifier || "", label: initialVals?.wingName || "" },
                         approverSociety: { value: initialVals?.socityIdentifier || "", label: initialVals?.societyName || "" },
@@ -202,6 +280,11 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                         approverName: initialVals?.fullName || "",
                         approverContact: initialVals?.contactNumber || "",
                         designation: { value: initialVals?.designation || "", label: initialVals?.designation || "" },
+                        hasParentApprover: "false",
+                        parentApproverName: initialVals?.fullName || "",
+                        parentApproverContact: initialVals?.contactNumber || "",
+                        parentDesignation: { value: initialVals?.parentDesignation || "", label: initialVals?.parentDesignation || "" },
+                        parentSocietyName: { value: "", label: "" },
 
                     }}
                     onSubmit={handleSubmit}>
@@ -210,12 +293,20 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
                         useEffect(() => {
                             if (forcedVenue) {
-                                const matchedVenue = venuesForDropDown.find((v:any) => v.label === forcedVenue);
+                                const matchedVenue = venuesForDropDown.find((v: any) => v.label === forcedVenue);
                                 if (matchedVenue) {
                                     setFieldValue("venue", matchedVenue);
                                 }
                             }
                         }, [forcedVenue, setFieldValue, venuesForDropDown]);
+                        useEffect(() => {
+                            if (society) {
+                                setFieldValue("society", society);
+                                fetchPropertiesForDropDown(society);
+                                fetchVenuesForSociety(society)
+                                fetchApproverDetails(society, setFieldValue)
+                            }
+                        }, [society]);
                         return (
                             <FormikForm>
                                 <Modal.Body className='bg-light'>
@@ -236,9 +327,10 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 onChange={(selected) => {
                                                                     fetchPropertiesForDropDown(selected);
                                                                     fetchVenuesForSociety(selected)
-                                                                    fetchApproverDetails(selected,setFieldValue)
+                                                                    fetchApproverDetails(selected, setFieldValue)
                                                                     setFieldValue("society", selected);
                                                                 }}
+                                                                isDisabled
                                                             />
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -256,6 +348,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 }}
                                                                 placeholder="Select property"
                                                                 classNamePrefix="Select2"
+                                                                isDisabled={initialVals && !editing}
                                                             />
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -272,6 +365,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 }}
                                                                 placeholder="Select type"
                                                                 classNamePrefix="Select2"
+                                                                isDisabled={initialVals && !editing}
                                                             />
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -288,6 +382,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 }}
                                                                 placeholder="Select type"
                                                                 classNamePrefix="Select2"
+                                                                isDisabled={initialVals && !editing}
                                                             />
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -302,6 +397,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 name="guestNo"
                                                                 value={values.guestNo}
                                                                 onChange={handleChange}
+                                                                disabled={initialVals && !editing}
                                                             ></Form.Control>
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -319,6 +415,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                     defaultValue="2020-01-16T14:22"
                                                                     name="entryDateTime"
                                                                     value={values.entryDateTime}
+                                                                    disabled={initialVals && !editing}
                                                                 />
                                                             </InputGroup>
                                                         </Form.Group>
@@ -337,7 +434,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                     defaultValue="2020-01-16T14:22"
                                                                     name="exitDateTime"
                                                                     value={values.exitDateTime}
-
+                                                                    disabled={initialVals && !editing}
                                                                 />
                                                             </InputGroup>
                                                         </Form.Group>
@@ -354,7 +451,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 onChange={(selected) => {
                                                                     setFieldValue("venue", selected);
                                                                 }}
-                                                                isDisabled={!!forcedVenue}
+                                                                isDisabled={!!forcedVenue || (initialVals && !editing)}
                                                             />
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -369,6 +466,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 name="organizerName"
                                                                 value={values.organizerName}
                                                                 onChange={handleChange}
+                                                                disabled={initialVals && !editing}
                                                             ></Form.Control>
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -383,6 +481,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                 name="contactNo"
                                                                 value={values.contactNo}
                                                                 onChange={handleChange}
+                                                                disabled={initialVals && !editing}
                                                             ></Form.Control>
                                                             {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
                                                         </Form.Group>
@@ -403,6 +502,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                         as={Form.Check}
                                                                         label="Yes"
                                                                         checked={values.CateringService === "Yes"}
+                                                                        disabled={initialVals && !editing}
                                                                     />
                                                                 </Col>
                                                                 <Col lg={1} className='mt-2'>
@@ -413,6 +513,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                         as={Form.Check}
                                                                         label="No"
                                                                         checked={values.CateringService === "No"}
+                                                                        disabled={initialVals && !editing}
                                                                     />
                                                                 </Col>
                                                             </Row>
@@ -429,6 +530,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                         as={Form.Check}
                                                                         label="Yes"
                                                                         checked={values.Decorations === "Yes"}
+                                                                        disabled={initialVals && !editing}
                                                                     />
                                                                 </Col>
                                                                 <Col lg={1} className='mt-2'>
@@ -439,6 +541,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                         as={Form.Check}
                                                                         label="No"
                                                                         checked={values.Decorations === "No"}
+                                                                        disabled={initialVals && !editing}
                                                                     />
                                                                 </Col>
                                                             </Row>
@@ -455,6 +558,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                         as={Form.Check}
                                                                         label="Yes"
                                                                         checked={values.SoundSystem === "Yes"}
+                                                                        disabled={initialVals && !editing}
                                                                     />
                                                                 </Col>
                                                                 <Col lg={1} className='mt-2'>
@@ -465,6 +569,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                         as={Form.Check}
                                                                         label="No"
                                                                         checked={values.SoundSystem === "No"}
+                                                                        disabled={initialVals && !editing}
                                                                     />
                                                                 </Col>
                                                             </Row>
@@ -481,6 +586,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                         as={Form.Check}
                                                                         label="Yes"
                                                                         checked={values.GuestParking === "Yes"}
+                                                                        disabled={initialVals && !editing}
                                                                     />
                                                                 </Col>
                                                                 <Col lg={1} className='mt-2'>
@@ -491,6 +597,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                                         as={Form.Check}
                                                                         label="No"
                                                                         checked={values.GuestParking === "No"}
+                                                                        disabled={initialVals && !editing}
                                                                     />
                                                                 </Col>
                                                             </Row>
@@ -503,7 +610,7 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                                             <Form.Label>Remarks
                                                                 <small className='text-muted float-end'>max 250 Character</small>
                                                             </Form.Label>
-                                                            <textarea className="form-control" placeholder='Remarks'></textarea>
+                                                            <textarea className="form-control" placeholder='Remarks' name="remarks" value={values.remarks} onChange={handleChange} disabled={initialVals && !editing}></textarea>
                                                             {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
                                                         </Form.Group>
                                                     </Col>
@@ -513,7 +620,87 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                             </Accordion.Body>
                                         </Accordion.Item>
 
+                                        <Accordion.Item eventKey="Documentdetails">
+                                            <Accordion.Header>Document Details</Accordion.Header>
+                                            <Accordion.Body>
+                                                <Row>
 
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Sale Agreement Copy</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Flat Registration Certificate</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Home Loan Sanction Letter</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col xl={6}>
+                                                        <Form.Group className="form-group mb-0">
+                                                            <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
+                                                            <Row>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="Yes" name="transferdocument" />
+                                                                </Col>
+                                                                <Col lg={3}>
+
+                                                                    <Form.Check type="radio" label="No" name="transferdocument" />
+                                                                </Col>
+
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+
+
+
+
+                                                </Row>
+                                            </Accordion.Body>
+                                        </Accordion.Item>
                                         <Accordion.Item eventKey="approvaldetails">
                                             <Accordion.Header>Approval Details</Accordion.Header>
                                             <Accordion.Body className='p-2'>
@@ -633,15 +820,80 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
 
 
                                                 </Row>
+                                                {values.hasParentApprover === "true" && (
+                                                    <>
+                                                        <hr />
+                                                        <h6>Parent Approver Details</h6>
+                                                        <Row>
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Approver Name</Form.Label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="parentApproverName"
+                                                                        placeholder="Parent Approver Name"
+                                                                        className="form-control"
+                                                                        value={values.parentApproverName}
+                                                                        disabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Approver Contact</Form.Label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="parentApproverContact"
+                                                                        placeholder="Parent Contact"
+                                                                        className="form-control"
+                                                                        value={values.parentApproverContact}
+                                                                        disabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Designation</Form.Label>
+                                                                    <Select
+                                                                        placeholder="Parent Designation"
+                                                                        classNamePrefix="Select2"
+                                                                        name="parentDesignation"
+                                                                        onChange={(selected) => setFieldValue("parentDesignation", selected)}
+                                                                        value={values.parentDesignation}
+                                                                        isDisabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+
+                                                            <Col xl={6}>
+                                                                <Form.Group className="form-group mb-1">
+                                                                    <Form.Label>Parent Society Name</Form.Label>
+                                                                    <Select
+                                                                        name='parentSocietyName'
+                                                                        placeholder="Select Society"
+                                                                        classNamePrefix="Select2"
+                                                                        onChange={(selected) => setFieldValue("parentSocietyName", selected)}
+                                                                        value={values.parentSocietyName}
+                                                                        isDisabled
+                                                                    />
+                                                                </Form.Group>
+                                                            </Col>
+                                                        </Row>
+
+                                                    </>
+                                                )}
+
                                             </Accordion.Body>
                                         </Accordion.Item>
 
                                     </Accordion>
 
                                     <Col xl={12} className='p-0'>
-                                        {/* <label><input type="checkbox" className='float-start m-2' />
-                        <b className='float-start mt-1 cursor'
-                         onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label> */}
+                                        <label><input type="checkbox" className='float-start m-2' />
+                                            <b className='float-start mt-1 cursor'
+                                                onClick={() => { viewDemoShow("termsconditionsview"); }}> Terms & Conditions</b></label>
                                     </Col>
 
                                 </Modal.Body>
@@ -649,9 +901,11 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                                     <Button variant="default" onClick={(event) => { event.preventDefault(), onClose() }}>
                                         Close
                                     </Button>
-                                    <Button variant="primary" type='submit'>
-                                        {editing ? "Update" : "Save"}
-                                    </Button>
+                                    {!(initialVals && !editing) && (
+                                        <Button variant="primary" type="submit">
+                                            {editing ? "Update" : "Save"}
+                                        </Button>
+                                    )}
 
 
                                 </Modal.Footer>
@@ -664,6 +918,9 @@ const EventModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, e
                 </Formik>
 
             </Modal>
+            {
+                termsconditionsview && <TermsAndConditionModal onClose={handleTermsAndConditionClose} initialVals={termsAndConditionData} show={termsconditionsview} />
+            }
 
 
 

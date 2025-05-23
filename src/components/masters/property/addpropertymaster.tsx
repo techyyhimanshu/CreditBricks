@@ -13,9 +13,10 @@ import { getAllSocietyApi, getTowersOfSocietyApi, getWingsOfSocietyApi } from '.
 import { handleApiError } from '../../../helpers/handle-api-error';
 import { showToast, CustomToastContainer } from '../../../common/services/toastServices';
 // import { getAllWingApi } from '../../../api/wing-api';
-import { Formik, Form as FormikForm, Field } from 'formik';
+import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import { getMemberForDropDownApi } from '../../../api/user-api';
 import { addPropertyApi, getTenantOptions } from '../../../api/property-api';
+import * as Yup from 'yup';
 // Define the types for the stateCities object
 // interface StateCities {
 //   [key: string]: string[];
@@ -24,6 +25,58 @@ import { addPropertyApi, getTenantOptions } from '../../../api/property-api';
 //   apiKey: 'free'
 // });
 // const stateCitiesTyped: StateCities = stateCities;
+
+const selectFieldValidation = (fieldLabel: string) =>
+  Yup.object()
+    .nullable()
+    .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+      if (!val || typeof val !== 'object') return false;
+
+      if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+      return true;
+    });
+
+const validationSchema = Yup.object().shape({
+  propertyName: Yup.string().required('Property name is required'),
+  status: selectFieldValidation('Status'),
+  narration: selectFieldValidation('Narration'),
+  area: Yup.string().required('Area is required'),
+  society: selectFieldValidation('Society'),
+  firstOwner: selectFieldValidation('Member'),
+  tower: selectFieldValidation('Tower'),
+  wing: selectFieldValidation('Wing'),
+  flatNumber: Yup.string().required('Flat number is required'),
+  floorNumber: Yup.string().required('Floor number is required'),
+
+  dateOfOpeningBalance: Yup.date().required('Date of opening balance is required'),
+
+  openingPrincipalAmount: Yup.string()
+    .test('is-number', 'Opening principal amount must be a number', function (val) {
+      return !val || /^\d+(\.\d+)?$/.test(val); 
+    }),
+
+  openingInterestAmount: Yup.string()
+    .test('is-number', 'Opening interest amount must be a number', function (val) {
+      return !val || /^\d+(\.\d+)?$/.test(val);
+    }),
+
+  monthlyPaidMaintenance: Yup.string()
+    .test('is-number', 'Monthly paid maintenance must be a number', function (val) {
+      return !val || /^\d+(\.\d+)?$/.test(val);
+    }),
+
+  monthlyPaidArrears: Yup.string()
+    .test('is-number', 'Monthly paid arrears must be a number', function (val) {
+      return !val || /^\d+(\.\d+)?$/.test(val);
+    }),
+
+  intercomNumber: Yup.string()
+    .test('is-number', 'Intercom number must be a number', function (val) {
+      return !val || /^\d+$/.test(val);
+    }),
+});
 export default function AddPropertyMaster() {
   const [currentProperty,] = useState({
     propertyId: null,
@@ -374,6 +427,7 @@ export default function AddPropertyMaster() {
           primaryProperty: ''
 
         }}
+        validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ setFieldValue, values }) => (
@@ -403,7 +457,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Property name"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="propertyName" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -445,7 +499,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Select Status"
                                   classNamePrefix="Select2"
                                 />
-                                {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="status" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -460,7 +514,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Select narration"
                                   classNamePrefix="Select2"
                                 />
-                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="narration" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -473,7 +527,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Area"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="area" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -492,12 +546,12 @@ export default function AddPropertyMaster() {
                                   placeholder="Select Society"
                                   classNamePrefix="Select2"
                                 />
-
+                                <ErrorMessage name="society" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
                             <Col xl={4}>
                               <Form.Group className="form-group">
-                                <Form.Label>Tower</Form.Label>
+                                <Form.Label>Tower <span className="text-danger">*</span></Form.Label>
                                 <Select
                                   options={towerOptions}
                                   name='tower'
@@ -505,7 +559,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Select tower"
                                   classNamePrefix="Select2"
                                 />
-                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="tower" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -521,7 +575,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Select wing"
                                   classNamePrefix="Select2"
                                 />
-                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="wing" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -535,20 +589,20 @@ export default function AddPropertyMaster() {
                                   placeholder="Flat no"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="flatNumber" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
                             <Col xl={4}>
                               <Form.Group className="form-group">
-                                <Form.Label>Floor No.</Form.Label>
+                                <Form.Label>Floor No. <span className="text-danger">*</span></Form.Label>
                                 <Field
                                   type="text"
                                   name="floorNumber"
                                   placeholder="Floor no"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="floorNumber" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -562,7 +616,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Select Type"
                                   classNamePrefix="Select2"
                                 />
-                                {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="dealType" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
                             {
@@ -576,7 +630,7 @@ export default function AddPropertyMaster() {
                                     placeholder="Select tenant"
                                     classNamePrefix="Select2"
                                   />
-                                  {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                                  <ErrorMessage name="tenant" component="div" className="text-danger" />
                                 </Form.Group>
                               </Col>
                             }
@@ -644,7 +698,7 @@ export default function AddPropertyMaster() {
                           <Row>
                             <Col xl={4}>
                               <Form.Group className="form-group">
-                                <Form.Label>Member</Form.Label>
+                                <Form.Label>Member <span className="text-danger">*</span></Form.Label>
                                 <Select
                                   options={memberOptions}
                                   name="firstOwner"
@@ -657,7 +711,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Select Member"
                                   classNamePrefix="Select2"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="firstOwner" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -784,7 +838,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Flat Registration Number"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="flatRegistrationNumber" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -797,7 +851,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Date of Agreement"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="dateOfAgreement" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -811,7 +865,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Date of Registration"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="dateOfRegistration" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -846,7 +900,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Principal Amount"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="openingPrincipalAmount" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
                             <Col xl={4}>
@@ -858,7 +912,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Interest Amount"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="openingInterestAmount" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
                             <Col xl={4}>
@@ -869,7 +923,7 @@ export default function AddPropertyMaster() {
                                   name="dateOfOpeningBalance"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="dateOfOpeningBalance" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -1002,7 +1056,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Intercom Number"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="intercomNumber" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -1015,7 +1069,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Consumer Electricity Number"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="consumerElectricityNumber" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -1028,7 +1082,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Gas Connection Number"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="gasConnectionNumber" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
                           </Row>
@@ -1056,7 +1110,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Monthly Paid Maintenance to Builder"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="monthlyPaidMaintenance" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -1070,7 +1124,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Monthly Paid Maintenance to Builder Upto"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="monthlyPaidMaintenanceUpto" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -1084,7 +1138,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Monthly Paid Arrears"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="monthlyPaidArrears" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
 
@@ -1098,7 +1152,7 @@ export default function AddPropertyMaster() {
                                   placeholder="Monthly Paid Arrears Upto"
                                   className="form-control"
                                 />
-                                {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                                <ErrorMessage name="monthlyPaidArrearsUpto" component="div" className="text-danger" />
                               </Form.Group>
                             </Col>
                           </Row>

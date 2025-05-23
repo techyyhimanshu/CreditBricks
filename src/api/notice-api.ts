@@ -1,22 +1,27 @@
 import axiosInstance from "./axiosInstance"
 
-export const getAllNoticeApi = async (): Promise<any> => {
+export const getAllNoticeApi = async (societyIdentifier?:string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`notice/all`)
+        const params: any = {};
+
+        if (societyIdentifier) {
+            params.society_identifier = societyIdentifier;
+        }
+        const response = await axiosInstance.get(`notice/all`,{params})
         return response
     } catch (error) {
         throw error
     }
 }
 
-export const createNoticeApi = async (data:any): Promise<any> => {
+export const createNoticeApi = async (data: any): Promise<any> => {
     try {
         const formData = new FormData();
         for (const key in data) {
             formData.append(key, data[key]);
 
         }
-        const response = await axiosInstance.post(`notice/n/new`,formData)
+        const response = await axiosInstance.post(`notice/n/new`, formData)
         return response
     } catch (error) {
         throw error
@@ -24,21 +29,21 @@ export const createNoticeApi = async (data:any): Promise<any> => {
 }
 
 
-export const updateNoticeApi = async (data:any,id:string): Promise<any> => {
+export const updateNoticeApi = async (data: any, id: string): Promise<any> => {
     try {
         const formData = new FormData();
         for (const key in data) {
             formData.append(key, data[key]);
 
         }
-        const response = await axiosInstance.patch(`notice/n/${id}`,formData)
+        const response = await axiosInstance.patch(`notice/n/${id}`, formData)
         return response
     } catch (error) {
         throw error
     }
 }
 
-export const deleteNoticeApi = async (id:string): Promise<any> => {
+export const deleteNoticeApi = async (id: string): Promise<any> => {
     try {
         const response = await axiosInstance.delete(`notice/${id}`)
         return response

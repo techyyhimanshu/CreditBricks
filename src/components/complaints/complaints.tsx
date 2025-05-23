@@ -16,6 +16,8 @@ import DataTableExtensions from "react-data-table-component-extensions"
 import ComplaintModal from '../../common/modals/complaintModal';
 import ComplaintViewModal from '../../common/modals/complaintViewModal';
 import TestLoader from '../../layout/layoutcomponent/testloader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
 
 export default function Complaints() {
 
@@ -71,6 +73,7 @@ export default function Complaints() {
     id: "",
     contactPersonName: ""
   });
+  const { society } = useSelector((state: RootState) => state.auth)
 
   const columns = [
     {
@@ -252,7 +255,7 @@ export default function Complaints() {
     fetchAllComplaints();
     fetchAllComplaintCategories()
     fetchSocietiesForDropDown()
-  }, []);
+  }, [society]);
 
   useEffect(() => {
     if (filtersss.societyIdentifier) {
@@ -263,7 +266,8 @@ export default function Complaints() {
 
   const fetchAllComplaints = async () => {
     try {
-      const response = await getAllComplaintsApi()
+      const updatedFilters = { filters: { societyIdentifier: society.value }, };
+      const response = await getAllComplaintsApi(updatedFilters)
       if (response.status === 200) {
         const formattedData = response.data.data.map((complaint: any, index: number) => {
           return {
@@ -307,16 +311,7 @@ export default function Complaints() {
     }
   }
 
-  // const fetchAllPropertiesForDropDown = async () => {
-  //   try {
-  //     const response = await getAllPropertiesForDropdownApi()
-  //     if (response.status === 200) {
-  //       setPropertiesForDropDown(response.data.data);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching properties:", error);
-  //   }
-  // }
+ 
   const fetchPropertiesOfSocietyForDropdown = async (identifier: string) => {
     try {
       const response = await getPropertiesOfSocietyApi(identifier)

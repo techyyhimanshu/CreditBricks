@@ -1,19 +1,24 @@
 
 import { Fragment, useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab, InputGroup, Nav } from "react-bootstrap";
+import { Col, Row, Card, Button, Form, Dropdown, Modal, CardHeader, Tabs, Tab, InputGroup } from "react-bootstrap";
 import "react-data-table-component-extensions/dist/index.css";
 import Select from "react-select";
 import { showToast, CustomToastContainer } from '../../common/services/toastServices';
 import { imagesData } from "../../common/commonimages";
 import Accordion from 'react-bootstrap/Accordion';
 import EventModal from '../../common/modals/eventModal';
-import { createNewEventApi, createNewGatePassApi, deleteApplicationApi, getAllApplicationApi, getEventDetailsApi } from '../../api/application-api';
+import { createNewDocumentSubmissionApi, createNewEnquiryApi, createNewEventApi, createNewFlatResaleApi, createNewGatePassApi, createNewOtherApplicationApi, deleteApplicationApi, getAllApplicationApi, getApplicationDetailsApi, updateDocumentSubmissionApi, updateEnquiryApi, updateEventApi, updateFlatResaleApi, updateGatePassApi, updateOtherApplicationApi } from '../../api/application-api';
 import { handleApiError } from '../../helpers/handle-api-error';
 import TestLoader from '../../layout/layoutcomponent/testloader';
 import DataTable from 'react-data-table-component';
 import DataTableExtensions from "react-data-table-component-extensions"
 import GatePassModal from '../../common/modals/gatePassModal';
+import OtherApplicationModal from '../../common/modals/otherApplicationModal';
+import { ViewGatePassData } from '../../common/services/database';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../common/store/store';
+import FlatResaleModal from '../../common/modals/flatResaleModal';
 
 
 export default function Applications() {
@@ -24,7 +29,7 @@ export default function Applications() {
   const [addcontactupdate, setaddcontactupdate] = useState(false);
   const [addparking, setaddparking] = useState(false);
   const [addflateresale, setaddflateresale] = useState(false);
-  const [flateresaleuploadreciept, setflateresaleuploadreciept] = useState(false);
+  const [, setflateresaleuploadreciept] = useState(false);
   const [Uploadloanclosure, setUploadloanclosure] = useState(false);
   const [addinteriorwork, setaddinteriorwork] = useState(false);
   const [addcelebration, setaddcelebration] = useState(false);
@@ -36,16 +41,37 @@ export default function Applications() {
   const [addturfarea, setaddturfarea] = useState(false);
   const [addrentagreement, setaddrentagreement] = useState(false);
   const [addsharecerificate, setaddsharecerificate] = useState(false);
-  const [tenatview, settenatview] = useState(false);
+
   const [termsconditionsview, settermsconditionsview] = useState(false);
   const [gatepassview, setgatepassview] = useState(false);
+  const [celebrationview, setcelebrationview] = useState(false);
+  const [banquethallview, setbanquethallview] = useState(false);
+  const [clubhouseview, setclubhouseview] = useState(false);
+  const [flatresaleview, setflatresaleview] = useState(false);
+  const [playareaview, setplayareaview] = useState(false);
+  const [foodcourtview, setfoodcourtview] = useState(false);
+  const [otherapplicationview, setotherapplicationview] = useState(false);
   const [addnomination, setaddnomination] = useState(false);
   const [addbadminton, setaddbadminton] = useState(false);
   const [addfoodcourt, setaddfoodcourt] = useState(false);
   const [applicationData, setApplicationData] = useState<any[]>([])
   const [addothers, setothers] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [banquetToView,setBanquetToView]=useState(null)
+  const [singleBanquetHallData, setSingleBanquetHallData] = useState(null);
+  const [singleCelebrationData, setSingleCelebrationData] = useState(null);
+  const [singleClubhouseData, setSingleClubhouseData] = useState(null);
+  const [singlePlayAreaData, setSinglePlayAreaData] = useState(null);
+  const [singleFoodCourtData, setSingleFoodCourtData] = useState(null);
+  const [, setSingleContactUpdateData] = useState(null);
+  const [, setSingleSwimmingPoolData] = useState(null);
+  const [, setSingleParkingData] = useState(null);
+  const [singleOthersData, setSingleOthersData] = useState(null);
+  const [, setSingleInteriorData] = useState(null);
+  const [singleGatePassData, setSingleGatePassData] = useState(null);
+  const [viewGatePassData, setViewGatePassData] = useState<ViewGatePassData | null>(null);
+  const [, setSingleChangeInNameData] = useState(null);
+  const [singleFlatResaleData, setSingleFlatResaleData] = useState(null);
+  const { society } = useSelector((state: RootState) => state.auth)
 
   const columns = [
     {
@@ -58,8 +84,7 @@ export default function Applications() {
       name: 'Application Id',
       cell: (row: any) => (
         <span className='text-info cursor' onClick={() => {
-          viewDemoShow("gatepassview")
-          // setComplaintToView(row) 
+          fetchEventDetailsForView(row.id)
         }}
         >{row.id}</span>
       ),
@@ -113,10 +138,7 @@ export default function Applications() {
 
           <Dropdown.Menu>
             <Dropdown.Item onClick={() => {
-              fetchEventDetails(row.id)
-              // setComplaintToView(row) 
-              // setEditing(true)
-              viewDemoShow("addbanquethall") 
+              fetchEventDetails(row.id);
             }}>Edit</Dropdown.Item>
 
             <Dropdown.Item className='text-danger' onClick={() => handleDelete(row.id)}>Delete</Dropdown.Item>
@@ -135,11 +157,11 @@ export default function Applications() {
 
   useEffect(() => {
     fetchAllApplications();
-  }, []);
+  }, [society]);
 
   const fetchAllApplications = async () => {
     try {
-      const response = await getAllApplicationApi()
+      const response = await getAllApplicationApi(society.value)
       if (response.status === 200) {
         const formattedData = response.data.data.map((complaint: any, index: number) => {
           return {
@@ -163,23 +185,203 @@ export default function Applications() {
     }
   }
 
-  const fetchEventDetails = async (id:string) => {
+  const fetchEventDetails = async (id: string) => {
+    const prefix = id.split('-')[0];
+    setIsLoading(true);
+
     try {
-      const response = await getEventDetailsApi(id)
+      const response = await getApplicationDetailsApi(id);
+
       if (response.status === 200) {
-        setBanquetToView(response.data.data)
+        const data = response.data.data;
+
+        switch (prefix) {
+          case "BH":
+            setSingleBanquetHallData(data);
+            viewDemoShow("addbanquethall");
+            break;
+
+          case "CB":
+            setSingleCelebrationData(data);
+            viewDemoShow("addcelebration");
+            break;
+
+          case "CH":
+            setSingleClubhouseData(data);
+            viewDemoShow("addclubhouse");
+            break;
+
+          case "PA":
+            setSinglePlayAreaData(data);
+            viewDemoShow("addplayarea");
+            break;
+
+          case "FC":
+            setSingleFoodCourtData(data);
+            viewDemoShow("addfoodcourt");
+            break;
+
+          case "CP":
+            setSingleContactUpdateData(data);
+            viewDemoShow("addcontactupdate");
+            break;
+
+          case "SW":
+            setSingleSwimmingPoolData(data);
+            viewDemoShow("addswimmingpool");
+            break;
+
+          case "PK":
+            setSingleParkingData(data);
+            viewDemoShow("addparking");
+            break;
+
+          case "OD":
+          case "OE":
+          case "OO":
+            setSingleOthersData(data);
+            viewDemoShow("addothers");
+            break;
+
+          case "IN":
+            setSingleInteriorData(data);
+            viewDemoShow("addinterior");
+            break;
+
+          case "GP":
+            setSingleGatePassData(data);
+            viewDemoShow("addgatepass");
+            break;
+
+          case "NC":
+            setSingleChangeInNameData(data);
+            viewDemoShow("addchangeinname");
+            break;
+
+          case "FR":
+            setSingleFlatResaleData(data);
+            viewDemoShow("addflateresale");
+            break;
+
+          default:
+            console.warn(`Unhandled application type: ${prefix}`);
+            break;
+        }
       }
     } catch (error) {
       const errorMessage = handleApiError(error);
       showToast("error", errorMessage);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  const handleEventSave = async (values: any, modal: string) => {
+  const fetchEventDetailsForView = async (id: string) => {
+    const prefix = id.split('-')[0];
+    setIsLoading(true);
+
     try {
-      const response = await createNewEventApi(values)
+      const response = await getApplicationDetailsApi(id);
+
+      if (response.status === 200) {
+        const data = response.data.data;
+
+        switch (prefix) {
+          case "BH":
+            setSingleBanquetHallData(data);
+            viewDemoShow("banquethallview");
+            break;
+
+          case "CB":
+            setSingleCelebrationData(data);
+            viewDemoShow("celebrationview");
+            break;
+
+          case "CH":
+            setSingleClubhouseData(data);
+            viewDemoShow("clubhouseview");
+            break;
+
+          case "PA":
+            setSinglePlayAreaData(data);
+            viewDemoShow("playareaview");
+            break;
+
+          case "FC":
+            setSingleFoodCourtData(data);
+            viewDemoShow("foodcourtview");
+            break;
+
+          case "CP":
+            setSingleContactUpdateData(data);
+            viewDemoShow("viewcontactupdate");
+            break;
+
+          case "SW":
+            setSingleSwimmingPoolData(data);
+            viewDemoShow("viewswimmingpool");
+            break;
+
+          case "PK":
+            setSingleParkingData(data);
+            viewDemoShow("viewparking");
+            break;
+
+          case "OD":
+          case "OE":
+          case "OO":
+            setSingleOthersData(data);
+            viewDemoShow("otherapplicationview");
+            break;
+
+          case "IN":
+            setSingleInteriorData(data);
+            viewDemoShow("viewinterior");
+            break;
+
+          case "GP":
+            setViewGatePassData(data);
+            viewDemoShow("gatepassview");
+            break;
+
+          case "NC":
+            setSingleChangeInNameData(data);
+            viewDemoShow("viewchangeinname");
+            break;
+
+          case "FR":
+            setSingleFlatResaleData(data);
+            viewDemoShow("flatresaleview");
+            break;
+
+          default:
+            console.warn(`Unhandled application type: ${prefix}`);
+            break;
+        }
+      }
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      showToast("error", errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const handleEventSave = async (values: any, modal: string, editing: boolean) => {
+    try {
+      let response;
+      const payload = { ...values };
+
+      const eventIdentifier = payload.eventIdentifier;
+      if (eventIdentifier) {
+        delete payload.eventIdentifier;
+      }
+      if (editing) {
+        response = await updateEventApi(payload, eventIdentifier || "")
+      } else {
+        response = await createNewEventApi(payload)
+      }
       if (response.status === 200 || response.status === 201) {
         showToast("success", response.data.message)
         fetchAllApplications()
@@ -192,11 +394,16 @@ export default function Applications() {
       viewDemoClose(modal)
     }
   }
-  const handleGatePassSave = async (values: any) => {
+  const handleGatePassSave = async (values: any, editing: boolean) => {
     try {
-      const response = await createNewGatePassApi(values)
-      if (response.status === 200|| response.status === 201) {
-        showToast("success", "Gate pass created successfully")
+      let response;
+      if (editing) {
+        response = await updateGatePassApi(values, values?.gatePassNumber || "")
+      } else {
+        response = await createNewGatePassApi(values)
+      }
+      if (response.status === 200 || response.status === 201) {
+        showToast("success", response.data.message)
         fetchAllApplications()
       }
 
@@ -207,22 +414,86 @@ export default function Applications() {
       viewDemoClose("addgatepass")
     }
   }
+  const handleOtherApplicationSave = async (values: any, tab: string, editing: boolean) => {
+    try {
+      let response;
 
-   const handleDelete = (id: string) => {
-      ; (async () => {
-        try {
-  
-          const response = await deleteApplicationApi(id)
-          if (response.status === 200) {
-            showToast("success", response.data.message)
-            setApplicationData((prevData: any) => prevData.filter((society: any) => society.id !== id))
-          }
-        } catch (error: any) {
-          const errorMessage = handleApiError(error)
-          showToast("error", errorMessage)
+      if (tab === "documentSubmission") {
+        if (editing) {
+          response = await updateDocumentSubmissionApi(values, values.id);
+        } else {
+          response = await createNewDocumentSubmissionApi(values);
         }
-      })()
+      } else if (tab === "enquiry") {
+        if (editing) {
+          response = await updateEnquiryApi(values, values.id);
+        } else {
+          response = await createNewEnquiryApi(values);
+        }
+
+      } else if (tab === "other") {
+        if (editing) {
+          response = await updateOtherApplicationApi(values, values.id);
+        } else {
+          response = await createNewOtherApplicationApi(values);
+        }
+      } else {
+        showToast("error", "Unknown tab selected");
+      }
+      if (response.status === 200 || response.status === 201) {
+        showToast("success", response.data.message)
+        fetchAllApplications()
+      }
+
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    } finally {
+      viewDemoClose("addothers")
     }
+  }
+
+  const handleFlatResaleSave = async (values: any, editing: boolean) => {
+    try {
+      let response;
+      const payload = { ...values };
+
+      const eventIdentifier = payload.eventIdentifier;
+      if (eventIdentifier) {
+        delete payload.eventIdentifier;
+      }
+      if (editing) {
+        response = await updateFlatResaleApi(payload, eventIdentifier || "")
+      } else {
+        response = await createNewFlatResaleApi(payload)
+      }
+      if (response.status === 200 || response.status === 201) {
+        showToast("success", response.data.message)
+        fetchAllApplications()
+      }
+
+    } catch (error) {
+      const errorMessage = handleApiError(error)
+      showToast("error", errorMessage)
+    }
+  }
+
+
+  const handleDelete = (id: string) => {
+    ; (async () => {
+      try {
+
+        const response = await deleteApplicationApi(id)
+        if (response.status === 200) {
+          showToast("success", response.data.message)
+          setApplicationData((prevData: any) => prevData.filter((society: any) => society.id !== id))
+        }
+      } catch (error: any) {
+        const errorMessage = handleApiError(error)
+        showToast("error", errorMessage)
+      }
+    })()
+  }
 
   const viewDemoShow = (modal: any) => {
     switch (modal) {
@@ -250,13 +521,31 @@ export default function Applications() {
       case "gatepassview":
         setgatepassview(true);
         break;
+      case "celebrationview":
+        setcelebrationview(true);
+        break;
+      case "banquethallview":
+        setbanquethallview(true);
+        break;
+      case "foodcourtview":
+        setfoodcourtview(true);
+        break;
+      case "playareaview":
+        setplayareaview(true);
+        break;
+      case "clubhouseview":
+        setclubhouseview(true);
+        break;
+
+      case "otherapplicationview":
+        setotherapplicationview(true);
+        break;
 
       case "termsconditionsview":
         settermsconditionsview(true);
         break;
-
-      case "tenatview":
-        settenatview(true);
+      case "flatresaleview":
+        setflatresaleview(true);
         break;
 
       case "addapplication":
@@ -356,10 +645,12 @@ export default function Applications() {
 
       case "addothers":
         setothers(false);
+        setSingleOthersData(null)
         break;
 
       case "addfoodcourt":
         setaddfoodcourt(false);
+        setSingleFoodCourtData(null)
         break;
 
       case "addbadminton":
@@ -372,14 +663,40 @@ export default function Applications() {
 
       case "gatepassview":
         setgatepassview(false);
+        setViewGatePassData(null)
+        break;
+
+      case "celebrationview":
+        setcelebrationview(false);
+        setSingleCelebrationData(null)
+        break;
+      case "clubhouseview":
+        setclubhouseview(false);
+        setSingleClubhouseData(null)
+        break;
+      case "banquethallview":
+        setbanquethallview(false);
+        setSingleBanquetHallData(null)
+        break;
+      case "playareaview":
+        setplayareaview(false);
+        setSinglePlayAreaData(null)
+        break;
+      case "foodcourtview":
+        setfoodcourtview(false);
+        setSingleFoodCourtData(null)
+        break;
+      case "otherapplicationview":
+        setotherapplicationview(false);
+        setSingleOthersData(null)
+        break;
+      case "flatresaleview":
+        setflatresaleview(false);
+        setSingleFlatResaleData(null)
         break;
 
       case "termsconditionsview":
         settermsconditionsview(false);
-        break;
-
-      case "tenatview":
-        settenatview(false);
         break;
 
       case "addapplication":
@@ -388,6 +705,7 @@ export default function Applications() {
 
       case "addgatepass":
         setaddgatepass(false);
+        setSingleGatePassData(null)
         break;
 
       case "addchangeinname":
@@ -405,6 +723,7 @@ export default function Applications() {
 
       case "addflateresale":
         setaddflateresale(false);
+        setSingleFlatResaleData(null)
         break;
 
       case "flateresaleuploadreciept":
@@ -421,6 +740,7 @@ export default function Applications() {
 
       case "addcelebration":
         setaddcelebration(false);
+        setSingleCelebrationData(null)
         break;
 
       case "addtheater":
@@ -429,6 +749,7 @@ export default function Applications() {
 
       case "addbanquethall":
         setaddbanquethall(false);
+        setSingleBanquetHallData(null);
         break;
 
       case "addswimmingpool":
@@ -436,11 +757,13 @@ export default function Applications() {
         break;
 
       case "addclubhouse":
-        setaddclubhouse(false);
+        setaddclubhouse(false),
+          setSingleClubhouseData(null);
         break;
 
       case "addplayarea":
         setaddplayarea(false);
+        setSinglePlayAreaData(null)
         break;
 
       case "addturfarea":
@@ -458,31 +781,6 @@ export default function Applications() {
     }
   };
 
-  const enquiry = [
-    { value: "1", label: "Contact Detials of the Committee Members" },
-    { value: "2", label: "Contact Detials of the Members" },
-    { value: "3", label: "Access to the Society Documents" },
-    { value: "4", label: "Contact Detials of the Vendors" },
-    { value: "5", label: "Property Tax Related" },
-    { value: "6", label: "Society Bank Details" },
-    { value: "7", label: "Upcoming Events" },
-    { value: "8", label: "Others" },
-  ]
-
-  const documentsubmission = [
-    { value: "1", label: "Agreement Copy" },
-    { value: "2", label: "Index 2" },
-    { value: "3", label: "Rent Agreement" },
-    { value: "4", label: "Police Verification" },
-    { value: "5", label: "Loan Sanction Letter" },
-    { value: "6", label: "Others" },
-  ]
-
-  const otherstype = [
-    { value: "1", label: "Notice" },
-    { value: "2", label: "Announcement" },
-    { value: "3", label: "Community" },
-  ]
 
   const showname = [
     { value: "1", label: "Show 1" },
@@ -490,11 +788,7 @@ export default function Applications() {
     { value: "3", label: "Show 3" },
   ]
 
-  const day = [
-    { value: "1", label: "Full Day" },
-    { value: "2", label: "First Half" },
-    { value: "3", label: "Second Half" },
-  ]
+
 
   const duration = [
     { value: "1", label: "1hr" },
@@ -513,43 +807,13 @@ export default function Applications() {
     { value: "2", label: "Female" },
   ]
 
-  const vehicletypegatepass = [
-    { value: "1", label: "Sedan" },
-    { value: "2", label: "Coupe" },
-    { value: "3", label: "Sports Car" },
-    { value: "4", label: "Station Wagon" },
-    { value: "5", label: "Hatchback" },
-    { value: "6", label: "Convertible" },
-    { value: "7", label: "SUV" },
-    { value: "8", label: "Minivan" },
-  ]
-
-  const flat = [
-    { value: "1", label: "Select Flat " },
-  ]
-
-  const wing = [
-    { value: "1", label: "Select Wing " },
-  ]
-  const designation = [
-    { value: "1", label: "Secretary " },
-    { value: "2", label: "Committe Member " },
-  ]
-
-
-  const vehiclenature = [
-    { value: "1", label: "Member Parking" },
-    { value: "2", label: "Visitor Parking" },
-    { value: "2", label: "Other" },
-  ]
-
 
   const status = [
     { value: "", label: "All" },
-    { value: "In-Progress", label: "In-Progress" },
-    { value: "Pending", label: "Pending" },
+   { value: "Pending", label: "Pending" },
+    { value: "onhold", label: "On Hold" },
     { value: "Approved", label: "Approved" },
-    { value: "Completed", label: "Completed" },
+    { value: "Declined", label: "Declined" },
   ]
 
   const property = [
@@ -562,25 +826,6 @@ export default function Applications() {
     { value: "1", label: "Test Member 1" },
     { value: "2", label: "Test Member 2" },
 
-  ];
-
-  const gatepasstenant = [
-    { value: "1", label: "Neha Gupta" }
-
-  ];
-
-  const vendor = [
-    { value: "1", label: "Ajay Kumar" }
-
-  ];
-
-  const gatetypesubcategory = [
-    { value: "1", label: "Member Shifting In" },
-    { value: "2", label: "Member Shifting Out" },
-    { value: "3", label: "Tenant Shifting In" },
-    { value: "4", label: "Tenant Shifting Out" },
-    { value: "5", label: "Asset Moving In" },
-    { value: "6", label: "Asset Moving Out" },
   ];
 
   const applicationtype = [
@@ -606,27 +851,6 @@ export default function Applications() {
     { value: "20", label: "Others" },
   ]
 
-  const gatetype = [
-    { value: "1", label: "Inward" },
-    { value: "2", label: "Outward" },
-    { value: "2", label: "Internal" },
-  ]
-
-  const gatetypecategory = [
-    { value: "1", label: "Member" },
-    { value: "2", label: "Tenant" },
-    { value: "2", label: "Material" },
-  ]
-
-  const changetype = [
-    { value: "1", label: "Owner" },
-    { value: "2", label: "Co-owner" },
-  ]
-
-  const society = [
-    { value: "1", label: "Mohan Areca Co-Op Housing Society Limited" },
-    { value: "2", label: "SKA MetroVilla Society Limited" },
-  ]
 
   const relation = [
     { value: "1", label: "Self" },
@@ -674,27 +898,6 @@ export default function Applications() {
 
   ]
 
-  const occasion = [
-    { value: "1", label: "Birthday" },
-    { value: "2", label: "Marriage" },
-    { value: "3", label: "House Warming" },
-    { value: "4", label: "Naming Ceremony" },
-    { value: "5", label: "Anniversary" },
-    { value: "6", label: "Festivals" },
-    { value: "7", label: "Reunion" },
-    { value: "8", label: "Retirement" },
-    { value: "9", label: "Other" },
-    { value: "10", label: "Get Together" },
-    { value: "11", label: "Event" },
-    { value: "12", label: "Camp" },
-  ]
-
-  const venue = [
-    { value: "1", label: "Flat" },
-    { value: "2", label: "Banquet Hall" },
-    { value: "3", label: "Parking Area" },
-  ]
-
   const sportactivity = [
     { value: "1", label: "Football" },
     { value: "2", label: "Cricket" },
@@ -723,11 +926,39 @@ export default function Applications() {
   const handleFoodCourtClose = () => {
     viewDemoClose("addfoodcourt");
   }
+  const handleOtherApplicationClose = () => {
+    viewDemoClose("addothers");
+    setSingleOthersData(null)
+  }
   const handlePlayAreaClose = () => {
     viewDemoClose("addplayarea");
   }
   const handleCelebrationClose = () => {
     viewDemoClose("addcelebration");
+  }
+  const handleFlatResaleClose = () => {
+    viewDemoClose("addflateresale");
+  }
+  const handleCelebrationViewClose = () => {
+    viewDemoClose("celebrationview");
+  }
+  const handleClubHouseViewClose = () => {
+    viewDemoClose("clubhouseview");
+  }
+  const handleBanquetHallViewClose = () => {
+    viewDemoClose("banquethallview");
+  }
+  const handleFoodCourtViewClose = () => {
+    viewDemoClose("foodcourtview");
+  }
+  const handlePlayAreaViewClose = () => {
+    viewDemoClose("playareaview");
+  }
+  const handleOtherApplicationViewClose = () => {
+    viewDemoClose("otherapplicationview");
+  }
+  const handleFlatResaleViewClose = () => {
+    viewDemoClose("flatresaleview");
   }
 
 
@@ -889,9 +1120,9 @@ export default function Applications() {
             </Modal.Body>
 
           </Modal>
-          
+
           {
-            addgatepass && <GatePassModal show={addgatepass} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={false} />
+            addgatepass && (singleGatePassData ? <GatePassModal show={addgatepass} initialVals={singleGatePassData} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={true} /> : <GatePassModal show={addgatepass} onSave={handleGatePassSave} onClose={handleGatePassClose} editing={false} />)
           }
 
           {/* gate pass view modal */}
@@ -903,7 +1134,7 @@ export default function Applications() {
               </Button>
             </Modal.Header>
 
-            <Modal.Body>
+            {/* <Modal.Body>
               <Tabs
                 defaultActiveKey="Tab 01"
                 id="uncontrolled-tab-example"
@@ -932,13 +1163,15 @@ export default function Applications() {
                               <Form.Label>Gate Type</Form.Label>
                               <p className='tx-14'>Inward</p>
                             </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Member</Form.Label>
+                              <p className='tx-14'>Test Member 1</p>
+                            </Col>
+
                             <Col xl={4} className='mb-2'>
                               <Form.Label>Category</Form.Label>
                               <p className='tx-14 col-sm-11 p-0'>Tenant</p>
-                            </Col>
-                            <Col xl={4} className='mb-2'>
-                              <Form.Label>Tenant Name</Form.Label>
-                              <p className='tx-14 col-sm-11 p-0'>Ajay Sharma</p>
                             </Col>
                             <Col xl={4} className='mb-2'>
                               <Form.Label>Sub Category</Form.Label>
@@ -946,9 +1179,12 @@ export default function Applications() {
                             </Col>
 
                             <Col xl={4} className='mb-2'>
-                              <Form.Label>Member</Form.Label>
-                              <p className='tx-14'>Test Member 1</p>
+                              <Form.Label>Tenant Name</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>Ajay Sharma</p>
                             </Col>
+
+
+
 
                             <Col xl={4} className='mb-2'>
                               <Form.Label>Gate Pass Number</Form.Label>
@@ -969,7 +1205,7 @@ export default function Applications() {
                         </Card.Body>
                       </Card>
 
-                      <Card className='box-shadow border border-primary'>
+                      <Card className='box-shadow border border-primary mb-2'>
                         <Card.Body>
                           <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Approval Details</h5>
 
@@ -1002,6 +1238,8 @@ export default function Applications() {
 
                         </Card.Body>
                       </Card>
+
+                      <p className='ps-2'>Powered by <strong>CreditBricks</strong></p>
                     </Col>
 
                     <Col xl={4}>
@@ -1092,6 +1330,196 @@ export default function Applications() {
               </Tabs>
 
 
+            </Modal.Body> */}
+            <Modal.Body>
+              <Tabs
+                defaultActiveKey="Tab 01"
+                id="uncontrolled-tab-example"
+                className="panel-tabs main-nav-line bd-b-"
+                transition={false}
+              >
+
+                <Tab eventKey="Tab 01" title="Details">
+                  <Row>
+                    <Col xl={8}>
+                      <Card className='box-shadow border mt-3 border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Information</h5>
+                          <Row>
+                            <Col xl={12} className='mb-2'>
+                              <Form.Label>Society</Form.Label>
+                              <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-14 text-info'>{viewGatePassData?.societyIdentifier || ""}</Link>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Property</Form.Label>
+                              <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-14 text-info'>{viewGatePassData?.propertyIdentifier || ""}</Link>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Gate Type</Form.Label>
+                              <p className='tx-14'>{viewGatePassData?.gateType || ""}</p>
+                            </Col>
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Category</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>{viewGatePassData?.category || ""}</p>
+                            </Col>
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Tenant Name</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>{viewGatePassData?.tenantName || ""}</p>
+                            </Col>
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Sub Category</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>{viewGatePassData?.subCategory || ""}</p>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Member</Form.Label>
+                              <p className='tx-14'>{viewGatePassData?.userIdentifier || ""}</p>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Gate Pass Number</Form.Label>
+                              <p className='tx-14'>{viewGatePassData?.gatePassNumber || ""}</p>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Entry Date & Time</Form.Label>
+                              <p className='tx-14 col-sm-11 p-0'>{viewGatePassData?.entryTime || ""}</p>
+                            </Col>
+
+                            <Col xl={4} className='mb-2'>
+                              <Form.Label>Exit Date & Time</Form.Label>
+                              <p className='tx-14'>{viewGatePassData?.exitTime || ""}</p>
+                            </Col>
+
+                          </Row>
+                        </Card.Body>
+                      </Card>
+
+                      <Card className='box-shadow border border-primary mb-0'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Approval Details</h5>
+
+                          <table className='table mt-3'>
+                            <thead>
+                              <tr>
+                                <th>Society</th>
+                                <th>Tower</th>
+                                <th>Wing</th>
+                                <th>Flat </th>
+                                <th>Approver</th>
+                                <th>Designation</th>
+                                <th>Application Type</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td className='align-top'>-</td>
+                                <td className='align-top'>Tower A</td>
+                                <td className='align-top'>A</td>
+                                <td className='align-top'>123</td>
+                                <td>Sandeep Singh<br /><span className='text-muted'>9876543212</span></td>
+                                <td className='align-top'>Secretary</td>
+                                <td className='align-top'>Flat Resale</td>
+                              </tr>
+
+
+                            </tbody>
+                          </table>
+
+                        </Card.Body>
+                      </Card>
+                    </Col>
+
+                    <Col xl={4}>
+                      <Card className='box-shadow border mt-3 border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Vehicle and Driver Details</h5>
+                          <Row>
+                            <Col xl={5} className='mb-1 tx-12'>Driver Name</Col>
+                            <Col xl={7} className='tx-semibold tx-14'>{viewGatePassData?.driverName || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Driver Contact </Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.driverMobileNumber || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Vehicle Number</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.vehicleNumber || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Vehicle Model</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.vehicleModel || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Vehicle Nature</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.vehicleNature || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Vehicle Type</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.vehicleType || ""}</Col>
+                          </Row>
+                        </Card.Body>
+                      </Card>
+
+                      <Card className='box-shadow border border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Contact Person Details</h5>
+                          <Row>
+                            <Col xl={5} className='mb-1 tx-12'>Contact Person</Col>
+                            <Col xl={7} className='tx-semibold tx-14'>{viewGatePassData?.contactPersonName || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Contact Number </Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.contactPersonNumber || ""}</Col>
+                            <Col xl={5} className='mb-1 tx-12'>Remarks</Col>
+                            <Col xl={7} className='tx-semibold tx-12'>{viewGatePassData?.remarks || ""}</Col>
+
+                          </Row>
+                        </Card.Body>
+                      </Card>
+
+
+                      <Card className='box-shadow border border-primary'>
+                        <Card.Body>
+                          <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Application Description</h5>
+                          <Row>
+                            <Col xl={12} className='mb-1 tx-12'>Purpose</Col>
+                            <Col xl={12} className='tx-semibold tx-14'>{viewGatePassData?.purpose || ""}</Col>
+                            <Col xl={12} className='mb-1 tx-12'>Description </Col>
+                            <Col xl={12} className='tx-semibold tx-12'>{viewGatePassData?.description || ""}</Col>
+
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+
+                  </Row>
+                </Tab>
+                {/* <Tab eventKey="ApprovalHistory" title="Approval History">
+
+                  <div className="table-responsive min-height500">
+                    <table className='table table-bordered'>
+                      <thead>
+                        <tr>
+                          <th>Step Name</th>
+                          <th>Date</th>
+                          <th>Status</th>
+                          <th>	Assigned To</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Approval level 2</td>
+                          <td>4/21/2023, 3:06 PM</td>
+                          <td>Rejected</td>
+                          <td>	Sarjerao Shinde</td>
+                        </tr>
+
+                        <tr>
+                          <td>Approval level 1</td>
+                          <td>4/21/2023, 3:02 PM</td>
+                          <td>Approved</td>
+                          <td>System Admin</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </Tab> */}
+
+
+              </Tabs>
+              Powered by <img src={imagesData('logo')} className="wd-100p ms-1" />
+
             </Modal.Body>
           </Modal>
 
@@ -1115,217 +1543,7 @@ export default function Applications() {
             </Modal.Body>
           </Modal>
 
-          {/* Tenant View */}
-          <Modal show={tenatview} size="xl" centered>
-            <Modal.Header>
-              <Modal.Title>Tenant Details</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("tenatview"); }}>
-                x
-              </Button>
-            </Modal.Header>
 
-            <Modal.Body className='bg-light'>
-              <Row>
-                <Col xl={8}>
-                  <Card>
-                    <Card.Body>
-                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-10">Basic Details</h5>
-                      <Row>
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Society Name</Form.Label>
-                          <Link to={`${import.meta.env.BASE_URL}society/societyview`} className='tx-15 text-info'>N/A</Link>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Property Name</Form.Label>
-                          <Link to={`${import.meta.env.BASE_URL}property/propertyview`} className='tx-15 text-info'>N/A</Link>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Tenant Name</Form.Label>
-                          <p className='tx-15'>Rohit Sharma</p>
-                        </Col>
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Tenant Number</Form.Label>
-                          <p className='tx-15 col-sm-11 p-0'>1212621024</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Alternative Mobile</Form.Label>
-                          <p className='tx-15 col-sm-11 p-0'>-</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Tenant Email</Form.Label>
-                          <p className='tx-15'>orhit@gmail.com</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Date Of Birth</Form.Label>
-                          <p className='tx-15'>2025-02-27</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Address</Form.Label>
-                          <p className='tx-15 col-sm-11 p-0'>123st lauren</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>City</Form.Label>
-                          <p className='tx-15'>Delhi</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>State</Form.Label>
-                          <p className='tx-15'>Delhi</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Country</Form.Label>
-                          <p className='tx-15'>India</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Pincode</Form.Label>
-                          <p className='tx-15'>250007</p>
-                        </Col>
-
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Family Members</Form.Label>
-                          <p className='tx-15'>8</p>
-                        </Col>
-
-                        <Col xl={6} className='mb-2'>
-                          <Form.Label>Pets</Form.Label>
-                          <p className='tx-15'>false</p>
-                        </Col>
-
-                      </Row>
-                    </Card.Body>
-                  </Card>
-
-                </Col>
-
-                <Col xl={4}>
-
-                  <Card>
-                    <Card.Body className='pb-3'>
-                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Current Lease</h5>
-                      <Row>
-                        <Col xl={6}>
-                          <p className='mb-0 text-muted'>Agreement Start Date</p>
-                          <p className='tx-15 tx-semibold'>2025-02-28</p>
-                          <p className='mb-0 text-muted'>Agreement End Date</p>
-                          <p className='tx-15 tx-semibold mb-2'>2025-04-05</p>
-                        </Col>
-                        <Col xl={6} className='text-end'>
-                          <p className='mb-0 text-muted'>Monthly Rent</p>
-                          <p className='tx-15 tx-semibold text-primary'>₹ 5000</p>
-                          <p className='mb-0 pt-2 text-muted'></p>
-                          {/* <p className='tx-12 pt-3 mb-2 tx-danger'>Rent agreement is expired.</p> */}
-                        </Col>
-
-                        <Col xl={12}>
-
-                          <Row>
-                            <Col xl={6} className='text-muted text-bold'>
-                              180 days left
-                            </Col>
-                            <Col xl={6} className='text-end text-muted text-bold'>
-                              365 days left
-                            </Col>
-                          </Row>
-                        </Col>
-
-                        <Col xl={6}>
-                          <p className='mb-0 mt-2 text-muted'>Due Amount</p>
-                          <p className='tx-15 tx-semibold'>₹ 1000</p>
-                        </Col>
-                        <Col xl={6}>
-                          <p className='mb-0 mt-2 text-muted text-end'>Deposit Amount</p>
-                          <p className='tx-15 tx-semibold mb-0 text-end'>₹ 4000</p>
-                        </Col>
-
-                      </Row>
-
-                    </Card.Body>
-
-                  </Card>
-
-
-                  <Card>
-                    <Card.Body className='pb-1'>
-                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Documents</h5>
-                      <Row>
-                        <Col xl={2} className='p-0'>
-                          <img
-                            alt="" className='w-100'
-                            src={imagesData('pdficon')}
-                          />
-                        </Col>
-                        <Col xl={9} className='p-0'>
-                          <p className='tx-14 mb-0 mt-2 tx-semibold'>Rent Registration Id : 565675756</p>
-                          <Link to={``} className="text-info">Download</Link>
-                        </Col>
-                      </Row>
-
-
-                      <Row>
-                        <Col xl={2} className='p-0'>
-                          <img alt="" className='w-100'
-                            src={imagesData('pdficon')}
-                          />
-                        </Col>
-                        <Col xl={9} className='p-0'>
-                          <p className='tx-14 mb-0 mt-2 tx-semibold'>Police Verification</p>
-                          <Link to={``}
-                            className="text-info">
-                            Download
-                          </Link>
-                        </Col>
-
-                      </Row>
-                    </Card.Body>
-                  </Card>
-
-
-                  <Card>
-                    <Card.Body className='pb-1'>
-                      <h5 className="card-title main-content-label tx-dark tx-medium mg-b-20">Vehicle Details</h5>
-                      <Row>
-
-
-
-                        <Row>
-                          <Col xl={2} className='p-0'>
-                            <img
-                              alt="Vehicle Icon"
-                              className='w-100'
-                              src={imagesData('pdficon')} // You can use any relevant icon for vehicle files
-                            />
-                          </Col>
-                          <Col xl={9} className='p-0'>
-                            <p className='tx-14 mb-0 mt-2 tx-semibold'>
-                              Vehicle No. dl1ct1004  <span className='text-muted'>(4Wheeler)</span>
-                            </p>
-                            <Link to={``}
-                              className="text-info" >
-                              Download
-                            </Link>
-                          </Col>
-                        </Row>
-
-                      </Row>
-                    </Card.Body>
-                  </Card>
-
-
-                </Col>
-              </Row>
-            </Modal.Body>
-
-          </Modal>
 
           {/* Add Change In Name */}
           <Modal show={addchangeinname} centered size='lg'>
@@ -1491,7 +1709,7 @@ export default function Applications() {
                       placeholder="Name"
                       className="form-control"
                     ></Form.Control>
-                    
+
                   </Form.Group>
                 </Col>
                 <Col xl={6}>
@@ -1728,535 +1946,15 @@ export default function Applications() {
             </Modal.Footer>
           </Modal>
 
-          {/* Add Flate Resale */}
-          <Modal show={addflateresale} size="xl" centered>
-            <Modal.Header>
-              <Modal.Title>Flate Resale</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addflateresale"); }}>
-                x
-              </Button>
-            </Modal.Header>
+          {/* Add Flat Resale */}
 
-            <Modal.Body className='bg-light'>
-              <Row>
-                <Col xl={5}>
-                  <Col xl={12} className='bg-white p-3 border rounded-3'>
-                    <Row>
-                      <Col xl={12}>
-                        <p className='mb-2 tx-bold'>To share your payment receipt, kindly click on the "Yes" option</p>
-                        <hr className='w-100 m-0' />
-                      </Col>
 
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Share Transfer Documents Submitted</Form.Label>
-                          <Row>
-                            <Col lg={3}>
+          {addflateresale && (singleFlatResaleData ? <FlatResaleModal show={addflateresale} initialVals={singleFlatResaleData} onSave={handleFlatResaleSave} onClose={handleFlatResaleClose} editing={true} /> : <FlatResaleModal show={addflateresale} onSave={handleFlatResaleSave} onClose={handleFlatResaleClose} editing={false} />)}
 
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
+          {
+            flatresaleview && <FlatResaleModal show={flatresaleview} initialVals={singleFlatResaleData} onClose={handleFlatResaleViewClose} editing={false} />
+          }
 
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="transferdocument" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Do you currently process the original share certificate?</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="proccesscertificate" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="proccesscertificate" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="proccesscertificate" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Is there an existing home loan on your property?</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="existinghomeloanproperty" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="existinghomeloanproperty" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="existinghomeloanproperty" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Have you fully settled your home loan?</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="fullysettledhomeloan" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="fullysettledhomeloan" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="fullysettledhomeloan" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Share Transfer Premium Paid</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="transferpremiumpaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferpremiumpaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="transferpremiumpaid" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Share Transfer Fees Paid</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="transferfeespaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferfeespaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="transferfeespaid" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Membership Fee Paid</Form.Label>
-                          <Row>
-                            <Col lg={3} >
-
-                              <Form.Check type="radio" label="Yes" name="membershipfeepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="membershipfeepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="membershipfeepaid" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Entrance Fee Paid</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="entrancefeepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="entrancefeepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="entrancefeepaid" />
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Other Charges Paid</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="otherchargepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="otherchargepaid" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="N/A" name="otherchargepaid" />
-                            </Col>
-                            <Col xl={12} className='pt-2'>
-                              <Form.Control
-                                type="text"
-                                placeholder="Other Charges"
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-                          </Row>
-
-                        </Form.Group>
-                      </Col>
-
-
-                    </Row>
-                  </Col>
-                </Col>
-
-                <Col xl={7}>
-                  <Col xl={12} className='bg-white p-3 border rounded-3'>
-                    <Row>
-                      <Col xl={12}>
-                        <p className='mb-2 tx-bold'>Documents</p>
-                        <hr className='w-100 m-0' />
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Sale Agreement Copy</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={6}>
-                              <small className='text-muted float-end'>Size : Max 2MB</small>
-                            </Col>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Flat Registration Certificate</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={6}>
-                              <small className='text-muted float-end'>Size : Max 2MB</small>
-                            </Col>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Home Loan Sanction Letter</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={6}>
-                              <small className='text-muted float-end'>Size : Max 2MB</small>
-                            </Col>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Old Owner Home Loan Closure Letter</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="transferdocument" />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="transferdocument" />
-                            </Col>
-                            <Col lg={6}>
-                              <small className='text-muted float-end'>Size : Max 2MB</small>
-                            </Col>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Upload Reciept
-                            <small className='text-muted float-end'>Size : Max 2MB</small>
-                          </Form.Label>
-                          <Row>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Upload loan Closure Letter
-                            <small className='text-muted float-end'>Size : Max 2MB</small>
-                          </Form.Label>
-                          <Row>
-                            <Col xl={12} className='mt-1'>
-                              <Form.Control
-                                type="file"
-                                placeholder=""
-                                className="form-control"
-                              ></Form.Control>
-                            </Col>
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-
-                    </Row>
-                  </Col>
-
-                  <Col xl={12} className='bg-white p-3 border rounded-3 mt-3'>
-                    <Row>
-                      <Col xl={12}>
-                        <p className='mb-2 tx-bold'>Joint Holder</p>
-                        <hr className='w-100 m-0' />
-                      </Col>
-
-                      <Col xl={12}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Joint Holder</Form.Label>
-                          <Row>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="Yes" name="jointholder" checked />
-                            </Col>
-                            <Col lg={3}>
-
-                              <Form.Check type="radio" label="No" name="jointholder" />
-                            </Col>
-
-
-                          </Row>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0 mt-0">
-                          <Form.Label>Owner Name <small className='text-muted tx-bold'>(As per Agreement)</small></Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Name"
-                            className="form-control"
-                          ></Form.Control>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Co-owner Name <small className='text-muted tx-bold'>(As per Agreement)</small>
-
-                          </Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Name"
-                            className="form-control"
-                          ></Form.Control>
-                          <small className='float-end text-black tx-bold cursor mt-1'>+ Add</small>
-                        </Form.Group>
-                      </Col>
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Flat Registration ID </Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="ID"
-                            className="form-control"
-                          ></Form.Control>
-                        </Form.Group>
-                      </Col>
-
-                      <Col xl={6}>
-                        <Form.Group className="form-group mb-0">
-                          <Form.Label>Flat Registration Copy </Form.Label>
-                          <Form.Control
-                            type="file"
-                            placeholder=""
-                            className="form-control"
-                          ></Form.Control>
-                        </Form.Group>
-                      </Col>
-
-
-
-                    </Row>
-                  </Col>
-                </Col>
-
-              </Row>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("addflateresale"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("addflateresale"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
-          </Modal>
-
-
-          {/* Flate Resale upload reciept */}
-          {/* <Modal show={flateresaleuploadreciept} centered>
-            <Modal.Header>
-              <Modal.Title>Upload Reciept</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("flateresaleuploadreciept"); }}>
-                x
-              </Button>
-            </Modal.Header>
-
-            <Modal.Body>
-              <Form.Group className="form-group mb-0">
-                <Form.Label>Upload <small className='text-muted float-end'>Upload Size : 2MB</small> </Form.Label>
-                <Form.Control
-                  type="file"
-                  placeholder=""
-                  className="form-control"
-                ></Form.Control>
-              </Form.Group>
-              <Col xl={12} className='bg-light p-2 mt-2'>
-                <span className='tx-semibold'>recieptfile.pdf</span>
-                <i className='fa fa-trash text-danger float-end cursor'></i>
-              </Col>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("flateresaleuploadreciept"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("flateresaleuploadreciept"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
-          </Modal> */}
-
-          {/* Upload loan closure*/}
-          {/* <Modal show={Uploadloanclosure} centered>
-            <Modal.Header>
-              <Modal.Title>Upload loan Closure Letter</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("Uploadloanclosure"); }}>
-                x
-              </Button>
-            </Modal.Header>
-
-            <Modal.Body>
-              <Form.Group className="form-group mb-0">
-                <Form.Label>Upload <small className='text-muted float-end'>Upload Size : 2MB</small> </Form.Label>
-                <Form.Control
-                  type="file"
-                  placeholder=""
-                  className="form-control"
-                ></Form.Control>
-              </Form.Group>
-
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("Uploadloanclosure"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("Uploadloanclosure"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
-          </Modal> */}
 
           {/* Add Interior Work */}
           <Modal show={addinteriorwork} size='lg' centered>
@@ -2436,8 +2134,11 @@ export default function Applications() {
           </Modal>
 
           {/* Add celebration */}
-          
-          {addcelebration && <EventModal show={addcelebration} onSave={handleEventSave} onClose={handleCelebrationClose} editing={false} name="Celebration" modal="addcelebration" />}
+
+          {addcelebration && (singleCelebrationData ? <EventModal show={addcelebration} initialVals={singleCelebrationData} onSave={handleEventSave} onClose={handleCelebrationClose} editing={true} name="Celebration" modal="addcelebration" /> : <EventModal show={addcelebration} onSave={handleEventSave} onClose={handleCelebrationClose} editing={false} name="Celebration" modal="addcelebration" />)}
+          {
+            celebrationview && <EventModal show={celebrationview} initialVals={singleCelebrationData} onClose={handleCelebrationViewClose} editing={false} name="Celebration" modal="addcelebration" />
+          }
 
           {/* Add theater */}
           <Modal show={addtheater} centered>
@@ -2558,13 +2259,20 @@ export default function Applications() {
             </Modal.Footer>
           </Modal>
 
-          
-          {addbanquethall && banquetToView? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={banquetToView} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall"/>:<EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />}
+
+          {addbanquethall && (singleBanquetHallData ? <EventModal show={addbanquethall} onClose={handleBanquetClose} editing={true} initialVals={singleBanquetHallData} onSave={handleEventSave} eventVenue="Banquet Hall" name="Banquet Hall" modal="addbanquethall" /> : <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet Hall" modal="addbanquethall" />)}
+
+          {
+            banquethallview && <EventModal show={banquethallview} initialVals={singleBanquetHallData} onClose={handleBanquetHallViewClose} editing={false} name="Banquet Hall" modal="addbanquethall" />
+          }
           {/* {addbanquethall && <EventModal show={addbanquethall} onSave={handleEventSave} onClose={handleBanquetClose} editing={false} eventVenue="Banquet Hall" name="Banquet hall" modal="addbanquethall" />} */}
           {/* Add Club House */}
-          
-          {addclubhouse && <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" modal="addclubhouse" />}
 
+          {addclubhouse && (singleClubhouseData ? <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} initialVals={singleClubhouseData} editing={true} eventVenue="Club House" name="Club House" modal="addclubhouse" /> : <EventModal show={addclubhouse} onSave={handleEventSave} onClose={handleClubHouseClose} editing={false} eventVenue="Club House" name="Club House" modal="addclubhouse" />)}
+
+          {
+            clubhouseview && <EventModal show={clubhouseview} initialVals={singleClubhouseData} onClose={handleClubHouseViewClose} editing={false} name="Club House" modal="addclubhouse" />
+          }
           {/* Add Swimming pool */}
           <Modal show={addswimmingpool} centered size='xl'>
             <Modal.Header>
@@ -2813,9 +2521,12 @@ export default function Applications() {
 
 
           {/* Add Play Area */}
-          
-          {addplayarea && <EventModal show={addplayarea} modal="addplayarea" onSave={handleEventSave} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />}
 
+          {addplayarea && (singlePlayAreaData ? <EventModal show={addplayarea} modal="addplayarea" initialVals={singlePlayAreaData} onSave={handleEventSave} onClose={handlePlayAreaClose} editing={true} eventVenue="Play Area" name="Play Area" /> : <EventModal show={addplayarea} modal="addplayarea" onSave={handleEventSave} onClose={handlePlayAreaClose} editing={false} eventVenue="Play Area" name="Play Area" />)}
+
+          {
+            playareaview && <EventModal show={playareaview} initialVals={singlePlayAreaData} onClose={handlePlayAreaViewClose} editing={false} name="Play Area" modal="addplayarea" />
+          }
 
           {/* Add Turf Area */}
           <Modal show={addturfarea} centered>
@@ -3735,247 +3446,18 @@ export default function Applications() {
           </Modal>
 
           {/* Add Food Court */}
-          
-
-          {addfoodcourt && <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />}
 
 
-          {/* Add Others */}
-          <Modal show={addothers} size='xl' centered>
-            <Modal.Header>
-              <Modal.Title>Others</Modal.Title>
-              <Button variant="" className="btn btn-close" onClick={() => { viewDemoClose("addothers"); }}>
-                x
-              </Button>
-            </Modal.Header>
+          {addfoodcourt && (singleFoodCourtData ? <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} initialVals={singleFoodCourtData} onClose={handleFoodCourtClose} editing={true} eventVenue="Food Court" name="Food Court" /> : <EventModal modal="addfoodcourt" show={addfoodcourt} onSave={handleEventSave} onClose={handleFoodCourtClose} editing={false} eventVenue="Food Court" name="Food Court" />)}
 
-            <Modal.Body className='bg-light'>
-              <div className="tab-menu-heading tabs-style-4 ps-3">
-                <div className="tabs-menu ">
+          {
+            foodcourtview && <EventModal show={foodcourtview} initialVals={singleFoodCourtData} onClose={handleFoodCourtViewClose} editing={false} name="Food Court" modal="addfoodcourt" />
+          }
 
-                  <Tab.Container
-                    id="left-tabs-example"
-                    defaultActiveKey="TabStyle01"
-                  >
-                    <Row>
-                      <Col sm={3} className='p-0'>
-                        <Nav variant="pills" className="flex-column">
-                          <Nav.Item>
-                            <Nav.Link eventKey="TabStyle01" className='rounded-0'>
-                              {" "}
-                              Document Submission
-                            </Nav.Link>
-                          </Nav.Item>
-                          <Nav.Item>
-                            <Nav.Link eventKey="TabStyle02" className='rounded-0'>
-                              {" "}
-                              Enquiry
-                            </Nav.Link>
-                          </Nav.Item>
-                          <Nav.Item>
-                            <Nav.Link eventKey="TabStyle03" className='rounded-0'>
-                              {" "}
-                              Others
-                            </Nav.Link>
-                          </Nav.Item>
-
-                        </Nav>
-                      </Col>
-                      <Col sm={9} className='p-0'>
-                        <Tab.Content className="tabs-style-4 card ps-4 pb-5 rounded-0">
-                          <Tab.Pane eventKey="TabStyle01">
-                            <div
-                              className="panel-body tabs-menu-body"
-                              id="tab21"
-                            >
-                              <Row>
-                                <Col xl={6}>
-                                  <Form.Group className="form-groupx">
-                                    <Form.Label className='tx-16'>Society </Form.Label>
-                                    <Select
-                                      options={society}
-                                      placeholder="Select society"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-
-                                <Col xl={6}>
-                                  <Form.Group className="form-group">
-                                    <Form.Label className='tx-16'>Property </Form.Label>
-                                    <Select
-                                      options={property}
-                                      placeholder="Select property"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-                              </Row>
-
-                              <Form.Group className="form-group">
-
-                                <Form.Label className='tx-16'>Document Submission</Form.Label>
-                                <Select
-                                  options={documentsubmission}
-                                  placeholder="Select submission"
-                                  classNamePrefix="Select2"
-                                />
-                              </Form.Group>
-
-                              <Form.Group className="form-group">
-                                <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-                                <Form.Control className="form-control" type="file" />
-                              </Form.Group>
-
-                              <Form.Group className="form-group">
-                                <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-                              </Form.Group>
-
-
-                            </div>
-                          </Tab.Pane>
-                          <Tab.Pane eventKey="TabStyle02">
-                            <div
-                              className="panel-body tabs-menu-body"
-                              id="tab22"
-                            >
-                              <Row>
-                                <Col xl={6}>
-                                  <Form.Group className="form-group">
-                                    <Form.Label className='tx-16'>Society </Form.Label>
-                                    <Select
-                                      options={society}
-                                      placeholder="Select society"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-
-                                <Col xl={6}>
-                                  <Form.Group className="form-group">
-                                    <Form.Label className='tx-16'>Property </Form.Label>
-                                    <Select
-                                      options={property}
-                                      placeholder="Select property"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-                              </Row>
-
-                              <Form.Group className="form-group">
-
-                                <Form.Label className='tx-16'>Enquiry</Form.Label>
-                                <Select
-                                  options={enquiry}
-                                  placeholder="Select enquiry"
-                                  classNamePrefix="Select2"
-                                />
-
-
-                              </Form.Group>
-
-                              <Form.Group className="form-group">
-                                <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-                                <Form.Control className="form-control" type="file" />
-                              </Form.Group>
-
-                              <Form.Group className="form-group">
-                                <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-                              </Form.Group>
-
-                            </div>
-                          </Tab.Pane>
-                          <Tab.Pane eventKey="TabStyle03">
-                            <div
-                              className="panel-body tabs-menu-body"
-                              id="tab23"
-                            >
-                              <Row>
-                                <Col xl={6}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label className='tx-16'>Society </Form.Label>
-                                    <Select
-                                      options={society}
-                                      placeholder="Select society"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-
-                                <Col xl={6}>
-                                  <Form.Group className="form-group mb-1">
-                                    <Form.Label className='tx-16'>Property </Form.Label>
-                                    <Select
-                                      options={property}
-                                      placeholder="Select property"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Form.Group>
-                                </Col>
-                              </Row>
-
-                              <Form.Group>
-
-                                <Form.Label className='tx-16'>Type</Form.Label>
-                                <Row>
-                                  <Col xl={12}>
-                                    <Select
-                                      options={otherstype}
-                                      placeholder="Select"
-                                      classNamePrefix="Select2"
-                                    />
-                                  </Col>
-
-
-                                  <Col xl={12}>
-                                    <Form.Group className='mt-4'>
-                                      <Form.Label className='tx-16'>Upload <small className='float-end text-muted'>Upload Size : Max 2MB </small></Form.Label>
-                                      <Form.Control className="form-control" type="file" />
-                                    </Form.Group>
-                                  </Col>
-
-
-                                  <Col xl={12}>
-                                    <Form.Group className='mt-4'>
-                                      <Form.Label className='tx-16'>Comments <small className='float-end text-muted'>Max 250 Char </small></Form.Label>
-                                      <Form.Control as="textarea" className="form-control" placeholder="Textarea" rows={3}></Form.Control>
-                                    </Form.Group>
-                                  </Col>
-                                </Row>
-
-
-
-
-
-
-
-
-
-                              </Form.Group>
-                            </div>
-                          </Tab.Pane>
-
-                        </Tab.Content>
-                      </Col>
-                    </Row>
-                  </Tab.Container>
-                </div>
-              </div>
-
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="default" onClick={() => { viewDemoClose("addothers"); }}>
-                Close
-              </Button>
-              <Button variant="primary" onClick={() => { viewDemoClose("addothers"); }}>
-                Save
-              </Button>
-
-            </Modal.Footer>
-          </Modal>
+          {addothers && (singleOthersData ? <OtherApplicationModal initialVals={singleOthersData} show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={true} /> : <OtherApplicationModal show={addothers} onSave={handleOtherApplicationSave} onClose={handleOtherApplicationClose} editing={false} />)}
+          {
+            otherapplicationview && <OtherApplicationModal show={otherapplicationview} initialVals={singleOthersData} onClose={handleOtherApplicationViewClose} editing={false} />
+          }
         </div>
       </div>
 
@@ -4106,5 +3588,5 @@ export default function Applications() {
 }
 
 
-{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
-{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */ }
+{/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */ }

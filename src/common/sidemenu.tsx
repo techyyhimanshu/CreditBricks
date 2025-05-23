@@ -127,7 +127,7 @@ export const MENUITEMS = [
         icon: (
           <i className="side-menu__icon bi bi-diagram-2"></i>
         ),
-        path: `${import.meta.env.BASE_URL}parententity/parententity`,
+        path: `${import.meta.env.BASE_URL}parententity`,
         type: "link",
         active: false,
         selected: false,
@@ -192,15 +192,15 @@ export const MENUITEMS = [
       },
 
 
-      // {
-      //   title: "Parking",
-      //   icon: (<i className="side-menu__icon bi bi-list-task"></i>
-      //   ),
-      //   path: `${import.meta.env.BASE_URL}parking/parking`,
-      //   type: "link",
-      //   selected: false,
-      //   active: false,
-      // },
+      {
+        title: "Parking",
+        icon: (<i className="side-menu__icon bi bi-list-task"></i>
+        ),
+        path: `${import.meta.env.BASE_URL}parking/parking`,
+        type: "link",
+        selected: false,
+        active: false,
+      },
       {
         title: "Loans",
         icon: (<i className="side-menu__icon bi bi-cash-stack"></i>
@@ -294,7 +294,16 @@ export const MENUITEMS = [
             selected: false,
           },
           {
-            path: ``,
+            path: `${import.meta.env.BASE_URL}gatepassapproval`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Gate Pass",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
+          {
+            path: `${import.meta.env.BASE_URL}celebrationbooking`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
             title: "Celebration Booking",
             type: "link",
@@ -303,13 +312,40 @@ export const MENUITEMS = [
           },
 
           {
-            path: ``,
+            path: `${import.meta.env.BASE_URL}flatresale`,
             icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
-            title: "Flate Resale",
+            title: "Flat Resale",
             type: "link",
             selected: false,
             active: false,
           },
+
+          {
+            path: `${import.meta.env.BASE_URL}cheque`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Cheque",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
+          {
+            path: `${import.meta.env.BASE_URL}documentsubmission`,
+            icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+            title: "Document Submission",
+            type: "link",
+            selected: false,
+            active: false,
+          },
+
+          // {
+          //   path: ``,
+          //   icon: (<i className="side-menu__icon bi bi-chevron-double-right"></i>),
+          //   title: "Flate Resale",
+          //   type: "link",
+          //   selected: false,
+          //   active: false,
+          // },
 
         ],
 

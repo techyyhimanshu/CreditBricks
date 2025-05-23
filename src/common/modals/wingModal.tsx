@@ -1,6 +1,6 @@
-import { Field, Formik, Form as FormikForm } from 'formik';
+import { ErrorMessage, Field, Formik, Form as FormikForm } from 'formik';
 import { useEffect, useState } from "react";
-import { Button,  Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import Select from "react-select";
 import 'suneditor/dist/css/suneditor.min.css';
 // import { getAllSocietyApi } from '../../api/society-api';
@@ -10,6 +10,9 @@ import { showToast } from '../services/toastServices';
 // import { getTowerWingsApi } from '../../api/wing-api';
 // import { getSocietyTowersApi } from '../../api/tower-api';
 import { getAllSocietyApi, getSocietyOwnerApi, getTowersOfSocietyApi } from '../../api/society-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import * as Yup from 'yup';
 
 interface ModalProps {
     show: boolean;
@@ -23,11 +26,32 @@ interface ModalProps {
 
 }
 
+const selectFieldValidation = (fieldLabel: string) =>
+    Yup.object()
+        .nullable()
+        .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+            if (!val || typeof val !== 'object') return false;
+
+            if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+            return true;
+        });
+
+const validationSchema = Yup.object().shape({
+    wingName: Yup.string().required('Wing name is required'),
+    tower: selectFieldValidation('Tower'),
+    society: selectFieldValidation('Society'),
+
+
+});
+
 
 const WingModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, editing }) => {
     const [societyData, setSocietyData] = useState<any[]>([]);
     const [societyOwner, setSocietyOwner] = useState("");
     const [towerOptions, setTowerOptions] = useState<any>([]);
+    const { society } = useSelector((state: RootState) => state.auth)
 
     const societyOptions = societyData?.map((society) => ({
         value: society.societyIdentifier,
@@ -98,40 +122,52 @@ const WingModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                         ownerName: societyOwner
                     }
                     }
-                    // validationSchema={validationSchema}
+                    validationSchema={validationSchema}
                     onSubmit={handleSubmit}
                 >
-                    {({ setFieldValue, values, errors, touched }) => (
+                    {({ setFieldValue, values }) => {
+                        useEffect(() => {
+                            if (society && !initialVals) {
+                                setFieldValue("society", society);
+                                setFieldValue("tower", null);
+                                fetchTowersForDropDown(society);
+                                fetchSocietyOwner(society)
+                            }
+                        }, [society]);
+                        return (
 
-                        <FormikForm>
-                            <Modal.Header>
-                                <Modal.Title>Wing</Modal.Title>
-                                <Button variant="" className="btn-close" onClick={(event) => { event.preventDefault(), onClose() }}>
-                                    x
-                                </Button>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <Form.Group className="form-group">
-                                    <Form.Label>Society<span className="text-danger">*</span></Form.Label>
-                                    <Select
-                                        options={societyOptions}
-                                        value={values.society}
-                                        onChange={(selected) => {
-                                            setFieldValue("society", selected)
-                                            setFieldValue("tower", null); // Reset tower selection
-                                            fetchTowersForDropDown(selected); // Fetch towers for the selected society
-                                            fetchSocietyOwner(selected)
-                                        }}
-                                        placeholder="Select Society"
-                                        classNamePrefix="Select2"
-                                    />
-                                    {/* Custom Error Rendering for `society` */}
-                                    {/* {touched.society?.value && errors.society?.value && (
+                            <FormikForm>
+                                <Modal.Header>
+                                    <Modal.Title>Wing</Modal.Title>
+                                    <Button variant="" className="btn-close" onClick={(event) => { event.preventDefault(), onClose() }}>
+                                        x
+                                    </Button>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <Form.Group className="form-group">
+                                        <Form.Label>Society<span className="text-danger">*</span></Form.Label>
+                                        <Select
+                                            options={societyOptions}
+                                            value={values.society}
+                                            onChange={(selected) => {
+                                                setFieldValue("society", selected)
+                                                setFieldValue("tower", null); // Reset tower selection
+                                                fetchTowersForDropDown(selected); // Fetch towers for the selected society
+                                                fetchSocietyOwner(selected)
+
+                                            }}
+                                            isDisabled
+                                            placeholder="Select Society"
+                                            classNamePrefix="Select2"
+                                        />
+                                        <ErrorMessage name="society" component="div" className="text-danger" />
+                                        {/* Custom Error Rendering for `society` */}
+                                        {/* {touched.society?.value && errors.society?.value && (
                                         <div className="text-danger">{errors.society.value}</div>
                                     )} */}
 
-                                </Form.Group>
-                                {/* <Form.Group className="form-group">
+                                    </Form.Group>
+                                    {/* <Form.Group className="form-group">
                                                         <Form.Label>Owner</Form.Label>
             
                                                         <Field
@@ -143,44 +179,46 @@ const WingModal: React.FC<ModalProps> = ({ show, initialVals, onClose, onSave, e
                                                         />
             
                                                     </Form.Group> */}
-                                <Form.Group className="form-group">
-                                    <Form.Label>
-                                        Tower
-                                    </Form.Label>
-                                    <Select
-                                        options={towerOptions}
-                                        value={values.tower}
-                                        onChange={(selected) => setFieldValue("tower", selected)}
-                                        placeholder="Select Tower"
-                                        classNamePrefix="Select2"
-                                    />
-                                    {/* {touched.tower?.value && errors.tower?.value && (
+                                    <Form.Group className="form-group">
+                                        <Form.Label>
+                                            Tower <span className="text-danger">*</span>
+                                        </Form.Label>
+                                        <Select
+                                            options={towerOptions}
+                                            value={values.tower}
+                                            onChange={(selected) => setFieldValue("tower", selected)}
+                                            placeholder="Select Tower"
+                                            classNamePrefix="Select2"
+                                        />
+                                        {/* {touched.tower?.value && errors.tower?.value && (
                                                             <div className="text-danger">{errors.tower.value}</div>
                                                         )} */}
-                                </Form.Group>
-                                <Form.Group className="form-group">
-                                    <Form.Label>Wing Name <span className="text-danger">*</span></Form.Label>
-                                    <Field
-                                        type="text"
-                                        name="wingName"
-                                        placeholder="Wing Name"
-                                        className="form-control"
-                                    />
-                                    {/* <ErrorMessage name="wingName" component="div" className="text-danger" /> */}
-                                </Form.Group>
+                                        <ErrorMessage name="tower" component="div" className="text-danger" />
+                                    </Form.Group>
+                                    <Form.Group className="form-group">
+                                        <Form.Label>Wing Name <span className="text-danger">*</span></Form.Label>
+                                        <Field
+                                            type="text"
+                                            name="wingName"
+                                            placeholder="Wing Name"
+                                            className="form-control"
+                                        />
+                                        <ErrorMessage name="wingName" component="div" className="text-danger" />
+                                    </Form.Group>
 
 
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="default" onClick={(event) => { event.preventDefault(), onClose() }}>
-                                    Close
-                                </Button>
-                                <Button className="btn btn-primary" type="submit" >
-                                    Save
-                                </Button>
-                            </Modal.Footer>
-                        </FormikForm>
-                    )}
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button variant="default" onClick={(event) => { event.preventDefault(), onClose() }}>
+                                        Close
+                                    </Button>
+                                    <Button className="btn btn-primary" type="submit" >
+                                        {editing ? "Update" : "Save"}
+                                    </Button>
+                                </Modal.Footer>
+                            </FormikForm>
+                        )
+                    }}
                 </Formik>
             </Modal>
         </>

@@ -14,15 +14,28 @@ export const addPropertyApi = async (data: any): Promise<any> => {
         throw error
     }
 }
-export const getAllPropertyApi = async (identifier?: string): Promise<any> => {
+export const getAllPropertyApi = async (
+    wingIdentifier?: string,
+    societyIdentifier?: string
+): Promise<any> => {
     try {
-        const params = identifier ? { wing_identifier: identifier } : {};
-        const response = await axiosInstance.get(`/property/all`, { params })
-        return response
+        const params: any = {};
+
+        if (wingIdentifier) {
+            params.wing_identifier = wingIdentifier;
+        }
+
+        if (societyIdentifier) {
+            params.society_identifier = societyIdentifier;
+        }
+
+        const response = await axiosInstance.get(`/property/all`, { params });
+        return response;
     } catch (error) {
-        throw error
+        throw error;
     }
 }
+
 
 export const getWingPropertiesApi = async (identifier: string): Promise<any> => {
     try {
@@ -41,9 +54,33 @@ export const getSinglePropertyDetailsApi = async (propertyId: string): Promise<a
         throw error
     }
 }
-export const getTenantOptions = async (propertyIdentifier: string): Promise<any> => {
+export const getPropertyOutstandingAmountApi = async (propertyId: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/property/${propertyId}/payment-outstanding`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getTenantsOfPropertyApi = async (propertyIdentifier: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`/property/${propertyIdentifier}/tenants`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getTenantOptions = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/tenant/ddl`)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const getMembersOfPropertyApi = async (propertyIdentifier: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/property/${propertyIdentifier}/members`)
         return response
     } catch (error) {
         throw error

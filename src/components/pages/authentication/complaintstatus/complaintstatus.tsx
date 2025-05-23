@@ -11,7 +11,8 @@ const ComplaintStatus = () => {
       <div className="cover-image">
 
         <div className="page loginbg">
-         <img src={imagesData('logo')} className="w-200px m-auto d-block"  />
+        <h3 className="text-center mb-2">Complaint Mangement</h3>
+        <h5 className="text-center mb-3">Status Update</h5>
           <div
             className="page-single"
             onClick={() => Switcherdatacustam.Swichermainrightremove()}
@@ -26,6 +27,7 @@ const ComplaintStatus = () => {
                   xs={10}
                   className="card justify-content-center mx-auto"
                 >
+
                   <div className="card-sigin p-3">
 
                     <div className="main-card-signin d-md-flex">
@@ -96,19 +98,25 @@ const ComplaintStatus = () => {
 
               </Row>
               <Col xl={12} className="p-0 text-end pt-3">
-              <Button type='button' className='btn btn-default ms-2'>Close</Button>
               <Button type='button' className='btn btn-primary'>Save</Button>
               </Col>
                       </div>
                     </div>
+
+
                   </div>
+
                 </Col>
               </Row>
 
             </div>
+            <Col xl={12} className="text-center">
+            <p className='ps-3'> Powered by <img src={imagesData('logo')} className="wd-100p ms-1"  /></p>
+            </Col>
           </div>
         </div>
       </div>
+
     </Fragment>
 
 ); };

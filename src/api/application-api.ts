@@ -8,9 +8,139 @@ export const createNewGatePassApi = async (gatePassData: any): Promise<any> => {
         throw error
     }
 }
+export const updateGatePassApi = async (gatePassData: any, id: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.patch(`gatepass/${id}`, gatePassData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
 export const createNewEventApi = async (eventData: any): Promise<any> => {
     try {
         const response = await axiosInstance.post(`event/new`, eventData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const updateEventApi = async (eventData: any, id: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.patch(`event/${id}`, eventData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const createNewEnquiryApi = async (data: any): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.post(`other-enquiry/new-other-enquiry`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const updateEnquiryApi = async (data: any, id: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`other-enquiry/update-other-enquiry/${id}`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const createNewDocumentSubmissionApi = async (data: any): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.post(`other-document/new-other-document`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const updateDocumentSubmissionApi = async (data: any, id: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`other-document/update-other-document/${id}`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const createNewOtherApplicationApi = async (data: any): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.post(`other-other/new-other-other`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const createNewFlatResaleApi = async (data: any): Promise<any> => {
+    try {
+        const formData = new FormData();
+
+        for (const key in data) {
+            const value = data[key];
+
+            if (value instanceof File || value instanceof Blob) {
+                formData.append(key, value);
+            } else if (Array.isArray(value) || typeof value === 'object') {
+                if (value !== null) {
+                    formData.append(key, JSON.stringify(value));
+                }
+            } else if (value !== undefined && value !== null) {
+                formData.append(key, value);
+            }
+        }
+        const response = await axiosInstance.post(`flat-resale/new-resale-application`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const updateFlatResaleApi = async (data: any, id: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`flat-resale/update-resale-application/${id}`, formData)
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+export const updateOtherApplicationApi = async (data: any, id: string): Promise<any> => {
+    try {
+        const formData = new FormData();
+        for (const key in data) {
+            formData.append(key, data[key]);
+
+        }
+        const response = await axiosInstance.patch(`other-other/update-other-other/${id}`, formData)
         return response
     } catch (error) {
         throw error
@@ -32,15 +162,23 @@ export const getAllVenueApi = async (): Promise<any> => {
         throw error
     }
 }
-export const getAllApplicationApi = async (): Promise<any> => {
+export const getAllApplicationApi = async (societyIdentifier?: string, propertyIdentifier?: string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`event/applications/all`)
+        const params: any = {};
+
+        if (societyIdentifier) {
+            params.society_identifier = societyIdentifier;
+        }
+        if (propertyIdentifier) {
+            params.property_identifier = propertyIdentifier;
+        }
+        const response = await axiosInstance.get(`event/applications/all`, { params })
         return response
     } catch (error) {
         throw error
     }
 }
-export const getSocietyVenueApi = async (id:string): Promise<any> => {
+export const getSocietyVenueApi = async (id: string): Promise<any> => {
     try {
         const response = await axiosInstance.get(`venue/society/${id}`)
         return response
@@ -49,16 +187,16 @@ export const getSocietyVenueApi = async (id:string): Promise<any> => {
     }
 }
 
-export const getEventDetailsApi = async (id:string): Promise<any> => {
+export const getApplicationDetailsApi = async (id: string): Promise<any> => {
     try {
-        const response = await axiosInstance.get(`event/${id}`)
+        const response = await axiosInstance.get(`event/applications/${id}`)
         return response
     } catch (error) {
         throw error
     }
 }
 
-export const deleteApplicationApi = async (id:string): Promise<any> => {
+export const deleteApplicationApi = async (id: string): Promise<any> => {
     try {
         const response = await axiosInstance.delete(`event/applications/${id}`)
         return response

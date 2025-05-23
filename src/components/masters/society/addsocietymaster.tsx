@@ -9,6 +9,7 @@ import stateCities from "../stateCity.json"
 import { Link } from "react-router-dom";
 import { Uploader } from 'uploader';
 import { UploadButton } from 'react-uploader';
+import * as Yup from 'yup';
 import { addSocietyApi, updateSocietyApi } from '../../../api/society-api';
 import { CustomToastContainer, showToast } from '../../../common/services/toastServices';
 import { handleApiError } from '../../../helpers/handle-api-error';
@@ -23,6 +24,53 @@ const uploader = Uploader({
   // Get production API keys from Upload.io
   apiKey: 'free'
 });
+
+const selectFieldValidation = (fieldLabel: string) =>
+  Yup.object()
+    .nullable()
+    .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+      if (!val || typeof val !== 'object') return false;
+
+      if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+      return true;
+    });
+
+const validationSchema = Yup.object().shape({
+  societyName: Yup.string().required('Society name is required'),
+  contactNumber: Yup.string()
+    .required('Contact number is required')
+    .matches(/^\d{10}$/, 'Invalid Contact Number'),
+  email: Yup.string()
+    .email('Invalid email format')
+    .required('Email is required'),
+  societyManager: Yup.string().required('Society manager is required'),
+  address: Yup.string().required('Address is required'),
+  country: selectFieldValidation('Country'),
+  state: selectFieldValidation('State'),
+  city: selectFieldValidation('City'),
+  pincode: Yup.string()
+    .required('Pincode is required')
+    .matches(/^\d+$/, 'Pincode must be a number'),
+
+  billingFrequency: selectFieldValidation('Billing Frequency'),
+  interestCalculationType: selectFieldValidation('Interest Calculation Type'),
+  annualRateOfInterest: Yup.number()
+    .typeError('Annual rate of interest must be a number')
+    .required('Annual rate of interest is required')
+    .positive("Invalid Rate of interest"),
+  interestCalculationStartDate: Yup.date()
+    .required('Interest calculation date is required'),
+
+  registrationNumber: Yup.string().required('Registration number is required'),
+  tanNumber: Yup.string().required('TAN number is required'),
+  panNumber: Yup.string().required('PAN number is required'),
+  signatory: Yup.string().required('Signatory is required'),
+  hsnCode: Yup.string().required('HSN code is required'),
+  gstin: Yup.string().required('GSTIN is required')
+});
+
 const stateCitiesTyped: StateCities = stateCities;
 export default function AddSocietyMaster() {
   const [formData, setFormData] = useState({
@@ -144,27 +192,6 @@ export default function AddSocietyMaster() {
     { value: "Due Date", label: "Due Date" },
   ]
 
-  const society = [
-    { value: "1", label: "Society" },
-    { value: "2", label: "Association" },
-  ]
-  const applicationtype = [
-    { value: "1", label: "Gate Pass" },
-    { value: "2", label: "Flat Resale" },
-    { value: "3", label: "Celebration" },
-
-  ]
-  const flat = [
-    { value: "1", label: "Select Flat " },
-  ]
-
-  const wing = [
-    { value: "1", label: "Select Wing " },
-  ]
-  const designation = [
-    { value: "1", label: "Secretary " },
-    { value: "2", label: "Committe Member " },
-  ]
 
   const billingfrequency = [
     { value: "Monthly", label: "Monthly " },
@@ -174,10 +201,6 @@ export default function AddSocietyMaster() {
     { value: "Yearly", label: "Yearly" },
   ]
 
-  const property = [
-    { value: "1", label: "A101 " },
-    { value: "2", label: "A102 " },
-  ]
 
   const stateOptions = Object.keys(stateCitiesTyped).map((state) => ({
     value: state,
@@ -286,6 +309,53 @@ export default function AddSocietyMaster() {
     });
   };
   const handleAddNewBank = () => {
+    const requiredFields: { [key: string]: string } = {
+      bankName: "Bank Name",
+      accountNumber: "Account Number",
+      branchName: "Branch Name",
+      ifscCode: "IFSC Code",
+      chequeFavourable: "Cheque Favourable Name",
+      // Add file validation if needed
+    };
+
+    // Check for missing fields
+    const missingField = Object.entries(requiredFields).find(
+      ([key]) => !formData[key as keyof typeof formData]
+    );
+
+    if (missingField) {
+      const [, fieldLabel] = missingField;
+      showToast("error", `${fieldLabel} is required`);
+      return;
+    }
+
+    // if (!formData.paymentQrFile) {
+    //   showToast("error", "QR Code File is required");
+    //   return;
+    // }
+    // const allowedTypes = ["application/pdf", "image/png", "image/jpeg", "image/jpg", "image/webp"];
+    // const fileType = formData.paymentQrFile.type;
+
+    // if (!allowedTypes.includes(fileType)) {
+    //   showToast("error", "Only PDF and image formats (JPG, PNG, WEBP) are allowed");
+    //   return;
+    // }
+
+    if (formData.paymentQrFile) {
+      const allowedTypes = [
+        "application/pdf",
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/webp"
+      ];
+      const fileType = formData.paymentQrFile.type;
+
+      if (!allowedTypes.includes(fileType)) {
+        showToast("error", "Only PDF and image formats (JPG, PNG, WEBP) are allowed");
+        return;
+      }
+    }
     if (editingIndex !== null) {
       // Update existing row
       const updatedData = [...bankData];
@@ -319,7 +389,7 @@ export default function AddSocietyMaster() {
 
             address: currentSociety?.address || "",
 
-            country: { value: currentSociety.country, label: currentSociety.country },
+            country: { value: "", label: "" },
 
             state: { value: currentSociety.state, label: currentSociety.state },
 
@@ -348,7 +418,7 @@ export default function AddSocietyMaster() {
             paymentQrFile: currentSociety?.paymentQrFile
           }
           }
-          // validationSchema={validationScWhema}
+          validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ setFieldValue, values }) => (
@@ -374,6 +444,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Society name"
                                 className="form-control"
                               />
+                              <ErrorMessage name="societyName" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -385,6 +456,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Society number"
                                 className="form-control"
                               />
+                              <ErrorMessage name="contactNumber" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -396,18 +468,20 @@ export default function AddSocietyMaster() {
                                 placeholder="Society email"
                                 className="form-control"
                               />
+                              <ErrorMessage name="email" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
-                              <Form.Label>Society Manager</Form.Label>
+                              <Form.Label>Society Manager <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
                                 name="societyManager"
                                 placeholder="Society Manager"
                                 className="form-control"
                               />
+                              <ErrorMessage name="societyManager" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -421,7 +495,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Address"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="address" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -436,7 +510,8 @@ export default function AddSocietyMaster() {
                                 placeholder="Select Country"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+
+                              <ErrorMessage name="country" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -458,7 +533,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Select State"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="state" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -473,7 +548,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Select City"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="city" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
                           <Col xl={4}>
@@ -485,6 +560,7 @@ export default function AddSocietyMaster() {
                                 placeholder="Pincode"
                                 className="form-control"
                               />
+                              <ErrorMessage name="pincode" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -519,19 +595,20 @@ export default function AddSocietyMaster() {
                                 onChange={(selected) => setFieldValue("interestCalculationType", selected)}
                                 classNamePrefix="Select2"
                               />
+                              <ErrorMessage name="interestCalculationType" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
                           <Col xl={3}>
                             <Form.Group className="form-group">
-                              <Form.Label>Annual Rate of Interest </Form.Label>
+                              <Form.Label>Annual Rate of Interest <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
                                 name="annualRateOfInterest"
                                 placeholder="0.00%"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="annualRateOfInterest" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
                           <Col xl={3}>
@@ -542,7 +619,7 @@ export default function AddSocietyMaster() {
                                 name="interestCalculationStartDate"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="interestCalculationStartDate" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -551,7 +628,7 @@ export default function AddSocietyMaster() {
                               <Form.Label>Rate of Interest</Form.Label>
                               <p className='mb-0'>0.0000000000%</p>
                               <em className='tx-12 text-muted'>This field is calculated upon save</em>
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+
                             </Form.Group>
                           </Col>
 
@@ -563,10 +640,10 @@ export default function AddSocietyMaster() {
                                 options={billingfrequency}
                                 name="billingFrequency"
                                 onChange={(selected) => setFieldValue("billingFrequency", selected)}
-                                placeholder="Select Billining"
+                                placeholder="Select Billing"
                                 classNamePrefix="Select2"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="billingFrequency" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -596,48 +673,48 @@ export default function AddSocietyMaster() {
                                 placeholder="Registration number"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="registrationNumber" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
-                              <Form.Label>TAN number </Form.Label>
+                              <Form.Label>TAN number <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
                                 name="tanNumber"
                                 placeholder="TAN number"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="societyName" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="tanNumber" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
-                              <Form.Label>PAN No</Form.Label>
+                              <Form.Label>PAN No <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
                                 name="panNumber"
                                 placeholder="PAN number"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="address" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="panNumber" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
-                              <Form.Label>Signatory</Form.Label>
+                              <Form.Label>Signatory <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
                                 name="signatory"
                                 placeholder="Signatory"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="country" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="signatory" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -645,28 +722,28 @@ export default function AddSocietyMaster() {
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
-                              <Form.Label>HSN Code </Form.Label>
+                              <Form.Label>HSN Code <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
                                 name="hsnCode"
                                 placeholder="HSN code"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="state" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="hsnCode" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
 
                           <Col xl={4}>
                             <Form.Group className="form-group">
-                              <Form.Label>GSTIN</Form.Label>
+                              <Form.Label>GSTIN <span className="text-danger">*</span></Form.Label>
                               <Field
                                 type="text"
                                 name="gstin"
                                 placeholder="GSTIN"
                                 className="form-control"
                               />
-                              {/* <ErrorMessage name="city" component="div" className="text-danger" /> */}
+                              <ErrorMessage name="gstin" component="div" className="text-danger" />
                             </Form.Group>
                           </Col>
 
@@ -694,42 +771,42 @@ export default function AddSocietyMaster() {
                         <Row>
                           <Col xl={4}>
                             <Form.Group>
-                              <Form.Label>Society Bank Name</Form.Label>
+                              <Form.Label>Society Bank Name <span className="text-danger">*</span></Form.Label>
                               <input type="text" name="bankName" placeholder="Bank name" className="form-control" value={formData.bankName} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
                           <Col xl={4}>
                             <Form.Group>
-                              <Form.Label>Account Number</Form.Label>
+                              <Form.Label>Account Number <span className="text-danger">*</span></Form.Label>
                               <input type="text" name="accountNumber" placeholder="Account number" className="form-control" value={formData.accountNumber} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
                           <Col xl={4}>
                             <Form.Group>
-                              <Form.Label>Branch Name</Form.Label>
+                              <Form.Label>Branch Name <span className="text-danger">*</span></Form.Label>
                               <input type="text" name="branchName" placeholder="Branch name" className="form-control" value={formData.branchName} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
                           <Col xl={4}>
                             <Form.Group>
-                              <Form.Label>IFSC Code</Form.Label>
+                              <Form.Label>IFSC Code <span className="text-danger">*</span></Form.Label>
                               <input type="text" name="ifscCode" placeholder="IFSC code" className="form-control" value={formData.ifscCode} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
                           <Col xl={4}>
                             <Form.Group>
-                              <Form.Label>Cheque Favourable</Form.Label>
+                              <Form.Label>Cheque Favourable <span className="text-danger">*</span></Form.Label>
                               <input type="text" name="chequeFavourable" placeholder="Cheque favourable" className="form-control" value={formData.chequeFavourable} onChange={handleInputChange} />
                             </Form.Group>
                           </Col>
 
                           <Col xl={4}>
                             <Form.Group>
-                              <Form.Label>Society Payment QR Code</Form.Label>
+                              <Form.Label>Society Payment QR Code <span className="text-danger">*</span></Form.Label>
                               <input type="file" className="form-control" accept="image/*" onChange={handleFileChange} />
                             </Form.Group>
                           </Col>

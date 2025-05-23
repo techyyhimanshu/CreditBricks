@@ -1,4 +1,4 @@
-import { Formik, Form as FormikForm } from 'formik';
+import { ErrorMessage, Formik, Form as FormikForm } from 'formik';
 import { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import Select from "react-select";
@@ -10,6 +10,9 @@ import { showToast } from '../services/toastServices';
 import { getWingPropertiesApi } from '../../api/property-api';
 import { getTowerWingsApi } from '../../api/wing-api';
 import { getSocietyTowersApi } from '../../api/tower-api';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import * as Yup from 'yup';
 
 interface ProductModalProps {
     show: boolean;
@@ -23,12 +26,44 @@ interface ProductModalProps {
 
 }
 
+const selectFieldValidation = (fieldLabel: string) =>
+    Yup.object()
+        .nullable()
+        .test(fieldLabel, `${fieldLabel} is required`, function (val: any) {
+
+            if (!val || typeof val !== 'object') return false;
+
+            if (typeof val.value === 'undefined' || val.value === null || val.value === '') return false;
+
+            return true;
+        });
+
+const noticeValidationSchema = Yup.object().shape({
+    society: selectFieldValidation("Society"),
+
+    message: Yup.string()
+        .required("Message is required"),
+
+    file: Yup.mixed()
+        .nullable()
+        .test(
+            "fileFormat",
+            "Only PDF or image files (jpg, jpeg, png) are allowed",
+            (value:any) => {
+                if (!value) return true;
+                const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
+                return allowedTypes.includes(value.type);
+            }
+        )
+});
+
 
 const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, onSave, editing }) => {
     const [societyData, setSocietyData] = useState<any[]>([]);
     const [propertiesForDropDown, setPropertiesForDropDown] = useState([]);
     const [towerOptions, setTowerOptions] = useState<any[]>([]);
     const [wingOptions, setWingOptions] = useState<any[]>([]);
+    const { society } = useSelector((state: RootState) => state.auth)
 
     const noticetype = [
         { value: "General Notice", label: "General Notice" },
@@ -131,9 +166,16 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                         file: null,
                         fileName: initialVals?.noticeFilePath || null,
                     }}
+                    validationSchema={noticeValidationSchema}
                     onSubmit={handleSubmit}
                 >
                     {({ values, handleChange, setFieldValue }) => {
+                        useEffect(() => {
+                            if (society) {
+                                setFieldValue("society", society);
+                                fetchTowersForDropDown(society);
+                            }
+                        }, [society]);
                         useEffect(() => {
                             if (values.society && values.society.value) {
                                 fetchTowersForDropDown(values.society);
@@ -170,7 +212,7 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                     <Row>
                                         <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
-                                                <Form.Label>Society</Form.Label>
+                                                <Form.Label>Society <span className="text-danger">*</span></Form.Label>
                                                 <Select
                                                     options={societyData}
                                                     name='society'
@@ -184,7 +226,9 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                                         setFieldValue("property", null);
                                                         setFieldValue("society", selected);
                                                     }}
+                                                    isDisabled
                                                 />
+                                                <ErrorMessage name="society" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
@@ -237,7 +281,6 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                             </Form.Group>
                                         </Col>
 
-                                        {/* Notice Type */}
                                         <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>Notice Type</Form.Label>
@@ -252,7 +295,6 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                             </Form.Group>
                                         </Col>
 
-                                        {/* Notice Subject */}
                                         <Col xl={12}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>Notice Subject</Form.Label>
@@ -264,10 +306,10 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                                     onChange={handleChange}
                                                     placeholder="Subject"
                                                 />
+                                                <ErrorMessage name="subject" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
-                                        {/* Message (SunEditor) */}
                                         <Col xl={12}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>
@@ -276,11 +318,12 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                                 <SunEditor
                                                     defaultValue={values.message}
                                                     onChange={(content) => setFieldValue("message", content)}
+                                                    name='message'
                                                 />
+                                                <ErrorMessage name="message" component="div" className="text-danger" />
                                             </Form.Group>
                                         </Col>
 
-                                        {/* Start Date */}
                                         <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>Start Date</Form.Label>
@@ -293,7 +336,6 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                             </Form.Group>
                                         </Col>
 
-                                        {/* Valid Date */}
                                         <Col xl={6}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>Valid Date</Form.Label>
@@ -306,7 +348,6 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                             </Form.Group>
                                         </Col>
 
-                                        {/* File Upload */}
                                         <Col xl={12}>
                                             <Form.Group className="form-group mb-1">
                                                 <Form.Label>
@@ -319,6 +360,7 @@ const NoticeModal: React.FC<ProductModalProps> = ({ show, initialVals, onClose, 
                                                         setFieldValue("file", event.currentTarget.files[0])
                                                     }
                                                 />
+                                                <ErrorMessage name="file" component="div" className="text-danger" />
                                             </Form.Group>
                                             {values.fileName && (
                                                 <p
